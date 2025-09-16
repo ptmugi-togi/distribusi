@@ -103,7 +103,8 @@ Route::get('/roce/renoOc',[OcController::class,'renoOc'])->middleware('auth');
 Route::get('/roce/customerOc',[OcController::class,'customerOc'])->middleware('auth');
 Route::resource('/roce', OcController::class)->middleware('auth');
 
-Route::get('/tpohdr', [TpoController::class,'index'])->middleware('auth');
-Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth');
+Route::get('/tpohdr', [TpoController::class,'index'])->middleware('auth')->name('tpohdr.index');
+Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth')->name('tpohdr.create');
+Route::post('/tpo/store', [TpoController::class, 'store'])->middleware('auth')->name('tpohdr.store');
 Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
 

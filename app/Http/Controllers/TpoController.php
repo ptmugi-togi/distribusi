@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Tpohdr;
 use Illuminate\Support\Facades\DB;
+use App\Models\Tpohdr;
+use App\Models\Mvendor;
 
 class TpoController extends Controller
 {
@@ -23,7 +24,8 @@ class TpoController extends Controller
      */
     public function create()
     {
-        return view('purchasing.tpo.tpo_create');
+        $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
+        return view('purchasing.tpo.tpo_create', compact('vendors'));
     }
 
     /**
@@ -31,7 +33,19 @@ class TpoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'pono' => 'required|unique:pohdr_tbl,pono',
+            'stamp' => 'nullable|numeric',
+        ], [
+            'pono.required' => 'Nomor PO harus diisi',
+            'pono.unique'   => 'Nomor PO sudah ada',
+        ]);
+
+        Tpohdr::create($request->all());
+        
+        
+
+        return redirect('/tpohdr')->with('success', 'Data berhasil disimpan');
     }
 
     /**
