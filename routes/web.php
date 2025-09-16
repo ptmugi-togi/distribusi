@@ -39,7 +39,7 @@ Route::get('/', [LoginController::class,'index'])->name('login')->middleware('gu
 Route::post('/login', [LoginController::class,'auth']);
 Route::post('/logout', [LoginController::class,'logout']);
 
-Route::get('/dashboard', function () { return view('home'); })->middleware('auth');
+Route::get('/dashboard', function () { return view('home'); })->middleware('auth')->name('dashboard');
 
 Route::get('/register', [LoginController::class,'registerUser'])->middleware('auth');
 Route::get('/cekUsername', [LoginController::class,'cekUsername']);
@@ -103,5 +103,7 @@ Route::get('/roce/renoOc',[OcController::class,'renoOc'])->middleware('auth');
 Route::get('/roce/customerOc',[OcController::class,'customerOc'])->middleware('auth');
 Route::resource('/roce', OcController::class)->middleware('auth');
 
-Route::get('/tpohdr',[TpoController::class,'index'])->middleware('auth');
+Route::get('/tpohdr', [TpoController::class,'index'])->middleware('auth');
+Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth');
+Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
 

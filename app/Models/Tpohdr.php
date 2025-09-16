@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tpo extends Model
+class Tpohdr extends Model
 {
     use HasFactory;
 
     protected $table = 'pohdr_tbl';
     protected $primaryKey = 'pono';
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
     protected $fillable = [
+        'pono',
         'formc',
         'podat',
         'potype',
@@ -29,5 +32,12 @@ class Tpo extends Model
         'pph',
         'stamp',
         'noteh',
+        'supno',
     ];
+
+    public function vendor()
+    {
+        return $this->belongsTo(Mvendor::class, 'supno', 'supno');
+    }
 }
+

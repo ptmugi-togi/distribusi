@@ -118,12 +118,12 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link collapsed" data-bs-target="#purchasing-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-cart"></i><span>Purchasing</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="/tpo">
+            <a href="/tpohdr">
             <i class="bi bi-circle"></i><span>TPO</span>
             </a>
           </li>

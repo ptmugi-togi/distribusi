@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Tpo;
+use App\Models\Tpohdr;
 use Illuminate\Support\Facades\DB;
 
 class TpoController extends Controller
@@ -13,8 +13,8 @@ class TpoController extends Controller
      */
     public function index()
     {
-        return view('master.tpo.tpohdr', [
-            'tpohdr'=>Tpo::all(),
+        return view('purchasing.tpo.tpohdr', [
+            'tpohdr'=>Tpohdr::with('vendor')->get(),
         ]);
     }
 
@@ -23,7 +23,7 @@ class TpoController extends Controller
      */
     public function create()
     {
-        //
+        return view('purchasing.tpo.tpo_create');
     }
 
     /**
@@ -63,6 +63,7 @@ class TpoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Tpohdr::destroy($id);
+        return redirect('/tpohdr')->with('success', 'Data berhasil dihapus');
     }
 }
