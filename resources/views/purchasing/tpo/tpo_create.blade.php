@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/purchasing/tpo/tpo_create.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/purchasing/tpo.css') }}">
 @endpush
 
 @section('container')
@@ -151,10 +151,10 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="noteh" class="form-label">Note</label>
+                        <label for="noteh" class="form-label">Catatan</label>
                         <textarea 
-                            type="text" class="form-control" placeholder="Cth : note" name="noteh" id="noteh" value="{{ old('noteh') }}" maxlength="200"
-                        ></textarea>
+                            type="text" class="form-control" placeholder="Cth : note" name="noteh" id="noteh" maxlength="200"
+                        >{{ old('noteh') }}</textarea>
                         <div class="form-text text-danger text-end" style="font-size: 0.7rem;">
                             Maksimal 200 karakter
                         </div>
@@ -165,7 +165,7 @@
                     <h3 class="my-2">Detail Barang PO</h3>
                     
                     <div id="barang_po">
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion" id="accordionPoBarang">
                             @foreach(old('opron', [null]) as $i => $oldOpron)
                                 @include('purchasing.tpo.partial.tpo_create_detail', ['i' => $i, 'oldOpron' => $oldOpron, 'products' => $products])
                             @endforeach
@@ -192,7 +192,7 @@
 
             // Function Tambah Barang
             function addBarang() {
-                const accordion = document.getElementById('accordionExample');
+                const accordion = document.getElementById('accordionPoBarang');
 
                 const newItem = document.createElement('div');
                 newItem.classList.add('accordion-item');
@@ -203,14 +203,14 @@
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
                                 aria-expanded="false" aria-controls="barang-${barangIndex}">
-                            Barang PO ${barangIndex + 1}
+                            Barang PO
                         </button>
                         <button type="button" class="btn btn-sm btn-danger mx-2"  onclick="removeBarang(${barangIndex})">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </h2>
                     <div id="barang-${barangIndex}" class="accordion-collapse collapse"
-                        aria-labelledby="heading-${barangIndex}" data-bs-parent="#accordionExample">
+                        aria-labelledby="heading-${barangIndex}" data-bs-parent="#accordionPoBarang">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6 mt-3">
@@ -244,11 +244,11 @@
                                 <div class="col-md-6 mt-3">
                                     <label for="odisp-${barangIndex}" class="form-label">Diskon (%)</label>
                                     <input type="number" class="form-control" name="odisp[]" id="odisp-${barangIndex}"
-                                        placeholder="Cth : 5" required>
+                                        placeholder="Cth : 5" value="0" required>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Deliveri</label>
+                                    <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Pengiriman</label>
                                     <input type="date" class="form-control" name="edeld[]" id="edeld-${barangIndex}" min="{{ date('Y-m-d') }}" required>
                                 </div>
 
@@ -264,21 +264,21 @@
 
                                 <div class="col-md-6 mt-3">
                                     <label for="bm-${barangIndex}" class="form-label">BM (%)</label>
-                                    <input type="number" class="form-control" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 10">
+                                    <input type="number" class="form-control" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 10" value="0">
                                 </div>
 
                                 <div class="col-md-6 mt-3">
                                     <label for="bmt-${barangIndex}" class="form-label">BMT (%)</label>
-                                    <input type="number" class="form-control" name="bmt[]" id="bmt-${barangIndex}" placeholder="Cth : 10">
+                                    <input type="number" class="form-control" name="bmt[]" id="bmt-${barangIndex}" placeholder="Cth : 10" value="0">
                                 </div>
 
                                 <div class="col-md-6 mt-3">
                                     <label for="pphd-${barangIndex}" class="form-label">PPH (%)</label>
-                                    <input type="number" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 5">
+                                    <input type="number" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 5" value="0">
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label for="noted-${barangIndex}" class="form-label">Note</label>
+                                    <label for="noted-${barangIndex}" class="form-label">Catatan</label>
                                     <textarea class="form-control" name="noted[]" id="noted-${barangIndex}" maxlength="200" placeholder="Cth : note"></textarea>
                                     <div class="form-text text-danger text-end" style="font-size: 0.7rem;">
                                         Maksimal 200 karakter
@@ -309,6 +309,5 @@
             }
         </script>
     @endpush
-
 
 @endsection

@@ -50,7 +50,7 @@ class Tpohdr extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function tpodetails()
+    public function tpodtl()
     {
         return $this->hasMany(TpoDtl::class, 'pono', 'pono');
     }

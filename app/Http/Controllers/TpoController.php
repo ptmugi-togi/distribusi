@@ -96,9 +96,10 @@ class TpoController extends Controller
      */
     public function show(string $id)
     {
+        $tpohdr = Tpohdr::with(['tpodtl', 'vendor'])->find($id);
+
         return view('purchasing.tpo.tpo_detail', [
-            'tpohdr' => Tpohdr::find($id),
-            'vendors' => Mvendor::select('supno','supna')->orderBy('supno')->get(),
+            'tpohdr' => $tpohdr,
         ]);
     }
 
@@ -136,7 +137,12 @@ class TpoController extends Controller
      */
     public function destroy(string $id)
     {
+        // hapus podtl
+        Tpodtl::where('pono', $id)->delete();
+
+        // hapus header
         Tpohdr::destroy($id);
-        return redirect('/tpohdr')->with('success', 'Data berhasil dihapus');
+
+        return redirect('/tpohdr')->with('success', 'Data PO berhasil dihapus');
     }
 }
