@@ -34,7 +34,9 @@ class Tpohdr extends Model
         'noteh',
         'supno',
         'user_id',
+        'created_at',
         'created_by',
+        'updated_at',
         'updated_by',
     ];
 
@@ -46,6 +48,11 @@ class Tpohdr extends Model
         public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function tpodetails()
+    {
+        return $this->hasMany(TpoDtl::class, 'pono', 'pono');
     }
 }
 

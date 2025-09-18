@@ -30,7 +30,8 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.0/css/responsive.bootstrap5.css" />
   <link href="{{ URL::asset('css/style.css'); }}" rel="stylesheet">
 
-
+  @stack('styles')
+  {{-- end stack styles --}}
 </head>
 
 <body>
