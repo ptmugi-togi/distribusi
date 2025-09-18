@@ -7,7 +7,7 @@
 @section('container')
     <main id="main" class="main">
         <div class="pagetitle">
-            <h1>Edit Data PO</h1>
+            <h1>Edit Data PO "{{ $tpohdr->pono }}"</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>

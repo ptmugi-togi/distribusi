@@ -86,7 +86,7 @@
                            value="{{ old('pphd.'.$i, 0) }}">
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-12 mt-3">
                     <label for="noted-{{ $i }}" class="form-label">Catatan</label>
                     <textarea class="form-control" placeholder="Cth : note" name="noted[]" id="noted-{{ $i }}" maxlength="200">{{ old('noted.'.$i) }}</textarea>
                     <div class="form-text text-danger text-end" style="font-size: 0.7rem;">

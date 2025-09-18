@@ -106,31 +106,69 @@ class TpoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        return view('purchasing.tpo.tpo_edit', [
-            'tpohdr' => Tpohdr::find($id),
-            'vendors' => Mvendor::select('supno','supna')->orderBy('supno')->get(),
-        ]);
+        $tpohdr = Tpohdr::with('tpodtl')->findOrFail($id);
+        $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
+        $products = Mpromas::select('opron','prona')->orderBy('opron')->get();
+
+        return view('purchasing.tpo.tpo_edit', compact('tpohdr','vendors','products'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        $data = $request->only([
-        'formc','podat','potype','topay','tdesc','curco','shvia','sconp',
-        'delco','delnm','dconp','diper','vatax','pph','stamp','noteh','supno',
-    ]);
+        $request->validate([
+            'formc' => 'required|in:PO,PI,PN',
+            'stamp' => 'nullable|numeric',
+            'podat' => 'required|date|after_or_equal:today',
+        ]);
 
-        $tpohdr = Tpohdr::find($id);
+        // Update Header
+        $data = $request->only([
+            'formc','podat','potype','topay','tdesc','curco','shvia','sconp',
+            'delco','delnm','dconp','diper','vatax','pph','stamp','noteh','supno',
+        ]);
+
+        $tpohdr = Tpohdr::findOrFail($id);
         $tpohdr->fill($data);
         $tpohdr->updated_by = Auth::user()->name ?? null;
         $tpohdr->save();
 
-        return back()->with('success','Data berhasil diubah');
+        // Update Detail
+        if ($request->has('opron')) {
+            // hapus detail lama dulu
+            $tpohdr->tpodtl()->delete();
+
+            foreach ($request->opron as $i => $opron) {
+                $detailData = [
+                    'pono'   => $tpohdr->pono,
+                    'formc'  => $tpohdr->formc,
+                    'supno'  => $tpohdr->supno,
+                    'opron'  => $opron,
+                    'poqty'  => $request->poqty[$i] ?? 0,
+                    'price'  => $request->price[$i] ?? 0,
+                    'odisp'  => $request->odisp[$i] ?? 0,
+                    'edeld'  => $request->edeld[$i] ?? null,
+                    'earrd'  => $request->earrd[$i] ?? null,
+                    'hsn'    => $request->hsn[$i] ?? null,
+                    'bm'     => $request->bm[$i] ?? null,
+                    'bmt'    => $request->bmt[$i] ?? null,
+                    'pphd'   => $request->pphd[$i] ?? null,
+                    'noted'  => $request->noted[$i] ?? null,
+                ];
+
+                Tpodtl::create($detailData);
+            }
+        }
+
+        return redirect()->route('tpohdr.index')
+            ->with('success','Data PO "' . $tpohdr->pono . '" berhasil diperbarui');
     }
+
 
     /**
      * Remove the specified resource from storage.
