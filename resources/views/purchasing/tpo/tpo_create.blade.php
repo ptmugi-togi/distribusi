@@ -150,7 +150,7 @@
                         <input type="number" class="form-control" placeholder="Cth : 10000" name="stamp" id="stamp" value="{{ old('stamp', 0) }}" >
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-12 mt-3">
                         <label for="noteh" class="form-label">Catatan</label>
                         <textarea 
                             type="text" class="form-control" placeholder="Cth : note" name="noteh" id="noteh" maxlength="200"
@@ -277,7 +277,7 @@
                                     <input type="number" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 5" value="0">
                                 </div>
 
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-12 mt-3">
                                     <label for="noted-${barangIndex}" class="form-label">Catatan</label>
                                     <textarea class="form-control" name="noted[]" id="noted-${barangIndex}" maxlength="200" placeholder="Cth : note"></textarea>
                                     <div class="form-text text-danger text-end" style="font-size: 0.7rem;">

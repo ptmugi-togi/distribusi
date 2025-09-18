@@ -43,7 +43,7 @@ class TpoDtl extends Model
 
     public function mpromas()
     {
-        return $this->belongsTo(Mpromas::class, 'opron');
+        return $this->belongsTo(Mpromas::class, 'opron', 'opron');
     }
 }
 

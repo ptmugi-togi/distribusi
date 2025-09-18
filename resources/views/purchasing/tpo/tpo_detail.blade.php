@@ -21,82 +21,82 @@
         <div class="row">
             <div class="col-md-6 mt-3">
                 <label class="form-label">Form Code</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->formc }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->formc }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Nomor PO</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->pono }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->pono }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Tanggal PO</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->podat }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->podat }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Supplier</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Tipe PO</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->potype }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->potype }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Term Of Payment</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->topay }} Hari ({{ $tpohdr->tdesc }})" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->topay }} Hari ({{ $tpohdr->tdesc }})" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Currency Code</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->curco }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->curco }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Pengiriman</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->shvia }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->shvia }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Kode Pengirim</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->delco }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->delco }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Nama Pengirim</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->delnm }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->delnm }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Kontak Pengirim</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->dconp }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->dconp }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Diskon (%)</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->diper }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->diper }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Tax Rate (%)</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->vatax }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->vatax }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">PPH (%)</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->pph }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->pph }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Meterai</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->stamp }}" readonly>
+                <input type="text" class="form-control" value="{{ $tpohdr->stamp }}" disabled>
             </div>
 
             <div class="col-md-12 mt-3">
                 <label class="form-label">Catatan</label>
-                <textarea class="form-control" readonly>{{ $tpohdr->noteh }}</textarea>
+                <textarea class="form-control" disabled>{{ $tpohdr->noteh }}</textarea>
             </div>
         </div>
 
@@ -118,51 +118,51 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Barang</label>
-                                    <input type="text" class="form-control" value="{{ $d->opron }} - {{ $d->prona }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->opron }} - {{ $d->mpromas->prona }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Qty</label>
-                                    <input type="text" class="form-control" value="{{ $d->poqty }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->poqty }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" value="{{ number_format($d->price,0,',','.') }}" readonly>
+                                    <input type="text" class="form-control" value="{{ number_format($d->price,0,',','.') }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Berat (Kg)</label>
-                                    <input type="text" class="form-control" value="{{ $d->weigh }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->weigh }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Diskon (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->odisp }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->odisp }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Ekspetasi Pengiriman</label>
-                                    <input type="text" class="form-control" value="{{ $d->edeld }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->edeld }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Ekspetasi Kedatangan</label>
-                                    <input type="text" class="form-control" value="{{ $d->earrd }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->earrd }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">HS Code</label>
-                                    <input type="text" class="form-control" value="{{ $d->hsn }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->hsn }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">BM (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->bm }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->bm }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">BMT (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->bmt }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->bmt }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">PPH (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->pphd }}" readonly>
+                                    <input type="text" class="form-control" value="{{ $d->pphd }}" disabled>
                                 </div>
                                 <div class="col-md-12 mt-3">
                                     <label class="form-label">Catatan</label>
-                                    <textarea class="form-control" readonly>{{ $d->noted }}</textarea>
+                                    <textarea class="form-control" disabled>{{ $d->noted }}</textarea>
                                 </div>
                             </div>
                         </div>
