@@ -124,7 +124,7 @@
         <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="/tpohdr">
-            <i class="bi bi-circle"></i><span>TPO</span>
+            <i class="bi bi-circle"></i><span>PO</span>
             </a>
           </li>
         </ul>

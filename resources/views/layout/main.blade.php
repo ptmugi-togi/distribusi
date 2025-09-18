@@ -47,10 +47,6 @@
     @yield('container')
   </div>
 
-  {{-- stack scripts --}}
-  @stack('scripts')
-  {{-- end stack scripts --}}
-
   <!-- ======= Footer ======= -->
   @include('partials.footer')
   <!-- End Footer -->
@@ -76,10 +72,13 @@
   <script src="https://cdn.datatables.net/responsive/3.0.0/js/responsive.bootstrap5.js"></script>
   <script src="{{ URL::asset('js/js.js'); }}"></script>
 
-{{-- Link Select2 --}}
+  {{-- Link Select2 --}}
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    {{-- stack scripts --}}
+        @stack('scripts')
+    {{-- end stack scripts --}}
 
   <script>
     $(document).ready(function () {

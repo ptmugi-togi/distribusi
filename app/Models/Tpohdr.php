@@ -13,7 +13,7 @@ class Tpohdr extends Model
     protected $primaryKey = 'pono';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false;
+    public $timestamps = true;
     protected $fillable = [
         'pono',
         'formc',
@@ -33,11 +33,19 @@ class Tpohdr extends Model
         'stamp',
         'noteh',
         'supno',
+        'user_id',
+        'created_by',
+        'updated_by',
     ];
 
     public function vendor()
     {
         return $this->belongsTo(Mvendor::class, 'supno', 'supno');
+    }
+
+        public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
 

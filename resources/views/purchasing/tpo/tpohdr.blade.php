@@ -44,20 +44,22 @@
                       <td class="text-center">{{ $tpo->pono }}</td>
                       <td class="text-center">{{ $tpo->potype ?? '-' }}</td>
                       <td class="text-center">{{ $tpo->vendor->supna ?? '-' }}</td>
-                      <td class="text-center">{{ $tpo->podat }}</td>
+                      <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tpo->podat)->format('Y-m-d') }}">
+                        {{ \Carbon\Carbon::parse($tpo->podat)->format('d/m/Y') }}
+                      </td>
                       <td class="text-center">{{ $tpo->dconp }}</td>
                       <td class="text-center">
                         <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-info p-auto"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>
-                        <a href="#" class="badge bg-danger p-auto" data-bs-toggle="modal" data-bs-target="#modalDeleteTpo"><i class="bi bi-trash"></i></a>
-                        <div class="modal fade" id="modalDeleteTpo" tabindex="-1">
+                        <a href="#" class="badge bg-danger p-auto" data-bs-toggle="modal" data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}"><i class="bi bi-trash"></i></a>
+                        <div class="modal fade" id="modalDeleteTpo-{{ $tpo->pono }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Hapus TPO?</h5>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Yakin ingin menghapus data ini?</p>
+                                        <p>Yakin ingin menghapus data PO "{{ $tpo->pono }}" ini?</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -69,6 +71,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                       </td>
                     </tr>
                     @endforeach
@@ -81,5 +84,17 @@
     </section>
   </main>
 
+    @push('scripts')
+        <script>
+          $(function () {
+            $('#myTable').DataTable({
+              destroy: true,
+              order: [[3, 'desc']],
+              stateSave: false,
+            });
+          });
+        </script>
+    @endpush
 
 @endsection
+
