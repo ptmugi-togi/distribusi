@@ -24,7 +24,7 @@
                 </div>
                 @endif
                 <div class="col-lg-12" style="padding:0px 10px 10px 0px;">
-                    <a id="tambahTpo" href="{{ route('tpohdr.create') }}" type="button" class="btn btn-success"> Tambah</a>
+                    <a id="tambahTpo" href="{{ route('tpo.create') }}" type="button" class="btn btn-success"> Tambah</a>
                 </div>
 
                 <table id="myTable" class="table table-striped nowrap" style="width:100%">

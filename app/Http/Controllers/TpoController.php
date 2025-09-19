@@ -88,7 +88,7 @@ class TpoController extends Controller
             }
         }
 
-        return redirect()->route('tpohdr.index')->with('success', 'Data PO "' . $header->pono . '" berhasil ditambahkan');
+        return redirect()->route('tpo.index')->with('success', 'Data PO "' . $header->pono . '" berhasil ditambahkan');
     }
 
     /**
@@ -119,56 +119,72 @@ class TpoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'formc' => 'required|in:PO,PI,PN',
             'stamp' => 'nullable|numeric',
-            'podat' => 'required|date|after_or_equal:today',
+            'podat' => 'required|date|',
         ]);
 
-        // Update Header
-        $data = $request->only([
+        // Update header
+        $tpohdr = Tpohdr::findOrFail($id);
+        $tpohdr->fill($request->only([
             'formc','podat','potype','topay','tdesc','curco','shvia','sconp',
             'delco','delnm','dconp','diper','vatax','pph','stamp','noteh','supno',
-        ]);
-
-        $tpohdr = Tpohdr::findOrFail($id);
-        $tpohdr->fill($data);
+        ]));
         $tpohdr->updated_by = Auth::user()->name ?? null;
         $tpohdr->save();
 
-        // Update Detail
-        if ($request->has('opron')) {
-            // hapus detail lama dulu
-            $tpohdr->tpodtl()->delete();
+        // Ambil semua id lama dari detail
+        $existingIds = $tpohdr->tpodtl()->pluck('idpo')->toArray();
 
-            foreach ($request->opron as $i => $opron) {
-                $detailData = [
-                    'pono'   => $tpohdr->pono,
-                    'formc'  => $tpohdr->formc,
-                    'supno'  => $tpohdr->supno,
-                    'opron'  => $opron,
-                    'poqty'  => $request->poqty[$i] ?? 0,
-                    'price'  => $request->price[$i] ?? 0,
-                    'odisp'  => $request->odisp[$i] ?? 0,
-                    'edeld'  => $request->edeld[$i] ?? null,
-                    'earrd'  => $request->earrd[$i] ?? null,
-                    'hsn'    => $request->hsn[$i] ?? null,
-                    'bm'     => $request->bm[$i] ?? null,
-                    'bmt'    => $request->bmt[$i] ?? null,
-                    'pphd'   => $request->pphd[$i] ?? null,
-                    'noted'  => $request->noted[$i] ?? null,
-                ];
+        //  filter idpo kosong supaya tidak dianggap data lama
+        $submittedIds = array_filter($request->idpo ?? []);
 
+        // Hapus detail yang sudah tidak ada di form
+        $toDelete = array_diff($existingIds, $submittedIds);
+        if (!empty($toDelete)) {
+            Tpodtl::whereIn('idpo', $toDelete)->delete();
+        }
+
+        // Loop data detail dari form
+        foreach ($request->opron as $i => $opron) {
+            $idpo = $request->idpo[$i] ?? null;
+
+            $detailData = [
+                'pono'   => $tpohdr->pono,
+                'formc'  => $tpohdr->formc,
+                'supno'  => $tpohdr->supno,
+                'opron'  => $opron,
+                'poqty'  => $request->poqty[$i] ?? 0,
+                'price'  => $request->price[$i] ?? 0,
+                'berat'  => $request->weigh[$i] ?? 0,
+                'odisp'  => $request->odisp[$i] ?? 0,
+                'edeld'  => $request->edeld[$i] ?? null,
+                'earrd'  => $request->earrd[$i] ?? null,
+                'hsn'    => $request->hsn[$i] ?? null,
+                'bm'     => $request->bm[$i] ?? null,
+                'bmt'    => $request->bmt[$i] ?? null,
+                'pphd'   => $request->pphd[$i] ?? null,
+                'noted'  => $request->noted[$i] ?? null,
+            ];
+
+            if ($idpo) {
+                // update detail lama
+                $detail = Tpodtl::find($idpo);
+                if ($detail) {
+                    $detail->update($detailData);
+                }
+            } else {
+                // tambah jika ada detail baru
                 Tpodtl::create($detailData);
             }
         }
 
-        return redirect()->route('tpohdr.index')
+        return redirect()->route('tpo.index')
             ->with('success','Data PO "' . $tpohdr->pono . '" berhasil diperbarui');
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -181,6 +197,6 @@ class TpoController extends Controller
         // hapus header
         Tpohdr::destroy($id);
 
-        return redirect('/tpohdr')->with('success', 'Data PO berhasil dihapus');
+        return redirect()->route('tpo.index')->with('success', 'Data PO berhasil dihapus');
     }
 }

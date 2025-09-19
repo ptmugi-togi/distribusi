@@ -11,14 +11,14 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('tpohdr.index') }}">List PO</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('tpo.index') }}">List PO</a></li>
                     <li class="breadcrumb-item active">Edit PO</li>
                 </ol>
             </nav>
         </div>
 
         <section class="section">
-            <form action="{{ route('tpohdr.update', $tpohdr->pono) }}" method="POST">
+            <form action="{{ route('tpo.update', $tpohdr->pono) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="row">
@@ -125,6 +125,7 @@
                         <div class="accordion" id="accordionPoBarang">
                             @foreach($tpohdr->tpodtl as $i => $d)
                             <div class="accordion-item" id="accordion-item-{{ $i }}">
+                                <input type="hidden" name="idpo[]" value="{{ $d->idpo }}">
                                 <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-{{ $i }}">
                                     <button class="accordion-button {{ $i>0?'collapsed':'' }}" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
@@ -159,8 +160,8 @@
                                                 <input type="text" class="form-control" name="price[]" value="{{ $d->price }}">
                                             </div>
                                             <div class="col-md-6 mt-3">
-                                                <label class="form-label">Berat</label>
-                                                <input type="number" class="form-control" name="weigh[]" value="{{ $d->weigh }}">
+                                                <label class="form-label">Berat (Kg)</label>
+                                                <input type="number" class="form-control" name="weigh[]" value="{{ $d->berat }}">
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Diskon (%)</label>
@@ -207,8 +208,8 @@
                     </div>
 
                     <div class="mt-3 d-flex justify-content-between">
-                        <a href="{{ route('tpohdr.index') }}" class="btn btn-secondary">Kembali</a>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
+                        <button type="submit" class="btn btn-primary">Perbaharui Data</button>
                     </div>
                 </div>
             </form>
@@ -226,6 +227,7 @@
                 newItem.id = `accordion-item-${barangIndex}`;
 
                 newItem.innerHTML = `
+                    <input type="hidden" name="idpo[]" value="">
                     <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-${barangIndex}">
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
@@ -257,7 +259,7 @@
                                     <input type="text" class="form-control" name="price[]" placeholder="Cth : 1000000">
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <label class="form-label">Berat</label>
+                                    <label class="form-label">Berat (Kg)</label>
                                     <input type="number" class="form-control" name="weigh[]" placeholder="Cth : 10">
                                 </div>
                                 <div class="col-md-6 mt-3">

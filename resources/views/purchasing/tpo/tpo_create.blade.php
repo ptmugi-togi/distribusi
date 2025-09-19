@@ -11,14 +11,14 @@
             <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('tpohdr.index') }}">List PO</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('tpo.index') }}">List PO</a></li>
                 <li class="breadcrumb-item active">PO Create</li>
             </ol>
             </nav>
         </div>
 
         <section class="section">
-            <form action="{{ route('tpohdr.store') }}" method="POST">
+            <form action="{{ route('tpo.store') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-md-6 mt-3">
@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="mt-3 d-flex justify-content-between">
-                        <a href="{{ route('tpohdr.index') }}" class="btn btn-secondary">Kembali</a>
+                        <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </div>

@@ -11,7 +11,7 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('tpohdr.index') }}">List PO</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('tpo.index') }}">List PO</a></li>
                 <li class="breadcrumb-item active">Detail PO</li>
             </ol>
         </nav>
@@ -46,7 +46,7 @@
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Term Of Payment</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->topay }} Hari ({{ $tpohdr->tdesc }})" disabled>
+                <input type="text" class="form-control" value="{{ $tpohdr->topay }} ({{ $tpohdr->tdesc }})" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
@@ -130,7 +130,7 @@
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Berat (Kg)</label>
-                                    <input type="text" class="form-control" value="{{ $d->weigh }}" disabled>
+                                    <input type="text" class="form-control" value="{{ $d->berat }}" disabled>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Diskon (%)</label>
@@ -172,7 +172,7 @@
         </div>
 
         <div class="mt-3 d-flex justify-content-between">
-            <a href="{{ route('tpohdr.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
     </section>
 </main>

@@ -12,7 +12,7 @@ class TpoDtl extends Model
 
     protected $table = 'podtl_tbl';
     protected $primaryKey = 'idpo';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $keyType = 'int';
     public $timestamps = false;
     protected $fillable = [
