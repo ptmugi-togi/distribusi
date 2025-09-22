@@ -23,7 +23,7 @@
                 @method('PUT')
                 <div class="row">
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Tipe PO</label>
+                        <label class="form-label">Tipe PO</label><span class="text-danger"> *</span>
                         <select id="potype" class="select2 form-control" name="potype" required>
                             <option value="Lokal" {{ old('potype',$tpohdr->potype)=='Lokal'?'selected':'' }}>Lokal</option>
                             <option value="Import" {{ old('potype',$tpohdr->potype)=='Import'?'selected':'' }}>Import</option>
@@ -34,17 +34,17 @@
                     <input type="text" name="formc" id="formc" value="{{ old('formc', $tpohdr->formc) }}" hidden>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Nomor PO</label>
+                        <label class="form-label">Nomor PO</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control" name="pono" value="{{ old('pono',$tpohdr->pono) }}" readonly>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Tanggal PO</label>
+                        <label class="form-label">Tanggal PO</label><span class="text-danger"> *</span>
                         <input type="date" class="form-control" name="podat" value="{{ old('podat',$tpohdr->podat) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Supplier</label>
+                        <label class="form-label">Supplier</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="supno" required>
                             <option value="" disabled>Pilih Supplier</option>
                             @foreach($vendors as $v)
@@ -56,17 +56,17 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Term Of Payment</label>
+                        <label class="form-label">Term Of Payment</label><span class="text-danger"> *</span>
                         <input type="number" class="form-control" name="topay" value="{{ old('topay',$tpohdr->topay) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Deskripsi TOP</label>
+                        <label class="form-label">Deskripsi Term Of Payment</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control" name="tdesc" value="{{ old('tdesc',$tpohdr->tdesc) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Currency</label>
+                        <label class="form-label">Currency Code</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="curco" required>
                             <option value="IDR" {{ old('curco',$tpohdr->curco)=='IDR'?'selected':'' }}>IDR</option>
                             <option value="USD" {{ old('curco',$tpohdr->curco)=='USD'?'selected':'' }}>USD</option>
@@ -76,12 +76,32 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Pengiriman</label>
+                        <label class="form-label">Pengiriman</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="shvia" required>
                             <option value="DARAT" {{ old('shvia',$tpohdr->shvia)=='DARAT'?'selected':'' }}>DARAT</option>
                             <option value="LAUT" {{ old('shvia',$tpohdr->shvia)=='LAUT'?'selected':'' }}>LAUT</option>
                             <option value="UDARA" {{ old('shvia',$tpohdr->shvia)=='UDARA'?'selected':'' }}>UDARA</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="delco" class="form-label">Kode Penerima</label>
+                        <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
+                            <option value="" {{ old('delco', $tpohdr->delco) ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
+                            <option value="PST" {{ old('delco', $tpohdr->delco) == 'PST' ? 'selected' : '' }}>PST (Pusat)</option>
+                            <option value="CKG" {{ old('delco', $tpohdr->delco) == 'CKG' ? 'selected' : '' }}>CKG (Cakung)</option>
+                            <option value="D3" {{ old('delco', $tpohdr->delco) == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="delnm" class="form-label">Nama Penerima</label>
+                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="delnm" id="delnm" value="{{ old('delnm',$tpohdr->delnm) }}">
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="dconp" class="form-label">Kontak Penerima</label>
+                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="dconp" id="dconp" value="{{ old('dconp',$tpohdr->dconp) }}">
                     </div>
                 </div>
                 <div class="row">
@@ -141,7 +161,7 @@
                                     <div class="accordion-body">
                                         <div class="row">
                                             <div class="col-md-6 mt-3">
-                                                <label class="form-label">Barang</label>
+                                                <label class="form-label">Barang</label><span class="text-danger"> *</span>
                                                 <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
                                                     @foreach($products as $p)
                                                     <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" {{ $d->opron==$p->opron?'selected':'' }}>
@@ -151,14 +171,14 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6 mt-3">
-                                                <label class="form-label">Harga</label>
+                                                <label class="form-label">Harga</label><span class="text-danger"> *</span>
                                                 <input type="text" class="form-control" name="price[]" value="{{ $d->price }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-4 mt-3">
-                                                <label class="form-label">Qty</label>
+                                                <label class="form-label">Qty</label><span class="text-danger"> *</span>
                                                 <input type="number" class="form-control" name="poqty[]" value="{{ $d->poqty }}">
                                             </div>
                                             <div class="col-md-4 mt-3">

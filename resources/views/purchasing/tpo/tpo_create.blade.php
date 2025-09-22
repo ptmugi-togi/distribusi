@@ -103,9 +103,9 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="delco" class="form-label">Kode Pengirim</label>
+                        <label for="delco" class="form-label">Kode Penerima</label>
                         <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
-                            <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Pengirim</option>
+                            <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
                             <option value="PST" {{ old('delco') == 'PST' ? 'selected' : '' }}>PST (Pusat)</option>
                             <option value="CKG" {{ old('delco') == 'CKG' ? 'selected' : '' }}>CKG (Cakung)</option>
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
@@ -113,12 +113,12 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="delnm" class="form-label">Nama Pengirim</label>
+                        <label for="delnm" class="form-label">Nama Penerima</label>
                         <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="delnm" id="delnm" value="{{ old('delnm') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="dconp" class="form-label">Kontak Pengirim</label>
+                        <label for="dconp" class="form-label">Kontak Penerima</label>
                         <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="dconp" id="dconp" value="{{ old('dconp') }}">
                     </div>
                 </div>
