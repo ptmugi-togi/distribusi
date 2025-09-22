@@ -3,7 +3,9 @@
         <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                 data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
                 aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
-            Barang PO
+            Barang PO&nbsp<span id="barang-label-{{ $i }}">
+                {{ optional($products->firstWhere('opron', $oldOpron))->opron }}  {{ optional($products->firstWhere('opron', $oldOpron))->prona }}
+            </span>
         </button>
         @if($i > 0)
             <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeBarang({{ $i }})">
@@ -17,10 +19,12 @@
             <div class="row">
                 <div class="col-md-6 mt-3">
                     <label for="opron-{{ $i }}" class="form-label">Barang PO <span class="text-danger">*</span></label>
-                    <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" required>
+                    <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
                         <option value="" disabled {{ !$oldOpron ? 'selected' : '' }}>Silahkan pilih Barang</option>
                         @foreach($products as $p)
-                            <option value="{{ $p->opron }}" {{ $oldOpron == $p->opron ? 'selected' : '' }}>
+                            <option value="{{ $p->opron }}" 
+                                data-prona="{{ $p->prona }}" 
+                                {{ $oldOpron == $p->opron ? 'selected' : '' }}>
                                 {{ $p->opron }} - {{ $p->prona }}
                             </option>
                         @endforeach
@@ -28,28 +32,31 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
+                    <label for="price-{{ $i }}" class="form-label">Harga Barang <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control price-input" name="price[]" id="price-{{ $i }}" 
+                           placeholder="Cth : 1000000" value="{{ old('price.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mt-3">
                     <label for="poqty-{{ $i }}" class="form-label">Qty <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="poqty[]" id="poqty-{{ $i }}" 
                            placeholder="Cth : 10" value="{{ old('poqty.'.$i) }}" required>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label for="price-{{ $i }}" class="form-label">Harga Barang <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="price[]" id="price-{{ $i }}" 
-                           placeholder="Cth : 1000000" value="{{ old('price.'.$i) }}" required>
-                </div>
-
-                <div class="col-md-6 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="weigh-{{ $i }}" class="form-label">Berat Barang (Kg)</label>
-                    <input type="number" class="form-control" name="weigh[]" id="weigh-{{ $i }}"
-                           placeholder="Cth : 10" value="{{ old('weigh.'.$i) }}" required>
+                    <input type="text" class="form-control" name="weigh[]" id="weigh-{{ $i }}"
+                           placeholder="Cth : 10.5" value="{{ old('weigh.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                 </div>
-                <div class="col-md-6 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="odisp-{{ $i }}" class="form-label">Diskon (%)</label>
-                    <input type="number" class="form-control" name="odisp[]" id="odisp-{{ $i }}" 
-                           placeholder="Cth : 5" value="{{ old('odisp.'.$i, 0) }}" >
+                    <input type="text" class="form-control" name="odisp[]" id="odisp-{{ $i }}" 
+                           placeholder="Cth : 5.5" value="{{ old('odisp.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-6 mt-3">
                     <label for="edeld-{{ $i }}" class="form-label">Ekspetasi Tanggal Pengiriman</label>
                     <input type="date" class="form-control" name="edeld[]" id="edeld-{{ $i }}" 
@@ -61,31 +68,35 @@
                     <input type="date" class="form-control" name="earrd[]" id="earrd-{{ $i }}" 
                            value="{{ old('earrd.'.$i) }}" min="{{ date('Y-m-d') }}" required>
                 </div>
+            </div>
 
-                <div class="col-md-6 mt-3">
+            <div class="row">
+                <div class="col-md-3 mt-3">
                     <label for="hsn-{{ $i }}" class="form-label">HS Code</label>
                     <input type="number" class="form-control" placeholder="Cth : 123" name="hsn[]" id="hsn-{{ $i }}"
                            value="{{ old('hsn.'.$i) }}">
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-3 mt-3">
                     <label for="bm-{{ $i }}" class="form-label">BM (%)</label>
-                    <input type="number" class="form-control" placeholder="Cth : 10" name="bm[]" id="bm-{{ $i }}"
-                           value="{{ old('bm.'.$i, 0) }}">
+                    <input type="text" class="form-control" placeholder="Cth : 1.5" name="bm[]" id="bm-{{ $i }}"
+                           value="{{ old('bm.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-3 mt-3">
                     <label for="bmt-{{ $i }}" class="form-label">BMT (%)</label>
-                    <input type="number" class="form-control" placeholder="Cth : 10" name="bmt[]" id="bmt-{{ $i }}"
-                           value="{{ old('bmt.'.$i, 0) }}">
+                    <input type="text" class="form-control" placeholder="Cth : 0.5" name="bmt[]" id="bmt-{{ $i }}"
+                           value="{{ old('bmt.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                 </div>
 
-                <div class="col-md-6 mt-3">
+                <div class="col-md-3 mt-3">
                     <label for="pphd-{{ $i }}" class="form-label">PPH (%)</label>
-                    <input type="number" class="form-control" placeholder="Cth : 5" name="pphd[]" id="pphd-{{ $i }}"
+                    <input type="text" class="form-control" placeholder="Cth : 11" name="pphd[]" id="pphd-{{ $i }}"
                            value="{{ old('pphd.'.$i, 0) }}">
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-12 mt-3">
                     <label for="noted-{{ $i }}" class="form-label">Catatan</label>
                     <textarea class="form-control" placeholder="Cth : note" name="noted[]" id="noted-{{ $i }}" maxlength="200">{{ old('noted.'.$i) }}</textarea>

@@ -22,14 +22,16 @@
                 @csrf
                 <div class="row">
                     <div class="col-md-6 mt-3">
-                        <label for="formc" class="form-label">Form Code</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control" name="formc" id="formc" style="width: 100%;" required>
-                            <option value="" {{ old('formc') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Form Code</option>
-                            <option value="PO" {{ old('formc') == 'PO' ? 'selected' : '' }}>PO (PO Lokal)</option>
-                            <option value="PI" {{ old('formc') == 'PI' ? 'selected' : '' }}>PI (PO Import)</option>
-                            <option value="PN" {{ old('formc') == 'PN' ? 'selected' : '' }}>PN (PO Inventaris)</option>
+                        <label for="potype" class="form-label">Tipe PO</label><span class="text-danger"> *</span>
+                        <select class="select2 form-control" name="potype" id="potype" style="width: 100%;" required>
+                            <option value="" {{ old('potype') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Tipe PO</option>
+                            <option value="Lokal" {{ old('potype') == 'Lokal' ? 'selected' : '' }}>Lokal</option>
+                            <option value="Import" {{ old('potype') == 'Import' ? 'selected' : '' }}>Import</option>
+                            <option value="Inventaris" {{ old('potype') == 'Inventaris' ? 'selected' : '' }}>Inventaris</option>
                         </select>
                     </div>
+                    
+                    <input type="text" name="formc" id="formc" value="{{ old('formc') }}" hidden>
 
                     <div class="col-md-6 mt-3">
                         <label for="pono" class="form-label">Nomor PO</label><span class="text-danger"> *</span>
@@ -63,16 +65,6 @@
                                     {{ $v->supno }} - {{ $v->supna }}
                                 </option>
                             @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="potype" class="form-label">Tipe PO</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control" name="potype" id="potype" style="width: 100%;" required>
-                            <option value="" {{ old('potype') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Tipe PO</option>
-                            <option value="Lokal" {{ old('potype') == 'Lokal' ? 'selected' : '' }}>Lokal</option>
-                            <option value="Import" {{ old('potype') == 'Import' ? 'selected' : '' }}>Import</option>
-                            <option value="Inventaris" {{ old('potype') == 'Inventaris' ? 'selected' : '' }}>Inventaris</option>
                         </select>
                     </div>
 
@@ -129,27 +121,27 @@
                         <label for="dconp" class="form-label">Kontak Pengirim</label>
                         <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="dconp" id="dconp" value="{{ old('dconp') }}">
                     </div>
+                </div>
 
-                    <div class="col-md-6 mt-3">
+                <div class="row">
+                    <div class="col-md-3 mt-3">
                         <label for="diper" class="form-label">Diskon (%)</label>
-                        <input type="double" class="form-control" placeholder="Cth : 10" name="diper" id="diper" value="{{ old('diper', 0) }}">
+                        <input type="text" class="form-control" placeholder="Cth : 1.25" name="diper" id="diper" value="{{ old('diper', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
-
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label for="vatax" class="form-label">Tax Rate (%)</label>
-                        <input type="double" class="form-control" placeholder="Cth : 5" name="vatax" id="vatax" value="{{ old('vatax', 0) }}">
+                        <input type="text" class="form-control" placeholder="Cth : 5.5" name="vatax" id="vatax" value="{{ old('vatax', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label for="pph" class="form-label">PPH (%)</label>
-                        <input type="number" class="form-control" placeholder="Cth : 5" name="pph" id="pph" value="{{ old('pph', 0) }}">
+                        <input type="text" class="form-control" placeholder="Cth : 10" name="pph" id="pph" value="{{ old('pph', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label for="stamp" class="form-label">Meterai</label>
                         <input type="number" class="form-control" placeholder="Cth : 10000" name="stamp" id="stamp" value="{{ old('stamp', 0) }}" >
                     </div>
-
                     <div class="col-md-12 mt-3">
                         <label for="noteh" class="form-label">Catatan</label>
                         <textarea 
@@ -159,9 +151,12 @@
                             Maksimal 200 karakter
                         </div>
                     </div>
+                </div>
 
-                    <hr class="my-4">
 
+                <hr class="my-4">
+
+                <div class="row">
                     <h3 class="my-2">Detail Barang PO</h3>
                     
                     <div id="barang_po">
@@ -171,21 +166,46 @@
                             @endforeach
                         </div>
                     </div>
+                </div>
  
-                    <div class="text-end">
-                        <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addBarang()">Tambah Barang</button>
-                    </div>
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addBarang()">Tambah Barang</button>
+                </div>
 
-                    <div class="mt-3 d-flex justify-content-between">
-                        <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
+                <div class="mt-3 d-flex justify-content-between">
+                    <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </section>
     </main>
 
     @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const formc = document.getElementById('formc');
+                const map = { Lokal: 'PO', Import: 'PI', Inventaris: 'PN' };
+
+                $('#potype').on('change', function () {
+                    formc.value = map[this.value] || '';
+                });
+            });
+        </script>
+
+        {{-- Nama Accordion ambil nama produk --}}
+        <script>
+            function updateBarangLabel(index) {
+            const select = document.getElementById(`opron-${index}`);
+            const selectedOption = select.options[select.selectedIndex];
+            const opron = selectedOption ? selectedOption.value : "";
+            const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
+            const labelSpan = document.getElementById(`barang-label-${index}`);
+            if (labelSpan) {
+                labelSpan.textContent = `(${opron} - ${prona ? `${prona})` : ""}`;
+            }
+        }
+        </script>
+
         <script>
             // Mulai dari jumlah data lama (kalau ada old input dari validasi gagal)
             let barangIndex = {{ count(old('opron', [null])) }};
@@ -203,7 +223,9 @@
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
                                 aria-expanded="false" aria-controls="barang-${barangIndex}">
-                            Barang PO
+                            Barang PO&nbsp<span id="barang-label-${barangIndex}">
+                                {{ optional($products->firstWhere('opron', $oldOpron))->opron }}  {{ optional($products->firstWhere('opron', $oldOpron))->prona }}
+                            </span>
                         </button>
                         <button type="button" class="btn btn-sm btn-danger mx-2"  onclick="removeBarang(${barangIndex})">
                             <i class="bi bi-trash-fill"></i>
@@ -215,18 +237,16 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label for="opron-${barangIndex}" class="form-label">Barang PO <span class="text-danger">*</span></label>
-                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" required>
-                                        <option value="" disabled selected>Silahkan pilih Barang</option>
+                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" onchange="updateBarangLabel(${barangIndex})" required>
+                                        <option value="" disabled {{ !$oldOpron ? 'selected' : '' }}>Silahkan pilih Barang</option>
                                         @foreach($products as $p)
-                                            <option value="{{ $p->opron }}">{{ $p->opron }} - {{ $p->prona }}</option>
+                                            <option value="{{ $p->opron }}" 
+                                                data-prona="{{ $p->prona }}" 
+                                                {{ $oldOpron == $p->opron ? 'selected' : '' }}>
+                                                {{ $p->opron }} - {{ $p->prona }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                </div>
-
-                                <div class="col-md-6 mt-3">
-                                    <label for="poqty-${barangIndex}" class="form-label">Qty <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}"
-                                        placeholder="Cth : 10" required>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
@@ -234,19 +254,29 @@
                                     <input type="text" class="form-control" name="price[]" id="price-${barangIndex}"
                                         placeholder="Cth : 1000000" required>
                                 </div>
+                            </div>
 
-                                <div class="col-md-6 mt-3">
-                                    <label for="weigh-${barangIndex}" class="form-label">Berat Barang (Kg)</label>
-                                    <input type="number" class="form-control" name="weigh[]" id="weigh-${barangIndex}"
+                            <div class="row">
+                                <div class="col-md-4 mt-3">
+                                    <label for="poqty-${barangIndex}" class="form-label">Qty <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}"
                                         placeholder="Cth : 10" required>
                                 </div>
 
-                                <div class="col-md-6 mt-3">
-                                    <label for="odisp-${barangIndex}" class="form-label">Diskon (%)</label>
-                                    <input type="number" class="form-control" name="odisp[]" id="odisp-${barangIndex}"
-                                        placeholder="Cth : 5" value="0" required>
+                                <div class="col-md-4 mt-3">
+                                    <label for="weigh-${barangIndex}" class="form-label">Berat Barang (Kg)</label>
+                                    <input type="text" class="form-control" name="weigh[]" id="weigh-${barangIndex}"
+                                        placeholder="Cth : 10.5" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                 </div>
 
+                                <div class="col-md-4 mt-3">
+                                    <label for="odisp-${barangIndex}" class="form-label">Diskon (%)</label>
+                                    <input type="text" class="form-control" name="odisp[]" id="odisp-${barangIndex}"
+                                        placeholder="Cth : 5.5" value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Pengiriman</label>
                                     <input type="date" class="form-control" name="edeld[]" id="edeld-${barangIndex}" min="{{ date('Y-m-d') }}" required>
@@ -256,27 +286,34 @@
                                     <label for="earrd-${barangIndex}" class="form-label">Ekspetasi Tanggal Kedatangan</label>
                                     <input type="date" class="form-control" name="earrd[]" id="earrd-${barangIndex}" min="{{ date('Y-m-d') }}" required>
                                 </div>
+                            </div>
 
-                                <div class="col-md-6 mt-3">
+                            <div class="row">
+                                <div class="col-md-3 mt-3">
                                     <label for="hsn-${barangIndex}" class="form-label">HS Code</label>
                                     <input type="number" class="form-control" name="hsn[]" id="hsn-${barangIndex}" placeholder="Cth : 123">
                                 </div>
 
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label for="bm-${barangIndex}" class="form-label">BM (%)</label>
-                                    <input type="number" class="form-control" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 10" value="0">
+                                    <input type="text" class="form-control" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 1.5" value="0"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                 </div>
 
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label for="bmt-${barangIndex}" class="form-label">BMT (%)</label>
-                                    <input type="number" class="form-control" name="bmt[]" id="bmt-${barangIndex}" placeholder="Cth : 10" value="0">
+                                    <input type="text" class="form-control" name="bmt[]" id="bmt-${barangIndex}" placeholder="Cth : 0.5" value="0"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                 </div>
 
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label for="pphd-${barangIndex}" class="form-label">PPH (%)</label>
-                                    <input type="number" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 5" value="0">
+                                    <input type="text" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 11" value="0"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                 </div>
+                            </div>
 
+                            <div class="row">
                                 <div class="col-md-12 mt-3">
                                     <label for="noted-${barangIndex}" class="form-label">Catatan</label>
                                     <textarea class="form-control" name="noted[]" id="noted-${barangIndex}" maxlength="200" placeholder="Cth : note"></textarea>

@@ -96,11 +96,9 @@ class TpoController extends Controller
      */
     public function show(string $id)
     {
-        $tpohdr = Tpohdr::with(['tpodtl', 'vendor'])->find($id);
+        $tpohdr = Tpohdr::with(['tpodtl.mpromas', 'vendor'])->findOrFail($id);
 
-        return view('purchasing.tpo.tpo_detail', [
-            'tpohdr' => $tpohdr,
-        ]);
+        return view('purchasing.tpo.tpo_detail', compact('tpohdr'));
     }
 
     /**
