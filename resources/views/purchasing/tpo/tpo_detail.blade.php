@@ -20,8 +20,8 @@
     <section class="section">
         <div class="row">
             <div class="col-md-6 mt-3">
-                <label class="form-label">Form Code</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->formc }}" disabled>
+                <label class="form-label">Tipe PO</label>
+                <input type="text" class="form-control" value="{{ $tpohdr->potype }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
@@ -31,17 +31,12 @@
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Tanggal PO</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->podat }}" disabled>
+                <input type="text" class="form-control" value="{{ date('d-m-Y', strtotime($tpohdr->podat)) }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Supplier</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}" disabled>
-            </div>
-
-            <div class="col-md-6 mt-3">
-                <label class="form-label">Tipe PO</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->potype }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
@@ -73,23 +68,25 @@
                 <label class="form-label">Kontak Pengirim</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->dconp }}" disabled>
             </div>
+        </div>
 
-            <div class="col-md-6 mt-3">
+        <div class="row">
+            <div class="col-md-3 mt-3">
                 <label class="form-label">Diskon (%)</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->diper }}" disabled>
             </div>
 
-            <div class="col-md-6 mt-3">
+            <div class="col-md-3 mt-3">
                 <label class="form-label">Tax Rate (%)</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->vatax }}" disabled>
             </div>
 
-            <div class="col-md-6 mt-3">
+            <div class="col-md-3 mt-3">
                 <label class="form-label">PPH (%)</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->pph }}" disabled>
             </div>
 
-            <div class="col-md-6 mt-3">
+            <div class="col-md-3 mt-3">
                 <label class="form-label">Meterai</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->stamp }}" disabled>
             </div>
@@ -102,73 +99,83 @@
 
         <hr class="my-4">
 
-        <h3 class="my-2">Detail Barang PO</h3>
-        <div class="accordion" id="accordionPoBarang">
-            @foreach($tpohdr->tpodtl as $i => $d)
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading-{{ $i }}">
-                        <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
-                                aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
-                            Barang PO {{ $i+1 }}
-                        </button>
-                    </h2>
-                    <div id="barang-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Barang</label>
-                                    <input type="text" class="form-control" value="{{ $d->opron }} - {{ $d->mpromas->prona }}" disabled>
+        <div class="row">
+            <h3 class="my-2">Detail Barang PO</h3>
+            <div class="accordion" id="accordionPoBarang">
+                @foreach($tpohdr->tpodtl as $i => $d)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading-{{ $i }}">
+                            <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
+                                    aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
+                                {{ $i+1 }}. {{ $d->opron }} - {{ $d->mpromas->prona ?? '-' }}
+                            </button>
+                        </h2>
+                        <div id="barang-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Barang</label>
+                                        <input type="text" class="form-control" value="{{ $d->opron }} - {{ $d->mpromas->prona }}" disabled>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Harga</label>
+                                        <input type="text" class="form-control" value="{{ number_format($d->price,0,',','.') }}" disabled>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Qty</label>
-                                    <input type="text" class="form-control" value="{{ $d->poqty }}" disabled>
+                                <div class="row">
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">Qty</label>
+                                        <input type="text" class="form-control" value="{{ $d->poqty }}" disabled>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">Berat (Kg)</label>
+                                        <input type="text" class="form-control" value="{{ $d->berat }}" disabled>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">Diskon (%)</label>
+                                        <input type="text" class="form-control" value="{{ $d->odisp }}" disabled>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" value="{{ number_format($d->price,0,',','.') }}" disabled>
+                                <div class="row">
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Ekspetasi Pengiriman</label>
+                                        <input type="text" class="form-control" value="{{ date('d-m-Y', strtotime($d->edld)) }}" disabled>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Ekspetasi Kedatangan</label>
+                                        <input type="text" class="form-control" value="{{ date('d-m-Y', strtotime($d->earrd)) }}" disabled>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Berat (Kg)</label>
-                                    <input type="text" class="form-control" value="{{ $d->berat }}" disabled>
+                                <div class="row">
+                                    <div class="col-md-3 mt-3">
+                                        <label class="form-label">HS Code</label>
+                                        <input type="text" class="form-control" value="{{ $d->hsn }}" disabled>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <label class="form-label">BM (%)</label>
+                                        <input type="text" class="form-control" value="{{ $d->bm }}" disabled>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <label class="form-label">BMT (%)</label>
+                                        <input type="text" class="form-control" value="{{ $d->bmt }}" disabled>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <label class="form-label">PPH (%)</label>
+                                        <input type="text" class="form-control" value="{{ $d->pphd }}" disabled>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Diskon (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->odisp }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Ekspetasi Pengiriman</label>
-                                    <input type="text" class="form-control" value="{{ $d->edeld }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Ekspetasi Kedatangan</label>
-                                    <input type="text" class="form-control" value="{{ $d->earrd }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">HS Code</label>
-                                    <input type="text" class="form-control" value="{{ $d->hsn }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">BM (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->bm }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">BMT (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->bmt }}" disabled>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">PPH (%)</label>
-                                    <input type="text" class="form-control" value="{{ $d->pphd }}" disabled>
-                                </div>
-                                <div class="col-md-12 mt-3">
-                                    <label class="form-label">Catatan</label>
-                                    <textarea class="form-control" disabled>{{ $d->noted }}</textarea>
+                                <div class="row">
+                                    <div class="col-md-12 mt-3">
+                                        <label class="form-label">Catatan</label>
+                                        <textarea class="form-control" disabled>{{ $d->noted }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
 
         <div class="mt-3 d-flex justify-content-between">
