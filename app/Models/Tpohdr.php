@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tpohdr extends Model
+class TpoHdr extends Model
 {
     use HasFactory;
 
