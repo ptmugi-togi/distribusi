@@ -23,14 +23,15 @@
                 @method('PUT')
                 <div class="row">
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Form Code</label>
-                        <select class="select2 form-control" name="formc" required>
-                            <option value="" disabled>Silahkan pilih Form Code</option>
-                            <option value="PO" {{ old('formc',$tpohdr->formc)=='PO'?'selected':'' }}>PO (Lokal)</option>
-                            <option value="PI" {{ old('formc',$tpohdr->formc)=='PI'?'selected':'' }}>PI (Import)</option>
-                            <option value="PN" {{ old('formc',$tpohdr->formc)=='PN'?'selected':'' }}>PN (Inventaris)</option>
+                        <label class="form-label">Tipe PO</label>
+                        <select id="potype" class="select2 form-control" name="potype" required>
+                            <option value="Lokal" {{ old('potype',$tpohdr->potype)=='Lokal'?'selected':'' }}>Lokal</option>
+                            <option value="Import" {{ old('potype',$tpohdr->potype)=='Import'?'selected':'' }}>Import</option>
+                            <option value="Inventaris" {{ old('potype',$tpohdr->potype)=='Inventaris'?'selected':'' }}>Inventaris</option>
                         </select>
                     </div>
+
+                    <input type="text" name="formc" id="formc" value="{{ old('formc', $tpohdr->formc) }}" hidden>
 
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Nomor PO</label>
@@ -51,15 +52,6 @@
                                     {{ $v->supno }} - {{ $v->supna }}
                                 </option>
                             @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Tipe PO</label>
-                        <select class="select2 form-control" name="potype" required>
-                            <option value="Lokal" {{ old('potype',$tpohdr->potype)=='Lokal'?'selected':'' }}>Lokal</option>
-                            <option value="Import" {{ old('potype',$tpohdr->potype)=='Import'?'selected':'' }}>Import</option>
-                            <option value="Inventaris" {{ old('potype',$tpohdr->potype)=='Inventaris'?'selected':'' }}>Inventaris</option>
                         </select>
                     </div>
 
@@ -91,23 +83,24 @@
                             <option value="UDARA" {{ old('shvia',$tpohdr->shvia)=='UDARA'?'selected':'' }}>UDARA</option>
                         </select>
                     </div>
-
-                    <div class="col-md-6 mt-3">
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mt-3">
                         <label class="form-label">Diskon (%)</label>
-                        <input type="number" class="form-control" name="diper" value="{{ old('diper',$tpohdr->diper) }}">
+                        <input type="text" class="form-control" name="diper" value="{{ old('diper',$tpohdr->diper) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label class="form-label">Tax Rate (%)</label>
-                        <input type="number" class="form-control" name="vatax" value="{{ old('vatax',$tpohdr->vatax) }}">
+                        <input type="text" class="form-control" name="vatax" value="{{ old('vatax',$tpohdr->vatax) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label class="form-label">PPH (%)</label>
-                        <input type="number" class="form-control" name="pph" value="{{ old('pph',$tpohdr->pph) }}">
+                        <input type="text" class="form-control" name="pph" value="{{ old('pph',$tpohdr->pph) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label class="form-label">Meterai</label>
                         <input type="number" class="form-control" name="stamp" value="{{ old('stamp',$tpohdr->stamp) }}">
                     </div>
@@ -116,11 +109,14 @@
                         <label class="form-label">Catatan</label>
                         <textarea class="form-control" name="noteh" maxlength="200">{{ old('noteh',$tpohdr->noteh) }}</textarea>
                     </div>
+                </div>
 
-                    <hr class="my-4">
+                <hr class="my-4">
 
+                
+                <div class="row">
                     <h3 class="my-2">Detail Barang PO</h3>
-
+                    
                     <div id="barang_po">
                         <div class="accordion" id="accordionPoBarang">
                             @foreach($tpohdr->tpodtl as $i => $d)
@@ -130,7 +126,9 @@
                                     <button class="accordion-button {{ $i>0?'collapsed':'' }}" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
                                             aria-expanded="{{ $i==0?'true':'false' }}" aria-controls="barang-{{ $i }}">
-                                        Barang PO {{ $i+1 }}
+                                        Barang PO&nbsp;<span id="barang-label-{{ $i }}">
+                                            ({{ $d->opron }} - {{ $d->prona }})
+                                        </span>
                                     </button>
                                     @if($i > 0)
                                     <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeBarang({{ $i }})">
@@ -138,35 +136,42 @@
                                     </button>
                                     @endif
                                 </h2>
+
                                 <div id="barang-{{ $i }}" class="accordion-collapse collapse {{ $i==0?'show':'' }}">
                                     <div class="accordion-body">
                                         <div class="row">
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Barang</label>
-                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}">
+                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
                                                     @foreach($products as $p)
-                                                    <option value="{{ $p->opron }}" {{ $d->opron==$p->opron?'selected':'' }}>
+                                                    <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" {{ $d->opron==$p->opron?'selected':'' }}>
                                                         {{ $p->opron }} - {{ $p->prona }}
                                                     </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-6 mt-3">
+                                                <label class="form-label">Harga</label>
+                                                <input type="text" class="form-control" name="price[]" value="{{ $d->price }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">Qty</label>
                                                 <input type="number" class="form-control" name="poqty[]" value="{{ $d->poqty }}">
                                             </div>
-                                            <div class="col-md-6 mt-3">
-                                                <label class="form-label">Harga</label>
-                                                <input type="text" class="form-control" name="price[]" value="{{ $d->price }}">
-                                            </div>
-                                            <div class="col-md-6 mt-3">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">Berat (Kg)</label>
-                                                <input type="number" class="form-control" name="weigh[]" value="{{ $d->berat }}">
+                                                <input type="text" class="form-control" name="weigh[]" value="{{ $d->berat }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
-                                            <div class="col-md-6 mt-3">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">Diskon (%)</label>
-                                                <input type="number" class="form-control" name="odisp[]" value="{{ $d->odisp }}">
+                                                <input type="text" class="form-control" name="odisp[]" value="{{ $d->odisp }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Tanggal Pengiriman</label>
                                                 <input type="date" class="form-control" name="edeld[]" value="{{ $d->edeld }}">
@@ -175,22 +180,28 @@
                                                 <label class="form-label">Tanggal Kedatangan</label>
                                                 <input type="date" class="form-control" name="earrd[]" value="{{ $d->earrd }}">
                                             </div>
-                                            <div class="col-md-6 mt-3">
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3 mt-3">
                                                 <label class="form-label">HSN</label>
                                                 <input type="number" class="form-control" name="hsn[]" value="{{ $d->hsn }}">
                                             </div>
-                                            <div class="col-md-6 mt-3">
+                                            <div class="col-md-3 mt-3">
                                                 <label class="form-label">BM</label>
-                                                <input type="number" class="form-control" name="bm[]" value="{{ $d->bm }}">
+                                                <input type="text" class="form-control" name="bm[]" value="{{ $d->bm }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
-                                            <div class="col-md-6 mt-3">
+                                            <div class="col-md-3 mt-3">
                                                 <label class="form-label">BMT</label>
-                                                <input type="number" class="form-control" name="bmt[]" value="{{ $d->bmt }}">
+                                                <input type="text" class="form-control" name="bmt[]" value="{{ $d->bmt }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
-                                            <div class="col-md-6 mt-3">
+                                            <div class="col-md-3 mt-3">
                                                 <label class="form-label">PPH</label>
-                                                <input type="number" class="form-control" name="pphd[]" value="{{ $d->pphd }}">
+                                                <input type="text" class="form-control" name="pphd[]" value="{{ $d->pphd }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-md-12 mt-3">
                                                 <label class="form-label">Catatan</label>
                                                 <textarea class="form-control" name="noted[]">{{ $d->noted }}</textarea>
@@ -202,21 +213,42 @@
                             @endforeach
                         </div>
                     </div>
+                </div>
 
-                    <div class="text-end">
-                        <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addBarang()">Tambah Barang</button>
-                    </div>
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addBarang()">Tambah Barang</button>
+                </div>
 
-                    <div class="mt-3 d-flex justify-content-between">
-                        <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
-                        <button type="submit" class="btn btn-primary">Perbaharui Data</button>
-                    </div>
+                <div class="mt-3 d-flex justify-content-between">
+                    <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
+                    <button type="submit" class="btn btn-primary">Perbaharui Data</button>
                 </div>
             </form>
         </section>
     </main>
 
     @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const formc = document.getElementById('formc');
+                const map = { Lokal: 'PO', Import: 'PI', Inventaris: 'PN' };
+
+                $('#potype').on('change', function () {
+                    formc.value = map[this.value] || '';
+                });
+            });
+        </script>
+
+        {{-- ambil nama produk pas awal load halaman --}}
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                @foreach($tpohdr->tpodtl as $i => $d)
+                    updateBarangLabel({{ $i }});
+                @endforeach
+            });
+        </script>
+
+        {{-- Nama Accordion ambil nama produk --}}
         <script>
             let barangIndex = {{ count($tpohdr->tpodtl) }};
 
@@ -232,7 +264,7 @@
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
                                 aria-expanded="false" aria-controls="barang-${barangIndex}">
-                            Barang PO ${barangIndex+1}
+                            Barang PO&nbsp<span id="barang-label-${barangIndex}"></span>
                         </button>
                         <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeBarang(${barangIndex})">
                             <i class="bi bi-trash-fill"></i>
@@ -243,10 +275,10 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Barang</label>
-                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}">
+                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" onchange="updateBarangLabel(${barangIndex})">
                                         <option value="" disabled selected>Pilih Barang</option>
                                         @foreach($products as $p)
-                                        <option value="{{ $p->opron }}">{{ $p->opron }} - {{ $p->prona }}</option>
+                                        <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}">{{ $p->opron }} - {{ $p->prona }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -298,14 +330,32 @@
                         </div>
                     </div>
                 `;
+
                 accordion.appendChild(newItem);
-                $(`#opron-${barangIndex}`).select2({theme:'bootstrap-5',width:'100%'});
+
+                // aktifkan select2
+                $(`#opron-${barangIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+
                 barangIndex++;
             }
 
             function removeBarang(index) {
                 const item = document.getElementById(`accordion-item-${index}`);
-                if(item){ item.remove(); }
+                if (item) { item.remove(); }
+            }
+
+            function updateBarangLabel(index) {
+                const select = document.getElementById(`opron-${index}`);
+                const selectedOption = select.options[select.selectedIndex];
+                const opron = selectedOption ? selectedOption.value : "";
+                const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
+                const labelSpan = document.getElementById(`barang-label-${index}`);
+
+                if (labelSpan) {
+                    labelSpan.textContent = opron
+                        ? `(${opron}${prona ? ' - ' + prona : ''})`
+                        : "";
+                }
             }
         </script>
     @endpush
