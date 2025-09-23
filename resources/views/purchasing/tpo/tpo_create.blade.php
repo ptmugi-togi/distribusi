@@ -18,7 +18,7 @@
         </div>
 
         <section class="section">
-            <form action="{{ route('tpo.store') }}" method="POST">
+            <form id="form-po" action="{{ route('tpo.store') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-md-6 mt-3">
@@ -174,9 +174,27 @@
 
                 <div class="mt-3 d-flex justify-content-between">
                     <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
             </form>
+
+            {{-- modal konfirmasi simpan data --}}
+            <div class="modal fade" id="modalKonfirmasi" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Konfirmasi Simpan</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah anda yakin ingin menyimpan data?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" id="btnKonfirmasiSimpan" class="btn btn-primary">Ya, Simpan</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -223,7 +241,7 @@
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
                                 aria-expanded="false" aria-controls="barang-${barangIndex}">
-                            Barang PO&nbsp<span id="barang-label-${barangIndex}">
+                            <span id="barang-label-${barangIndex}">
                                 {{ optional($products->firstWhere('opron', $oldOpron))->opron }}  {{ optional($products->firstWhere('opron', $oldOpron))->prona }}
                             </span>
                         </button>
@@ -344,6 +362,32 @@
                     item.remove();
                 }
             }
+        </script>
+
+        {{-- Modal Konfirmasi simpan data --}}
+        <script>
+            const form = document.getElementById('form-po');
+            const btnKonfirmasi = document.getElementById('btnKonfirmasiSimpan');
+
+            // cegah submit default
+            form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // jalankan validasi browser dulu
+            if (form.checkValidity()) {
+                // tampilkan modal konfirmasi
+                const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
+                modal.show();
+            } else {
+                // trigger bootstrap validation styling
+                form.classList.add('was-validated');
+            }
+            });
+
+            // kalau user setuju simpan
+            btnKonfirmasi.addEventListener('click', () => {
+            form.submit(); // submit form beneran
+            });
         </script>
     @endpush
 

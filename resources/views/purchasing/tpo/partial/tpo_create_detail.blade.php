@@ -3,7 +3,7 @@
         <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                 data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
                 aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
-            Barang PO&nbsp<span id="barang-label-{{ $i }}">
+            <span id="barang-label-{{ $i }}">
                 {{ optional($products->firstWhere('opron', $oldOpron))->opron }}  {{ optional($products->firstWhere('opron', $oldOpron))->prona }}
             </span>
         </button>

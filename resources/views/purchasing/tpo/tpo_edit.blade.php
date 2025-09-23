@@ -18,7 +18,7 @@
         </div>
 
         <section class="section">
-            <form action="{{ route('tpo.update', $tpohdr->pono) }}" method="POST">
+            <form id="form-edit-po" action="{{ route('tpo.update', $tpohdr->pono) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="row">
@@ -146,7 +146,7 @@
                                     <button class="accordion-button {{ $i>0?'collapsed':'' }}" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
                                             aria-expanded="{{ $i==0?'true':'false' }}" aria-controls="barang-{{ $i }}">
-                                        Barang PO&nbsp;<span id="barang-label-{{ $i }}">
+                                        <span id="barang-label-{{ $i }}">
                                             ({{ $d->opron }} - {{ $d->prona }})
                                         </span>
                                     </button>
@@ -244,6 +244,24 @@
                     <button type="submit" class="btn btn-primary">Perbaharui Data</button>
                 </div>
             </form>
+
+            {{-- modal konfirmasi edit data --}}
+            <div class="modal fade" id="modalKonfirmasi" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Konfirmasi Ubah Data</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah anda yakin ingin mengubah data?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" id="btnKonfirmasiEdit" class="btn btn-primary">Ya, Ubah Data</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -284,7 +302,7 @@
                         <button class="accordion-button collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#barang-${barangIndex}"
                                 aria-expanded="false" aria-controls="barang-${barangIndex}">
-                            Barang PO&nbsp<span id="barang-label-${barangIndex}"></span>
+                            <span id="barang-label-${barangIndex}"></span>
                         </button>
                         <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeBarang(${barangIndex})">
                             <i class="bi bi-trash-fill"></i>
@@ -377,6 +395,31 @@
                         : "";
                 }
             }
+        </script>
+        {{-- Modal Konfirmasi edit data --}}
+        <script>
+            const form = document.getElementById('form-edit-po');
+            const btnKonfirmasi = document.getElementById('btnKonfirmasiEdit');
+
+            // cegah submit default
+            form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // jalankan validasi browser dulu
+            if (form.checkValidity()) {
+                // tampilkan modal konfirmasi
+                const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
+                modal.show();
+            } else {
+                // trigger bootstrap validation styling
+                form.classList.add('was-validated');
+            }
+            });
+
+            // kalau user setuju simpan
+            btnKonfirmasi.addEventListener('click', () => {
+            form.submit(); // submit form beneran
+            });
         </script>
     @endpush
 @endsection
