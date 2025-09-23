@@ -124,21 +124,16 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label for="diper" class="form-label">Diskon (%)</label>
                         <input type="text" class="form-control" placeholder="Cth : 1.25" name="diper" id="diper" value="{{ old('diper', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label for="vatax" class="form-label">Tax Rate (%)</label>
                         <input type="text" class="form-control" placeholder="Cth : 5.5" name="vatax" id="vatax" value="{{ old('vatax', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-3 mt-3">
-                        <label for="pph" class="form-label">PPH (%)</label>
-                        <input type="text" class="form-control" placeholder="Cth : 10" name="pph" id="pph" value="{{ old('pph', 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                    </div>
-
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label for="stamp" class="form-label">Meterai</label>
                         <input type="number" class="form-control" placeholder="Cth : 10000" name="stamp" id="stamp" value="{{ old('stamp', 0) }}" >
                     </div>
@@ -270,7 +265,7 @@
                                 <div class="col-md-6 mt-3">
                                     <label for="price-${barangIndex}" class="form-label">Harga Barang <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="price[]" id="price-${barangIndex}"
-                                        placeholder="Cth : 1000000" required>
+                                        placeholder="Cth : 1000000" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" required>
                                 </div>
                             </div>
 

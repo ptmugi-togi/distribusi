@@ -29,7 +29,6 @@ class TpoHdr extends Model
         'dconp',
         'diper',
         'vatax',
-        'pph',
         'stamp',
         'noteh',
         'supno',
@@ -45,7 +44,7 @@ class TpoHdr extends Model
         return $this->belongsTo(Mvendor::class, 'supno', 'supno');
     }
 
-        public function creator()
+    public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -54,5 +53,9 @@ class TpoHdr extends Model
     {
         return $this->hasMany(TpoDtl::class, 'pono', 'pono');
     }
-}
 
+    public function formcode()
+    {
+        return $this->belongsTo(Mformcode::class, 'formc', 'formc');
+    }
+}

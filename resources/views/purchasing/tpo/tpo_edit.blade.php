@@ -105,22 +105,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label class="form-label">Diskon (%)</label>
                         <input type="text" class="form-control" name="diper" value="{{ old('diper',$tpohdr->diper) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label class="form-label">Tax Rate (%)</label>
                         <input type="text" class="form-control" name="vatax" value="{{ old('vatax',$tpohdr->vatax) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                     </div>
 
-                    <div class="col-md-3 mt-3">
-                        <label class="form-label">PPH (%)</label>
-                        <input type="text" class="form-control" name="pph" value="{{ old('pph',$tpohdr->pph) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                    </div>
-
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label class="form-label">Meterai</label>
                         <input type="number" class="form-control" name="stamp" value="{{ old('stamp',$tpohdr->stamp) }}">
                     </div>
