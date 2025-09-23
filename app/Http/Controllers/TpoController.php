@@ -17,7 +17,7 @@ class TpoController extends Controller
      */
     public function index()
     {
-        $tpohdr = TpoHdr::with('vendor')
+        $tpohdr = TpoHdr::with(['vendor', 'tpodtl'])
                     ->orderBy('podat','desc')
                     ->get();
         return view('purchasing.tpo.tpohdr', compact('tpohdr'));

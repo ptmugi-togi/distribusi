@@ -51,7 +51,14 @@
                       <td class="text-center">
                         <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-info p-auto"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>
-                        <a href="#" class="badge bg-danger p-auto" data-bs-toggle="modal" data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}"><i class="bi bi-trash"></i></a>
+                        @if($tpo->tpodtl->every(fn($d) => $d->rcqty == 0 && $d->inqty == 0))
+                            <a href="#" class="badge bg-danger" 
+                              data-bs-toggle="modal" 
+                              data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}">
+                              <i class="bi bi-trash"></i>
+                            </a>
+                        @endif
+
                         <div class="modal fade" id="modalDeleteTpo-{{ $tpo->pono }}" tabindex="-1">
                             <div class="modal-dialog">
                                 <div class="modal-content">
