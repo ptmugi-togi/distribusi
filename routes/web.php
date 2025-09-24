@@ -22,6 +22,7 @@ use App\Http\Controllers\CusmasCabController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\TpoController;
+use App\Http\Controllers\PdfController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,4 +111,7 @@ Route::get('/tpo/{id}/detail', [TpoController::class, 'show'])->middleware('auth
 Route::get('/tpo/{id}/edit', [TpoController::class, 'edit'])->middleware('auth')->name('tpo.edit');
 Route::put('/tpo/{id}', [TpoController::class, 'update'])->middleware('auth')->name('tpo.update');
 Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
+
+Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview');
+Route::get('/pdf/download/{id}', [PdfController::class, 'download'])->name('pdf.download');
 
