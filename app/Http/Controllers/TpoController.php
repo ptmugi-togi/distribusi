@@ -72,6 +72,7 @@ class TpoController extends Controller
                     'supno'  => $header->supno,
                     'opron'  => $opron,
                     'poqty'  => $request->poqty[$i] ?? 0,
+                    'stdqu'  => $request->stdqu[$i] ?? null,
                     'price'  => $request->price[$i] ?? 0,
                     'berat'  => $berat,
                     'odisp'  => $request->odisp[$i] ?? 0,
@@ -156,6 +157,7 @@ class TpoController extends Controller
                 'supno'  => $tpohdr->supno,
                 'opron'  => $opron,
                 'poqty'  => $request->poqty[$i] ?? 0,
+                'stdqu'  => $request->stdqu[$i] ?? null,
                 'price'  => $request->price[$i] ?? 0,
                 'berat'  => $request->weigh[$i] ?? 0,
                 'odisp'  => $request->odisp[$i] ?? 0,
@@ -189,10 +191,8 @@ class TpoController extends Controller
      */
     public function destroy(string $id)
     {
-        // hapus podtl
         Tpodtl::where('pono', $id)->delete();
 
-        // hapus header
         Tpohdr::destroy($id);
 
         return redirect()->route('tpo.index')->with('success', 'Data PO berhasil dihapus');

@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: sans-serif; 
-            font-size: 9pt;
+            font-size: 8pt;
         }
 
         table {
@@ -32,21 +32,30 @@
             text-align: center;
         }
 
-        /* Bagian total + tanda tangan fixed di bawah */
+        /* Bagian total + tanda tangan */
         .footer-summary {
-            position: fixed;
+            position: relative;
             bottom: 0;
             left: 0;
             right: 0;
+            margin-top: 20px;
         }
+
         .footer-summary table { 
             width: 100%;
             border: none;
         }
+
         .footer-summary td {
             border: none;
             padding: 5px;
             font-size: 10pt;
+        }
+
+        .summary-signature {
+            page-break-inside: avoid;
+            page-break-before: auto;
+            page-break-after: auto;
         }
     </style>
 </head>
@@ -88,13 +97,15 @@
             </td>
             <td class="left" style="width:25%">
                 <b>Dikirim Ke:</b><br>
-                {{ $tpohdr->delco }}
-            </td>
+                {{ $tpohdr->branches->conam }}<br>
+                {{ $tpohdr->branches->address }}<br>
+                Tel: {{ $tpohdr->branches->phone }}<br>
+                Fax: {{ $tpohdr->branches->faxno }}
             <td class="left" style="width: 25%">
                 <b>Nama Penerima:</b><br>
-                {{ $tpohdr->delnm }} <br>
+                {{ $tpohdr->branches->contactp }} <br>
                 <b>Kontak Penerima:</b><br>
-                {{ $tpohdr->dconp }}
+                {{ $tpohdr->branches->phone }}
             </td>
         </tr>
     </table>
@@ -114,11 +125,11 @@
         <thead>
             <tr>
                 <th style="width: 5%">No</th>
-                <th style="width: 10%">Quantity</th>
-                <th style="width: 15%">Kode Barang</th>
-                <th style="width: 35%">Nama Barang</th>
-                <th style="width: 10%">Berat Barang</th>
-                <th style="width: 10%">Harga</th>
+                <th style="width: 9%">Quantity</th>
+                <th style="width: 40%">Nama Barang</th>
+                <th style="width: 8%">Berat Barang</th>
+                <th style="width: 11%">Harga Satuan</th>
+                <th style="width: 11%">Diskon Satuan</th>
                 <th style="width: 15%">Sub Total</th>
             </tr>
         </thead>
@@ -129,7 +140,6 @@
                 <tr>
                     <td class="center">{{ $i+1 }}</td>
                     <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
-                    <td>{{ $d->opron }}</td>
                     <td>
                         {{ $d->mpromas->prona ?? '-' }}
                         @if(!empty($d->noted))
@@ -139,7 +149,8 @@
                         @endif
                     </td>
                     <td class="center">{{ $d->berat ?? '-' }}</td>
-                    <td class="right">{{ number_format($d->price, 2, ',', '.') }}</td>
+                    <td class="center">{{ number_format($d->price, 2, ',', '.') }}</td>
+                    <td class="center">{{ $d->odisp }}</td>
                     <td class="right">{{ number_format($subtotal, 2, ',', '.') }}</td>
                 </tr>
             @endforeach
@@ -147,7 +158,7 @@
     </table>
 
     <!-- Ringkasan Total & Tanda Tangan (tanpa outline) -->
-    <div class="footer-summary">
+    <div class="footer-summary summary-signature">
         <div style="border-top:1px dashed #00000049; margin-bottom:10px;"></div>
         <table class="no-border" style="margin-top:10px;">
             <tr>

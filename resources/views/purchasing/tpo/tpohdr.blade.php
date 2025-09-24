@@ -49,7 +49,7 @@
                       </td>
                       <td class="text-center">{{ $tpo->dconp }}</td>
                       <td class="text-center">
-                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-info p-auto"><i class="bi bi-info-circle"></i></a>
+                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-secondary p-auto"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>
                         @if($tpo->tpodtl->every(fn($d) => $d->rcqty == 0 && $d->inqty == 0))
                             <a href="#" class="badge bg-danger" 

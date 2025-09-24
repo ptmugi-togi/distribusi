@@ -23,6 +23,7 @@ class TpoDtl extends Model
         'opron',
         'prona',
         'poqty',
+        'stdqu',
         'weigh',
         'berat',
         'price',

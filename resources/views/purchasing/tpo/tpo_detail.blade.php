@@ -41,7 +41,12 @@
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Term Of Payment</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->topay }} ({{ $tpohdr->tdesc }})" disabled>
+                <input type="text" class="form-control" value="{{ $tpohdr->topay }}" disabled>
+            </div>
+
+            <div class="col-md-6 mt-3">
+                <label class="form-label">Deskripsi Term Of Payment</label>
+                <input type="text" class="form-control" value="{{ $tpohdr->tdesc }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
@@ -55,8 +60,17 @@
             </div>
 
             <div class="col-md-6 mt-3">
+                <label class="form-label">Branch</label>
+                <input type="text" class="form-control" value="PST" disabled>
+            </div>
+
+            <div class="col-md-6 mt-3">
                 <label class="form-label">Kode Penerima</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->delco }}" disabled>
+                <input type="text" class="form-control"
+                    value="{{ $tpohdr->delco == 'PST' ? 'PST (Pusat)' : 
+                            ($tpohdr->delco == 'CKG' ? 'CKG (Cakung)' : 
+                            ($tpohdr->delco == 'D3' ? 'D3 (Duren 3)' : '')) }}" 
+                    disabled>
             </div>
         </div>
 
@@ -90,13 +104,13 @@
                 @foreach($tpohdr->tpodtl as $i => $d)
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading-{{ $i }}">
-                            <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
+                            <button class="accordion-button" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
                                     aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
                                 {{ $i+1 }}. {{ $d->opron }} - {{ $d->mpromas->prona ?? '-' }}
                             </button>
                         </h2>
-                        <div id="barang-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
+                        <div id="barang-{{ $i }}" class="accordion-collapse collapse show">
                             <div class="accordion-body">
                                 <div class="row">
                                     <div class="col-md-6 mt-3">

@@ -37,6 +37,14 @@ class TpoHdr extends Model
         'updated_by',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($tpohdr) {
+            $tpohdr->tpodtl()->delete();
+        });
+    }
+
+
     public function vendor()
     {
         return $this->belongsTo(Mvendor::class, 'supno', 'supno');

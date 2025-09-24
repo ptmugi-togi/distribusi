@@ -116,7 +116,7 @@
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
-                    <input type="text" class="form-control" name="braco" id="braco" value="{{ old('braco') }}" hidden>
+                    <input type="text" class="form-control" name="braco" id="braco" value="PST" hidden>
                 </div>
 
                 <div class="row">
@@ -227,7 +227,11 @@
             if (qtyLabel) {
                 qtyLabel.textContent = stdqu;
             }
-            console.log("Update Barang:", opron, "Prona:", prona, "Unit:", stdqu);
+
+            const stdquInput = document.getElementById(`stdqu-${index}`);
+            if (stdquInput) {
+                stdquInput.value = stdqu || '';
+            }
         }
         </script>
 
@@ -273,6 +277,7 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    <input type="text" name="stdqu[]" id="stdqu-${barangIndex}">
                                 </div>
 
                                 <div class="col-md-6 mt-3">

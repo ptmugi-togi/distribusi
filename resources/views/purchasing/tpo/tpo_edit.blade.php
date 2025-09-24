@@ -85,6 +85,11 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
+                        <label for="branch" class="form-label">Branch</label>
+                        <input style="background-color: #e9ecef" type="text" class="form-control"  name="branch" id="branch" value="PST" readonly>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
                         <label for="delco" class="form-label">Kode Penerima</label>
                         <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
                             <option value="" {{ old('delco', $tpohdr->delco) ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
@@ -149,11 +154,12 @@
                                                 <label class="form-label">Barang</label><span class="text-danger"> *</span>
                                                 <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
                                                     @foreach($products as $p)
-                                                    <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" {{ $d->opron==$p->opron?'selected':'' }}>
+                                                    <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" data-stdqu="{{ $p->stdqu }}" {{ $d->opron==$p->opron?'selected':'' }}>
                                                         {{ $p->opron }} - {{ $p->prona }}
                                                     </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="text" name="stdqu[]" id="stdqu-{{ $i }}" value="{{ $d->stdqu }}" hidden>
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Harga</label><span class="text-danger"> *</span>
@@ -164,7 +170,13 @@
                                         <div class="row">
                                             <div class="col-md-4 mt-3">
                                                 <label class="form-label">Qty</label><span class="text-danger"> *</span>
-                                                <input type="number" class="form-control" name="poqty[]" value="{{ $d->poqty }}">
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="poqty[]" id="poqty-{{ $i }}"
+                                                        value="{{ $d->poqty }}" required>
+                                                    <span class="input-group-text" id="qty-label-{{ $i }}">
+                                                        {{ optional($products->firstWhere('opron', $d->opron))->stdqu ?? '' }}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div class="col-md-4 mt-3">
                                                 <label class="form-label">Berat (Kg)</label>
@@ -304,10 +316,14 @@
                                         <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}">{{ $p->opron }} - {{ $p->prona }}</option>
                                         @endforeach
                                     </select>
+                                    <input type="text" name="stdqu[]" id="stdqu-${barangIndex}" hidden>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Qty</label>
-                                    <input type="number" class="form-control" name="poqty[]" placeholder="Cth : 10">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}" placeholder="Cth : 10">
+                                        <span class="input-group-text" id="qty-label-${barangIndex}"></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Harga</label>
@@ -372,12 +388,24 @@
                 const selectedOption = select.options[select.selectedIndex];
                 const opron = selectedOption ? selectedOption.value : "";
                 const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
+                const stdqu = selectedOption ? selectedOption.getAttribute("data-stdqu") : "";
+
                 const labelSpan = document.getElementById(`barang-label-${index}`);
 
                 if (labelSpan) {
                     labelSpan.textContent = opron
                         ? `(${opron}${prona ? ' - ' + prona : ''})`
                         : "";
+                }
+
+                const qtyLabel = document.getElementById(`qty-label-${index}`);
+                if (qtyLabel) {
+                    qtyLabel.textContent = stdqu || '';
+                }
+
+                const stdquInput = document.getElementById(`stdqu-${index}`);
+                if (stdquInput) {
+                    stdquInput.value = stdqu || '';
                 }
             }
         </script>

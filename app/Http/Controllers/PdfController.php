@@ -13,7 +13,8 @@ class PdfController extends Controller
         $tpohdr = \App\Models\TpoHdr::with([
             'vendor',
             'tpodtl.mpromas',
-            'formcode'
+            'formcode',
+            'branches'
         ])->findOrFail($id);
 
         $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
@@ -23,6 +24,12 @@ class PdfController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 15,
         ]);
+        
+        $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-size: 9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
 
         $mpdf->WriteHTML($html);
         $mpdf->Output(); 
@@ -33,7 +40,8 @@ class PdfController extends Controller
         $tpohdr = \App\Models\TpoHdr::with([
             'vendor',
             'tpodtl.mpromas',
-            'formcode'
+            'formcode',
+            'branches'
         ])->findOrFail($id);
 
         $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
@@ -43,6 +51,12 @@ class PdfController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 15,
         ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-size: 9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
 
         $mpdf->WriteHTML($html);
         $mpdf->Output("PO-{$tpohdr->pono}.pdf", "D");
