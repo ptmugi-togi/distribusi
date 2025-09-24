@@ -58,16 +58,6 @@
                 <label class="form-label">Kode Penerima</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->delco }}" disabled>
             </div>
-
-            <div class="col-md-6 mt-3">
-                <label class="form-label">Nama Penerima</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->delnm }}" disabled>
-            </div>
-
-            <div class="col-md-6 mt-3">
-                <label class="form-label">Kontak Penerima</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->dconp }}" disabled>
-            </div>
         </div>
 
         <div class="row">

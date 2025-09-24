@@ -103,6 +103,11 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
+                        <label for="branch" class="form-label">Branch</label>
+                        <input style="background-color: #e9ecef" type="text" class="form-control"  name="branch" id="branch" value="PST" readonly>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
                         <label for="delco" class="form-label">Kode Penerima</label>
                         <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
                             <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
@@ -111,16 +116,7 @@
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="delnm" class="form-label">Nama Penerima</label>
-                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="delnm" id="delnm" value="{{ old('delnm') }}">
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="dconp" class="form-label">Kontak Penerima</label>
-                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="dconp" id="dconp" value="{{ old('dconp') }}">
-                    </div>
+                    <input type="text" class="form-control" name="braco" id="braco" value="{{ old('braco') }}" hidden>
                 </div>
 
                 <div class="row">
@@ -203,6 +199,14 @@
                     formc.value = map[this.value] || '';
                 });
             });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const braco = document.getElementById('braco');
+                
+                $('#delco').on('change', function () {
+                    braco.value = this.value;
+                });
+            });
         </script>
 
         {{-- Nama Accordion ambil nama produk --}}
@@ -212,10 +216,18 @@
             const selectedOption = select.options[select.selectedIndex];
             const opron = selectedOption ? selectedOption.value : "";
             const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
+            const stdqu = selectedOption ? selectedOption.getAttribute("data-stdqu") : "";
+
             const labelSpan = document.getElementById(`barang-label-${index}`);
             if (labelSpan) {
                 labelSpan.textContent = `(${opron} - ${prona ? `${prona})` : ""}`;
             }
+
+            const qtyLabel = document.getElementById(`qty-label-${index}`);
+            if (qtyLabel) {
+                qtyLabel.textContent = stdqu;
+            }
+            console.log("Update Barang:", opron, "Prona:", prona, "Unit:", stdqu);
         }
         </script>
 
@@ -255,6 +267,7 @@
                                         @foreach($products as $p)
                                             <option value="{{ $p->opron }}" 
                                                 data-prona="{{ $p->prona }}" 
+                                                data-stdqu="{{ $p->stdqu }}"
                                                 {{ $oldOpron == $p->opron ? 'selected' : '' }}>
                                                 {{ $p->opron }} - {{ $p->prona }}
                                             </option>
@@ -272,8 +285,12 @@
                             <div class="row">
                                 <div class="col-md-4 mt-3">
                                     <label for="poqty-${barangIndex}" class="form-label">Qty <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}"
-                                        placeholder="Cth : 10" required>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}"
+                                            placeholder="Cth : 10" required>
+                                        <span class="input-group-text" id="qty-label-${barangIndex}">
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4 mt-3">
@@ -291,12 +308,12 @@
 
                             <div class="row">
                                 <div class="col-md-6 mt-3">
-                                    <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Pengiriman</label>
+                                    <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Pengiriman <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" name="edeld[]" id="edeld-${barangIndex}" min="{{ date('Y-m-d') }}" required>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label for="earrd-${barangIndex}" class="form-label">Ekspetasi Tanggal Kedatangan</label>
+                                    <label for="earrd-${barangIndex}" class="form-label">Ekspetasi Tanggal Kedatangan <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" name="earrd[]" id="earrd-${barangIndex}" min="{{ date('Y-m-d') }}" required>
                                 </div>
                             </div>

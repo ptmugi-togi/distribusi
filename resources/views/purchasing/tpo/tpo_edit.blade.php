@@ -93,16 +93,6 @@
                             <option value="D3" {{ old('delco', $tpohdr->delco) == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="delnm" class="form-label">Nama Penerima</label>
-                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="delnm" id="delnm" value="{{ old('delnm',$tpohdr->delnm) }}">
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="dconp" class="form-label">Kontak Penerima</label>
-                        <input type="text" class="form-control" placeholder="Cth : PT MUGI" name="dconp" id="dconp" value="{{ old('dconp',$tpohdr->dconp) }}">
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mt-3">
@@ -188,11 +178,11 @@
 
                                         <div class="row">
                                             <div class="col-md-6 mt-3">
-                                                <label class="form-label">Tanggal Pengiriman</label>
+                                                <label class="form-label">Tanggal Pengiriman <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control" name="edeld[]" value="{{ $d->edeld }}">
                                             </div>
                                             <div class="col-md-6 mt-3">
-                                                <label class="form-label">Tanggal Kedatangan</label>
+                                                <label class="form-label">Tanggal Kedatangan <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control" name="earrd[]" value="{{ $d->earrd }}">
                                             </div>
                                         </div>

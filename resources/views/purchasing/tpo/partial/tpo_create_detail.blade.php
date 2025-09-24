@@ -23,7 +23,8 @@
                         <option value="" disabled {{ !$oldOpron ? 'selected' : '' }}>Silahkan pilih Barang</option>
                         @foreach($products as $p)
                             <option value="{{ $p->opron }}" 
-                                data-prona="{{ $p->prona }}" 
+                                data-prona="{{ $p->prona }}"
+                                data-stdqu="{{ $p->stdqu }}" 
                                 {{ $oldOpron == $p->opron ? 'selected' : '' }}>
                                 {{ $p->opron }} - {{ $p->prona }}
                             </option>
@@ -40,8 +41,13 @@
             <div class="row">
                 <div class="col-md-4 mt-3">
                     <label for="poqty-{{ $i }}" class="form-label">Qty <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="poqty[]" id="poqty-{{ $i }}" 
-                           placeholder="Cth : 10" value="{{ old('poqty.'.$i) }}" required>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="poqty[]" id="poqty-{{ $i }}"
+                            placeholder="Cth : 10" value="{{ old('poqty.'.$i) }}" required>
+                        <span class="input-group-text" id="qty-label-{{ $i }}">
+                            {{ optional($products->firstWhere('opron', $oldOpron))->stdqu ?? '' }}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="col-md-4 mt-3">
@@ -58,13 +64,13 @@
 
             <div class="row">
                 <div class="col-md-6 mt-3">
-                    <label for="edeld-{{ $i }}" class="form-label">Ekspetasi Tanggal Pengiriman</label>
+                    <label for="edeld-{{ $i }}" class="form-label">Ekspetasi Tanggal Pengiriman <span class="text-danger">*</span></label>
                     <input type="date" class="form-control" name="edeld[]" id="edeld-{{ $i }}" 
                            value="{{ old('edeld.'.$i) }}" min="{{ date('Y-m-d') }}" required>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="earrd-{{ $i }}" class="form-label">Ekspetasi Tanggal Kedatangan</label>
+                    <label for="earrd-{{ $i }}" class="form-label">Ekspetasi Tanggal Kedatangan <span class="text-danger">*</span></label>
                     <input type="date" class="form-control" name="earrd[]" id="earrd-{{ $i }}" 
                            value="{{ old('earrd.'.$i) }}" min="{{ date('Y-m-d') }}" required>
                 </div>

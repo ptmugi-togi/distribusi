@@ -29,7 +29,7 @@ class TpoController extends Controller
     public function create()
     {
         $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
-        $products = Mpromas::select('opron','prona')->orderBy('opron')->get();
+        $products = Mpromas::select('opron','prona','stdqu')->orderBy('opron')->get();
 
         return view('purchasing.tpo.tpo_create', compact('vendors', 'products'));
     }
@@ -52,7 +52,7 @@ class TpoController extends Controller
         // simpan ke tabel header
         $HeaderData = $request->only([
             'pono','formc','podat','potype','topay','tdesc','curco','shvia','sconp',
-            'delco','delnm','dconp','diper','vatax','stamp','noteh','supno',
+            'delco','diper','vatax','stamp','noteh','supno',
         ]);
 
         $HeaderData['user_id'] = Auth::id();
@@ -108,7 +108,7 @@ class TpoController extends Controller
     {
         $tpohdr = Tpohdr::with('tpodtl')->findOrFail($id);
         $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
-        $products = Mpromas::select('opron','prona')->orderBy('opron')->get();
+        $products = Mpromas::select('opron','prona','stdqu')->orderBy('opron')->get();
 
         return view('purchasing.tpo.tpo_edit', compact('tpohdr','vendors','products'));
     }
@@ -129,7 +129,7 @@ class TpoController extends Controller
         $tpohdr = Tpohdr::findOrFail($id);
         $tpohdr->fill($request->only([
             'formc','podat','potype','topay','tdesc','curco','shvia','sconp',
-            'delco','delnm','dconp','diper','vatax','stamp','noteh','supno',
+            'delco','diper','vatax','stamp','noteh','supno',
         ]));
         $tpohdr->updated_by = Auth::user()->name ?? null;
         $tpohdr->save();

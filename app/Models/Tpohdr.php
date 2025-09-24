@@ -25,8 +25,6 @@ class TpoHdr extends Model
         'shvia',
         'sconp',
         'delco',
-        'delnm',
-        'dconp',
         'diper',
         'vatax',
         'stamp',
@@ -57,5 +55,10 @@ class TpoHdr extends Model
     public function formcode()
     {
         return $this->belongsTo(Mformcode::class, 'formc', 'formc');
+    }
+
+    public function branches()
+    {
+        return $this->belongsTo(Mbranch::class, 'braco', 'braco');
     }
 }
