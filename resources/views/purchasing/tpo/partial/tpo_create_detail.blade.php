@@ -30,7 +30,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <input type="text" name="stdqu[]" id="stdqu-{{ $i }}" value="{{ old('stdqu.'.$i) }}" >
+                    <input type="text" name="stdqu[]" id="stdqu-{{ $i }}" value="{{ old('stdqu.'.$i) }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">

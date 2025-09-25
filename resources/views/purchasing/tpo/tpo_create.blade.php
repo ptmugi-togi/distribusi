@@ -277,7 +277,7 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    <input type="text" name="stdqu[]" id="stdqu-${barangIndex}">
+                                    <input type="text" name="stdqu[]" id="stdqu-${barangIndex}" hidden>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
