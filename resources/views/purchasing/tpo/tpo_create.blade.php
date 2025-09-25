@@ -80,7 +80,7 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control" name="curco" id="curco" style="width: 100%;" required>
+                        <select class="select2 form-control" name="curco" id="currency" style="width: 100%;" required>
                             <option value="" {{ old('curco') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Currency Code</option>
                             <option value="CHF" {{ old('curco') == 'CHF' ? 'selected' : '' }}>CHF (Franc Swiss)</option>
                             <option value="EUR" {{ old('curco') == 'EUR' ? 'selected' : '' }}>EUR (Euro)</option>
@@ -116,7 +116,7 @@
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
-                    <input type="text" class="form-control" name="braco" id="braco" value="PST" hidden>
+                    <input type="text" class="form-control" name="braco" id="braco" value="{{ old('braco') }}" hidden>
                 </div>
 
                 <div class="row">
@@ -209,32 +209,127 @@
             });
         </script>
 
+        <script>
+            function getLocale(currency) {
+                switch(currency) {
+                    case "CHF": return "fr-CH";
+                    case "EUR": return "de-DE";
+                    case "GBP": return "en-GB";
+                    case "IDR": return "id-ID";
+                    case "MYR": return "ms-MY";
+                    case "SGD": return "en-SG";
+                    case "USD": return "en-US";
+                    case "JPY": return "ja-JP";
+                    default: return "en-US";
+                }
+            }
+
+            function formatCurrency(value, currency) {
+                if (value === "" || value === null || isNaN(value)) return "";
+                if (!currency) return value;
+
+                const locale = getLocale(currency);
+
+                let fractionDigits = 2; // default pakai cent
+                if (currency === "IDR" || currency === "JPY") {
+                    fractionDigits = 0; // tanpa cent
+                }
+
+                return new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currency,
+                    minimumFractionDigits: fractionDigits,
+                    maximumFractionDigits: fractionDigits
+                }).format(value);
+            }
+
+            function attachPriceEvents(input, hidden, currencySelect) {
+                input.addEventListener("input", (e) => {
+                    const currency = currencySelect.value;
+                    const allowDecimal = !(currency === "IDR" || currency === "JPY");
+
+                    let raw = e.target.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
+                    let parts = raw.split(".");
+                    let intPart = parts[0] || "0";
+                    let decPart = allowDecimal && parts[1] ? "." + parts[1].slice(0, 2) : "";
+
+                    hidden.value = allowDecimal ? parseFloat(intPart + decPart) : parseInt(intPart);
+                });
+
+                input.addEventListener("blur", (e) => {
+                    const currency = currencySelect.value;
+                    if (hidden.value) {
+                        e.target.value = formatCurrency(hidden.value, currency);
+                    }
+                });
+
+                input.addEventListener("focus", (e) => {
+                    if (hidden.value) {
+                        e.target.value = hidden.value; // tampilkan raw
+                    }
+                });
+            }
+
+            function initPriceFormatter() {
+                const currencySelect = document.getElementById("currency");
+                document.querySelectorAll(".price-input").forEach((input) => {
+                    const index = input.id.split("-")[1];
+                    const hidden = document.getElementById("priceraw-" + index);
+
+                    attachPriceEvents(input, hidden, currencySelect);
+
+                    // kalau ada old value → langsung formatkan
+                    if (hidden && hidden.value) {
+                        input.value = formatCurrency(hidden.value, currencySelect.value);
+                    }
+                });
+
+                // kalau currency ganti → reformat semua input
+                $('#currency').on('change', function () {
+                    const newCurrency = $(this).val();
+                    if (!newCurrency) return;
+
+                    document.querySelectorAll(".price-input").forEach((input) => {
+                        const index = input.id.split("-")[1];
+                        const hidden = document.getElementById("priceraw-" + index);
+                        if (hidden.value) {
+                            input.value = formatCurrency(hidden.value, newCurrency);
+                        }
+                    });
+                });
+            }
+
+            // jalankan pas load
+            document.addEventListener("DOMContentLoaded", initPriceFormatter);
+        </script>
+
         {{-- Nama Accordion ambil nama produk --}}
         <script>
             function updateBarangLabel(index) {
-            const select = document.getElementById(`opron-${index}`);
-            const selectedOption = select.options[select.selectedIndex];
-            const opron = selectedOption ? selectedOption.value : "";
-            const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
-            const stdqu = selectedOption ? selectedOption.getAttribute("data-stdqu") : "";
+                const select = document.getElementById(`opron-${index}`);
+                const selectedOption = select.options[select.selectedIndex];
+                const opron = selectedOption ? selectedOption.value : "";
+                const prona = selectedOption ? selectedOption.getAttribute("data-prona") : "";
+                const stdqu = selectedOption ? selectedOption.getAttribute("data-stdqu") : "";
 
-            const labelSpan = document.getElementById(`barang-label-${index}`);
-            if (labelSpan) {
-                labelSpan.textContent = `(${opron} - ${prona ? `${prona})` : ""}`;
-            }
+                const labelSpan = document.getElementById(`barang-label-${index}`);
+                if (labelSpan) {
+                    labelSpan.textContent = `(${opron} - ${prona ? `${prona})` : ""}`;
+                }
 
-            const qtyLabel = document.getElementById(`qty-label-${index}`);
-            if (qtyLabel) {
-                qtyLabel.textContent = stdqu;
-            }
+                const qtyLabel = document.getElementById(`qty-label-${index}`);
+                if (qtyLabel) {
+                    qtyLabel.textContent = stdqu;
+                }
 
-            const stdquInput = document.getElementById(`stdqu-${index}`);
-            if (stdquInput) {
-                stdquInput.value = stdqu || '';
+                const stdquInput = document.getElementById(`stdqu-${index}`);
+                if (stdquInput) {
+                    stdquInput.value = stdqu || '';
+                }
             }
-        }
         </script>
 
+        {{-- add barang --}}
         <script>
             // Mulai dari jumlah data lama (kalau ada old input dari validasi gagal)
             let barangIndex = {{ count(old('opron', [null])) }};
@@ -282,8 +377,9 @@
 
                                 <div class="col-md-6 mt-3">
                                     <label for="price-${barangIndex}" class="form-label">Harga Barang <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="price[]" id="price-${barangIndex}"
-                                        placeholder="Cth : 1000000" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" required>
+                                    <input type="text" class="form-control" id="price-${barangIndex}"
+                                        placeholder="Cth : 1000000" required>
+                                    <input type="text" name="price[]" id="priceraw-${barangIndex}" hidden>
                                 </div>
                             </div>
 
@@ -368,6 +464,14 @@
                     theme: 'bootstrap-5',
                     width: '100%' 
                 });
+
+                const newPrice = document.getElementById(`price-${barangIndex}`);
+                const newHidden = document.getElementById(`priceraw-${barangIndex}`);
+                const currencySelect = document.getElementById("currency");
+
+                if (newPrice && newHidden) {
+                    attachPriceEvents(newPrice, newHidden, currencySelect);
+                }
 
                 barangIndex++;
             }

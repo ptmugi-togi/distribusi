@@ -67,7 +67,7 @@
 
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Currency Code</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control" name="curco" required>
+                        <select id="currency" class="select2 form-control" name="curco" required>
                             <option value="IDR" {{ old('curco',$tpohdr->curco)=='IDR'?'selected':'' }}>IDR</option>
                             <option value="USD" {{ old('curco',$tpohdr->curco)=='USD'?'selected':'' }}>USD</option>
                             <option value="EUR" {{ old('curco',$tpohdr->curco)=='EUR'?'selected':'' }}>EUR</option>
@@ -98,6 +98,7 @@
                             <option value="D3" {{ old('delco', $tpohdr->delco) == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
+                    <input type="text" name="braco" id="braco" value="{{ old('braco', $tpohdr->braco) }}" hidden>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mt-3">
@@ -163,7 +164,8 @@
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Harga</label><span class="text-danger"> *</span>
-                                                <input type="text" class="form-control" name="price[]" value="{{ $d->price }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                                    <input type="text" class="form-control price-input" id="price-{{ $i }}" value="{{ formatCurrencyDetail($d->price ?? old('price.'.$i), $tpohdr->curco) }}" required>
+                                                     <input type="text" name="price[]" id="priceraw-{{ $i }}" value="{{ $d->price ?? old('price.'.$i) }}" hidden>
                                             </div>
                                         </div>
 
@@ -272,6 +274,14 @@
                     formc.value = map[this.value] || '';
                 });
             });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const braco = document.getElementById('braco');
+                
+                $('#delco').on('change', function () {
+                    braco.value = this.value;
+                });
+            });
         </script>
 
         {{-- ambil nama produk pas awal load halaman --}}
@@ -280,6 +290,95 @@
                 @foreach($tpohdr->tpodtl as $i => $d)
                     updateBarangLabel({{ $i }});
                 @endforeach
+            });
+        </script>
+
+        {{-- currency --}}
+        <script>
+            function getLocale(currency) {
+                switch(currency) {
+                    case "CHF": return "fr-CH";
+                    case "EUR": return "de-DE";
+                    case "GBP": return "en-GB";
+                    case "IDR": return "id-ID";
+                    case "MYR": return "ms-MY";
+                    case "SGD": return "en-SG";
+                    case "USD": return "en-US";
+                    case "JPY": return "ja-JP";
+                    default: return "en-US";
+                }
+            }
+
+            function formatCurrencyJs(value, currency) {
+                if (!value) return "";
+                let locale = getLocale(currency);
+                let fractionDigits = (currency === "IDR" || currency === "JPY") ? 0 : 2;
+
+                return new Intl.NumberFormat(locale, {
+                    style: "currency",
+                    currency: currency,
+                    minimumFractionDigits: fractionDigits,
+                    maximumFractionDigits: fractionDigits
+                }).format(value);
+            }
+
+            function attachPriceEvents(input, hidden, currencySelect) {
+                input.addEventListener("input", () => {
+                    const currency = currencySelect.value;
+                    const allowDecimal = !(currency === "IDR" || currency === "JPY");
+
+                    let raw = input.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
+                    let value = allowDecimal ? parseFloat(raw) : parseInt(raw);
+
+                    if (!isNaN(value)) {
+                        hidden.value = value; // 🔑 sync selalu
+                    } else {
+                        hidden.value = "";
+                    }
+                });
+
+                input.addEventListener("blur", () => {
+                    const currency = currencySelect.value;
+                    if (hidden.value) {
+                        input.value = formatCurrencyJs(hidden.value, currency);
+                    }
+                });
+
+                input.addEventListener("focus", () => {
+                    if (hidden.value) {
+                        input.value = hidden.value;
+                    }
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const currencySelect = document.getElementById("currency");
+                document.querySelectorAll(".price-input").forEach((input) => {
+                    const index = input.id.split("-")[1];
+                    const hidden = document.getElementById("priceraw-" + index);
+                    attachPriceEvents(input, hidden, currencySelect);
+
+                    // format awal biar langsung kelihatan
+                    if (!hidden.value && input.value) {
+                        let raw = input.value.replace(/[^0-9.]/g, "");
+                        hidden.value = raw;
+                    }
+                    if (hidden.value) {
+                        input.value = formatCurrencyJs(hidden.value, currencySelect.value);
+                    }
+                });
+
+                // kalau currency ganti → reformat semua input
+                $('#currency').on('change', function () {
+                    const newCurrency = $(this).val();
+                    document.querySelectorAll(".price-input").forEach((input) => {
+                        const index = input.id.split("-")[1];
+                        const hidden = document.getElementById("priceraw-" + index);
+                        if (hidden.value) {
+                            input.value = formatCurrencyJs(hidden.value, newCurrency);
+                        }
+                    });
+                });
             });
         </script>
 
@@ -309,34 +408,39 @@
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6 mt-3">
-                                    <label class="form-label">Barang</label>
+                                    <label class="form-label">Barang <span class="text-danger">*</span></label>
                                     <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" onchange="updateBarangLabel(${barangIndex})">
                                         <option value="" disabled selected>Pilih Barang</option>
                                         @foreach($products as $p)
-                                        <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}">{{ $p->opron }} - {{ $p->prona }}</option>
+                                        <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" data-stdqu="{{ $p->stdqu }}">{{ $p->opron }} - {{ $p->prona }}</option>
                                         @endforeach
                                     </select>
                                     <input type="text" name="stdqu[]" id="stdqu-${barangIndex}" hidden>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <label class="form-label">Qty</label>
+                                    <label class="form-label">Harga <span class="text-danger">*</span></label>
+                                    <input type="text" id="price-${barangIndex}" class="form-control price-input" placeholder="Cth : 1000000">
+                                    <input type="text" name="price[]" id="priceraw-${barangIndex}" hidden>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mt-3">
+                                    <label class="form-label">Qty <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}" placeholder="Cth : 10">
                                         <span class="input-group-text" id="qty-label-${barangIndex}"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
-                                    <label class="form-label">Harga</label>
-                                    <input type="text" class="form-control" name="price[]" placeholder="Cth : 1000000">
-                                </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label class="form-label">Berat (Kg)</label>
                                     <input type="number" class="form-control" name="weigh[]" placeholder="Cth : 10">
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label class="form-label">Diskon (%)</label>
                                     <input type="number" class="form-control" name="odisp[]" value="0">
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label class="form-label">Tanggal Pengiriman</label>
                                     <input type="date" class="form-control" name="edeld[]">
@@ -345,22 +449,26 @@
                                     <label class="form-label">Tanggal Kedatangan</label>
                                     <input type="date" class="form-control" name="earrd[]">
                                 </div>
-                                <div class="col-md-6 mt-3">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 mt-3">
                                     <label class="form-label">HSN</label>
                                     <input type="number" class="form-control" name="hsn[]">
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label class="form-label">BM</label>
                                     <input type="number" class="form-control" name="bm[]" value="0">
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label class="form-label">BMT</label>
                                     <input type="number" class="form-control" name="bmt[]" value="0">
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-3 mt-3">
                                     <label class="form-label">PPH</label>
                                     <input type="number" class="form-control" name="pphd[]" value="0">
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-12 mt-3">
                                     <label class="form-label">Catatan</label>
                                     <textarea class="form-control" name="noted[]" maxlength="200"></textarea>
@@ -374,6 +482,11 @@
 
                 // aktifkan select2
                 $(`#opron-${barangIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+
+                const currencySelect = document.getElementById("currency");
+                const input = document.getElementById(`price-${barangIndex}`);
+                const hidden = document.getElementById(`priceraw-${barangIndex}`);
+                attachPriceEvents(input, hidden, currencySelect);
 
                 barangIndex++;
             }

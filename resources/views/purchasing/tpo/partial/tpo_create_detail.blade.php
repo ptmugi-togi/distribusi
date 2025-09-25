@@ -35,8 +35,9 @@
 
                 <div class="col-md-6 mt-3">
                     <label for="price-{{ $i }}" class="form-label">Harga Barang <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control price-input" name="price[]" id="price-{{ $i }}" 
-                           placeholder="Cth : 1000000" value="{{ old('price.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" required>
+                    <input type="text" class="form-control price-input" id="price-{{ $i }}" 
+                           placeholder="Cth : 1000000" value="{{ old('price.'.$i) }}" required>
+                    <input type="text" name="price[]" id="priceraw-{{ $i }}" value="{{ old('price.'.$i) }}" hidden>
                 </div>
             </div>
             <div class="row">

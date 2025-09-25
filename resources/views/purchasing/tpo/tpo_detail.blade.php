@@ -119,7 +119,7 @@
                                     </div>
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Harga</label>
-                                        <input type="text" class="form-control" value="{{ number_format($d->price,2,',','.') }}" disabled>
+                                        <input type="text" class="form-control" value="{{ formatCurrencyDetail($d->price, $d->tpohdr->curco) }}" disabled>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -180,7 +180,7 @@
         <div class="mt-3 d-flex justify-content-between">
             <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
             <a href="{{ route('pdf.preview', $tpohdr->pono) }}" class="btn" style="background-color:#4456f1; color:#fff"><i class="bi bi-file-earmark-pdf"></i> Preview PDF Data PO</a>
-            <a href="{{ route('pdf.download', $tpohdr->pono) }}" class="btn btn-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Download PDF</a>
+            <a href="{{ route('pdf.print', $tpohdr->pono) }}" class="btn btn-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Print PDF</a>
         </div>
     </section>
 </main>
