@@ -35,7 +35,7 @@ class PdfController extends Controller
         $mpdf->Output(); 
     }
 
-    public function download($id)
+    public function print($id)
     {
         $tpohdr = \App\Models\TpoHdr::with([
             'vendor',

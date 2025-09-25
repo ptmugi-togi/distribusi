@@ -100,7 +100,8 @@
                 {{ $tpohdr->branches->conam }}<br>
                 {{ $tpohdr->branches->address }}<br>
                 Tel: {{ $tpohdr->branches->phone }}<br>
-                Fax: {{ $tpohdr->branches->faxno }}
+                Fax: {{ $tpohdr->branches->faxno }}<br>
+                Email: {{ $tpohdr->branches->email }}
             <td class="left" style="width: 25%">
                 <b>Nama Penerima:</b><br>
                 {{ $tpohdr->branches->contactp }} <br>
@@ -127,16 +128,20 @@
                 <th style="width: 5%">No</th>
                 <th style="width: 9%">Quantity</th>
                 <th style="width: 40%">Nama Barang</th>
-                <th style="width: 8%">Berat Barang</th>
-                <th style="width: 11%">Harga Satuan</th>
+                <th style="width: 7%">Berat/Vol</th>
+                <th style="width: 12%">Harga Satuan</th>
                 <th style="width: 11%">Diskon Satuan</th>
-                <th style="width: 15%">Sub Total</th>
+                <th style="width: 15%">Jumlah</th>
             </tr>
         </thead>
         <tbody>
+            @php $subtotal = 0; @endphp
             @php $total = 0; @endphp
+            @php $pph = 0; @endphp
+            @php $totalpph = 0; @endphp
             @foreach($tpohdr->tpodtl as $i => $d)
-                @php $subtotal = $d->poqty * $d->price; $total += $subtotal @endphp
+                @php $jumlah = $d->poqty * $d->price - (($d->price * ($d->odisp / 100)) * $d->poqty); $subtotal += $jumlah @endphp
+                @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
                 <tr>
                     <td class="center">{{ $i+1 }}</td>
                     <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
@@ -149,9 +154,9 @@
                         @endif
                     </td>
                     <td class="center">{{ $d->berat ?? '-' }}</td>
-                    <td class="center">{{ number_format($d->price, 2, ',', '.') }}</td>
-                    <td class="center">{{ $d->odisp }}</td>
-                    <td class="right">{{ number_format($subtotal, 2, ',', '.') }}</td>
+                    <td class="center">{{ formatCurrencyDetail($d->price, $tpohdr->curco) }}</td>
+                    <td class="center">{{ formatCurrencyDetail($d->price * ($d->odisp / 100), $tpohdr->curco) }}</td>
+                    <td class="right">{{ formatCurrencyDetail($jumlah, $tpohdr->curco) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -162,6 +167,11 @@
         <div style="border-top:1px dashed #00000049; margin-bottom:10px;"></div>
         <table class="no-border" style="margin-top:10px;">
             <tr>
+                {{-- itungan harga --}}
+                @php $diskon = $subtotal * ($tpohdr->diper / 100); @endphp
+                @php $ppn = $diskon * ($tpohdr->vatax / 100); @endphp
+                @php $grandtotal = $subtotal - $diskon + $ppn - $totalpph; @endphp
+
                 <td style="width:60%; vertical-align:top">
                     <b>Catatan:</b><br>
                     {{ $tpohdr->noteh }}
@@ -170,23 +180,23 @@
                     <table class="no-border">
                         <tr>
                             <td>Sub Total</td>
-                            <td class="right">{{ number_format($total, 2, ',', '.') }}</td>
+                            <td class="right">{{ formatCurrencyDetail($subtotal, $tpohdr->curco) }}</td>
                         </tr>
                         <tr>
                             <td>Diskon</td>
-                            <td class="right">{{ $tpohdr->diper }} %</td>
+                            <td class="right">- {{ formatCurrencyDetail($diskon, $tpohdr->curco) ?? '0' }}</td>
                         </tr>
                         <tr>
                             <td>PPN</td>
-                            <td class="right">{{ $tpohdr->vatax }} %</td>
+                            <td class="right">{{ formatCurrencyDetail($ppn, $tpohdr->curco) ?? '0' }}</td>
                         </tr>
                         <tr>
                             <td>PPH</td>
-                            <td class="right">{{ number_format(array_sum(array_column($tpohdr->tpodtl->toArray(), 'pphd')), 2, ',', '.') }} %</td>
+                            <td class="right">- {{ formatCurrencyDetail($totalpph, $tpohdr->curco) ?? '0' }}</td>
                         </tr>
                         <tr>
                             <td><b>Grand Total</b></td>
-                            <td class="right"><b>{{ number_format($total, 2, ',', '.') }}</b></td>
+                            <td class="right"><b>{{ formatCurrencyDetail($grandtotal, $tpohdr->curco) }}</b></td>
                         </tr>
                     </table>
                 </td>
