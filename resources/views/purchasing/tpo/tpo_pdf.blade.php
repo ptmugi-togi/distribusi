@@ -66,8 +66,8 @@
         <tr>
             <td style="width:70%">
                 <h2>PT. MUGI</h2>
-                Jl. A. Yani Kav. 132-134, Tebet Barat, Tebet, Kota Adm. Jakarta Selatan, DKI Jakarta, 12810<br>
-                Phone: (021) 8294315 / Fax: (021) 8294312 <br>
+                Jl.M.T.HARYONO KAV.10, TEBET, TEBET BARAT, TEBET, KOTA ADM.JAKARTA SELATAN, DKI JAKARTA, 12810<br>
+                Phone: (62)21-8308415 / Fax: (62)21-8308422 <br>
                 NPWP: 0013 0857 0906 2000 
             </td>
         </tr>

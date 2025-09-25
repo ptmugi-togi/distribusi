@@ -48,7 +48,7 @@
                         {{ \Carbon\Carbon::parse($tpo->podat)->format('d/m/Y') }}
                       </td>
                       <td class="text-center">
-                        <a href="{{ route('pdf.preview', $tpo->pono) }}" class="btn btn-primary btn-sm m-1"><i class="bi bi-file-earmark-pdf"></i> Preview</a>
+                        <a href="{{ route('pdf.preview', $tpo->pono) }}" class="btn btn-primary btn-sm m-1" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Preview</a>
                         <a href="{{ route('pdf.print', $tpo->pono) }}" class="btn btn-success btn-sm m-1"><i class="bi bi-file-earmark-arrow-down"></i> Print</a>
                       <td class="text-center">
                         <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary p-auto"><i class="bi bi-info-circle"></i></a>

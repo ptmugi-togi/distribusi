@@ -179,7 +179,7 @@
 
         <div class="mt-3 d-flex justify-content-between">
             <a href="{{ route('tpo.index') }}" class="btn btn-secondary">Kembali</a>
-            <a href="{{ route('pdf.preview', $tpohdr->pono) }}" class="btn" style="background-color:#4456f1; color:#fff"><i class="bi bi-file-earmark-pdf"></i> Preview PDF Data PO</a>
+            <a href="{{ route('pdf.preview', $tpohdr->pono) }}" class="btn" style="background-color:#4456f1; color:#fff" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Preview PDF Data PO</a>
             <a href="{{ route('pdf.print', $tpohdr->pono) }}" class="btn btn-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Print PDF</a>
         </div>
     </section>
