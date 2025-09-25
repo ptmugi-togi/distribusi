@@ -113,5 +113,5 @@ Route::put('/tpo/{id}', [TpoController::class, 'update'])->middleware('auth')->n
 Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
 
 Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview');
-Route::get('/pdf/download/{id}', [PdfController::class, 'download'])->name('pdf.download');
+Route::get('/pdf/print/{id}', [PdfController::class, 'print'])->name('pdf.print');
 

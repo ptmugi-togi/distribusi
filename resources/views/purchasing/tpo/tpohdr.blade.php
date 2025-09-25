@@ -34,7 +34,7 @@
                       <th class="text-center">Tipe PO</th>
                       <th class="text-center">Nama Supplier</th>
                       <th class="text-center">Tanggal PO</th>
-                      <th class="text-center">Nama Delivery</th>
+                      <th class="text-center">PO PDF</th>
                       <th class="text-center">Action</th>
                     </tr>
                   </thead>
@@ -43,13 +43,15 @@
                     <tr>
                       <td class="text-center">{{ $tpo->pono }}</td>
                       <td class="text-center">{{ $tpo->potype ?? '-' }}</td>
-                      <td class="text-center">{{ $tpo->vendor->supna ?? '-' }}</td>
+                      <td>{{ $tpo->vendor->supna ?? '-' }}</td>
                       <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tpo->podat)->format('Y-m-d') }}">
                         {{ \Carbon\Carbon::parse($tpo->podat)->format('d/m/Y') }}
                       </td>
-                      <td class="text-center">{{ $tpo->dconp }}</td>
                       <td class="text-center">
-                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-secondary p-auto"><i class="bi bi-info-circle"></i></a>
+                        <a href="{{ route('pdf.preview', $tpo->pono) }}" class="btn btn-primary btn-sm m-1"><i class="bi bi-file-earmark-pdf"></i> Preview</a>
+                        <a href="{{ route('pdf.print', $tpo->pono) }}" class="btn btn-success btn-sm m-1"><i class="bi bi-file-earmark-arrow-down"></i> Print</a>
+                      <td class="text-center">
+                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary p-auto"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>
                         @if($tpo->tpodtl->every(fn($d) => $d->rcqty == 0 && $d->inqty == 0))
                             <a href="#" class="badge bg-danger" 

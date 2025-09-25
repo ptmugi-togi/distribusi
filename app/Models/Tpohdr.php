@@ -25,6 +25,7 @@ class TpoHdr extends Model
         'shvia',
         'sconp',
         'delco',
+        'braco',
         'diper',
         'vatax',
         'stamp',
