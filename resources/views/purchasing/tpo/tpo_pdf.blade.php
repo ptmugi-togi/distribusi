@@ -138,6 +138,7 @@
             @php $subtotal = 0; @endphp
             @php $total = 0; @endphp
             @php $pph = 0; @endphp
+            @php $ppn = 0; @endphp
             @php $totalpph = 0; @endphp
             @foreach($tpohdr->tpodtl as $i => $d)
                 @php $jumlah = $d->poqty * $d->price - (($d->price * ($d->odisp / 100)) * $d->poqty); $subtotal += $jumlah @endphp
@@ -169,7 +170,7 @@
             <tr>
                 {{-- itungan harga --}}
                 @php $diskon = $subtotal * ($tpohdr->diper / 100); @endphp
-                @php $ppn = $diskon * ($tpohdr->vatax / 100); @endphp
+                @php $ppn = ($subtotal - $diskon) * ($tpohdr->vatax / 100); @endphp
                 @php $grandtotal = $subtotal - $diskon + $ppn - $totalpph; @endphp
 
                 <td style="width:60%; vertical-align:top">
