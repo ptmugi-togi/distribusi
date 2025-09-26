@@ -230,30 +230,23 @@
 
                 const locale = getLocale(currency);
 
-                let fractionDigits = 2; // default pakai cent
-                if (currency === "IDR" || currency === "JPY") {
-                    fractionDigits = 0; // tanpa cent
-                }
-
                 return new Intl.NumberFormat(locale, {
                     style: 'currency',
                     currency: currency,
-                    minimumFractionDigits: fractionDigits,
-                    maximumFractionDigits: fractionDigits
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }).format(value);
             }
 
             function attachPriceEvents(input, hidden, currencySelect) {
                 input.addEventListener("input", (e) => {
                     const currency = currencySelect.value;
-                    const allowDecimal = !(currency === "IDR" || currency === "JPY");
-
                     let raw = e.target.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
                     let parts = raw.split(".");
                     let intPart = parts[0] || "0";
-                    let decPart = allowDecimal && parts[1] ? "." + parts[1].slice(0, 2) : "";
+                    let decPart = parts[1] ? "." + parts[1].slice(0, 2) : "";
 
-                    hidden.value = allowDecimal ? parseFloat(intPart + decPart) : parseInt(intPart);
+                    hidden.value = parseFloat(intPart + decPart);
                 });
 
                 input.addEventListener("blur", (e) => {

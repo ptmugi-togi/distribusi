@@ -312,26 +312,24 @@
             function formatCurrencyJs(value, currency) {
                 if (!value) return "";
                 let locale = getLocale(currency);
-                let fractionDigits = (currency === "IDR" || currency === "JPY") ? 0 : 2;
 
                 return new Intl.NumberFormat(locale, {
                     style: "currency",
                     currency: currency,
-                    minimumFractionDigits: fractionDigits,
-                    maximumFractionDigits: fractionDigits
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }).format(value);
             }
 
             function attachPriceEvents(input, hidden, currencySelect) {
                 input.addEventListener("input", () => {
                     const currency = currencySelect.value;
-                    const allowDecimal = !(currency === "IDR" || currency === "JPY");
 
                     let raw = input.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
-                    let value = allowDecimal ? parseFloat(raw) : parseInt(raw);
+                    let value = parseFloat(raw);
 
                     if (!isNaN(value)) {
-                        hidden.value = value; // 🔑 sync selalu
+                        hidden.value = value;
                     } else {
                         hidden.value = "";
                     }
