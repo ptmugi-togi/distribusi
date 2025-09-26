@@ -141,7 +141,14 @@
             @php $ppn = 0; @endphp
             @php $totalpph = 0; @endphp
             @foreach($tpohdr->tpodtl as $i => $d)
-                @php $jumlah = ($d->poqty * $d->price * $d->berat) - (($d->price * ($d->odisp / 100)) * $d->poqty); $subtotal += $jumlah @endphp
+                @php
+                    if ($d->berat == 0) {
+                        $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->poqty;
+                    } else {
+                        $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->berat * $d->poqty;
+                    }
+                    $subtotal += $jumlah;
+                @endphp
                 @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
                 <tr>
                     <td class="center">{{ $i+1 }}</td>
@@ -185,15 +192,15 @@
                         </tr>
                         <tr>
                             <td>Diskon</td>
-                            <td class="right">- {{ formatCurrencyDetail($diskon, $tpohdr->curco) ?? '0' }}</td>
+                            <td class="right">{{ $diskon != 0 ? '- ' . formatCurrencyDetail($diskon, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
                             <td>PPN</td>
-                            <td class="right">{{ formatCurrencyDetail($ppn, $tpohdr->curco) ?? '0' }}</td>
+                            <td class="right">{{ $ppn != 0 ? '' . formatCurrencyDetail($ppn, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
                             <td>PPH</td>
-                            <td class="right">- {{ formatCurrencyDetail($totalpph, $tpohdr->curco) ?? '0' }}</td>
+                            <td class="right">{{ $totalpph != 0 ? '- ' . formatCurrencyDetail($totalpph, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
                             <td><b>Grand Total</b></td>
