@@ -59,6 +59,60 @@ class PdfController extends Controller
         ');
 
         $mpdf->WriteHTML($html);
-        $mpdf->Output("PO-{$tpohdr->pono}.pdf", "D");
+        $mpdf->Output("{$tpohdr->potype}-{$tpohdr->pono}.pdf", "D");
+    }
+
+    public function previewPi($id)
+    {
+        $tpohdr = \App\Models\TpoHdr::with([
+            'vendor',
+            'tpodtl.mpromas',
+            'formcode',
+            'branches'
+        ])->findOrFail($id);
+
+        $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 15,
+        ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-size: 9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output(); 
+    }
+
+    public function printPi($id)
+    {
+        $tpohdr = \App\Models\TpoHdr::with([
+            'vendor',
+            'tpodtl.mpromas',
+            'formcode',
+            'branches'
+        ])->findOrFail($id);
+
+        $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 15,
+        ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-size: 9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("PI-{$tpohdr->pono}.pdf", "D");
     }
 }

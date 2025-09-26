@@ -48,8 +48,26 @@
                         {{ \Carbon\Carbon::parse($tpo->podat)->format('d/m/Y') }}
                       </td>
                       <td class="text-center">
-                        <a href="{{ route('pdf.preview', $tpo->pono) }}" class="btn btn-primary btn-sm m-1" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Preview</a>
-                        <a href="{{ route('pdf.print', $tpo->pono) }}" class="btn btn-success btn-sm m-1"><i class="bi bi-file-earmark-arrow-down"></i> Print</a>
+                        @if ($tpo->formc === 'PO' || $tpo->formc === 'PN')
+                            <a href="{{ route('pdf.preview', $tpo->pono) }}" 
+                              class="btn btn-primary btn-sm m-1" target="_blank">
+                              <i class="bi bi-file-earmark-pdf"></i> Preview
+                            </a>
+                            <a href="{{ route('pdf.print', $tpo->pono) }}" 
+                              class="btn btn-success btn-sm m-1" target="_blank">
+                              <i class="bi bi-file-earmark-arrow-down"></i> Print
+                            </a>
+                        @elseif ($tpo->formc === 'PI')
+                            <a href="{{ route('pdf_pi.preview', $tpo->pono) }}" 
+                              class="btn btn-primary btn-sm m-1" target="_blank">
+                              <i class="bi bi-file-earmark-pdf"></i> Preview
+                            </a>
+                            <a href="{{ route('pdf_pi.print', $tpo->pono) }}" 
+                              class="btn btn-success btn-sm m-1" target="_blank">
+                              <i class="bi bi-file-earmark-arrow-down"></i> Print
+                            </a>
+                        @endif 
+                      </td>
                       <td class="text-center">
                         <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary p-auto"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>

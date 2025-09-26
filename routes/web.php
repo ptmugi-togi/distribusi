@@ -114,4 +114,6 @@ Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware
 
 Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview');
 Route::get('/pdf/print/{id}', [PdfController::class, 'print'])->name('pdf.print');
+Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview');
+Route::get('/pdf/printPi/{id}', [PdfController::class, 'printPi'])->name('pdf_pi.print');
 

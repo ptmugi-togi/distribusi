@@ -68,10 +68,14 @@
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Currency Code</label><span class="text-danger"> *</span>
                         <select id="currency" class="select2 form-control" name="curco" required>
-                            <option value="IDR" {{ old('curco',$tpohdr->curco)=='IDR'?'selected':'' }}>IDR</option>
-                            <option value="USD" {{ old('curco',$tpohdr->curco)=='USD'?'selected':'' }}>USD</option>
-                            <option value="EUR" {{ old('curco',$tpohdr->curco)=='EUR'?'selected':'' }}>EUR</option>
-                            <option value="GBP" {{ old('curco',$tpohdr->curco)=='GBP'?'selected':'' }}>GBP</option>
+                            <option value="" {{ old('curco', $tpohdr->curco) == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Currency Code</option>
+                            <option value="CHF" {{ old('curco', $tpohdr->curco) == 'CHF' ? 'selected' : '' }}>CHF (Franc Swiss)</option>
+                            <option value="EUR" {{ old('curco', $tpohdr->curco) == 'EUR' ? 'selected' : '' }}>EUR (Euro)</option>
+                            <option value="GBP" {{ old('curco', $tpohdr->curco) == 'GBP' ? 'selected' : '' }}>GBP (Pound Sterling)</option>
+                            <option value="IDR" {{ old('curco', $tpohdr->curco) == 'IDR' ? 'selected' : '' }}>IDR (Rupiah Indonesia)</option>
+                            <option value="MYR" {{ old('curco', $tpohdr->curco) == 'MYR' ? 'selected' : '' }}>MYR (Ringgit Malaysia)</option>
+                            <option value="SGD" {{ old('curco', $tpohdr->curco) == 'SGD' ? 'selected' : '' }}>SGD (Dollar Singapura)</option>
+                            <option value="USD" {{ old('curco', $tpohdr->curco) == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>:'' }}>GBP</option>
                         </select>
                     </div>
 
