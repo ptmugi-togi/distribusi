@@ -141,7 +141,7 @@
             @php $ppn = 0; @endphp
             @php $totalpph = 0; @endphp
             @foreach($tpohdr->tpodtl as $i => $d)
-                @php $jumlah = $d->poqty * $d->price - (($d->price * ($d->odisp / 100)) * $d->poqty); $subtotal += $jumlah @endphp
+                @php $jumlah = ($d->poqty * $d->price * $d->berat) - (($d->price * ($d->odisp / 100)) * $d->poqty); $subtotal += $jumlah @endphp
                 @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
                 <tr>
                     <td class="center">{{ $i+1 }}</td>
