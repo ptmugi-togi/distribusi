@@ -111,8 +111,8 @@
         <tr>
             <td class="left" style="width:25%">PO DATE: {{ date('d-m-Y', strtotime($tpohdr->podat)) }}</td>
             <td class="center" style="width:25%">EXP. DELIVERY: {{ date('d-m-Y', strtotime($tpohdr->tpodtl->first()->edeld)) }}</td>
-            <td class="center" style="width:25%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
-            <td class="right" style="width:25%">Currency: {{ $tpohdr->curco }}</td>
+            <td class="center" style="width:35%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
+            <td class="right" style="width:15%">Currency: {{ $tpohdr->curco }}</td>
         </tr>
     </table>
 
