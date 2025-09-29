@@ -67,7 +67,12 @@
 
                     <div class="col-md-3 mt-3">
                         <label for="freight_cost" class="form-label">Freight Cost</label>
-                        <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="freight_cost" id="freight_cost" value="{{ old('freight_cost', $tpohdr->freight_cost) }}">
+                        <input type="text" class="form-control" id="freight_cost_display" 
+                            value="{{ old('freight_cost') ? number_format(old('freight_cost', $tpohdr->freight_cost), 2, ',', '.') : '' }}"
+                            placeholder="Cth : 1000000">
+
+                        <input type="text" name="freight_cost" id="freight_cost" 
+                            value="{{ old('freight_cost', $tpohdr->freight_cost) }}" hidden>
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -307,16 +312,51 @@
         </script>
 
         <script>
+            function formatCurrency(value, currency) {
+                if (!value || isNaN(value)) return "";
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: currency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
+            }
+
             function formatRupiah(num) {
-                return "Rp " + new Intl.NumberFormat("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+                return "Rp " + new Intl.NumberFormat("id-ID", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(num);
             }
 
             function cleanNumber(str) {
                 return str.replace(/[^0-9,.-]/g, '').replace(',', '.');
             }
 
-            $(document).ready(function() {
-                // Saat pilih currency → ambil dari mcurco via ajax
+            $(document).ready(function () {
+                // === FREIGHT COST ===
+                $('#freight_cost_display').on('input', function () {
+                    let raw = cleanNumber($(this).val());
+                    if (raw) {
+                        $('#freight_cost').val(raw);
+                    } else {
+                        $('#freight_cost').val('');
+                    }
+                });
+
+                $('#freight_cost_display').on('blur', function () {
+                    let raw = cleanNumber($('#freight_cost').val());
+                    if (raw) {
+                        $(this).val(formatCurrency(raw, $('#currency').val()));
+                    }
+                });
+
+                $('#freight_cost_display').on('focus', function () {
+                    let raw = $('#freight_cost').val();
+                    $(this).val(raw);
+                });
+
+                // === CURRENCY RATE ===
                 $('#currency').on('select2:select', function () {
                     let cur = $(this).val();
                     if (cur && cur !== "IDR") {
@@ -325,38 +365,50 @@
                         $('#currency_rate_label').html(`Kurs (IDR)<span class="text-danger"> *</span>`);
                     }
 
-                    $.getJSON(`/get-currency-rate/${cur}`, function(res) {
+                    $.getJSON(`/get-currency-rate/${cur}`, function (res) {
                         if (res.success) {
                             let crate = parseFloat(res.crate);
                             $('#currency_rate_display').val(formatRupiah(crate));
                             $('#currency_rate').val(crate);
                         }
                     });
+
+                    // kalau ganti currency → reformat freight cost
+                    let rawFreight = $('#freight_cost').val();
+                    if (rawFreight) {
+                        $('#freight_cost_display').val(formatCurrency(rawFreight, cur));
+                    }
                 });
 
-                // Saat user edit manual
-                $('#currency_rate_display').on('input', function() {
+                // manual edit kurs
+                $('#currency_rate_display').on('input', function () {
                     let raw = cleanNumber($(this).val());
                     if (raw) {
-                        $('#currency_rate').val(raw); // simpan angka ke hidden
+                        $('#currency_rate').val(raw);
                     } else {
                         $('#currency_rate').val('');
                     }
                 });
 
-                // Saat blur → format Rp
-                $('#currency_rate_display').on('blur', function() {
+                $('#currency_rate_display').on('blur', function () {
                     let raw = cleanNumber($(this).val());
                     if (raw) {
                         $(this).val(formatRupiah(raw));
                     }
                 });
 
-                // Saat focus → tampilkan angka murni
-                $('#currency_rate_display').on('focus', function() {
+                $('#currency_rate_display').on('focus', function () {
                     let raw = $('#currency_rate').val();
                     $(this).val(raw);
                 });
+
+                // load awal (kalau ada old value)
+                if ($('#freight_cost').val()) {
+                    $('#freight_cost_display').val(formatCurrency($('#freight_cost').val(), $('#currency').val()));
+                }
+                if ($('#currency_rate').val()) {
+                    $('#currency_rate_display').val(formatRupiah($('#currency_rate').val()));
+                }
             });
         </script>
 

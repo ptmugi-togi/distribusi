@@ -80,7 +80,12 @@
 
                     <div class="col-md-3 mt-3">
                         <label for="freight_cost" class="form-label">Freight Cost</label>
-                        <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="freight_cost" id="freight_cost" value="{{ old('freight_cost') }}">
+                        <input type="text" class="form-control" id="freight_cost_display"
+                            value="{{ old('freight_cost') ? number_format(old('freight_cost'), 2, ',', '.') : '' }}"
+                            placeholder="Cth : 1000000">
+
+                        <input type="text" name="freight_cost" id="freight_cost" 
+                            value="{{ old('freight_cost') }}" hidden>
                     </div>
                     
                     <div class="col-md-6 mt-3">
@@ -228,55 +233,137 @@
         </script>
 
         <script>
-            function formatRupiah(num) {
-                return "Rp " + new Intl.NumberFormat("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+            function formatCurrency(value, currency) {
+                if (!value || isNaN(value)) return "";
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: currency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
             }
 
             function cleanNumber(str) {
-                return str.replace(/[^0-9,.-]/g, '').replace(',', '.');
+                return str.replace(/[^0-9,.-]/g, "").replace(",", ".");
             }
 
-            $(document).ready(function() {
-                // Saat pilih currency → ambil dari mcurco via ajax
-                $('#currency').on('select2:select', function () {
-                    let cur = $(this).val();
-                    if (cur && cur !== "IDR") {
-                        $('#currency_rate_label').html(`Kurs (${cur} to IDR)<span class="text-danger"> *</span>`);
-                    } else {
-                        $('#currency_rate_label').html(`Kurs (IDR)<span class="text-danger"> *</span>`);
+            // formatter untuk single field (display + raw)
+            function attachCurrencyFormatter(displayId, hiddenId, currencySelect, forceCurrency = null) {
+                const display = document.getElementById(displayId);
+                const hidden = document.getElementById(hiddenId);
+
+                if (!display || !hidden) return;
+
+                // input → update raw
+                display.addEventListener("input", (e) => {
+                    let raw = cleanNumber(e.target.value);
+                    let value = parseFloat(raw);
+                    hidden.value = !isNaN(value) ? value : "";
+                });
+
+                // blur → tampilkan format
+                display.addEventListener("blur", (e) => {
+                    if (hidden.value) {
+                        e.target.value = formatCurrency(
+                            hidden.value,
+                            forceCurrency ? forceCurrency : currencySelect.value
+                        );
+                    }
+                });
+
+                // focus → tampilkan angka mentah
+                display.addEventListener("focus", (e) => {
+                    if (hidden.value) {
+                        e.target.value = hidden.value;
+                    }
+                });
+
+                // load awal
+                if (hidden.value) {
+                    display.value = formatCurrency(
+                        hidden.value,
+                        forceCurrency ? forceCurrency : currencySelect.value
+                    );
+                }
+            }
+
+            function attachPriceEvents(input, hidden, currencySelect) {
+                input.addEventListener("input", (e) => {
+                    let raw = e.target.value.replace(/,/g, ".").replace(/[^\d.]/g, "");
+                    let parts = raw.split(".");
+                    let intPart = parts[0] || "0";
+                    let decPart = parts[1] ? "." + parts[1].slice(0, 2) : "";
+
+                    hidden.value = parseFloat(intPart + decPart);
+                });
+
+                input.addEventListener("blur", (e) => {
+                    if (hidden.value) {
+                        e.target.value = formatCurrency(hidden.value, currencySelect.value);
+                    }
+                });
+
+                input.addEventListener("focus", (e) => {
+                    if (hidden.value) {
+                        e.target.value = hidden.value;
+                    }
+                });
+            }
+
+            function initPriceFormatter() {
+                const currencySelect = document.getElementById("currency");
+
+                // Format semua price[]
+                document.querySelectorAll(".price-input").forEach((input) => {
+                    const index = input.id.split("-")[1];
+                    const hidden = document.getElementById("priceraw-" + index);
+
+                    attachPriceEvents(input, hidden, currencySelect);
+
+                    if (hidden && hidden.value) {
+                        input.value = formatCurrency(hidden.value, currencySelect.value);
+                    }
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const currencySelect = document.getElementById("currency");
+
+                // init freight_cost → ikut currency yang dipilih
+                attachCurrencyFormatter("freight_cost_display", "freight_cost", currencySelect);
+
+                // init currency_rate → selalu pakai IDR
+                attachCurrencyFormatter("currency_rate_display", "currency_rate", currencySelect, "IDR");
+
+                // init semua price[]
+                initPriceFormatter();
+
+                // kalau currency ganti → reformat semua field
+                $('#currency').on('change', function () {
+                    const newCurrency = $(this).val();
+
+                    // reformat freight cost
+                    const freightHidden = document.getElementById("freight_cost");
+                    const freightDisplay = document.getElementById("freight_cost_display");
+                    if (freightHidden && freightHidden.value) {
+                        freightDisplay.value = formatCurrency(freightHidden.value, newCurrency);
                     }
 
-                    $.getJSON(`/get-currency-rate/${cur}`, function(res) {
-                        if (res.success) {
-                            let crate = parseFloat(res.crate);
-                            $('#currency_rate_display').val(formatRupiah(crate));
-                            $('#currency_rate').val(crate);
+                    // reformat semua price
+                    document.querySelectorAll(".price-input").forEach((input) => {
+                        const index = input.id.split("-")[1];
+                        const hidden = document.getElementById("priceraw-" + index);
+                        if (hidden.value) {
+                            input.value = formatCurrency(hidden.value, newCurrency);
                         }
                     });
-                });
 
-                // Saat user edit manual
-                $('#currency_rate_display').on('input', function() {
-                    let raw = cleanNumber($(this).val());
-                    if (raw) {
-                        $('#currency_rate').val(raw); // simpan angka ke hidden
-                    } else {
-                        $('#currency_rate').val('');
+                    // kurs tetap IDR
+                    const rateHidden = document.getElementById("currency_rate");
+                    const rateDisplay = document.getElementById("currency_rate_display");
+                    if (rateHidden && rateHidden.value) {
+                        rateDisplay.value = formatCurrency(rateHidden.value, "IDR");
                     }
-                });
-
-                // Saat blur → format Rp
-                $('#currency_rate_display').on('blur', function() {
-                    let raw = cleanNumber($(this).val());
-                    if (raw) {
-                        $(this).val(formatRupiah(raw));
-                    }
-                });
-
-                // Saat focus → tampilkan angka murni
-                $('#currency_rate_display').on('focus', function() {
-                    let raw = $('#currency_rate').val();
-                    $(this).val(raw);
                 });
             });
         </script>
