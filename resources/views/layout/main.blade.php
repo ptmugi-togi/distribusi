@@ -753,7 +753,25 @@
     });
   });
 </script>
+{{-- script tooltip --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function enableTooltips() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tooltip="true"]'));
+            tooltipTriggerList.map(function (el) {
+                return new bootstrap.Tooltip(el);
+            });
+        }
 
+        // load pertama
+        enableTooltips();
+
+        // kalau pakai DataTable, refresh tooltip setiap redraw
+        $(document).on('draw.dt', function () {
+            enableTooltips();
+        });
+    });
+</script>
 
 </body>
 

@@ -31,9 +31,12 @@ if (! function_exists('formatCurrencyDetail')) {
     if (! function_exists('formatNumberOnly')) {
         function formatNumberOnly($value, $currency) {
             if ($value === null) return '';
-            // pakai number_format biasa aja
-            return number_format($value, 2, ',', '.');
+
+            if ($currency === 'IDR') {
+                return number_format($value, 0, ',', '.');
+            } else {
+                return number_format($value, 2, ',', '.');
+            }
         }
     }
-
 }

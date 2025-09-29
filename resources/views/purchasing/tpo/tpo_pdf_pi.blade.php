@@ -67,16 +67,15 @@
             <td style="width:70%">
                 <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
                 Jl.M.T.HARYONO KAV.10, TEBET, TEBET BARAT, TEBET, KOTA ADM.JAKARTA SELATAN, DKI JAKARTA, 12810<br>
-                Phone: (62)21-8308415 / Fax: (62)21-8308422 <br>
-                NPWP: 0013 0857 0906 2000 
+                Phone : (62)21-8308415  Fax : (62)21-8308422 <br>
+                NPWP : 0013 0857 0906 2000 
             </td>
         </tr>
         <br>
         <br>
         <tr>
             <td class="center" style="width:30%">
-                <h1><u>PURCHASE ORDER</u></h1>
-                <h2>{{ $tpohdr->pono }}</h2>
+                <h1>PURCHASE ORDER</h1>
             </td>
         </tr>
     </table>
@@ -84,24 +83,27 @@
     <!-- Info Supplier & Penerima -->
     <table class="no-border" style="margin-top:10px;">
         <tr valign="top">
-            <td class="left" style="width:50%">
-                <b>Vendor:</b><br>
+            <td class="left" style="width:33%; vertical-align:top">
+                <b>VENDOR :</b><br>
                 {{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}<br>
                 {{ $tpohdr->vendor->address ?? '' }}<br>
                 {{ $tpohdr->vendor->city ?? '' }}<br>
-                Tel: {{ $tpohdr->vendor->phone ?? '' }}<br>
-                Fax: {{ $tpohdr->vendor->fax ?? '' }}<br>
-                Email: {{ $tpohdr->vendor->email ?? '' }}<br>
-                ATTN: {{ $tpohdr->vendor->contact ?? '' }}
+                Telp : {{ $tpohdr->vendor->phone ?? '' }}<br>
+                Fax : {{ $tpohdr->vendor->fax ?? '' }}<br>
+                ATTN : {{ $tpohdr->vendor->contact ?? '' }}
             </td>
-            <td class="left" style="width:50%">
-                <b>Delivery To:</b><br>
+            <td class="left" style="width:33%; vertical-align:top">
+                <b>DELIVERY TO :</b><br>
                 {{ $tpohdr->branches->conam }}<br>
                 {{ $tpohdr->branches->address }}<br>
-                Tel: {{ $tpohdr->branches->phone }}<br>
-                Fax: {{ $tpohdr->branches->faxno }}<br>
-                Email: {{ $tpohdr->branches->email }}<br>
-                ATTN: {{ $tpohdr->branches->contactp }}
+                ATTN. {{ $tpohdr->branches->contactp }}
+            </td>
+            <td style="width:5%"></td>
+            <td class="left" style="width:28%; vertical-align:top">
+                <b>PO NO. :</b>
+                {{ $tpohdr->pono }}<br>
+                <b>PO DATE :</b> 
+                {{ $tpohdr->podat }}<br>
             </td>
         </tr>
     </table>
@@ -109,10 +111,9 @@
     <!-- Info Nomor PO -->
     <table class="no-border" style="margin-top:10px;">
         <tr>
-            <td class="left" style="width:25%">PO DATE: {{ date('d-m-Y', strtotime($tpohdr->podat)) }}</td>
-            <td class="center" style="width:25%">EXP. DELIVERY: {{ date('d-m-Y', strtotime($tpohdr->tpodtl->first()->edeld)) }}</td>
-            <td class="center" style="width:35%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
-            <td class="right" style="width:15%">Currency: {{ $tpohdr->curco }}</td>
+            <td class="left" style="width:40%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
+            <td class="left" style="width:45%">EXP. DELIVERY: {{ date('d-m-Y', strtotime($tpohdr->tpodtl->first()->edeld)) }}</td>
+            <td class="right" style="width:15%">CURRENCY: {{ $tpohdr->curco }}</td>
         </tr>
     </table>
 
@@ -120,9 +121,8 @@
     <table style="margin-top:15px; overflow: wrap;">
         <thead>
             <tr>
-                <th style="width: 5%">No</th>
+                <th style="width: 63%">Product Description</th>
                 <th style="width: 9%">Quantity</th>
-                <th style="width: 58%">Product Description</th>
                 <th style="width: 12%">Unit Price</th>
                 <th style="width: 15%">Total</th>
             </tr>
@@ -138,8 +138,6 @@
                     $diskon += round(($d->price * ($d->odisp / 100)) * $d->poqty, 2);
                 @endphp
                 <tr>
-                    <td class="center">{{ $i+1 }}</td>
-                    <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
                     <td>
                         {{ $d->mpromas->prona ?? '-' }}
                         @if(!empty($d->noted))
@@ -148,7 +146,8 @@
                         </table>
                         @endif
                     </td>
-                    <td class="right">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
+                    <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
+                    <td class="center">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
                     <td class="right">{{ formatNumberOnly($total, $tpohdr->curco) }}</td>
                 </tr>
             @endforeach
@@ -161,21 +160,21 @@
         <table class="no-border" style="margin-top:10px;">
             <tr>
                 {{-- itungan harga --}}
-                @php $grandtotal = round($total - $diskon, 2); @endphp
+                @php $grandtotal = round($total - $diskon + $tpohdr->freight_cost, 2); @endphp
 
                 <td style="width:60%; vertical-align:top">
-                    <b>Note:</b><br>
+                    <b>Note :</b><br>
                     {{ $tpohdr->noteh }}
                 </td>
                 <td style="width:40%">
                     <table class="no-border">
                         <tr>
-                            <td>Total Gross</td>
+                            <td>Total EXW</td>
                             <td class="right">{{ formatNumberOnly($total, $tpohdr->curco) }}</td>
                         </tr>
                         <tr>
-                            <td>Total Disc</td>
-                            <td class="right">{{ $diskon != 0 ? '- ' . formatNumberOnly($diskon, $tpohdr->curco) : '0' }}</td>
+                            <td>Freight Cost</td>
+                            <td class="right">{{ $tpohdr->freight_cost != 0 ?  formatNumberOnly($tpohdr->freight_cost, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
                             <td><b>Grand Total</b></td>
@@ -230,27 +229,11 @@
                     <td class="center">( {{ $tpohdr->formcode->name4 }} )</td>
                 @endif
             </tr>
-            <tr>
-                @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
-                    <td class="left">DATE:</td>
-                @endif
-
-                @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
-                    <td class="left">DATE:</td>
-                @endif
-
-                @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
-                    <td class="left">DATE:</td>
-                @endif
-
-                @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
-                    <td class="left">DATE:</td>
-                @endif
-            </tr>
         </table>
 
         <hr>
 
+        <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
         <div style="font-size: 10px">{{ $tpohdr->formcode?->docd ?? '' }}</div>
     </div>
 

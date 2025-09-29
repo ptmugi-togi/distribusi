@@ -67,40 +67,44 @@
         <td style="width:70%">
             <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
             Jl.M.T.HARYONO KAV.10, TEBET, TEBET BARAT, TEBET, KOTA ADM.JAKARTA SELATAN, DKI JAKARTA, 12810<br>
-            Phone: (62)21-8308415 / Fax: (62)21-8308422 <br>
-            NPWP: 0013 0857 0906 2000 
+            Phone : (62)21-8308415  Fax : (62)21-8308422 <br>
+            NPWP : 0013 0857 0906 2000 
         </td>
     </tr>
     <br>
     <br>
     <tr>
         <td class="center" style="width:30%">
-            <h1><u>PURCHASE ORDER</u></h1>
-            <h2>{{ $tpohdr->pono }}</h2>
+            <h1>PURCHASE ORDER</h1>
         </td>
     </tr>
 </table>
 
 <!-- Info Supplier & Penerima -->
 <table class="no-border" style="margin-top:10px;">
-    <tr valign="top">
-        <td class="left" style="width:50%">
-            <b>Supplier:</b><br>
+    <tr>
+        <td class="left" style="width:33%; vertical-align:top">
+            <b>Supplier :</b><br>
             {{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}<br>
             {{ $tpohdr->vendor->address ?? '' }}<br>
             {{ $tpohdr->vendor->city ?? '' }}<br>
             Tel: {{ $tpohdr->vendor->phone ?? '' }}<br>
             Fax: {{ $tpohdr->vendor->fax ?? '' }}<br>
-            Email: {{ $tpohdr->vendor->email ?? '' }}<br>
+            Attn: {{ $tpohdr->vendor->contact ?? '' }}<br>
         </td>
-        <td class="left" style="width:50%">
-            <b>Dikirim Ke:</b><br>
+        <td class="left" style="width:33%; vertical-align:top">
+            <b>DIKIRIM KE :</b><br>
             {{ $tpohdr->branches->conam }}<br>
             {{ $tpohdr->branches->address }}<br>
-            Tel: {{ $tpohdr->branches->phone }}<br>
-            Fax: {{ $tpohdr->branches->faxno }}<br>
             Email: {{ $tpohdr->branches->email }}<br>
             ATTN: {{ $tpohdr->branches->contactp }}
+        </td>
+        <td style="width:5%"></td>
+        <td class="left" style="width:28%; vertical-align:top">
+            <b>NOMOR PO :</b>
+            {{ $tpohdr->pono }}<br>
+            <b>TANGGAL PO :</b> 
+            {{ $tpohdr->podat }}<br>
         </td>
     </tr>
 </table>
@@ -108,9 +112,8 @@
 <!-- Info Nomor PO -->
 <table class="no-border" style="margin-top:10px;">
     <tr>
-        <td class="left" style="width:33%">Tanggal PO: {{ date('d-m-Y', strtotime($tpohdr->podat)) }}</td>
-        <td class="center" style="width:33%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
-        <td class="right" style="width:33%">Currency: {{ $tpohdr->curco }}</td>
+        <td class="left" style="width:50%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
+        <td class="right" style="width:50%">Currency: {{ $tpohdr->curco }}</td>
     </tr>
 </table>
 
@@ -118,10 +121,9 @@
 <table style="margin-top:15px; overflow: wrap;">
     <thead>
         <tr>
-            <th style="width: 5%">No</th>
             <th style="width: 9%">Quantity</th>
-            <th style="width: 40%">Nama Barang</th>
-            <th style="width: 7%">Berat/Vol</th>
+            <th style="width: 42%">Nama Barang</th>
+            <th style="width: 10%">Berat/Vol</th>
             <th style="width: 12%">Harga Satuan</th>
             <th style="width: 11%">Diskon Satuan</th>
             <th style="width: 15%">Jumlah</th>
@@ -144,7 +146,6 @@
             @endphp
             @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
             <tr>
-                <td class="center">{{ $i+1 }}</td>
                 <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
                 <td>
                     {{ $d->mpromas->prona ?? '-' }}
@@ -185,7 +186,7 @@
                         <td class="right">{{ formatNumberOnly($subtotal, $tpohdr->curco) }}</td>
                     </tr>
                     <tr>
-                        <td>Diskon</td>
+                        <td>Discount</td>
                         <td class="right">{{ $diskon != 0 ? '- ' . formatNumberOnly($diskon, $tpohdr->curco) : '0' }}</td>
                     </tr>
                     <tr>
@@ -197,7 +198,7 @@
                         <td class="right">{{ $ppn != 0 ? '' . formatNumberOnly($ppn, $tpohdr->curco) : '0' }}</td>
                     </tr>
                     <tr>
-                        <td>PPH</td>
+                        <td>PPH {{ $d->pphd }}%</td>
                         <td class="right">{{ $totalpph != 0 ? '- ' . formatNumberOnly($totalpph, $tpohdr->curco) : '0' }}</td>
                     </tr>
                     <tr>
@@ -253,27 +254,11 @@
                 <td class="center">( {{ $tpohdr->formcode->name4 }} )</td>
             @endif
         </tr>
-        <tr>
-            @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
-                <td class="left">TGL:</td>
-            @endif
-
-            @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
-                <td class="left">TGL:</td>
-            @endif
-
-            @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
-                <td class="left">TGL:</td>
-            @endif
-
-            @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
-                <td class="left">TGL:</td>
-            @endif
-        </tr>
     </table>
 
     <hr>
 
+    <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
     <div style="font-size: 10px">{{ $tpohdr->formcode?->docd ?? '' }}</div>
 </div>
 
