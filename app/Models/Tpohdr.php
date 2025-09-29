@@ -22,6 +22,8 @@ class TpoHdr extends Model
         'topay',
         'tdesc',
         'curco',
+        'currency_rate',
+        'freight_cost',
         'shvia',
         'sconp',
         'delco',
@@ -69,5 +71,10 @@ class TpoHdr extends Model
     public function branches()
     {
         return $this->belongsTo(Mbranch::class, 'braco', 'braco');
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Mcurco::class, 'curco', 'curco');
     }
 }

@@ -45,7 +45,7 @@
                     <label for="poqty-{{ $i }}" class="form-label">Qty <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <input type="number" class="form-control" name="poqty[]" id="poqty-{{ $i }}"
-                            placeholder="Cth : 10" value="{{ old('poqty.'.$i) }}" required>
+                            placeholder="Cth : 10" value="{{ old('poqty.'.$i) }}" required min="0">
                         <span class="input-group-text" id="qty-label-{{ $i }}">
                             {{ optional($products->firstWhere('opron', $oldOpron))->stdqu ?? '' }}
                         </span>
@@ -66,38 +66,32 @@
 
             <div class="row">
                 <div class="col-md-6 mt-3">
-                    <label for="edeld-{{ $i }}" class="form-label">Ekspetasi Tanggal Pengiriman <span class="text-danger">*</span></label>
+                    <label for="edeld-{{ $i }}" class="form-label">ETD <span class="text-danger">*</span></label>
                     <input type="date" class="form-control" name="edeld[]" id="edeld-{{ $i }}" 
                            value="{{ old('edeld.'.$i) }}" min="{{ date('Y-m-d') }}" required>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="earrd-{{ $i }}" class="form-label">Ekspetasi Tanggal Kedatangan <span class="text-danger">*</span></label>
+                    <label for="earrd-{{ $i }}" class="form-label">ETA</label>
                     <input type="date" class="form-control" name="earrd[]" id="earrd-{{ $i }}" 
-                           value="{{ old('earrd.'.$i) }}" min="{{ date('Y-m-d') }}" required>
+                           value="{{ old('earrd.'.$i) }}" min="{{ date('Y-m-d') }}">
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-3 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="hsn-{{ $i }}" class="form-label">HS Code</label>
-                    <input type="number" class="form-control" placeholder="Cth : 123" name="hsn[]" id="hsn-{{ $i }}"
-                           value="{{ old('hsn.'.$i) }}">
+                    <input type="number" class="form-control hsn-input" placeholder="Cth : 123" name="hsn[]" id="hsn-{{ $i }}"
+                           value="{{ old('hsn.'.$i) }}" min="0" disabled>
                 </div>
 
-                <div class="col-md-3 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="bm-{{ $i }}" class="form-label">BM (%)</label>
-                    <input type="text" class="form-control" placeholder="Cth : 1.5" name="bm[]" id="bm-{{ $i }}"
-                           value="{{ old('bm.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                    <input type="text" class="form-control bm-input" placeholder="Cth : 1.5" name="bm[]" id="bm-{{ $i }}"
+                           value="{{ old('bm.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" disabled>
                 </div>
 
-                <div class="col-md-3 mt-3">
-                    <label for="bmt-{{ $i }}" class="form-label">BMT (%)</label>
-                    <input type="text" class="form-control" placeholder="Cth : 0.5" name="bmt[]" id="bmt-{{ $i }}"
-                           value="{{ old('bmt.'.$i, 0) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                </div>
-
-                <div class="col-md-3 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="pphd-{{ $i }}" class="form-label">PPH (%)</label>
                     <input type="text" class="form-control" placeholder="Cth : 11" name="pphd[]" id="pphd-{{ $i }}"
                            value="{{ old('pphd.'.$i, 0) }}">

@@ -32,7 +32,6 @@ class TpoDtl extends Model
         'earrd',
         'hsn',
         'bm',
-        'bmt',
         'pphd',
         'noted',
     ];

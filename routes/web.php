@@ -105,6 +105,7 @@ Route::get('/roce/customerOc',[OcController::class,'customerOc'])->middleware('a
 Route::resource('/roce', OcController::class)->middleware('auth');
 
 Route::get('/tpo', [TpoController::class,'index'])->middleware('auth')->name('tpo.index');
+Route::get('/get-currency-rate/{curco}', [TpoController::class, 'getCurrencyRate']);
 Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth')->name('tpo.create');
 Route::post('/tpo/store', [TpoController::class, 'store'])->middleware('auth')->name('tpo.store');
 Route::get('/tpo/{id}/detail', [TpoController::class, 'show'])->middleware('auth')->name('tpo.detail');

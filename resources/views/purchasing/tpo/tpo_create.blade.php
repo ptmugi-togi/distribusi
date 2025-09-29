@@ -62,22 +62,27 @@
                                 <option
                                     value="{{ $v->supno }}"
                                     {{ old('supno') == $v->supno ? 'selected' : '' }}>
-                                    {{ $v->supno }} - {{ $v->supna }}
+                                    {{ $v->supna }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label for="topay" class="form-label">Term Of Payment</label><span class="text-danger"> *</span>
-                        <input type="number" class="form-control" placeholder="Cth : 30" name="topay" id="topay" value="{{ old('topay') }}" required>
+                    <div class="col-md-3 mt-3">
+                        <label for="topay" class="form-label">TOP (Hari)</label><span class="text-danger"> *</span>
+                        <input type="number" class="form-control" placeholder="Cth : 30" name="topay" id="topay" value="{{ old('topay') }}" required min="0">
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="tdesc" class="form-label">Deskripsi Term Of Payment</label>
+                        <label for="tdesc" class="form-label">Deskripsi TOP</label>
                         <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="tdesc" id="tdesc" value="{{ old('tdesc') }}">
                     </div>
 
+                    <div class="col-md-3 mt-3">
+                        <label for="freight_cost" class="form-label">Freight Cost</label>
+                        <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="freight_cost" id="freight_cost" value="{{ old('freight_cost') }}">
+                    </div>
+                    
                     <div class="col-md-6 mt-3">
                         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="curco" id="currency" style="width: 100%;" required>
@@ -93,24 +98,20 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
+                        <label for="currency_rate" class="form-label" id="currency_rate_label">Kurs (IDR)</label>
+                        <input type="text" class="form-control" id="currency_rate_display" value="{{ old('currency_rate') ? 'Rp ' . number_format(old('currency_rate'), 2, ',', '.') : '' }}" required>
+                        <input type="text" class="form-control" name="currency_rate" id="currency_rate" value="{{ old('currency_rate') }}" hidden required>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
                         <label for="shvia" class="form-label">Pengiriman</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control" name="shvia" id="shvia" style="width: 100%;" required>
-                            <option value="" {{ old('shvia') ? '' : 'selected' }} disabled selected>Silahkan pilih Pengiriman</option>
-                            <option value="DARAT" {{ old('shvia') == 'DARAT' ? 'selected' : '' }}>DARAT</option>
-                            <option value="LAUT" {{ old('shvia') == 'LAUT' ? 'selected' : '' }}>LAUT</option>
-                            <option value="UDARA" {{ old('shvia') == 'UDARA' ? 'selected' : '' }}>UDARA</option>
-                        </select>
+                        <input type="text" class="form-control" name="shvia" id="shvia" value="{{ old('shvia') }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="branch" class="form-label">Branch</label>
-                        <input style="background-color: #e9ecef" type="text" class="form-control"  name="branch" id="branch" value="PST" readonly>
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="delco" class="form-label">Kode Penerima</label>
+                        <label for="delco" class="form-label">Dikirim Ke</label>
                         <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
-                            <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
+                            <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih tujuan pengiriman</option>
                             <option value="PST" {{ old('delco') == 'PST' ? 'selected' : '' }}>PST (Pusat)</option>
                             <option value="CKG" {{ old('delco') == 'CKG' ? 'selected' : '' }}>CKG (Cakung)</option>
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
@@ -131,7 +132,7 @@
 
                     <div class="col-md-4 mt-3">
                         <label for="stamp" class="form-label">Meterai</label>
-                        <input type="number" class="form-control" placeholder="Cth : 10000" name="stamp" id="stamp" value="{{ old('stamp', 0) }}" >
+                        <input type="number" class="form-control" placeholder="Cth : 10000" name="stamp" id="stamp" value="{{ old('stamp', 0) }}"  min="0">
                     </div>
                     <div class="col-md-12 mt-3">
                         <label for="noteh" class="form-label">Catatan</label>
@@ -206,6 +207,96 @@
                 $('#delco').on('change', function () {
                     braco.value = this.value;
                 });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                function toggleHSBM() {
+                    const potype = $('#potype').val();
+                    if (potype === "Import") {
+                        $('.hsn-input, .bm-input').prop('disabled', false);
+                    } else {
+                        $('.hsn-input, .bm-input').prop('disabled', true).val('');
+                    }
+                }
+
+                toggleHSBM();
+
+                $('#potype').on('change', toggleHSBM);
+            });
+        </script>
+
+        <script>
+            function formatRupiah(num) {
+                return "Rp " + new Intl.NumberFormat("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+            }
+
+            function cleanNumber(str) {
+                return str.replace(/[^0-9,.-]/g, '').replace(',', '.');
+            }
+
+            $(document).ready(function() {
+                // Saat pilih currency → ambil dari mcurco via ajax
+                $('#currency').on('select2:select', function () {
+                    let cur = $(this).val();
+                    if (cur && cur !== "IDR") {
+                        $('#currency_rate_label').html(`Kurs (${cur} to IDR)<span class="text-danger"> *</span>`);
+                    } else {
+                        $('#currency_rate_label').html(`Kurs (IDR)<span class="text-danger"> *</span>`);
+                    }
+
+                    $.getJSON(`/get-currency-rate/${cur}`, function(res) {
+                        if (res.success) {
+                            let crate = parseFloat(res.crate);
+                            $('#currency_rate_display').val(formatRupiah(crate));
+                            $('#currency_rate').val(crate);
+                        }
+                    });
+                });
+
+                // Saat user edit manual
+                $('#currency_rate_display').on('input', function() {
+                    let raw = cleanNumber($(this).val());
+                    if (raw) {
+                        $('#currency_rate').val(raw); // simpan angka ke hidden
+                    } else {
+                        $('#currency_rate').val('');
+                    }
+                });
+
+                // Saat blur → format Rp
+                $('#currency_rate_display').on('blur', function() {
+                    let raw = cleanNumber($(this).val());
+                    if (raw) {
+                        $(this).val(formatRupiah(raw));
+                    }
+                });
+
+                // Saat focus → tampilkan angka murni
+                $('#currency_rate_display').on('focus', function() {
+                    let raw = $('#currency_rate').val();
+                    $(this).val(raw);
+                });
+            });
+        </script>
+
+        {{-- custom select2 agar tidak load semua data, hanya 10 --}}
+        <script>
+            $('.select2').select2({
+                placeholder: "Silahkan pilih Supplier",
+                minimumResultsForSearch: 0,
+                templateResult: function (data, container) {
+                    // kalau tidak ada pencarian (params.term kosong) → batasi 10
+                    if ($('.select2-search__field').val() === '' && data._resultId) {
+                        // ambil index option dari ID yang dibikin Select2
+                        let index = parseInt(data._resultId.split('-').pop());
+                        if (index > 10) {
+                            return null; // hide item > 10
+                        }
+                    }
+                    return data.text;
+                }
             });
         </script>
 
@@ -380,7 +471,7 @@
                                 <div class="col-md-4 mt-3">
                                     <label for="poqty-${barangIndex}" class="form-label">Qty <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}"
+                                        <input type="number" class="form-control" name="poqty[]" id="poqty-${barangIndex}" min="0"
                                             placeholder="Cth : 10" required>
                                         <span class="input-group-text" id="qty-label-${barangIndex}">
                                         </span>
@@ -402,35 +493,29 @@
 
                             <div class="row">
                                 <div class="col-md-6 mt-3">
-                                    <label for="edeld-${barangIndex}" class="form-label">Ekspetasi Tanggal Pengiriman <span class="text-danger">*</span></label>
+                                    <label for="edeld-${barangIndex}" class="form-label">ETD <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" name="edeld[]" id="edeld-${barangIndex}" min="{{ date('Y-m-d') }}" required>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label for="earrd-${barangIndex}" class="form-label">Ekspetasi Tanggal Kedatangan <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="earrd[]" id="earrd-${barangIndex}" min="{{ date('Y-m-d') }}" required>
+                                    <label for="earrd-${barangIndex}" class="form-label">ETA</label>
+                                    <input type="date" class="form-control" name="earrd[]" id="earrd-${barangIndex}" min="{{ date('Y-m-d') }}">
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label for="hsn-${barangIndex}" class="form-label">HS Code</label>
-                                    <input type="number" class="form-control" name="hsn[]" id="hsn-${barangIndex}" placeholder="Cth : 123">
+                                    <input type="number" class="form-control hsn-input" name="hsn[]" id="hsn-${barangIndex}" placeholder="Cth : 123" min="0" disabled>
                                 </div>
 
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label for="bm-${barangIndex}" class="form-label">BM (%)</label>
-                                    <input type="text" class="form-control" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 1.5" value="0"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                    <input type="text" class="form-control bm-input" name="bm[]" id="bm-${barangIndex}" placeholder="Cth : 1.5" value="0"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')" disabled>
                                 </div>
 
-                                <div class="col-md-3 mt-3">
-                                    <label for="bmt-${barangIndex}" class="form-label">BMT (%)</label>
-                                    <input type="text" class="form-control" name="bmt[]" id="bmt-${barangIndex}" placeholder="Cth : 0.5" value="0"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                                </div>
-
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label for="pphd-${barangIndex}" class="form-label">PPH (%)</label>
                                     <input type="text" class="form-control" name="pphd[]" id="pphd-${barangIndex}" placeholder="Cth : 11" value="0"
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '')">

@@ -49,20 +49,25 @@
                             <option value="" disabled>Pilih Supplier</option>
                             @foreach($vendors as $v)
                                 <option value="{{ $v->supno }}" {{ old('supno',$tpohdr->supno)==$v->supno?'selected':'' }}>
-                                    {{ $v->supno }} - {{ $v->supna }}
+                                    {{ $v->supna }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Term Of Payment</label><span class="text-danger"> *</span>
+                    <div class="col-md-3 mt-3">
+                        <label class="form-label">TOP</label><span class="text-danger"> *</span>
                         <input type="number" class="form-control" name="topay" value="{{ old('topay',$tpohdr->topay) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Deskripsi Term Of Payment</label><span class="text-danger"> *</span>
+                        <label class="form-label">Deskripsi TOP</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control" name="tdesc" value="{{ old('tdesc',$tpohdr->tdesc) }}">
+                    </div>
+
+                    <div class="col-md-3 mt-3">
+                        <label for="freight_cost" class="form-label">Freight Cost</label>
+                        <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="freight_cost" id="freight_cost" value="{{ old('freight_cost', $tpohdr->freight_cost) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -75,8 +80,14 @@
                             <option value="IDR" {{ old('curco', $tpohdr->curco) == 'IDR' ? 'selected' : '' }}>IDR (Rupiah Indonesia)</option>
                             <option value="MYR" {{ old('curco', $tpohdr->curco) == 'MYR' ? 'selected' : '' }}>MYR (Ringgit Malaysia)</option>
                             <option value="SGD" {{ old('curco', $tpohdr->curco) == 'SGD' ? 'selected' : '' }}>SGD (Dollar Singapura)</option>
-                            <option value="USD" {{ old('curco', $tpohdr->curco) == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>:'' }}>GBP</option>
+                            <option value="USD" {{ old('curco', $tpohdr->curco) == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="currency_rate" class="form-label" id="currency_rate_label">Kurs (IDR)</label>
+                        <input type="text" class="form-control" id="currency_rate_display" value="{{ old('currency_rate', $tpohdr->currency_rate) ? 'Rp ' . number_format(old('currency_rate', $tpohdr->currency_rate), 2, ',', '.') : '' }}" required>
+                        <input type="text" class="form-control" name="currency_rate" id="currency_rate" value="{{ old('currency_rate', $tpohdr->currency_rate) }}" hidden required>
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -89,12 +100,7 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="branch" class="form-label">Branch</label>
-                        <input style="background-color: #e9ecef" type="text" class="form-control"  name="branch" id="branch" value="PST" readonly>
-                    </div>
-
-                    <div class="col-md-6 mt-3">
-                        <label for="delco" class="form-label">Kode Penerima</label>
+                        <label for="delco" class="form-label">Dikirim ke</label>
                         <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
                             <option value="" {{ old('delco', $tpohdr->delco) ? '' : 'selected' }} disabled selected>Silahkan pilih Kode Penerima</option>
                             <option value="PST" {{ old('delco', $tpohdr->delco) == 'PST' ? 'selected' : '' }}>PST (Pusat)</option>
@@ -206,19 +212,15 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-md-3 mt-3">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">HSN</label>
-                                                <input type="number" class="form-control" name="hsn[]" value="{{ $d->hsn }}">
+                                                <input type="number" class="form-control hsn-input" name="hsn[]" value="{{ $d->hsn }}">
                                             </div>
-                                            <div class="col-md-3 mt-3">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">BM</label>
-                                                <input type="text" class="form-control" name="bm[]" value="{{ $d->bm }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                                                <input type="text" class="form-control bm-input" name="bm[]" value="{{ $d->bm }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
-                                            <div class="col-md-3 mt-3">
-                                                <label class="form-label">BMT</label>
-                                                <input type="text" class="form-control" name="bmt[]" value="{{ $d->bmt }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
-                                            </div>
-                                            <div class="col-md-3 mt-3">
+                                            <div class="col-md-4 mt-3">
                                                 <label class="form-label">PPH</label>
                                                 <input type="text" class="form-control" name="pphd[]" value="{{ $d->pphd }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                                             </div>
@@ -285,6 +287,95 @@
                 $('#delco').on('change', function () {
                     braco.value = this.value;
                 });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function () {
+                function toggleHSBM() {
+                    const potype = $('#potype').val();
+                    if (potype === "Import") {
+                        $('.hsn-input, .bm-input').prop('disabled', false);
+                    } else {
+                        $('.hsn-input, .bm-input').prop('disabled', true);
+                    }
+                }
+
+                toggleHSBM(); // jalankan saat load
+                $('#potype').on('change', toggleHSBM);
+            });
+        </script>
+
+        <script>
+            function formatRupiah(num) {
+                return "Rp " + new Intl.NumberFormat("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+            }
+
+            function cleanNumber(str) {
+                return str.replace(/[^0-9,.-]/g, '').replace(',', '.');
+            }
+
+            $(document).ready(function() {
+                // Saat pilih currency → ambil dari mcurco via ajax
+                $('#currency').on('select2:select', function () {
+                    let cur = $(this).val();
+                    if (cur && cur !== "IDR") {
+                        $('#currency_rate_label').html(`Kurs (${cur} to IDR)<span class="text-danger"> *</span>`);
+                    } else {
+                        $('#currency_rate_label').html(`Kurs (IDR)<span class="text-danger"> *</span>`);
+                    }
+
+                    $.getJSON(`/get-currency-rate/${cur}`, function(res) {
+                        if (res.success) {
+                            let crate = parseFloat(res.crate);
+                            $('#currency_rate_display').val(formatRupiah(crate));
+                            $('#currency_rate').val(crate);
+                        }
+                    });
+                });
+
+                // Saat user edit manual
+                $('#currency_rate_display').on('input', function() {
+                    let raw = cleanNumber($(this).val());
+                    if (raw) {
+                        $('#currency_rate').val(raw); // simpan angka ke hidden
+                    } else {
+                        $('#currency_rate').val('');
+                    }
+                });
+
+                // Saat blur → format Rp
+                $('#currency_rate_display').on('blur', function() {
+                    let raw = cleanNumber($(this).val());
+                    if (raw) {
+                        $(this).val(formatRupiah(raw));
+                    }
+                });
+
+                // Saat focus → tampilkan angka murni
+                $('#currency_rate_display').on('focus', function() {
+                    let raw = $('#currency_rate').val();
+                    $(this).val(raw);
+                });
+            });
+        </script>
+
+        {{-- custom select2 agar tidak load semua data, hanya 10 --}}
+        <script>
+            $('.select2').select2({
+                placeholder: "Silahkan pilih Supplier",
+                minimumResultsForSearch: 0,
+                templateResult: function (data, container) {
+                    // kalau tidak ada pencarian (params.term kosong) → batasi 10
+                    if ($('.select2-search__field').val() === '' && data._resultId) {
+                        // ambil index option dari ID yang dibikin Select2
+                        let index = parseInt(data._resultId.split('-').pop());
+                        if (index > 10) {
+                            return null; // hide item > 10
+                        }
+                    }
+                    return data.text;
+                }
             });
         </script>
 
@@ -453,19 +544,15 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label class="form-label">HSN</label>
-                                    <input type="number" class="form-control" name="hsn[]">
+                                    <input type="number" class="form-control hsn-input" name="hsn[]">
                                 </div>
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label class="form-label">BM</label>
-                                    <input type="number" class="form-control" name="bm[]" value="0">
+                                    <input type="number" class="form-control bm-input" name="bm[]" value="0">
                                 </div>
-                                <div class="col-md-3 mt-3">
-                                    <label class="form-label">BMT</label>
-                                    <input type="number" class="form-control" name="bmt[]" value="0">
-                                </div>
-                                <div class="col-md-3 mt-3">
+                                <div class="col-md-4 mt-3">
                                     <label class="form-label">PPH</label>
                                     <input type="number" class="form-control" name="pphd[]" value="0">
                                 </div>
@@ -546,7 +633,9 @@
 
             // kalau user setuju simpan
             btnKonfirmasi.addEventListener('click', () => {
-            form.submit(); // submit form beneran
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalKonfirmasi'));
+                modal.hide();
+                form.submit();
             });
         </script>
     @endpush

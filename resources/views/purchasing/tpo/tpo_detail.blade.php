@@ -36,17 +36,22 @@
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Supplier</label>
-                <input type="text" class="form-control" value="{{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}" disabled>
+                <input type="text" class="form-control" value="{{ $tpohdr->vendor->supna ?? '' }}" disabled>
             </div>
 
-            <div class="col-md-6 mt-3">
-                <label class="form-label">Term Of Payment</label>
+            <div class="col-md-3 mt-3">
+                <label class="form-label">TOP</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->topay }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
-                <label class="form-label">Deskripsi Term Of Payment</label>
+                <label class="form-label">Deskripsi TOP</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->tdesc }}" disabled>
+            </div>
+
+            <div class="col-md-3 mt-3">
+                <label class="form-label">Freight Cost</label>
+                <input type="text" class="form-control" value="{{ $tpohdr->freight_cost }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
@@ -55,17 +60,17 @@
             </div>
 
             <div class="col-md-6 mt-3">
+                <label class="form-label">Kurs</label>
+                <input type="text" class="form-control" value="Rp {{ number_format($tpohdr->currency_rate, 2, ',', '.') }}"  disabled>
+            </div>
+
+            <div class="col-md-6 mt-3">
                 <label class="form-label">Pengiriman</label>
                 <input type="text" class="form-control" value="{{ $tpohdr->shvia }}" disabled>
             </div>
 
             <div class="col-md-6 mt-3">
-                <label class="form-label">Branch</label>
-                <input type="text" class="form-control" value="PST" disabled>
-            </div>
-
-            <div class="col-md-6 mt-3">
-                <label class="form-label">Kode Penerima</label>
+                <label class="form-label">Dikirim ke</label>
                 <input type="text" class="form-control"
                     value="{{ $tpohdr->delco == 'PST' ? 'PST (Pusat)' : 
                             ($tpohdr->delco == 'CKG' ? 'CKG (Cakung)' : 
@@ -138,28 +143,24 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Ekspetasi Pengiriman</label>
-                                        <input type="text" class="form-control" value="{{ date('d-m-Y', strtotime($d->edld)) }}" disabled>
+                                        <label class="form-label">ETD</label>
+                                        <input type="text" class="form-control" value="{{ $d->edeld ? date('d-m-Y', strtotime($d->edeld)) : '' }}" disabled>
                                     </div>
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Ekspetasi Kedatangan</label>
-                                        <input type="text" class="form-control" value="{{ date('d-m-Y', strtotime($d->earrd)) }}" disabled>
+                                        <label class="form-label">ETA</label>
+                                        <input type="text" class="form-control" value="{{ $d->earrd ? date('d-m-Y', strtotime($d->earrd)) : '' }}" disabled>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-3 mt-3">
+                                    <div class="col-md-4 mt-3">
                                         <label class="form-label">HS Code</label>
                                         <input type="text" class="form-control" value="{{ $d->hsn }}" disabled>
                                     </div>
-                                    <div class="col-md-3 mt-3">
+                                    <div class="col-md-4 mt-3">
                                         <label class="form-label">BM (%)</label>
                                         <input type="text" class="form-control" value="{{ $d->bm }}" disabled>
                                     </div>
-                                    <div class="col-md-3 mt-3">
-                                        <label class="form-label">BMT (%)</label>
-                                        <input type="text" class="form-control" value="{{ $d->bmt }}" disabled>
-                                    </div>
-                                    <div class="col-md-3 mt-3">
+                                    <div class="col-md-4 mt-3">
                                         <label class="form-label">PPH (%)</label>
                                         <input type="text" class="form-control" value="{{ $d->pphd }}" disabled>
                                     </div>

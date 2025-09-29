@@ -9,6 +9,7 @@ use App\Models\TpoHdr;
 use App\Models\TpoDtl;
 use App\Models\Mvendor;
 use App\Models\Mpromas;
+use App\Models\Mcurco;
 
 class TpoController extends Controller
 {
@@ -23,6 +24,20 @@ class TpoController extends Controller
         return view('purchasing.tpo.tpohdr', compact('tpohdr'));
     }
 
+    public function getCurrencyRate($curco)
+    {
+        $currency = Mcurco::find($curco);
+
+        if ($currency) {
+            return response()->json([
+                'success' => true,
+                'crate' => $currency->crate,
+            ]);
+        }
+
+        return response()->json(['success' => false], 404);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -30,8 +45,9 @@ class TpoController extends Controller
     {
         $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
         $products = Mpromas::select('opron','prona','stdqu')->orderBy('opron')->get();
+        $currencies = Mcurco::select('curco')->get();
 
-        return view('purchasing.tpo.tpo_create', compact('vendors', 'products'));
+        return view('purchasing.tpo.tpo_create', compact('vendors', 'products', 'currencies'));
     }
 
     /**
@@ -52,8 +68,15 @@ class TpoController extends Controller
         // simpan ke tabel header
         $HeaderData = $request->only([
             'pono','formc','podat','potype','topay','tdesc','curco','shvia','sconp',
-            'delco','braco','diper','vatax','stamp','noteh','supno',
+            'delco','braco','diper','vatax','stamp','noteh','supno', 'currency_rate',
+            'freight_cost',
         ]);
+
+        // ambil currency rate hanya saat PO create
+        if (empty($request->currency_rate)) {
+            $currency = Mcurco::find($request->curco);
+            $HeaderData['currency_rate'] = $currency ? $currency->crate : 1;
+        }
 
         $HeaderData['user_id'] = Auth::id();
         $HeaderData['created_by'] = Auth::user()->name;
@@ -80,7 +103,6 @@ class TpoController extends Controller
                     'earrd'  => $request->earrd[$i] ?? null,
                     'hsn'    => $request->hsn[$i] ?? null,
                     'bm'     => $request->bm[$i] ?? null,
-                    'bmt'    => $request->bmt[$i] ?? null,
                     'pphd'   => $request->pphd[$i] ?? null,
                     'noted'  => $request->noted[$i] ?? null,
                 ];
@@ -130,7 +152,7 @@ class TpoController extends Controller
         $tpohdr = Tpohdr::findOrFail($id);
         $tpohdr->fill($request->only([
             'formc','podat','potype','topay','tdesc','curco','shvia','sconp',
-            'delco','braco','diper','vatax','stamp','noteh','supno',
+            'delco','braco','diper','vatax','stamp','noteh','supno', 'currency_rate', 'freight_cost',
         ]));
         $tpohdr->updated_by = Auth::user()->name ?? null;
         $tpohdr->save();
@@ -165,7 +187,6 @@ class TpoController extends Controller
                 'earrd'  => $request->earrd[$i] ?? null,
                 'hsn'    => $request->hsn[$i] ?? null,
                 'bm'     => $request->bm[$i] ?? null,
-                'bmt'    => $request->bmt[$i] ?? null,
                 'pphd'   => $request->pphd[$i] ?? null,
                 'noted'  => $request->noted[$i] ?? null,
             ];
