@@ -84,7 +84,7 @@
 <table class="no-border" style="margin-top:10px;">
     <tr>
         <td class="left" style="width:33%; vertical-align:top">
-            <b>Supplier :</b><br>
+            <b>SUPPLIER :</b><br>
             {{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}<br>
             {{ $tpohdr->vendor->address ?? '' }}<br>
             {{ $tpohdr->vendor->city ?? '' }}<br>
