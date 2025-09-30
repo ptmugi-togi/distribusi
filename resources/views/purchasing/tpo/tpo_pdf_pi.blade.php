@@ -90,7 +90,7 @@
                 {{ $tpohdr->vendor->city ?? '' }}<br>
                 Telp : {{ $tpohdr->vendor->phone ?? '' }}<br>
                 Fax : {{ $tpohdr->vendor->fax ?? '' }}<br>
-                ATTN : {{ $tpohdr->vendor->contact ?? '' }}
+                ATTN. {{ $tpohdr->vendor->contact ?? '' }}
             </td>
             <td class="left" style="width:33%; vertical-align:top">
                 <b>DELIVERY TO :</b><br>
