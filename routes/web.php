@@ -113,8 +113,8 @@ Route::get('/tpo/{id}/edit', [TpoController::class, 'edit'])->middleware('auth')
 Route::put('/tpo/{id}', [TpoController::class, 'update'])->middleware('auth')->name('tpo.update');
 Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
 
-// Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview');
+Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview'); // sementara dinonaktifkan
 Route::get('/pdf/print/{pono}', [PdfController::class, 'print'])->name('pdf.print');
-// Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview');
+Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview'); // sementara dinonaktifkan
 Route::get('/pdf/printPi/{pono}', [PdfController::class, 'printPi'])->name('pdf_pi.print');
 

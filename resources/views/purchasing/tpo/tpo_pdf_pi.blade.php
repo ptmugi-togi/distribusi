@@ -98,11 +98,19 @@
                 {{ $tpohdr->branches->address }}<br>
                 ATTN. {{ $tpohdr->branches->contactp }}
             </td>
-            <td style="width:5%"></td>
-            <td class="left" style="width:28%; vertical-align:top">
-                <b>PO NO. :</b>
+            <td style="width:8%"></td>
+            <td class="left" style="width:10%; vertical-align:top">
+                <b>PO NO.</b><br>
+                <b>PO DATE</b> 
+            </td>
+            <td class="left" style="width:1px; vertical-align:top">
+                <b>:</b>
+                <br>
+                <b>:</b> 
+                <br>
+            </td>
+            <td class="left" style="width:13%; vertical-align:top">
                 {{ $tpohdr->pono }}<br>
-                <b>PO DATE :</b> 
                 {{ $tpohdr->podat }}<br>
             </td>
         </tr>

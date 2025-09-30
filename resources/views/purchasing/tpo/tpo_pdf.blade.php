@@ -100,10 +100,18 @@
             ATTN: {{ $tpohdr->branches->contactp }}
         </td>
         <td style="width:5%"></td>
-        <td class="left" style="width:28%; vertical-align:top">
-            <b>NOMOR PO :</b>
+        <td class="left" style="width:13%; vertical-align:top">
+            <b>NOMOR PO</b><br>
+            <b>TANGGAL PO</b> 
+        </td>
+        <td class="left" style="width:1%; vertical-align:top">
+            <b>:</b>
+            <br>
+            <b>:</b> 
+            <br>
+        </td>
+        <td class="left" style="width:13%; vertical-align:top">
             {{ $tpohdr->pono }}<br>
-            <b>TANGGAL PO :</b> 
             {{ $tpohdr->podat }}<br>
         </td>
     </tr>
