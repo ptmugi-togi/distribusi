@@ -629,7 +629,14 @@
                 const hidden = document.getElementById(`priceraw-${barangIndex}`);
                 attachPriceEvents(input, hidden, currencySelect);
 
+                const potype = $('#potype').val();
+                if (potype !== "Import") {
+                    $(newItem).find('.hsn-input, .bm-input').prop('disabled', true).val('');
+                }
+
                 barangIndex++;
+
+                toggleHSBM();
             }
 
             function removeBarang(index) {
@@ -663,6 +670,7 @@
                 }
             }
         </script>
+
         {{-- Modal Konfirmasi edit data --}}
         <script>
             const form = document.getElementById('form-edit-po');
