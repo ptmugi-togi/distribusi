@@ -36,6 +36,7 @@
                       <th class="text-center">Tanggal PO</th>
                       <th class="text-center">PO PDF</th>
                       <th class="text-center">Action</th>
+                      <th class="text-center">Created At</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -49,35 +50,32 @@
                       </td>
                       <td class="text-center">
                         @if ($tpo->formc === 'PO' || $tpo->formc === 'PN')
-                            <a href="{{ route('pdf.preview', $tpo->pono) }}" 
-                              class="btn btn-primary btn-sm m-1" target="_blank">
-                              <i class="bi bi-file-earmark-pdf"></i> Preview
-                            </a>
                             <a href="{{ route('pdf.print', $tpo->pono) }}" 
-                              class="btn btn-success btn-sm m-1" target="_blank">
+                              class="badge bg-success" target="_blank">
                               <i class="bi bi-file-earmark-arrow-down"></i> Print
                             </a>
                         @elseif ($tpo->formc === 'PI')
-                            <a href="{{ route('pdf_pi.preview', $tpo->pono) }}" 
-                              class="btn btn-primary btn-sm m-1" target="_blank">
-                              <i class="bi bi-file-earmark-pdf"></i> Preview
-                            </a>
                             <a href="{{ route('pdf_pi.print', $tpo->pono) }}" 
-                              class="btn btn-success btn-sm m-1" target="_blank">
+                              class="badge bg-success" target="_blank">
                               <i class="bi bi-file-earmark-arrow-down"></i> Print
                             </a>
                         @endif 
                       </td>
                       <td class="text-center">
-                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary p-auto"><i class="bi bi-info-circle"></i></a>
-                        <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning p-auto"><i class="bi bi-pencil"></i></a>
+                        <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                        <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
                         @if($tpo->tpodtl->every(fn($d) => $d->rcqty == 0 && $d->inqty == 0))
-                            <a href="#" class="badge bg-danger" 
-                              data-bs-toggle="modal" 
-                              data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}">
-                              <i class="bi bi-trash"></i>
+                            <a href="#"
+                              class="badge bg-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}"
+                              data-tooltip="true"
+                              data-bs-placement="top"
+                              title="Delete">
+                                <i class="bi bi-trash"></i>
                             </a>
                         @endif
+
 
                         <div class="modal fade" id="modalDeleteTpo-{{ $tpo->pono }}" tabindex="-1">
                             <div class="modal-dialog">
@@ -100,6 +98,9 @@
                             </div>
                         </div>
                       </td>
+                      <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tpo->created_at)->format('Y-m-d H:i:s') }}">
+                        {{ \Carbon\Carbon::parse($tpo->created_at)->format('d/m/Y H:i:s') }}
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -116,8 +117,11 @@
           $(function () {
             $('#myTable').DataTable({
               destroy: true,
-              order: [[3, 'desc']],
+              order: [[6, 'desc']], // sorting berdasarkan created at
               stateSave: false,
+              columnDefs: [
+                { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
+              ]
             });
           });
         </script>

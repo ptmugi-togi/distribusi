@@ -32,6 +32,7 @@ class TpoHdr extends Model
         'vatax',
         'stamp',
         'noteh',
+        'prctr',
         'supno',
         'user_id',
         'created_at',

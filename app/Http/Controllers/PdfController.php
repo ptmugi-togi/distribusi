@@ -3,116 +3,164 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\TpoHdr;
 use Mpdf\Mpdf;
 
 class PdfController extends Controller
 {
-    public function preview($id)
-    {
-        $tpohdr = \App\Models\TpoHdr::with([
-            'vendor',
-            'tpodtl.mpromas',
-            'formcode',
-            'branches'
-        ])->findOrFail($id);
+    // sementara dinonaktifkan prieview
+    // public function preview($id)
+    // {
+    //     $tpohdr = \App\Models\TpoHdr::with([
+    //         'vendor',
+    //         'tpodtl.mpromas',
+    //         'formcode',
+    //         'branches'
+    //     ])->findOrFail($id);
 
-        $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
+    //     $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
-            'margin_bottom' => 15,
-        ]);
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'format' => 'A4',
+    //         'margin_top' => 10,
+    //         'margin_bottom' => 15,
+    //     ]);
         
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
+    //     $mpdf->SetHTMLFooter('
+    //         <div style="text-align: right; font-size: 9pt;">
+    //             {PAGENO}/{nbpg}
+    //         </div>
+    //     ');
 
-        $mpdf->WriteHTML($html);
-        $mpdf->Output(); 
-    }
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output(); 
+    // }
 
-    public function print($id)
-    {
-        $tpohdr = \App\Models\TpoHdr::with([
-            'vendor',
-            'tpodtl.mpromas',
-            'formcode',
-            'branches'
-        ])->findOrFail($id);
+    // public function print($id)
+    // {
+    //     $tpohdr = \App\Models\TpoHdr::with([
+    //         'vendor',
+    //         'tpodtl.mpromas',
+    //         'formcode',
+    //         'branches'
+    //     ])->findOrFail($id);
+
+    //     $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'format' => 'A4',
+    //         'margin_top' => 10,
+    //         'margin_bottom' => 15,
+    //     ]);
+
+    //     $mpdf->SetHTMLFooter('
+    //         <div style="text-align: right; font-size: 9pt;">
+    //             {PAGENO}/{nbpg}
+    //         </div>
+    //     ');
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output("{$tpohdr->potype}-{$tpohdr->pono}.pdf", "D");
+    // }
+
+    // sementara dinonaktifkan prieview
+    // public function previewPi($id)
+    // {
+    //     $tpohdr = \App\Models\TpoHdr::with([
+    //         'vendor',
+    //         'tpodtl.mpromas',
+    //         'formcode',
+    //         'branches'
+    //     ])->findOrFail($id);
+
+    //     $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'format' => 'A4',
+    //         'margin_top' => 10,
+    //         'margin_bottom' => 15,
+    //     ]);
+
+    //     $mpdf->SetHTMLFooter('
+    //         <div style="text-align: right; font-size: 9pt;">
+    //             {PAGENO}/{nbpg}
+    //         </div>
+    //     ');
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output(); 
+    // }
+
+    // public function printPi($id)
+    // {
+    //     $tpohdr = \App\Models\TpoHdr::with([
+    //         'vendor',
+    //         'tpodtl.mpromas',
+    //         'formcode',
+    //         'branches'
+    //     ])->findOrFail($id);
+
+    //     $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'format' => 'A4',
+    //         'margin_top' => 10,
+    //         'margin_bottom' => 15,
+    //     ]);
+
+    //     $mpdf->SetHTMLFooter('
+    //         <div style="text-align: right; font-size: 9pt;">
+    //             {PAGENO}/{nbpg}
+    //         </div>
+    //     ');
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output("PI-{$tpohdr->pono}.pdf", "D");
+    // }
+
+    // counter print
+    public function print($pono) {
+        $tpohdr = Tpohdr::where('pono', $pono)->firstOrFail();
+
+        // increment counter total print
+        DB::table('pohdr_tbl')
+        ->where('pono', $pono)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
 
         $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
-            'margin_bottom' => 15,
-        ]);
-
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
-
+        $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
-        $mpdf->Output("{$tpohdr->potype}-{$tpohdr->pono}.pdf", "D");
+
+        $pdfContent = $mpdf->Output("{$tpohdr->potype}-{$tpohdr->pono}.pdf", "S");
+
+        return response($pdfContent)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'attachment; filename="'.$tpohdr->formc.'-'.$tpohdr->pono.'.pdf"');
     }
 
-    public function previewPi($id)
-    {
-        $tpohdr = \App\Models\TpoHdr::with([
-            'vendor',
-            'tpodtl.mpromas',
-            'formcode',
-            'branches'
-        ])->findOrFail($id);
+    public function printPi($pono) {
+        $tpohdr = Tpohdr::where('pono', $pono)->firstOrFail();
+
+        // increment counter total print
+        DB::table('pohdr_tbl')
+        ->where('pono', $pono)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
 
         $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
-            'margin_bottom' => 15,
-        ]);
-
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
-
+        $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
-        $mpdf->Output(); 
-    }
 
-    public function printPi($id)
-    {
-        $tpohdr = \App\Models\TpoHdr::with([
-            'vendor',
-            'tpodtl.mpromas',
-            'formcode',
-            'branches'
-        ])->findOrFail($id);
+        $pdfContent = $mpdf->output("PI-{$tpohdr->pono}.pdf", "S");
 
-        $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
-
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
-            'margin_bottom' => 15,
-        ]);
-
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
-
-        $mpdf->WriteHTML($html);
-        $mpdf->Output("PI-{$tpohdr->pono}.pdf", "D");
+        return response($pdfContent)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="PI-'.$tpohdr->pono.'.pdf"');
     }
 }
