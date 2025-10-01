@@ -19,21 +19,18 @@ class PdfController extends Controller
             'branches'
         ])->findOrFail($id);
 
-        $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
+        $html = view('purchasing.tpo.pdf.tpo_pdf', compact('tpohdr'))->render();
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
             'margin_top' => 10,
-            'margin_bottom' => 15,
+            'margin_bottom' => 10,
         ]);
         
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
-
         $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
         $mpdf->Output(); 
     }
 
@@ -47,21 +44,18 @@ class PdfController extends Controller
             'branches'
         ])->findOrFail($id);
 
-        $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+        $html = view('purchasing.tpo.pdf.tpo_pdf_pi', compact('tpohdr'))->render();
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
             'margin_top' => 10,
-            'margin_bottom' => 15,
+            'margin_bottom' => 10,
         ]);
 
-        $mpdf->SetHTMLFooter('
-            <div style="text-align: right; font-size: 9pt;">
-                {PAGENO}/{nbpg}
-            </div>
-        ');
-
         $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
         $mpdf->Output(); 
     }
 
@@ -76,10 +70,12 @@ class PdfController extends Controller
             'prctr' => DB::raw('prctr + 1')
         ]);
 
-        $html = view('purchasing.tpo.tpo_pdf', compact('tpohdr'))->render();
+        $html = view('purchasing.tpo.pdf.tpo_pdf', compact('tpohdr'))->render();
 
+        
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
         $pdfContent = $mpdf->Output("{$tpohdr->potype}-{$tpohdr->pono}.pdf", "S");
 
@@ -98,10 +94,11 @@ class PdfController extends Controller
             'prctr' => DB::raw('prctr + 1')
         ]);
 
-        $html = view('purchasing.tpo.tpo_pdf_pi', compact('tpohdr'))->render();
+        $html = view('purchasing.tpo.pdf.tpo_pdf_pi', compact('tpohdr'))->render();
 
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
         $pdfContent = $mpdf->output("PI-{$tpohdr->pono}.pdf", "S");
 

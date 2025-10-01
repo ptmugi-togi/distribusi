@@ -51,12 +51,6 @@
             padding: 5px;
             font-size: 10pt;
         }
-
-        .summary-signature {
-            page-break-inside: avoid;
-            page-break-before: auto;
-            page-break-after: auto;
-        }
     </style>
 </head>
 <body>
@@ -162,88 +156,93 @@
         </tbody>
     </table>
 
-    <!-- Ringkasan Total & Tanda Tangan (tanpa outline) -->
-    <div class="footer-summary summary-signature">
-        <div style="border-top:1px dashed #00000049; margin-bottom:10px;"></div>
-        <table class="no-border" style="margin-top:10px;">
-            <tr>
-                {{-- itungan harga --}}
-                @php $grandtotal = round($total - $diskon + $tpohdr->freight_cost, 2); @endphp
+    <htmlpagefooter name="myFooter">
+        <!-- Ringkasan Total & Tanda Tangan (tanpa outline) -->
+        <div class="footer-summary">
+            <div style="border-top:1px dashed #00000049; margin-bottom:10px;"></div>
+            <table class="no-border" style="margin-top:10px;">
+                <tr>
+                    {{-- itungan harga --}}
+                    @php $grandtotal = round($total - $diskon + $tpohdr->freight_cost, 2); @endphp
 
-                <td style="width:60%; vertical-align:top">
-                    <b>Note :</b><br>
-                    {{ $tpohdr->noteh }}
-                </td>
-                <td style="width:40%">
-                    <table class="no-border">
-                        <tr>
-                            <td>Total EXW</td>
-                            <td class="right">{{ formatNumberOnly($total, $tpohdr->curco) }}</td>
-                        </tr>
-                        <tr>
-                            <td>Freight Cost</td>
-                            <td class="right">{{ $tpohdr->freight_cost != 0 ?  formatNumberOnly($tpohdr->freight_cost, $tpohdr->curco) : '0' }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Grand Total</b></td>
-                            <td class="right"><b>{{ formatNumberOnly($grandtotal, $tpohdr->curco) }}</b></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+                    <td style="width:60%; vertical-align:top">
+                        <b>Note :</b><br>
+                        {{ $tpohdr->noteh }}
+                    </td>
+                    <td style="width:40%">
+                        <table class="no-border">
+                            <tr>
+                                <td>Total EXW</td>
+                                <td class="right">{{ formatNumberOnly($total, $tpohdr->curco) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Freight Cost</td>
+                                <td class="right">{{ $tpohdr->freight_cost != 0 ?  formatNumberOnly($tpohdr->freight_cost, $tpohdr->curco) : '0' }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Grand Total</b></td>
+                                <td class="right"><b>{{ formatNumberOnly($grandtotal, $tpohdr->curco) }}</b></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
 
-        <table class="no-border" style="width:100%; margin-top:40px;">
-            <tr>
-                @if (!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
-                    <td class="center">{{ $tpohdr->formcode?->pos1 ?? '' }}</td>
-                @endif
+            <table class="no-border" style="width:100%; margin-top:40px;">
+                <tr>
+                    @if (!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
+                        <td class="center">{{ $tpohdr->formcode?->pos1 ?? '' }}</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
-                    <td class="center">{{ $tpohdr->formcode->pos2 }}</td>
-                @endif
+                    @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
+                        <td class="center">{{ $tpohdr->formcode->pos2 }}</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
-                    <td class="center">{{ $tpohdr->formcode->pos3 }}</td>
-                @endif
+                    @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
+                        <td class="center">{{ $tpohdr->formcode->pos3 }}</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
-                    <td class="center">{{ $tpohdr->formcode->pos4 }}</td>
-                @endif
-            </tr>
+                    @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
+                        <td class="center">{{ $tpohdr->formcode->pos4 }}</td>
+                    @endif
+                </tr>
 
-            <tr style="height:80px;">
-                <td class="center" style="padding-top: 40px">&nbsp;</td>
-                @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1)) <td class="center"></td> @endif
-                @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2)) <td class="center"></td> @endif
-                @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3)) <td class="center"></td> @endif
-                @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4)) <td class="center"></td> @endif
-            </tr>
+                <tr style="height:80px;">
+                    <td class="center" style="padding-top: 40px">&nbsp;</td>
+                    @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1)) <td class="center"></td> @endif
+                    @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2)) <td class="center"></td> @endif
+                    @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3)) <td class="center"></td> @endif
+                    @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4)) <td class="center"></td> @endif
+                </tr>
 
-            <tr>
-                @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
-                    <td class="center">( {{ $tpohdr->formcode?->name1 ?? '....................' }} )</td>
-                @endif
+                <tr>
+                    @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
+                        <td class="center">( {{ $tpohdr->formcode?->name1 ?? '....................' }} )</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
-                    <td class="center">( {{ $tpohdr->formcode->name2 }} )</td>
-                @endif
+                    @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
+                        <td class="center">( {{ $tpohdr->formcode->name2 }} )</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
-                    <td class="center">( {{ $tpohdr->formcode->name3 }} )</td>
-                @endif
+                    @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
+                        <td class="center">( {{ $tpohdr->formcode->name3 }} )</td>
+                    @endif
 
-                @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
-                    <td class="center">( {{ $tpohdr->formcode->name4 }} )</td>
-                @endif
-            </tr>
-        </table>
+                    @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
+                        <td class="center">( {{ $tpohdr->formcode->name4 }} )</td>
+                    @endif
+                </tr>
+            </table>
 
-        <hr>
+            <hr>
 
-        <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
-        <div style="font-size: 10px">{{ $tpohdr->formcode?->docd ?? '' }}</div>
-    </div>
+            <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
+            <div style="font-size: 10px">{{ $tpohdr->formcode?->docd ?? '' }}</div>
+            <div style="text-align: right; font-size: 9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        </div>
+    </htmlpagefooter>
 
 </body>
 </html>
