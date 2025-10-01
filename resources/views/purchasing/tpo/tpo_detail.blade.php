@@ -61,7 +61,7 @@
 
             <div class="col-md-6 mt-3">
                 <label class="form-label">Kurs</label>
-                <input type="text" class="form-control" value="{{ formatCurrencyDetail($tpohdr->currency_rate, $tpohdr->curco) }}"  disabled>
+                <input type="text" class="form-control" value="Rp {{ number_format($tpohdr->currency_rate, 2, ',', '.') }}"  disabled>
             </div>
 
             <div class="col-md-6 mt-3">
