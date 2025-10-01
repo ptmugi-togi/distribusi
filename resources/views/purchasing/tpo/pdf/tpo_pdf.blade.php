@@ -90,7 +90,6 @@
             <b>DIKIRIM KE :</b><br>
             {{ $tpohdr->branches->conam }}<br>
             {{ $tpohdr->branches->address }}<br>
-            Email: {{ $tpohdr->branches->email }}<br>
             ATTN: {{ $tpohdr->branches->contactp }}
         </td>
         <td style="width:5%"></td>
