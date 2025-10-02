@@ -123,6 +123,13 @@
         </a>
         <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="{{ route('blawb.index') }}">
+            <i class="bi bi-circle"></i><span>BL / AWB</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
             <a href="{{ route('tpo.index') }}">
             <i class="bi bi-circle"></i><span>PO</span>
             </a>

@@ -23,6 +23,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\TpoController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\BlawbController;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,3 +119,5 @@ Route::get('/pdf/print/{pono}', [PdfController::class, 'print'])->name('pdf.prin
 Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview'); // sementara dinonaktifkan
 Route::get('/pdf/printPi/{pono}', [PdfController::class, 'printPi'])->name('pdf_pi.print');
 
+Route::get('/blawb', [BlawbController::class,'index'])->name('blawb.index');
+Route::get('/blawb/create', [BlawbController::class,'create'])->name('blawb.create');
