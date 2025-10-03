@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class tbolh extends Model
+class tbold extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,6 @@ class tbolh extends Model
     protected $keyType = 'int';
     public $timestamps = true;
     protected $fillable = [
-        'id_bl',
         'rinum',
         'costt',
         'costf',
@@ -23,6 +22,6 @@ class tbolh extends Model
 
     public function tbolh()
     {
-        return $this->belongsTo(tbolh::class, 'rinum', 'rinum');
+        return $this->belongsTo(Tbolh::class, 'rinum', 'rinum');
     }
 }

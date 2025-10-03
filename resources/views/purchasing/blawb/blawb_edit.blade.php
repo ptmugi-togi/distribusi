@@ -32,8 +32,9 @@
         </div>
 
         <section class="section">
-            <form id="form-blawb" action="{{ route('blawb.store') }}" method="POST">
+            <form id="form-edit-blawb" action="{{ route('blawb.update', $tbolh->rinum) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="row">
                     <div class="col-md-6 mt-3">
                         <input type="text" name="braco" id="braco" value="PST" hidden>
@@ -42,7 +43,7 @@
                         <label for="rinum" class="form-label">Receipt Number</label><span class="text-danger"> *</span>
                         <div class="input-group">
                             <span class="input-group-text">RI</span>
-                            <input type="number" class="form-control" placeholder="Cth : 250XXX" name="rinum" id="rinum" value="{{ old('rinum') }}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="number" class="form-control" placeholder="Cth : 250XXX" name="rinum" id="rinum" value="{{ old('rinum', $tbolh->rinum) }}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         @error('rinum')
                             <span class="text-danger">
@@ -53,62 +54,62 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="nocal" class="form-label">Calculation Number</label>
-                        <input type="text" class="form-control" name="nocal" id="nocal" value="{{ old('nocal') }}">
+                        <input type="text" class="form-control" name="nocal" id="nocal" value="{{ old('nocal', $tbolh->nocal) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="blnum" class="form-label">BL/AWB No.</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" name="blnum" id="blnum" value="{{ old('blnum') }}" required>
+                        <input type="text" class="form-control" name="blnum" id="blnum" value="{{ old('blnum', $tbolh->blnum) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="bldat" class="form-label">BL/AWB Date</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="bldat" id="bldat" value="{{ old('bldat') }}" required>
+                        <input type="date" class="form-control" name="bldat" id="bldat" value="{{ old('bldat', $tbolh->bldat) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="shpln" class="form-label">Shipping Line</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" name="shpln" id="shpln" value="{{ old('shpln') }}" required>
+                        <input type="text" class="form-control" name="shpln" id="shpln" value="{{ old('shpln', $tbolh->shpln) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="vesel" class="form-label">Vessel/Flight</label>
-                        <input type="text" class="form-control" name="vesel" id="vesel" value="{{ old('vesel') }}">
+                        <input type="text" class="form-control" name="vesel" id="vesel" value="{{ old('vesel', $tbolh->vesel) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="pload" class="form-label">Port of Loading</label>
-                        <input type="text" class="form-control" name="pload" id="pload" value="{{ old('pload') }}">
+                        <input type="text" class="form-control" name="pload" id="pload" value="{{ old('pload', $tbolh->pload) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="pdest" class="form-label">Port of Destination</label>
-                        <input type="text" class="form-control" name="pdest" id="pdest" value="{{ old('pdest') }}">
+                        <input type="text" class="form-control" name="pdest" id="pdest" value="{{ old('pdest', $tbolh->pdest) }}">
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="etds" class="form-label">ETD</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="etds" id="etds" value="{{ old('etds') }}" required>
+                        <input type="date" class="form-control" name="etds" id="etds" value="{{ old('etds', $tbolh->etds) }}" required>
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="etah" class="form-label">ETA Harbour</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="etah" id="etah" value="{{ old('etah') }}" required>
+                        <input type="date" class="form-control" name="etah" id="etah" value="{{ old('etah', $tbolh->etah) }}" required>
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="etaw" class="form-label">ETA Warehouse</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="etaw" id="etaw" value="{{ old('etaw') }}" required>
+                        <input type="date" class="form-control" name="etaw" id="etaw" value="{{ old('etaw', $tbolh->etaw) }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
                         <select class="select2 form-control" name="supno" id="supno" required>
-                            <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
+                            <option value="" disabled {{ old('supno', $tbolh->supno) ? '' : 'selected' }}>Silahkan pilih Supplier</option>
                             @foreach($vendors as $v)
                                 <option
                                     value="{{ $v->supno }}"
-                                    {{ old('supno') == $v->supno ? 'selected' : '' }}>
+                                    {{ old('supno', $tbolh->supno) == $v->supno ? 'selected' : '' }}>
                                     {{ $v->supno }} - {{ $v->supna }}
                                 </option>
                             @endforeach
@@ -117,37 +118,37 @@
 
                     <div class="col-md-3 mt-3">
                         <label for="gweight" class="form-label">Gross Wight (Kg)</label>
-                        <input type="number" class="form-control" name="gweight" id="gweight" value="{{ old('gweight') }}">
+                        <input type="number" class="form-control" name="gweight" id="gweight" value="{{ old('gweight', $tbolh->gweight) }}">
                     </div>
 
                     <div class="col-md-3 mt-3">
                         <label for="nweight" class="form-label">Net Weight (Kg)</label>
-                        <input type="number" class="form-control" name="nweight" id="nweight" value="{{ old('nweight') }}">
+                        <input type="number" class="form-control" name="nweight" id="nweight" value="{{ old('nweight', $tbolh->nweight) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="npolis" class="form-label">Insurance Polis No.</label>
-                        <input type="text" class="form-control" name="npolis" id="npolis" value="{{ old('npolis') }}">
+                        <input type="text" class="form-control" name="npolis" id="npolis" value="{{ old('npolis', $tbolh->npolis) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="tpiud" class="form-label">Insurance Polis Date</label>
-                        <input type="date" class="form-control" name="tpiud" id="tpiud" value="{{ old('tpiud') }}">
+                        <input type="date" class="form-control" name="tpiud" id="tpiud" value="{{ old('tpiud', $tbolh->tpiud) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="npiud" class="form-label">PIB No.</label>
-                        <input type="text" class="form-control" name="npiud" id="npiud" value="{{ old('npiud') }}">
+                        <input type="text" class="form-control" name="npiud" id="npiud" value="{{ old('npiud', $tbolh->npiud) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="tpiud" class="form-label">PIB Date</label>
-                        <input type="date" class="form-control" name="tpiud" id="tpiud" value="{{ old('tpiud') }}">
+                        <input type="date" class="form-control" name="tpiud" id="tpiud" value="{{ old('tpiud', $tbolh->tpiud) }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="clrag" class="form-label">Clearing Agent</label>
-                        <input type="text" class="form-control" name="clrag" id="clrag" value="{{ old('clrag') }}">
+                        <input type="text" class="form-control" name="clrag" id="clrag" value="{{ old('clrag', $tbolh->clrag) }}">
                     </div>
                 </div>
 
@@ -159,37 +160,37 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="I01" class="form-label">Biaya Transport</label>
-                        <input type="text" class="form-control currency" name="I01" id="I01" value="{{ old('I01') }}">
+                        <input type="text" class="form-control currency" name="I01" id="I01" value="{{ old('I01', $biaya['I01'] ?? '') }}">
                     </div>
                     
                     <div class="col-md-6 mt-3">
                         <label for="I02" class="form-label">Biaya Asuransi</label>
-                        <input type="text" class="form-control currency" name="I02" id="I02" value="{{ old('I02') }}">
+                        <input type="text" class="form-control currency" name="I02" id="I02" value="{{ old('I02', $biaya['I02'] ?? '') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="I03" class="form-label">Biaya Sewa Gudang</label>
-                        <input type="text" class="form-control currency" name="I03" id="I03" value="{{ old('I03') }}">
+                        <input type="text" class="form-control currency" name="I03" id="I03" value="{{ old('I03', $biaya['I03'] ?? '') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="I04" class="form-label">Biaya Handling Charges</label>
-                        <input type="text" class="form-control currency" name="I04" id="I04" value="{{ old('I04') }}">
+                        <input type="text" class="form-control currency" name="I04" id="I04" value="{{ old('I04', $biaya['I04'] ?? '') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="I05" class="form-label">Freight Collect</label>
-                        <input type="text" class="form-control currency" name="I05" id="I05" value="{{ old('I05') }}">
+                        <input type="text" class="form-control currency" name="I05" id="I05" value="{{ old('I05', $biaya['I05'] ?? '') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="I06" class="form-label">BEA Masuk</label>
-                        <input type="text" class="form-control currency" name="I06" id="I06" value="{{ old('I06') }}">
+                        <input type="text" class="form-control currency" name="I06" id="I06" value="{{ old('I06', $biaya['I06'] ?? '') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="I07" class="form-label">Biaya Lain - lain</label>
-                        <input type="text" class="form-control currency" name="I07" id="I07" value="{{ old('I07') }}">
+                        <input type="text" class="form-control currency" name="I07" id="I07" value="{{ old('I07', $biaya['I07'] ?? '') }}">
                     </div>
                 </div>
 
@@ -207,7 +208,7 @@
                         <h5 class="modal-title">Konfirmasi Simpan</h5>
                     </div>
                     <div class="modal-body">
-                        <p>Apakah anda yakin ingin menyimpan data?</p>
+                        <p>Apakah anda yakin ingin menyimpan perubahan data?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -242,6 +243,13 @@
 
         <script>
             document.querySelectorAll('.currency').forEach(function(el) {
+                // kalo sudah ada value langsung format
+                let initValue = el.value.replace(/\D/g,''); 
+                if(initValue){
+                    el.value = 'Rp. ' + new Intl.NumberFormat('id-ID').format(initValue);
+                }
+                
+                // format ketika input
                 el.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g,''); // hapus semua non-digit
                     if(value){
@@ -262,7 +270,7 @@
 
         {{-- Modal Konfirmasi simpan data --}}
         <script>
-            const form = document.getElementById('form-blawb');
+            const form = document.getElementById('form-edit-blawb');
             const btnKonfirmasi = document.getElementById('btnKonfirmasiSimpan');
 
             // cegah submit default

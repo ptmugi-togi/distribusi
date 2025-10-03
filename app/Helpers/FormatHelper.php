@@ -39,4 +39,15 @@ if (! function_exists('formatCurrencyDetail')) {
             }
         }
     }
+
+    if (!function_exists('formatRupiahNull')) {
+        function formatRupiahNull($value)
+        {
+            if (is_null($value) || $value == 0) {
+                return '';
+            }
+
+            return 'Rp. ' . number_format($value, 0, ',', '.');
+        }
+    }
 }

@@ -119,5 +119,10 @@ Route::get('/pdf/print/{pono}', [PdfController::class, 'print'])->name('pdf.prin
 Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview'); // sementara dinonaktifkan
 Route::get('/pdf/printPi/{pono}', [PdfController::class, 'printPi'])->name('pdf_pi.print');
 
-Route::get('/blawb', [BlawbController::class,'index'])->name('blawb.index');
-Route::get('/blawb/create', [BlawbController::class,'create'])->name('blawb.create');
+Route::get('/blawb', [BlawbController::class,'index'])->middleware('auth')->name('blawb.index');
+Route::get('/blawb/create', [BlawbController::class,'create'])->middleware('auth')->name('blawb.create');
+Route::post('/blawb/store', [BlawbController::class,'store'])->middleware('auth')->name('blawb.store');
+Route::get('/blawb/{id}/detail', [BlawbController::class,'show'])->middleware('auth')->name('blawb.detail');
+Route::get('/blawb/{id}/edit', [BlawbController::class,'edit'])->middleware('auth')->name('blawb.edit');
+Route::put('/blawb/{id}', [BlawbController::class,'update'])->middleware('auth')->name('blawb.update');
+Route::delete('/blawb/{id}/delete', [BlawbController::class,'destroy'])->middleware('auth')->name('blawb.delete');
