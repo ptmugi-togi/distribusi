@@ -17,9 +17,7 @@ class BlawbController extends Controller
      */
     public function index()
     {
-        $tbolh = tbolh:: with(['vendor', 'currency', 'branches', 'formcode'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $tbolh = tbolh:: with(['vendor', 'currency', 'branches', 'formcode'])->get();
         return view('purchasing.blawb.blawb_index', compact('tbolh'));
     }
 
