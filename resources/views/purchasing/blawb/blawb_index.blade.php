@@ -52,7 +52,9 @@
                       </td>
                       <td>{{ $tbolh->vendor->supna ?? '-' }}</td>
                       <td class="text-center">{{ $tbolh->npiud}}</td>
-                      <td class="text-center">{{ $tbolh->tpiud}}</td>
+                      <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tbolh->tpiud)->format('Y-m-d') }}">
+                        {{ \Carbon\Carbon::parse($tbolh->tpiud)->format('d/m/Y') }}
+                      </td>
                       <td class="text-center">
                         <a href="/blawb/{{ $tbolh->rinum }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                         <a href="/blawb/{{ $tbolh->rinum }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

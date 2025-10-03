@@ -106,6 +106,7 @@ class BlawbController extends Controller
         $tbolh = Tbolh::findOrFail($id);
         $tbolh->fill($request->except(['I01','I02','I03','I04','I05','I06','I07']));
         $tbolh['user_id'] = Auth::user()->id;
+        $tbolh['updated_at'] = date('Y-m-d H:i:s');
         $tbolh['updated_by'] = Auth::user()->name;
         
         $tbolh->save();
