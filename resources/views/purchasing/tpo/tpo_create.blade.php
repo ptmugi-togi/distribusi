@@ -77,18 +77,8 @@
                         <label for="tdesc" class="form-label">Deskripsi TOP</label>
                         <input type="text" class="form-control" placeholder="Cth : Bulan Kredit" name="tdesc" id="tdesc" value="{{ old('tdesc') }}">
                     </div>
-
-                    <div class="col-md-3 mt-3">
-                        <label for="freight_cost" class="form-label">Freight Cost</label>
-                        <input type="text" class="form-control" id="freight_cost_display"
-                            value="{{ old('freight_cost') ? number_format(old('freight_cost'), 2, ',', '.') : '' }}"
-                            placeholder="Cth : 1000000">
-
-                        <input type="text" name="freight_cost" id="freight_cost" 
-                            value="{{ old('freight_cost') }}" hidden>
-                    </div>
                     
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-3 mt-3">
                         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="curco" id="currency" style="width: 100%;" required>
                             <option value="" {{ old('curco') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Currency Code</option>
@@ -106,6 +96,15 @@
                         <label for="currency_rate" class="form-label" id="currency_rate_label">Kurs (IDR)</label>
                         <input type="text" class="form-control" id="currency_rate_display" value="{{ old('currency_rate') ? 'Rp ' . number_format(old('currency_rate'), 2, ',', '.') : '' }}" required>
                         <input type="text" class="form-control" name="currency_rate" id="currency_rate" value="{{ old('currency_rate') }}" hidden required>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="freight_cost" class="form-label">Freight Cost</label>
+                        <input type="text" class="form-control" id="freight_cost_display"
+                            value="{{ old('freight_cost') ? number_format(old('freight_cost'), 2, ',', '.') : '' }}"
+                            placeholder="Cth : 1000000">
+
+                        <input type="text" name="freight_cost" id="freight_cost" value="{{ old('freight_cost') }}" hidden>
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -231,6 +230,56 @@
                 $('#potype').on('change', toggleHSBM);
             });
         </script>
+
+        <script>
+            $(document).ready(function () {
+                $('#currency').on('change', function () {
+                    const curco = $(this).val();
+                    if (!curco) return;
+
+                    $.ajax({
+                        url: `/get-currency-rate/${curco}`,
+                        method: 'GET',
+                        success: function (response) {
+                            console.log(response); // lihat di console
+
+                            if (response.success) {
+                                const rate = parseFloat(response.crate);
+
+                                if (!isNaN(rate)) {
+                                    // isi ke hidden
+                                    $('#currency_rate').val(rate);
+
+                                    // tampilkan ke display
+                                    $('#currency_rate_display').val(
+                                        new Intl.NumberFormat('id-ID', {
+                                            style: 'currency',
+                                            currency: 'IDR',
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }).format(rate)
+                                    );
+                                } else {
+                                    $('#currency_rate').val('');
+                                    $('#currency_rate_display').val('');
+                                }
+                            } else {
+                                alert('Currency tidak ditemukan.');
+                                $('#currency_rate').val('');
+                                $('#currency_rate_display').val('');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error(xhr.responseText);
+                            alert('Gagal mengambil data kurs dari server.');
+                            $('#currency_rate').val('');
+                            $('#currency_rate_display').val('');
+                        }
+                    });
+                });
+            });
+            </script>
+
 
         <script>
             function formatCurrency(value, currency) {
