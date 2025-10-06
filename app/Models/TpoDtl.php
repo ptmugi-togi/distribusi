@@ -27,6 +27,7 @@ class TpoDtl extends Model
         'weigh',
         'berat',
         'price',
+        'netpr',
         'odisp',
         'edeld',
         'earrd',
