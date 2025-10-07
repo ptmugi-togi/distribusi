@@ -58,36 +58,14 @@
                       <td class="text-center">
                         <a href="/blawb/{{ $tbolh->rinum }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                         <a href="/blawb/{{ $tbolh->rinum }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <a href="#"
-                              class="badge bg-danger"
-                              data-bs-toggle="modal"
-                              data-bs-target="#modalDeleteBlAwb-{{ $tbolh->rinum }}"
-                              data-tooltip="true"
-                              data-bs-placement="top"
-                              title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </a>
-
-                        <div class="modal fade" id="modalDeleteBlAwb-{{ $tbolh->rinum }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Hapus data BL / AWB?</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Yakin ingin menghapus data BL / AWB "RI {{ $tbolh->rinum }}" ini?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                      <form action="/blawb/{{ $tbolh->rinum }}/delete" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Hapus</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <form id="delete-blawb-{{ $tbolh->rinum }}" action="/blawb/{{ $tbolh->rinum }}/delete" method="POST" style="display:inline;">
+                          @csrf
+                          @method('DELETE')
+                          <a
+                            class="badge bg-danger border-0 btn-delete-blawb" data-rinum="{{ $tbolh->rinum }}" data-tooltip="true" data-bs-placement="top" title="Delete">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        </form>
                       </td>
                       <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tbolh->created_at)->format('Y-m-d H:i:s') }}">
                         {{ \Carbon\Carbon::parse($tbolh->created_at)->format('d/m/Y H:i:s') }}
@@ -114,6 +92,44 @@
             { targets: [8], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
           ]
         });
+      });
+    </script>
+
+    {{-- modal delete data blawb --}}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          $(document).on('click', '.btn-delete-blawb', function (e) {
+              e.preventDefault();
+
+              const rinum = $(this).data('rinum');
+              const form = document.getElementById(`delete-blawb-${rinum}`);
+
+              Swal.fire({
+                  title: 'Hapus Data BL / AWB?',
+                  text: `Yakin ingin menghapus data BL / AWB "RI ${rinum}" ini?`,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: 'Ya, Hapus!',
+                  cancelButtonText: 'Batal',
+                  confirmButtonColor: '#d33',
+                  cancelButtonColor: '#6c757d'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      Swal.fire({
+                          title: 'Menghapus...',
+                          text: 'Mohon tunggu sebentar.',
+                          icon: 'info',
+                          allowOutsideClick: false,
+                          allowEscapeKey: false,
+                          showConfirmButton: false,
+                          didOpen: () => {
+                              Swal.showLoading();
+                              form.submit(); 
+                          }
+                      });
+                  }
+              });
+          });
       });
     </script>
 @endpush
