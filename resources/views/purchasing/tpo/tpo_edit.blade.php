@@ -254,24 +254,6 @@
                     <button type="submit" class="btn btn-primary">Perbaharui Data</button>
                 </div>
             </form>
-
-            {{-- modal konfirmasi edit data --}}
-            <div class="modal fade" id="modalKonfirmasi" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Konfirmasi Ubah Data</h5>
-                    </div>
-                    <div class="modal-body">
-                        <p>Apakah anda yakin ingin mengubah data?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" id="btnKonfirmasiEdit" class="btn btn-primary">Ya, Ubah Data</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
@@ -673,29 +655,47 @@
 
         {{-- Modal Konfirmasi edit data --}}
         <script>
-            const form = document.getElementById('form-edit-po');
-            const btnKonfirmasi = document.getElementById('btnKonfirmasiEdit');
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('form-edit-po');
 
-            // cegah submit default
-            form.addEventListener('submit', function (e) {
-            e.preventDefault();
+                if (!form) return; // amankan kalau form tidak ada di halaman
 
-            // jalankan validasi browser dulu
-            if (form.checkValidity()) {
-                // tampilkan modal konfirmasi
-                const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
-                modal.show();
-            } else {
-                // trigger bootstrap validation styling
-                form.classList.add('was-validated');
-            }
-            });
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault(); // cegah submit langsung
 
-            // kalau user setuju simpan
-            btnKonfirmasi.addEventListener('click', () => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalKonfirmasi'));
-                modal.hide();
-                form.submit();
+                    // validasi form bawaan browser dulu
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                        return;
+                    }
+
+                    // tampilkan konfirmasi SweetAlert
+                    Swal.fire({
+                        title: 'Konfirmasi Perubahan',
+                        text: 'Apakah Anda yakin ingin menyimpan perubahan Purchase Order ini?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Simpan!',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Menyimpan...',
+                                text: 'Mohon tunggu sebentar.',
+                                icon: 'info',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    form.submit(); // submit form sebenarnya
+                                }
+                            });
+                        }
+                    });
+                });
             });
         </script>
     @endpush

@@ -173,24 +173,6 @@
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
             </form>
-
-            {{-- modal konfirmasi simpan data --}}
-            <div class="modal fade" id="modalKonfirmasi" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Konfirmasi Simpan</h5>
-                    </div>
-                    <div class="modal-body">
-                        <p>Apakah anda yakin ingin menyimpan data?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="button" id="btnKonfirmasiSimpan" class="btn btn-primary">Ya, Simpan</button>
-                    </div>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
@@ -701,27 +683,47 @@
 
         {{-- Modal Konfirmasi simpan data --}}
         <script>
-            const form = document.getElementById('form-po');
-            const btnKonfirmasi = document.getElementById('btnKonfirmasiSimpan');
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.getElementById('form-po');
 
-            // cegah submit default
-            form.addEventListener('submit', function (e) {
-            e.preventDefault();
+                if (!form) return; 
 
-            // jalankan validasi browser dulu
-            if (form.checkValidity()) {
-                // tampilkan modal konfirmasi
-                const modal = new bootstrap.Modal(document.getElementById('modalKonfirmasi'));
-                modal.show();
-            } else {
-                // trigger bootstrap validation styling
-                form.classList.add('was-validated');
-            }
-            });
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
 
-            // kalau user setuju simpan
-            btnKonfirmasi.addEventListener('click', () => {
-            form.submit(); // submit form beneran
+                    // Jalankan validasi 
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                        return;
+                    }
+
+                    // SweetAlert
+                    Swal.fire({
+                        title: 'Konfirmasi Simpan',
+                        text: 'Apakah Anda yakin ingin menyimpan data Purchase Order ini?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Simpan!',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Menyimpan...',
+                                text: 'Mohon tunggu sebentar.',
+                                icon: 'info',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showConfirmButton: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    form.submit();
+                                }
+                            });
+                        }
+                    });
+                });
             });
         </script>
     @endpush

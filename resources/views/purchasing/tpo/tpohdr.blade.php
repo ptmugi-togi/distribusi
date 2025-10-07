@@ -65,38 +65,14 @@
                         <a href="/tpo/{{ $tpo->pono }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                         <a href="/tpo/{{ $tpo->pono }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
                         @if($tpo->tpodtl->every(fn($d) => $d->rcqty == 0 && $d->inqty == 0))
-                            <a href="#"
-                              class="badge bg-danger"
-                              data-bs-toggle="modal"
-                              data-bs-target="#modalDeleteTpo-{{ $tpo->pono }}"
-                              data-tooltip="true"
-                              data-bs-placement="top"
-                              title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                          <form id="delete-tpo-{{ $tpo->pono }}" action="{{ url('/tpo/'.$tpo->pono.'/delete') }}" method="POST" style="display:inline;">
+                              @csrf
+                              @method('DELETE')
+                              <a class="badge bg-danger btn-delete-tpo" data-pono="{{ $tpo->pono }}" data-tooltip="true" data-bs-placement="top" title="Delete">
+                                  <i class="bi bi-trash"></i>
+                              </a>
+                          </form>
                         @endif
-
-
-                        <div class="modal fade" id="modalDeleteTpo-{{ $tpo->pono }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Hapus TPO?</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Yakin ingin menghapus data PO "{{ $tpo->pono }}" ini?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <form action="{{ url('/tpo/'.$tpo->pono.'/delete') }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Hapus</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                       </td>
                       <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tpo->created_at)->format('Y-m-d H:i:s') }}">
                         {{ \Carbon\Carbon::parse($tpo->created_at)->format('d/m/Y H:i:s') }}
@@ -125,6 +101,46 @@
             });
           });
         </script>
+
+        {{-- modal hapus data po --}}
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+              // Event delegation untuk semua tombol hapus
+              $(document).on('click', '.btn-delete-tpo', function (e) {
+                  e.preventDefault();
+
+                  const pono = $(this).data('pono');
+                  const form = document.getElementById(`delete-tpo-${pono}`);
+
+                  Swal.fire({
+                      title: 'Hapus TPO?',
+                      text: `Yakin ingin menghapus data PO "${pono}" ini?`,
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonText: 'Ya, Hapus!',
+                      cancelButtonText: 'Batal',
+                      confirmButtonColor: '#d33',
+                      cancelButtonColor: '#6c757d'
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          Swal.fire({
+                              title: 'Menghapus...',
+                              text: 'Mohon tunggu sebentar.',
+                              icon: 'info',
+                              allowOutsideClick: false,
+                              allowEscapeKey: false,
+                              showConfirmButton: false,
+                              didOpen: () => {
+                                  Swal.showLoading();
+                                  form.submit(); // kirim form DELETE
+                              }
+                          });
+                      }
+                  });
+              });
+          });
+        </script>
+
     @endpush
 
 @endsection
