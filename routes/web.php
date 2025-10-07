@@ -24,6 +24,7 @@ use App\Http\Controllers\OcController;
 use App\Http\Controllers\TpoController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\BlawbController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,3 +127,13 @@ Route::get('/blawb/{id}/detail', [BlawbController::class,'show'])->middleware('a
 Route::get('/blawb/{id}/edit', [BlawbController::class,'edit'])->middleware('auth')->name('blawb.edit');
 Route::put('/blawb/{id}', [BlawbController::class,'update'])->middleware('auth')->name('blawb.update');
 Route::delete('/blawb/{id}/delete', [BlawbController::class,'destroy'])->middleware('auth')->name('blawb.delete');
+
+Route::get('/invoice', [InvoiceController::class,'index'])->middleware('auth')->name('invoice.index');
+Route::get('/invoice/create', [InvoiceController::class,'create'])->middleware('auth')->name('invoice.create');
+Route::get('/get-po-by-supplier/{supno}', [InvoiceController::class, 'getPoBySupplier']);
+Route::get('/get-items-by-po/{pono}', [InvoiceController::class, 'getItemsByPo']);
+Route::post('/invoice/store', [InvoiceController::class,'store'])->middleware('auth')->name('invoice.store');
+// Route::get('/invoice/{id}/detail', [InvoiceController::class,'show'])->middleware('auth')->name('invoice.detail');
+// Route::get('/invoice/{id}/edit', [InvoiceController::class,'edit'])->middleware('auth')->name('invoice.edit');
+// Route::put('/invoice/{id}', [InvoiceController::class,'update'])->middleware('auth')->name('invoice.update');
+// Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->middleware('auth')->name('invoice.delete');

@@ -130,6 +130,13 @@
         </ul>
         <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="{{ route('invoice.index') }}">
+            <i class="bi bi-circle"></i><span>Invoice</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
             <a href="{{ route('tpo.index') }}">
             <i class="bi bi-circle"></i><span>PO</span>
             </a>
