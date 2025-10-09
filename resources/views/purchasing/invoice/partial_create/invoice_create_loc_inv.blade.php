@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-6 mt-3">
         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
-        <select class="select2 form-control" name="supno[]" id="supno" required>
+        <select class="select2 form-control" name="supno" id="supno" required>
             <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
             @foreach($vendors as $v)
                 <option
@@ -16,6 +16,11 @@
     <div class="col-md-6 mt-3">
         <label for="invno" class="form-label">Invoice no.</label><span class="text-danger"> *</span>
         <input type="number" class="form-control" name="invno" id="invno" value="{{ old('invno') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        @error('invno')
+            <span class="text-danger">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
 
     <div class="col-md-6 mt-3">
@@ -29,6 +34,7 @@
     </div>
 
     <input type="text" name="braco" id="braco" value="PST" hidden>
+    <input type="text" name="formc" id="formc" value="RI" hidden>
 
     <div class="col-md-6 mt-3">
         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
@@ -47,8 +53,15 @@
 
 <hr class="my-4">
 
-@include('purchasing.invoice.partial.invoice_create_detail_loc_inv')
+<div class="row">
+    <h3 class="my-2">Invoice Detail</h3>
+    <div class="accordion" id="accordionInvoiceLocInv">
+        @foreach (old('opron', [null]) as $i => $oldOpron)
+            @include('purchasing.invoice.partial_create.invoice_create_detail_loc_inv', ['i' => $i, 'oldOpron' => $oldOpron])
+        @endforeach
+    </div>
+</div>
 
 <div class="text-end">
-    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoice()">Tambah data Invoice</button>
+    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoiceLocInv()">Tambah data Invoice</button>
 </div>

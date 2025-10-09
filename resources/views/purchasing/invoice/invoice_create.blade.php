@@ -23,21 +23,21 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <div class="col-md-6 mt-3">
                         <label for="potype">PO Type</label>
-                        <select class="form-control select2" id="potype">
+                        <select class="form-control select2" id="potype" name="potype">
                             <option value="" disabled {{ old('potype') ? '' : 'selected' }}>Silahkan pilih PO Type</option>
-                            <option value="PO">Lokal</option>
-                            <option value="PN">Inventaris</option>
-                            <option value="PI">Import</option>
+                            <option value="PO" {{ old('potype') == 'PO' ? 'selected' : '' }}>Lokal</option>
+                            <option value="PN" {{ old('potype') == 'PN' ? 'selected' : '' }}>Inventaris</option>
+                            <option value="PI" {{ old('potype') == 'PI' ? 'selected' : '' }}>Import</option>
                         </select>
                     </div>
                 </div>
 
                 <div id="content-import" style="display:none;">
-                    @include('purchasing.invoice.partial.invoice_create_import')
+                    @include('purchasing.invoice.partial_create.invoice_create_import')
                 </div>
 
                 <div id="content-loc-inv" style="display:none;">
-                    @include('purchasing.invoice.partial.invoice_create_loc_inv')
+                    @include('purchasing.invoice.partial_create.invoice_create_loc_inv')
                 </div>
 
                 <div class="mt-3 d-flex justify-content-between">
@@ -49,6 +49,123 @@
     </main>
 
     @push('scripts')
+        <script>
+            let selectedSupplier = null;
+
+            // simpan pilihan supplier 
+            $(document).on('change', 'select[name="supno"]', function () {
+                selectedSupplier = $(this).val();
+            });
+        </script>
+
+        {{-- old value --}}
+        <script>
+            $(document).ready(function () {
+                $('.select2').select2({ width: '100%' });
+
+                const oldSupno = @json(old('supno'));
+                const oldPono = @json(old('pono', []));
+                const oldOpron = @json(old('opron', []));
+                const oldHsn = @json(old('hsn', []));
+                const oldPotype = @json(old('potype'));
+
+                let $formSection;
+
+                if (oldPotype === 'PI') {
+                    $formSection = $('#content-import');
+                } else if (oldPotype === 'PO' || oldPotype === 'PN') {
+                    $formSection = $('#content-loc-inv');
+                } else {
+                    return;
+                }
+
+                if (!oldSupno) {
+                    return;
+                }
+
+                const $supSelect = $('select[name="supno"]');
+                $supSelect.val(oldSupno).trigger('change.select2');
+
+                $.getJSON(`/get-po-by-supplier/${oldSupno}`).then(async (response) => {
+
+                    if (!response.success || response.data.length === 0) {
+                        return;
+                    }
+
+                    let poOptions = '<option value="" disabled>Pilih No. PO</option>';
+                    response.data.forEach(po => {
+                        poOptions += `<option value="${po.pono}">${po.pono}</option>`;
+                    });
+
+                    $formSection.find('select[name="pono[]"]').each(function (i) {
+                        $(this).html(poOptions).trigger('change.select2');
+                    });
+
+                    // Loop setiap baris yang ada old value
+                    for (let i = 0; i < oldPono.length; i++) {
+                        const pono = oldPono[i];
+                        const opron = oldOpron[i];
+                        const hsn = oldHsn[i];
+
+                        if (!pono) continue;
+
+                        const $accordion = $formSection.find('.accordion-item').eq(i);
+                        const $ponoSelect = $accordion.find('select[name="pono[]"]');
+                        const $opronSelect = $accordion.find('select[name="opron[]"]');
+                        const $hsnSelect = $accordion.find('select[name="hsn[]"]');
+
+                        $ponoSelect.val(pono).trigger('change.select2');
+
+                        const res = await $.getJSON(`/get-items-by-po/${pono}`);
+
+                        if (res.success && res.data.length > 0) {
+                            let opronOptions = '<option value="" disabled>Pilih Barang</option>';
+                            res.data.forEach(item => {
+                                opronOptions += `
+                                    <option value="${item.opron}"
+                                        data-qty="${item.poqty}"
+                                        data-price="${item.netpr}"
+                                        data-stdqu="${item.stdqu}">
+                                        ${item.opron} - ${item.prona}
+                                    </option>`;
+                            });
+                            $opronSelect.html(opronOptions).trigger('change.select2');
+
+                            if (opron) {
+                                $opronSelect.val(opron).trigger('change'); // pilih value
+                                $opronSelect.trigger({
+                                    type: 'select2:select',
+                                    params: { data: { id: opron, text: $opronSelect.find(':selected').text() } }
+                                });
+                            }
+
+
+                            const selected = $opronSelect.find(':selected');
+                            const qty = selected.data('qty') || '';
+                            const stdqu = selected.data('stdqu') || '';
+                            const price = selected.data('price') || '';
+
+                            const $body = $accordion.find('.accordion-body');
+                            $body.find('.poqty').val(qty);
+                            $body.find('.unit-label').text(stdqu);
+                            $body.find('input[name="netpr[]"]').val(price);
+                            $body.find('.stdqu-input').val(stdqu);
+
+                        }
+                        if (hsn && $hsnSelect.length) {
+                            $hsnSelect.val(hsn).trigger('change.select2');
+                        }
+                    }
+                });
+            });
+        </script>
+
+        {{-- add invoice lokal inventaris --}}
+        @include('purchasing.invoice.partial_create.add_invoice_loc_inv')
+
+        {{-- add invoice import --}}
+        @include('purchasing.invoice.partial_create.add_invoice_import')
+        
         {{-- menampilkan form Invoice berdasarkan pilihan potype --}}
         <script>
             $(document).ready(function() {
@@ -81,100 +198,172 @@
 
         {{-- price input --}}
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const currencySelect = $('.currency-selector');
+        document.addEventListener("DOMContentLoaded", function () {
+            const localeMap = {
+                IDR: 'id-ID',
+                USD: 'en-US',
+                EUR: 'de-DE',
+                GBP: 'en-GB',
+                MYR: 'ms-MY',
+                SGD: 'en-SG',
+                CHF: 'de-CH'
+            };
 
-                const localeMap = {
-                    IDR: 'id-ID',
-                    USD: 'en-US',
-                    EUR: 'de-DE',
-                    GBP: 'en-GB',
-                    MYR: 'ms-MY',
-                    SGD: 'en-SG',
-                    CHF: 'de-CH'
-                };
+            // 🔹 Fungsi bantu untuk parse angka dari input apapun
+            function parseCurrencyString(str) {
+                if (!str) return 0;
+                let clean = String(str).replace(/[^\d.,-]/g, '');
 
-                function formatCurrency(value, currencyCode) {
-                    if (!value) return '';
-                    const number = Number(String(value).replace(/[^\d]/g, ''));
-                    if (isNaN(number)) return value;
-                    const locale = localeMap[currencyCode] || 'id-ID';
-                    return new Intl.NumberFormat(locale, {
-                        style: 'currency',
-                        currency: currencyCode,
-                        minimumFractionDigits: 0
-                    }).format(number);
+                // Deteksi format (Eropa vs US)
+                if (clean.includes(',') && clean.includes('.')) {
+                    // format Eropa: 1.234,56
+                    if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                        clean = clean.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        // format US: 1,234.56
+                        clean = clean.replace(/,/g, '');
+                    }
+                } else if (clean.includes(',')) {
+                    // Bisa jadi format lokal
+                    const commaCount = (clean.match(/,/g) || []).length;
+                    if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
+                        clean = clean.replace(',', '.'); // 1200,55 → 1200.55
+                    } else {
+                        clean = clean.replace(/,/g, '');
+                    }
+                } else {
+                    clean = clean.replace(/[^\d.-]/g, '');
                 }
 
-                // fungsi untuk reformat semua input .currency
-                function reformatAll() {
-                    const selectedCurrency = currencySelect.val() || 'IDR';
-                    document.querySelectorAll('.currency').forEach(function(input) {
-                        const rawValue = input.value.replace(/[^\d]/g, '');
-                        if (rawValue) {
-                            input.value = formatCurrency(rawValue, selectedCurrency);
-                        }
-                    });
-                }
+                const number = parseFloat(clean);
+                return isNaN(number) ? 0 : number;
+            }
 
-                // langsung format ketika ketik
-                $(document).on('input', '.currency', function(e) {
-                    const selectedCurrency = currencySelect.val() || 'IDR';
-                    const rawValue = e.target.value.replace(/[^\d]/g, '');
-                    e.target.value = rawValue ? formatCurrency(rawValue, selectedCurrency) : '';
+            // 🔹 Format ke tampilan currency sesuai locale
+            function formatCurrency(value, currencyCode) {
+                const locale = localeMap[currencyCode] || 'id-ID';
+                const number = parseCurrencyString(value);
+                return new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currencyCode,
+                    minimumFractionDigits: 2
+                }).format(number);
+            }
+
+            // 🔹 Ambil kode currency aktif dari section
+            function getSelectedCurrency($context) {
+                const currency = $context.find('.currency-selector').val();
+                return currency || 'IDR';
+            }
+
+            // 🔹 Format ulang semua .currency di dalam satu container
+            function reformatAll($context) {
+                const selectedCurrency = getSelectedCurrency($context);
+                $context.find('.currency').each(function () {
+                    const val = $(this).val();
+                    if (val) {
+                        $(this).val(formatCurrency(val, selectedCurrency));
+                    }
                 });
+            }
 
-                // format ulang ketika user ganti mata uang
-                currencySelect.on('select2:select change', reformatAll);
-
-                // langsung format semua input (termasuk dari DB/old())
-                reformatAll();
-
-                // kalau ada elemen baru dimasukkan ke DOM (misal tambah invoice detail)
-                const observer = new MutationObserver(() => reformatAll());
-                observer.observe(document.body, { childList: true, subtree: true });
-
-                // hapus format sebelum submit
-                document.querySelector('form').addEventListener('submit', function() {
-                    document.querySelectorAll('.currency').forEach(function(input) {
-                        input.value = input.value.replace(/[^\d]/g, '');
-                    });
-                });
+            // 🟢 Saat user mengetik
+            $(document).on('input', '.currency', function (e) {
+                const val = e.target.value;
+                // Hapus semua simbol currency & spasi biar bebas input
+                e.target.value = val.replace(/[^\d.,-]/g, '');
             });
+
+            // 🟢 Saat user keluar dari input → format ke tampilan currency
+            $(document).on('blur', '.currency', function () {
+                const $context = $(this).closest('#content-import, #content-loc-inv');
+                const selectedCurrency = getSelectedCurrency($context);
+                const val = $(this).val();
+                if (val) {
+                    $(this).val(formatCurrency(val, selectedCurrency));
+                }
+            });
+
+            // 🟢 Saat input focus → hapus format (biar user bisa edit angka mentah)
+            $(document).on('focus', '.currency', function () {
+                const val = $(this).val();
+                const number = parseCurrencyString(val);
+                $(this).val(number ? number.toString().replace('.', ',') : '');
+            });
+
+            // 🔄 Ganti currency selector → reformat semua
+            $(document).on('select2:select change', '.currency-selector', function () {
+                const $context = $(this).closest('#content-import, #content-loc-inv');
+                reformatAll($context);
+            });
+
+            // 🔁 Format semua input saat halaman load
+            reformatAll($('#content-import'));
+            reformatAll($('#content-loc-inv'));
+
+            // 🔄 Jika ada elemen baru ditambahkan (misal tambah invoice)
+            const observer = new MutationObserver(() => {
+                reformatAll($('#content-import'));
+                reformatAll($('#content-loc-inv'));
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // Expose fungsi kalau dibutuhkan manual
+            window.reformatAll = reformatAll;
+        });
         </script>
+
 
         {{-- Ambil PO berdasarkan Supplier --}}
         <script>
             $(document).ready(function () {
-                $(document).on('change', 'select[name="supno[]"]', function () {
+                $(document).on('change', 'select[name="supno"]', function () {
                     const supno = $(this).val();
 
-                    // cari container form aktif (import atau lokal)
-                    const formSection = $(this).closest('#content-import').length ? '#content-import' : '#content-loc-inv';
-                    const $pono = $(formSection).find('select[name="pono[]"]');
+                    // cari section aktif (import atau lokal)
+                    const $formSection = $(this).closest('#content-import').length ? $('#content-import') : $('#content-loc-inv');
+                    const $ponoSelect = $formSection.find('select[name="pono[]"]');
+                    const $accordions = $formSection.find('.accordion-item');
+                    const $first = $formSection.find('.accordion-item').first();
+                    const $headerButton = $first.find('.accordion-button');
+
+                    // hapus selain accordion 1
+                    if ($accordions.length > 1) {
+                        $accordions.slice(1).remove();
+                    }
+
+                    // kosongkan form
+                    $first.find('input[type="text"], input[type="number"], input[type="hidden"]', 'input').val('');
+                    $first.find('select').val('').trigger('change.select2');
+                    $first.find('.unit-label').text('');
+                    $first.find('.stdqu-input').val('');
+                    if ($headerButton.text().trim() !== '') {
+                        $headerButton.contents().filter(function () {
+                            return this.nodeType === 3; // node type 3 itu text
+                        }).remove();
+                    }
 
                     if (!supno) return;
 
-                    $pono.html('<option value="">Loading...</option>');
+                    $ponoSelect.html('<option value="">Loading...</option>');
 
                     $.ajax({
                         url: `/get-po-by-supplier/${supno}`,
                         type: 'GET',
                         dataType: 'json',
                         success: function (response) {
-
                             if (response.success && response.data.length > 0) {
                                 let options = '<option value="" disabled selected>Pilih No. PO</option>';
                                 response.data.forEach(po => {
                                     options += `<option value="${po.pono}">${po.pono}</option>`;
                                 });
-                                $pono.html(options).trigger('change.select2');
+                                $ponoSelect.html(options).trigger('change.select2');
                             } else {
-                                $pono.html('<option value="">Tidak ada PO untuk supplier ini</option>');
+                                $ponoSelect.html('<option value="">Tidak ada PO untuk supplier ini</option>');
                             }
                         },
-                        error: function (xhr) {
-                            $pono.html('<option value="">Gagal memuat data PO</option>');
+                        error: function () {
+                            $ponoSelect.html('<option value="">Gagal memuat data PO</option>');
                         }
                     });
                 });
@@ -226,7 +415,7 @@
                     const price = selectedOption.data('price') || '';
 
                     const parent = $(this).closest('.accordion-body');
-                    parent.find('input[name="poqty[]"]').val(qty);
+                    parent.find('.poqty').val(qty);
                     parent.find('.unit-label').text(stdqu);
                     parent.find('input[name="netpr[]"]').val(price);
                     parent.find('.stdqu-input').val(stdqu);
@@ -304,46 +493,81 @@
         </script>
 
         {{-- Modal Konfirmasi simpan data --}}
-        <script>
-            $(document).ready(function() {
-                const form = document.getElementById('form-invoice');
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('form-invoice');
 
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-                    if (!form.checkValidity()) {
-                        form.classList.add('was-validated');
-                        return;
-                    }
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
 
-                    Swal.fire({
-                        title: 'Konfirmasi Simpan',
-                        text: 'Apakah Anda yakin ingin menyimpan data ini?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, Simpan!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Menyimpan...',
-                                text: 'Mohon tunggu sebentar',
-                                icon: 'info',
-                                showConfirmButton: false,
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                    form.submit();
+        Swal.fire({
+            title: 'Konfirmasi Simpan',
+            text: 'Apakah Anda yakin ingin menyimpan data ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Simpan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menyimpan...',
+                    text: 'Mohon tunggu sebentar',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+
+                        // 🧩 Pastikan fungsi parseCurrencyString tersedia dari script kamu
+                        function parseCurrencyString(str) {
+                            if (!str) return 0;
+                            let clean = String(str).replace(/[^\d.,-]/g, '');
+                            if (clean.includes(',') && clean.includes('.')) {
+                                if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                                    clean = clean.replace(/\./g, '').replace(',', '.');
+                                } else {
+                                    clean = clean.replace(/,/g, '');
                                 }
-                            });
+                            } else if (clean.includes(',')) {
+                                const commaCount = (clean.match(/,/g) || []).length;
+                                if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
+                                    clean = clean.replace(',', '.');
+                                } else {
+                                    clean = clean.replace(/,/g, '');
+                                }
+                            } else {
+                                clean = clean.replace(/[^\d.-]/g, '');
+                            }
+                            const number = parseFloat(clean);
+                            return isNaN(number) ? 0 : number;
                         }
-                    });
+
+                        // 🔥 Bersihkan semua input .currency dengan parser aman
+                        document.querySelectorAll('.currency').forEach(function(el) {
+                            const before = el.value;
+                            const parsed = parseCurrencyString(before);
+                            el.value = parsed.toString();
+                            console.log('Currency cleaned:', el.name, '| Before:', before, '| After:', el.value);
+                        });
+
+                        // ✅ Akhirnya submit benar-benar dilakukan
+                        form.submit();
+                    }
                 });
-            });
-        </script>
+            }
+        });
+    });
+});
+</script>
+
     @endpush
 
 @endsection

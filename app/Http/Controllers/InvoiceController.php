@@ -83,109 +83,20 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     DB::beginTransaction();
-
-    //     try {
-    //         $validated = $request->validate([
-    //             'supno.*' => 'required|string',
-    //             'invno' => 'required|numeric',
-    //             'invdt' => 'required|date',
-    //             'duedt' => 'required|date',
-    //             'curco' => 'required|string|max:10',
-    //             'tfreight' => 'nullable|numeric',
-    //             'pono.*' => 'required|string',
-    //             'opron.*' => 'required|string',
-    //             'inqty.*' => 'nullable|numeric',
-    //         ]);
-
-    //         // simpan ke tsupih
-    //         $headerId = DB::table('tsupih')->insertGetId([
-    //             'supno'   => $request->supno[0], 
-    //             'invno'   => $request->invno,
-    //             'invdt'   => $request->invdt,
-    //             'duedt'   => $request->duedt,
-    //             'curco'   => $request->curco,
-    //             'tfreight'=> $request->tfreight,
-    //             'blnum'   => $request->blnum,
-    //             'rinum'   => $request->rinum,
-    //             'braco'   => $request->braco,
-    //             'formc'   => $request->formc,
-    //             'created_at' => now(),
-    //             'updated_at' => now(),
-    //         ]);
-
-    //         // kirim ke tsupid
-    //         $oprons = $request->opron ?? [];
-    //         foreach ($oprons as $i => $opron) {
-    //             $pono   = $request->pono[$i] ?? null;
-    //             $inqty  = $request->inqty[$i] ?? null;
-    //             $poqty  = $request->poqty[$i] ?? null;
-    //             $netpr  = $request->netpr[$i] ?? 0;
-    //             $inprc  = $request->inprc[$i] ?? 0;
-    //             $ewprc  = $request->ewprc[$i] ?? 0;
-    //             $fobch  = $request->fobch[$i] ?? 0;
-    //             $incst  = $request->incst[$i] ?? 0;
-    //             $hsn    = $request->hsn[$i] ?? null;
-    //             $bm     = $request->bm[$i] ?? 0;
-    //             $ppn    = $request->ppn[$i] ?? 0;
-    //             $ppnbm  = $request->ppnbm[$i] ?? 0;
-    //             $pph    = $request->pph[$i] ?? 0;
-
-    //             DB::table('tsupid')->insert([
-    //                 'header_id' => $headerId,
-    //                 'pono'      => $pono,
-    //                 'opron'     => $opron,
-    //                 'poqty'     => $poqty,
-    //                 'inqty'     => $inqty,
-    //                 'netpr'     => $netpr,
-    //                 'inprc'     => $inprc,
-    //                 'ewprc'     => $ewprc,
-    //                 'fobch'     => $fobch,
-    //                 'incst'     => $incst,
-    //                 'hsn'       => $hsn,
-    //                 'bm'        => $bm,
-    //                 'ppn'       => $ppn,
-    //                 'ppnbm'     => $ppnbm,
-    //                 'pph'       => $pph,
-    //                 'created_at' => now(),
-    //                 'updated_at' => now(),
-    //             ]);
-
-    //             // update inqty ke podtl
-    //             if ($inqty !== null) {
-    //                 DB::table('podtl_tbl')
-    //                     ->where('pono', $pono)
-    //                     ->where('opron', $opron)
-    //                     ->update(['inqty' => $inqty]);
-    //             }
-    //         }
-
-    //         DB::commit();
-
-    //         return redirect()->route('invoice.index')->with('success', 'Data Invoice berhasil disimpan!');
-    //     } catch (\Throwable $th) {
-    //         DB::rollBack();
-    //         Log::error('Gagal simpan invoice: ' . $th->getMessage());
-    //         return back()->with('error', 'Gagal menyimpan data invoice: ' . $th->getMessage());
-    //     }
-    // }
-
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'invno' => 'required|unique:tsupih_tbl,invno',
+        ], [
+            'invno.unique' => 'Nomor Invoice sudah ada',
+        ]);
+
         DB::beginTransaction();
 
         try {
-            $validated = $request->validate([
-                'invno' => 'required|unique:tsupih_tbl,invno',
-            ], [
-                'invno.unique' => 'Nomor Invoice sudah ada',
-            ]);
-
             // simpan ke header
             $headerId = DB::table('tsupih_tbl')->insertGetId([
-                'supno'     => $request->supno[0] ?? null,
+                'supno'     => $request->supno,
                 'invno'     => $request->invno,
                 'invdt'     => $request->invdt,
                 'duedt'     => $request->duedt,
@@ -196,7 +107,10 @@ class InvoiceController extends Controller
                 'braco'     => $request->braco,
                 'formc'     => $request->formc,
                 'created_at'=> now(),
+                'created_by'=> Auth::user()->name,
                 'updated_at'=> now(),
+                'updated_by'=> Auth::user()->name,
+                'user_id'   => Auth::id(),
             ]);
 
             // simpan ke detail
@@ -207,23 +121,24 @@ class InvoiceController extends Controller
                 $poqty  = $request->poqty[$i] ?? null;
 
                 DB::table('tsupid_tbl')->insert([
-                    'header_id' => $headerId,
+                    'invno'     => $request->invno,
                     'pono'      => $pono,
+                    'potyp'     => $request->potype,
                     'opron'     => $opron,
-                    'poqty'     => str_replace(',', '', $poqty) ?? 0,
-                    'inqty'     => str_replace(',', '', $inqty) ?? 0,
-                    'netpr'     => str_replace(',', '', $request->netpr[$i] ?? 0),
-                    'inprc'     => str_replace(',', '', $request->inprc[$i] ?? 0),
-                    'ewprc'     => str_replace(',', '', $request->ewprc[$i] ?? 0),
-                    'fobch'     => str_replace(',', '', $request->fobch[$i] ?? 0),
-                    'incst'     => str_replace(',', '', $request->incst[$i] ?? 0),
+                    'inqty'     => $inqty,
+                    'stdqt'     => $request->stdqt[$i] ?? 0,
+                    'inprc'     => $request->inprc[$i] ?? 0,
+                    'inamt'     => ((float) str_replace(',', '', $inqty)) * ((float) str_replace(',', '', $request->inprc[$i] ?? 0)),
+                    'curco'     => $request->curco,
+                    'ewprc'     => $request->ewprc[$i] ?? 0,
+                    'fobch'     => $request->fobch[$i] ?? 0,
+                    'frcst'     => $request->tfreight ?? 0,
+                    'incst'     => $request->incst[$i] ?? 0,
                     'hsn'       => $request->hsn[$i] ?? null,
                     'bm'        => $request->bm[$i] ?? 0,
                     'ppn'       => $request->ppn[$i] ?? 0,
                     'ppnbm'     => $request->ppnbm[$i] ?? 0,
                     'pph'       => $request->pph[$i] ?? 0,
-                    'created_at'=> now(),
-                    'updated_at'=> now(),
                 ]);
 
                 // update inqty ke tabel podtl_tbl
@@ -231,10 +146,12 @@ class InvoiceController extends Controller
                     DB::table('podtl_tbl')
                         ->where('pono', $pono)
                         ->where('opron', $opron)
-                        ->update(['inqty' => $inqty]);
+                        ->update([
+                            'inqty' => $inqty,
+                        ]);
                 }
             }
-
+            
             DB::commit();
 
             return redirect()
@@ -243,7 +160,7 @@ class InvoiceController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
 
-            // Log error detail untuk debugging
+            // Log error 
             \Illuminate\Support\Facades\Log::error('Gagal simpan invoice: ' . $th->getMessage());
 
             return back()

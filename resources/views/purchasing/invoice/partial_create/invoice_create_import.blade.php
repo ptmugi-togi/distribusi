@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-6 mt-3">
         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
-        <select class="select2 form-control" name="supno[]" id="supno-import" required>
+        <select class="select2 form-control" name="supno" id="supno-import" required>
             <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
             @foreach($vendors as $v)
                 <option
@@ -16,6 +16,11 @@
     <div class="col-md-6 mt-3">
         <label for="invno" class="form-label">Invoice no.</label><span class="text-danger"> *</span>
         <input type="number" class="form-control" name="invno" id="invno-import" value="{{ old('invno') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        @error('invno')
+            <span class="text-danger">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
     </div>
 
     <div class="col-md-6 mt-3">
@@ -72,8 +77,16 @@
 
 <hr class="my-4">
 
-@include('purchasing.invoice.partial.invoice_create_detail_import')
+<div class="row">
+    <h3 class="my-2">Invoice Detail</h3>
+    <div class="accordion" id="accordionInvoiceImport">
+      @foreach (old('opron', [null]) as $i => $oldOpron)
+            @include('purchasing.invoice.partial_create.invoice_create_detail_import', ['i' => $i, 'oldOpron' => $oldOpron])
+        @endforeach
+    </div>
+</div>
+
 
 <div class="text-end">
-    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoice()">Tambah data Invoice</button>
+    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoiceImport()">Tambah data Invoice</button>
 </div>
