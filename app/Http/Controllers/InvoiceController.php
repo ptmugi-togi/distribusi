@@ -10,6 +10,7 @@ use illuminate\Support\Facades\Log;
 use App\Models\Mvendor;
 use App\Models\InvoiceHdr;
 use App\Models\InvoiceDtl;
+use App\Models\Mpromas;
 
 class InvoiceController extends Controller
 {
@@ -174,7 +175,17 @@ class InvoiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $invoice = InvoiceHdr::with(['vendor'])->findOrFail($id);
+        $invoice->details = \DB::table('tsupid_tbl as d')
+            ->leftJoin('podtl_tbl as p', function ($join) {
+                $join->on('d.pono', '=', 'p.pono')
+                    ->on('d.opron', '=', 'p.opron');
+            })
+            ->where('d.invno', $invoice->invno)
+            ->select('d.*', 'p.netpr', 'p.stdqu', 'p.poqty')
+            ->get();
+        
+        return view('purchasing.invoice.invoice_detail', compact('invoice'));
     }
 
     /**
