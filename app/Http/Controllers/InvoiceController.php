@@ -209,6 +209,33 @@ class InvoiceController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $invoice = DB::table('tsupih_tbl')->where('invno', $id)->first();
+            if (!$invoice) {
+                return redirect()
+                    ->route('invoice.index')
+                    ->with('error', "Invoice dengan nomor $id tidak ditemukan.");
+            }
+
+            DB::table('tsupid_tbl')->where('invno', $id)->delete();
+
+            DB::table('tsupih_tbl')->where('invno', $id)->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('invoice.index')
+                ->with('success', "Invoice $id berhasil dihapus!");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            \Log::error("Gagal menghapus invoice $id: " . $th->getMessage());
+
+            return redirect()
+                ->route('invoice.index')
+                ->with('error', "Gagal menghapus invoice: " . $th->getMessage());
+        }
     }
 }

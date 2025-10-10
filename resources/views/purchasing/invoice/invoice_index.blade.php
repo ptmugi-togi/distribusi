@@ -50,32 +50,32 @@
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($i->duedt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($i->duedt)->format('d/m/Y') }}
                         </td>
-                        <td class="text-center">RI {{ $i->rinum }}</td>
+                        <td class="text-center">RI {{ $i->invno }}</td>
                         <td class="text-center">
-                            <a href="/blawb/{{ $i->rinum }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                            <a href="/blawb/{{ $i->rinum }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a href="/invoice/{{ $i->invno }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                            <a href="/invoice/{{ $i->invno }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
                                 <a href="#"
                                 class="badge bg-danger"
                                 data-bs-toggle="modal"
-                                data-bs-target="#modalDeleteBlAwb-{{ $i->rinum }}"
+                                data-bs-target="#modalDeleteInvoice-{{ $i->invno }}"
                                 data-tooltip="true"
                                 data-bs-placement="top"
                                 title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </a>
 
-                            <div class="modal fade" id="modalDeleteBlAwb-{{ $i->rinum }}" tabindex="-1">
+                            <div class="modal fade" id="modalDeleteInvoice-{{ $i->invno }}" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Hapus data BL / AWB?</h5>
+                                            <h5 class="modal-title">Hapus data Invoice?</h5>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Yakin ingin menghapus data BL / AWB "RI {{ $i->rinum }}" ini?</p>
+                                            <p>Yakin ingin menghapus data Invoice "{{ $i->invno }}" ini?</p>
                                         </div>
                                         <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <form action="/blawb/{{ $i->rinum }}/delete" method="POST">
+                                        <form action="/invoice/{{ $i->invno }}/delete" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger">Hapus</button>
