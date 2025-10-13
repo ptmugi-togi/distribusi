@@ -80,7 +80,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                             data-bs-toggle="collapse" data-bs-target="#detail-{{ $i }}">
-                            {{ $detail->opron }} - {{ $detail->barang_name ?? '' }}
+                            {{ $detail->opron }} - {{ $detail->prona }}
                         </button>
                     </h2>
                     <div id="detail-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
@@ -93,7 +93,7 @@
                                 <div class="col-md-6 mt-2">
                                     <label class="form-label">Barang</label>
                                     <input type="text" class="form-control"
-                                        value="{{ $detail->opron }} - {{ $detail->barang_name ?? '' }}" disabled>
+                                        value="{{ $detail->opron }} - {{ $detail->prona }}" disabled>
                                 </div>
 
                                 <div class="col-md-6 mt-2">

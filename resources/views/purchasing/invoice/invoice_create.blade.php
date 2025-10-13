@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="mt-3 d-flex justify-content-between">
-                    <a href="{{ route('blawb.index') }}" class="btn btn-secondary">Kembali</a>
+                    <a href="{{ route('invoice.index') }}" class="btn btn-secondary">Kembali</a>
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
             </form>
@@ -198,119 +198,133 @@
 
         {{-- price input --}}
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const localeMap = {
-                IDR: 'id-ID',
-                USD: 'en-US',
-                EUR: 'de-DE',
-                GBP: 'en-GB',
-                MYR: 'ms-MY',
-                SGD: 'en-SG',
-                CHF: 'de-CH'
-            };
+            document.addEventListener("DOMContentLoaded", function () {
+                const localeMap = {
+                    IDR: 'id-ID',
+                    USD: 'en-US',
+                    EUR: 'de-DE',
+                    GBP: 'en-GB',
+                    MYR: 'ms-MY',
+                    SGD: 'en-SG',
+                    CHF: 'de-CH'
+                };
 
-            // 🔹 Fungsi bantu untuk parse angka dari input apapun
-            function parseCurrencyString(str) {
-                if (!str) return 0;
-                let clean = String(str).replace(/[^\d.,-]/g, '');
+                // Fungsi bantu untuk parse angka dari input apapun
+                function parseCurrencyString(str) {
+                    if (!str) return 0;
+                    let clean = String(str).replace(/[^\d.,-]/g, '');
 
-                // Deteksi format (Eropa vs US)
-                if (clean.includes(',') && clean.includes('.')) {
-                    // format Eropa: 1.234,56
-                    if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
-                        clean = clean.replace(/\./g, '').replace(',', '.');
+                    // Deteksi format (Eropa vs US)
+                    if (clean.includes(',') && clean.includes('.')) {
+                        // format Eropa
+                        if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                            clean = clean.replace(/\./g, '').replace(',', '.');
+                        } else {
+                            // format US
+                            clean = clean.replace(/,/g, '');
+                        }
+                    } else if (clean.includes(',')) {
+                        // Bisa jadi format lokal
+                        const commaCount = (clean.match(/,/g) || []).length;
+                        if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
+                            clean = clean.replace(',', '.');
+                        } else {
+                            clean = clean.replace(/,/g, '');
+                        }
                     } else {
-                        // format US: 1,234.56
-                        clean = clean.replace(/,/g, '');
+                        clean = clean.replace(/[^\d.-]/g, '');
                     }
-                } else if (clean.includes(',')) {
-                    // Bisa jadi format lokal
-                    const commaCount = (clean.match(/,/g) || []).length;
-                    if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
-                        clean = clean.replace(',', '.'); // 1200,55 → 1200.55
-                    } else {
-                        clean = clean.replace(/,/g, '');
-                    }
-                } else {
-                    clean = clean.replace(/[^\d.-]/g, '');
+
+                    const number = parseFloat(clean);
+                    return isNaN(number) ? 0 : number;
                 }
 
-                const number = parseFloat(clean);
-                return isNaN(number) ? 0 : number;
-            }
+                // format ke tampilan currency sesuai locale
+                function formatCurrency(value, currencyCode) {
+                    const locale = localeMap[currencyCode] || 'id-ID';
+                    const number = parseCurrencyString(value);
+                        if (currencyCode === 'SGD') {
+                            return new Intl.NumberFormat(locale, {
+                                style: 'currency',
+                                currency: currencyCode,
+                                currencyDisplay: 'code',  // tampil kode "SGD" bukan simbol "$"
+                                minimumFractionDigits: 2
+                            }).format(number);
+                        }
+                    return new Intl.NumberFormat(locale, {
+                        style: 'currency',
+                        currency: currencyCode,
+                        minimumFractionDigits: 2
+                    }).format(number);
+                }
 
-            // 🔹 Format ke tampilan currency sesuai locale
-            function formatCurrency(value, currencyCode) {
-                const locale = localeMap[currencyCode] || 'id-ID';
-                const number = parseCurrencyString(value);
-                return new Intl.NumberFormat(locale, {
-                    style: 'currency',
-                    currency: currencyCode,
-                    minimumFractionDigits: 2
-                }).format(number);
-            }
+                // ambil kode currency aktif dari section
+                function getSelectedCurrency($context) {
+                    let currency = $context.find('.currency-selector').val();
 
-            // 🔹 Ambil kode currency aktif dari section
-            function getSelectedCurrency($context) {
-                const currency = $context.find('.currency-selector').val();
-                return currency || 'IDR';
-            }
+                    if (!currency) {
+                        currency = $('select[name="curco"]').val() || 'IDR';
+                    }
 
-            // 🔹 Format ulang semua .currency di dalam satu container
-            function reformatAll($context) {
-                const selectedCurrency = getSelectedCurrency($context);
-                $context.find('.currency').each(function () {
+                    return currency;
+                }
+
+
+                // format ulang semua .currency di dalam satu container
+                function reformatAll($context) {
+                    const selectedCurrency = getSelectedCurrency($context);
+                    $context.find('.currency').each(function () {
+                        const val = $(this).val();
+                        if (val) {
+                            $(this).val(formatCurrency(val, selectedCurrency));
+                        }
+                    });
+                }
+
+                // saat user mengetik
+                $(document).on('input', '.currency', function (e) {
+                    const val = e.target.value;
+                    // Hapus semua simbol currency & spasi biar bebas input
+                    e.target.value = val.replace(/[^\d.,-]/g, '');
+                });
+
+                // saat user keluar dari input → format ke tampilan currency
+                $(document).on('blur', '.currency', function () {
+                    const $context = $(this).closest('#content-import, #content-loc-inv');
+                    const selectedCurrency = getSelectedCurrency($context);
                     const val = $(this).val();
                     if (val) {
                         $(this).val(formatCurrency(val, selectedCurrency));
                     }
                 });
-            }
 
-            // 🟢 Saat user mengetik
-            $(document).on('input', '.currency', function (e) {
-                const val = e.target.value;
-                // Hapus semua simbol currency & spasi biar bebas input
-                e.target.value = val.replace(/[^\d.,-]/g, '');
-            });
+                // saat input focus → hapus format dulu (biar user bisa edit angka mentah)
+                $(document).on('focus', '.currency', function () {
+                    const val = $(this).val();
+                    const number = parseCurrencyString(val);
+                    $(this).val(number ? number.toString().replace('.', ',') : '');
+                });
 
-            // 🟢 Saat user keluar dari input → format ke tampilan currency
-            $(document).on('blur', '.currency', function () {
-                const $context = $(this).closest('#content-import, #content-loc-inv');
-                const selectedCurrency = getSelectedCurrency($context);
-                const val = $(this).val();
-                if (val) {
-                    $(this).val(formatCurrency(val, selectedCurrency));
-                }
-            });
+                // Ganti currency selector → reformat semua
+                $(document).on('select2:select change', '.currency-selector', function () {
+                    const $context = $(this).closest('#content-import, #content-loc-inv');
+                    reformatAll($context);
+                });
 
-            // 🟢 Saat input focus → hapus format (biar user bisa edit angka mentah)
-            $(document).on('focus', '.currency', function () {
-                const val = $(this).val();
-                const number = parseCurrencyString(val);
-                $(this).val(number ? number.toString().replace('.', ',') : '');
-            });
-
-            // 🔄 Ganti currency selector → reformat semua
-            $(document).on('select2:select change', '.currency-selector', function () {
-                const $context = $(this).closest('#content-import, #content-loc-inv');
-                reformatAll($context);
-            });
-
-            // 🔁 Format semua input saat halaman load
-            reformatAll($('#content-import'));
-            reformatAll($('#content-loc-inv'));
-
-            // 🔄 Jika ada elemen baru ditambahkan (misal tambah invoice)
-            const observer = new MutationObserver(() => {
+                // Format semua input saat halaman load
                 reformatAll($('#content-import'));
                 reformatAll($('#content-loc-inv'));
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
 
-            // Expose fungsi kalau dibutuhkan manual
-            window.reformatAll = reformatAll;
-        });
+                // Jika ada elemen baru ditambahkan (misal tambah invoice)
+                const observer = new MutationObserver(() => {
+                    reformatAll($('#content-import'));
+                    reformatAll($('#content-loc-inv'));
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                // Expose fungsi kalau dibutuhkan manual
+                window.reformatAll = reformatAll;
+            });
         </script>
 
 
@@ -493,80 +507,77 @@
         </script>
 
         {{-- Modal Konfirmasi simpan data --}}
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById('form-invoice');
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const form = document.getElementById('form-invoice');
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
 
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            return;
-        }
-
-        Swal.fire({
-            title: 'Konfirmasi Simpan',
-            text: 'Apakah Anda yakin ingin menyimpan data ini?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Simpan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Menyimpan...',
-                    text: 'Mohon tunggu sebentar',
-                    icon: 'info',
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-
-                        // 🧩 Pastikan fungsi parseCurrencyString tersedia dari script kamu
-                        function parseCurrencyString(str) {
-                            if (!str) return 0;
-                            let clean = String(str).replace(/[^\d.,-]/g, '');
-                            if (clean.includes(',') && clean.includes('.')) {
-                                if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
-                                    clean = clean.replace(/\./g, '').replace(',', '.');
-                                } else {
-                                    clean = clean.replace(/,/g, '');
-                                }
-                            } else if (clean.includes(',')) {
-                                const commaCount = (clean.match(/,/g) || []).length;
-                                if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
-                                    clean = clean.replace(',', '.');
-                                } else {
-                                    clean = clean.replace(/,/g, '');
-                                }
-                            } else {
-                                clean = clean.replace(/[^\d.-]/g, '');
-                            }
-                            const number = parseFloat(clean);
-                            return isNaN(number) ? 0 : number;
-                        }
-
-                        // 🔥 Bersihkan semua input .currency dengan parser aman
-                        document.querySelectorAll('.currency').forEach(function(el) {
-                            const before = el.value;
-                            const parsed = parseCurrencyString(before);
-                            el.value = parsed.toString();
-                            console.log('Currency cleaned:', el.name, '| Before:', before, '| After:', el.value);
-                        });
-
-                        // ✅ Akhirnya submit benar-benar dilakukan
-                        form.submit();
+                    if (!form.checkValidity()) {
+                        form.classList.add('was-validated');
+                        return;
                     }
+
+                    Swal.fire({
+                        title: 'Konfirmasi Simpan',
+                        text: 'Apakah Anda yakin ingin menyimpan data ini?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Simpan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Menyimpan...',
+                                text: 'Mohon tunggu sebentar',
+                                icon: 'info',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+
+                                    function parseCurrencyString(str) {
+                                        if (!str) return 0;
+                                        let clean = String(str).replace(/[^\d.,-]/g, '');
+                                        if (clean.includes(',') && clean.includes('.')) {
+                                            if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                                                clean = clean.replace(/\./g, '').replace(',', '.');
+                                            } else {
+                                                clean = clean.replace(/,/g, '');
+                                            }
+                                        } else if (clean.includes(',')) {
+                                            const commaCount = (clean.match(/,/g) || []).length;
+                                            if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
+                                                clean = clean.replace(',', '.');
+                                            } else {
+                                                clean = clean.replace(/,/g, '');
+                                            }
+                                        } else {
+                                            clean = clean.replace(/[^\d.-]/g, '');
+                                        }
+                                        const number = parseFloat(clean);
+                                        return isNaN(number) ? 0 : number;
+                                    }
+
+                                    document.querySelectorAll('.currency').forEach(function(el) {
+                                        const before = el.value;
+                                        const parsed = parseCurrencyString(before);
+                                        el.value = parsed.toString();
+                                        console.log('Currency cleaned:', el.name, '| Before:', before, '| After:', el.value);
+                                    });
+
+                                    form.submit();
+                                }
+                            });
+                        }
+                    });
                 });
-            }
-        });
-    });
-});
-</script>
+            });
+        </script>
 
     @endpush
 

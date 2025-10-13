@@ -63,5 +63,5 @@
 </div>
 
 <div class="text-end">
-    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoiceLocInv()">Tambah data Invoice</button>
+    <button type="button" class="btn mt-3" style="background-color: #4456f1; color: #fff" onclick="addInvoiceLocInv()">Tambah Detail Invoice</button>
 </div>
