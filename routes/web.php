@@ -130,6 +130,7 @@ Route::delete('/blawb/{id}/delete', [BlawbController::class,'destroy'])->middlew
 
 Route::get('/invoice', [InvoiceController::class,'index'])->middleware('auth')->name('invoice.index');
 Route::get('/invoice/create', [InvoiceController::class,'create'])->middleware('auth')->name('invoice.create');
+Route::get('/get-rinum-by-supplier/{supno}', [InvoiceController::class, 'getRinumBySupplier']);
 Route::get('/get-po-by-supplier/{supno}', [InvoiceController::class, 'getPoBySupplier']);
 Route::get('/get-items-by-po/{pono}', [InvoiceController::class, 'getItemsByPo']);
 Route::post('/invoice/store', [InvoiceController::class,'store'])->middleware('auth')->name('invoice.store');

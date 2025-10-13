@@ -35,24 +35,17 @@
 
     <div class="col-md-6 mt-3">
         <input type="text" name="braco" id="braco-import" value="PST" hidden>
-        
         <input type="text" name="formc" id="formc-import" value="RI" hidden>
 
         <label for="rinum" class="form-label">Receipt Number</label><span class="text-danger"> *</span>
-        <div class="input-group">
-            <span class="input-group-text">RI</span>
-            <input type="number" class="form-control" placeholder="Cth : 250XXX" name="rinum" id="rinum-import" value="{{ old('rinum') }}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        </div>
-        @error('rinum')
-            <span class="text-danger">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
+        <select class="form-select select2" name="rinum" id="rinum-import" required>
+            <option value="">Pilih Supplier Terlebih Dahulu</option>
+        </select>
     </div>
 
     <div class="col-md-6 mt-3">
         <label for="blnum" class="form-label">BL / AWB no.</label><span class="text-danger"> *</span>
-        <input type="text" class="form-control" name="blnum" id="blnum-import" value="{{ old('blnum') }}">
+        <input type="text" class="form-control" name="blnum" id="blnum-import" value="{{ old('blnum') }}" readonly style="background-color: #e9ecef">
     </div>
 
     <div class="col-md-6 mt-3">

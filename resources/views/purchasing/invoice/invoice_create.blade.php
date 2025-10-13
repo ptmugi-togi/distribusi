@@ -64,6 +64,7 @@
                 $('.select2').select2({ width: '100%' });
 
                 const oldSupno = @json(old('supno'));
+                const oldRinum = @json(old('rinum'));
                 const oldPono = @json(old('pono', []));
                 const oldOpron = @json(old('opron', []));
                 const oldHsn = @json(old('hsn', []));
@@ -85,6 +86,28 @@
 
                 const $supSelect = $('select[name="supno"]');
                 $supSelect.val(oldSupno).trigger('change.select2');
+
+                 $.getJSON(`/get-rinum-by-supplier/${oldSupno}`).then(response => {
+                    if (response.success && response.data.length > 0) {
+                        let rinumOptions = '<option value="">Pilih Receipt Number</option>';
+                        response.data.forEach(row => {
+                            rinumOptions += `
+                                <option value="${row.rinum}" 
+                                        data-blnum="${row.blnum}">
+                                    RI${row.rinum}
+                                </option>`;
+                        });
+                        const $rinumSelect = $('#rinum-import');
+                        $rinumSelect.html(rinumOptions).trigger('change.select2');
+
+                        // kalau ada old rinum → set value dan isi blnum otomatis
+                        if (oldRinum) {
+                            $rinumSelect.val(oldRinum).trigger('change.select2');
+                            const selected = $rinumSelect.find(':selected');
+                            $('#blnum-import').val(selected.data('blnum') || '');
+                        }
+                    }
+                });
 
                 $.getJSON(`/get-po-by-supplier/${oldSupno}`).then(async (response) => {
 
@@ -327,40 +350,64 @@
             });
         </script>
 
-
-        {{-- Ambil PO berdasarkan Supplier --}}
+        {{-- Ambil berdasarkan Supplier --}}
         <script>
             $(document).ready(function () {
+
+                // Saat supplier berubah
                 $(document).on('change', 'select[name="supno"]', function () {
                     const supno = $(this).val();
 
-                    // cari section aktif (import atau lokal)
+                    // tentukan section aktif
                     const $formSection = $(this).closest('#content-import').length ? $('#content-import') : $('#content-loc-inv');
                     const $ponoSelect = $formSection.find('select[name="pono[]"]');
-                    const $accordions = $formSection.find('.accordion-item');
-                    const $first = $formSection.find('.accordion-item').first();
-                    const $headerButton = $first.find('.accordion-button');
+                    const $rinumSelect = $('#rinum-import');
+                    const $blnumInput = $('#blnum-import');
 
-                    // hapus selain accordion 1
-                    if ($accordions.length > 1) {
-                        $accordions.slice(1).remove();
-                    }
-
-                    // kosongkan form
-                    $first.find('input[type="text"], input[type="number"], input[type="hidden"]', 'input').val('');
-                    $first.find('select').val('').trigger('change.select2');
-                    $first.find('.unit-label').text('');
-                    $first.find('.stdqu-input').val('');
-                    if ($headerButton.text().trim() !== '') {
-                        $headerButton.contents().filter(function () {
-                            return this.nodeType === 3; // node type 3 itu text
-                        }).remove();
-                    }
+                    // reset isi dropdown
+                    $rinumSelect.html('<option value="">Loading...</option>');
+                    $blnumInput.val('');
+                    $ponoSelect.html('<option value="">Loading...</option>');
 
                     if (!supno) return;
 
-                    $ponoSelect.html('<option value="">Loading...</option>');
+                    if (!supno) {
+                        $rinumSelect.html('<option value="">Pilih Supplier Terlebih Dahulu</option>');
+                        return;
+                    }
 
+                    // ambil RINUM berdasarkan SUPPLIER
+                    $.ajax({
+                        url: `/get-rinum-by-supplier/${supno}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success && response.data.length > 0) {
+                                let options = '<option value="">Pilih Receipt Number</option>';
+                                response.data.forEach(row => {
+                                    options += `
+                                        <option value="${row.rinum}" data-blnum="${row.blnum}">
+                                            RI${row.rinum}
+                                        </option>`;
+                                });
+                                $rinumSelect.html(options).trigger('change.select2');
+                            } else {
+                                $rinumSelect.html('<option value="">Tidak ada Receipt Number untuk supplier ini</option>');
+                            }
+                        },
+                        error: function() {
+                            $rinumSelect.html('<option value="">Gagal memuat data Receipt Number</option>');
+                        }
+                    });
+
+                    $(document).on('change', '#rinum-import', function() {
+                        const selected = $(this).find(':selected');
+                        const blnum = selected.data('blnum') || '';
+
+                        $('#blnum-import').val(blnum); // isi otomatis BL
+                    });
+
+                    // ambil PO berdasarkan SUPPLIER
                     $.ajax({
                         url: `/get-po-by-supplier/${supno}`,
                         type: 'GET',
@@ -378,6 +425,41 @@
                         },
                         error: function () {
                             $ponoSelect.html('<option value="">Gagal memuat data PO</option>');
+                        }
+                    });
+                });
+
+                // ambil daftar BLNUM dari RINUM yang kepilih
+                $(document).on('change', '#rinum-import', function() {
+                    const rinum = $(this).val();
+                    const $blnumSelect = $('#blnum-import');
+
+                    $blnumSelect.html('<option value="">Loading...</option>');
+
+                    if (!rinum) {
+                        $blnumSelect.html('<option value="">Pilih Receipt Number terlebih dahulu</option>');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: `/get-blnum-by-rinum/${rinum}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success && response.data.length > 0) {
+                                let options = '<option value="">Pilih BL / AWB No.</option>';
+                                response.data.forEach(row => {
+                                    options += `<option value="${row.blnum}" data-bldat="${row.bldat}">
+                                        ${row.blnum} (${row.bldat})
+                                    </option>`;
+                                });
+                                $blnumSelect.html(options).trigger('change.select2');
+                            } else {
+                                $blnumSelect.html('<option value="">Tidak ada BL untuk RINUM ini</option>');
+                            }
+                        },
+                        error: function() {
+                            $blnumSelect.html('<option value="">Gagal memuat data BL</option>');
                         }
                     });
                 });
@@ -415,7 +497,7 @@
                                 $opron.html('<option value="">Tidak ada barang untuk PO ini</option>');
                             }
                         },
-                        error: function (xhr) {
+                        error: function () {
                             $opron.html('<option value="">Gagal memuat data barang</option>');
                         }
                     });
@@ -445,7 +527,6 @@
                     const parentItem = $(this).closest('.accordion-item');
                     const headerButton = parentItem.find('.accordion-button');
 
-                    // update teks header
                     headerButton.contents().filter(function () {
                         return this.nodeType === 3;
                     }).first().replaceWith(` ${newLabel}`);

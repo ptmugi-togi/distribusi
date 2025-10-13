@@ -23,6 +23,20 @@ class InvoiceController extends Controller
         return view('purchasing.invoice.invoice_index', compact('invoice'));
     }
 
+    public function getRinumBySupplier($supno)
+    {
+        $data = DB::table('tbolh')
+            ->select('rinum', 'blnum', 'bldat')
+            ->where('supno', $supno)
+            ->orderByDesc('bldat')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
     public function getPoBySupplier($supno)
     {
         $poList = DB::table('pohdr_tbl')
