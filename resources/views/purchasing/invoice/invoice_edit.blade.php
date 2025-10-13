@@ -59,6 +59,11 @@
 
             @if($invoice->details->first()->potyp === 'PI')
             <div class="col-md-6 mt-2">
+                <label class="form-label">Receipt Number</label>
+                <input type="text" class="form-control" name="rinum" value="RI {{ $invoice->rinum }}" readonly style="background-color:#e9ecef;">
+            </div>
+
+            <div class="col-md-6 mt-2">
                 <label class="form-label">BL / AWB No.</label>
                 <input type="text" class="form-control" name="blnum" value="{{ $invoice->blnum }}" readonly style="background-color:#e9ecef;">
             </div>
