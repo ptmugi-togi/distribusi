@@ -134,6 +134,6 @@ Route::get('/get-po-by-supplier/{supno}', [InvoiceController::class, 'getPoBySup
 Route::get('/get-items-by-po/{pono}', [InvoiceController::class, 'getItemsByPo']);
 Route::post('/invoice/store', [InvoiceController::class,'store'])->middleware('auth')->name('invoice.store');
 Route::get('/invoice/{id}/detail', [InvoiceController::class,'show'])->middleware('auth')->name('invoice.detail');
-// Route::get('/invoice/{id}/edit', [InvoiceController::class,'edit'])->middleware('auth')->name('invoice.edit');
-// Route::put('/invoice/{id}', [InvoiceController::class,'update'])->middleware('auth')->name('invoice.update');
+Route::get('/invoice/{id}/edit', [InvoiceController::class,'edit'])->middleware('auth')->name('invoice.edit');
+Route::put('/invoice/{id}', [InvoiceController::class,'update'])->middleware('auth')->name('invoice.update');
 Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->middleware('auth')->name('invoice.delete');

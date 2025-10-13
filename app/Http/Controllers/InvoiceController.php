@@ -181,8 +181,15 @@ class InvoiceController extends Controller
                 $join->on('d.pono', '=', 'p.pono')
                     ->on('d.opron', '=', 'p.opron');
             })
+            ->leftJoin('mpromas as m', 'd.opron', '=', 'm.opron')
             ->where('d.invno', $invoice->invno)
-            ->select('d.*', 'p.netpr', 'p.stdqu', 'p.poqty')
+            ->select(
+                'd.*',
+                'p.netpr',
+                'p.stdqu',
+                'p.poqty',
+                'm.prona'
+            )
             ->get();
         
         return view('purchasing.invoice.invoice_detail', compact('invoice'));
@@ -193,16 +200,126 @@ class InvoiceController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $invoice = InvoiceHdr::with('vendor')->where('invno', $id)->firstOrFail();
+
+        $details = DB::table('tsupid_tbl as d')
+            ->leftJoin('podtl_tbl as p', function ($join) {
+                $join->on('d.pono', '=', 'p.pono')
+                    ->on('d.opron', '=', 'p.opron');
+            })
+            ->select(
+                'd.*',
+                'p.poqty',
+                'p.stdqu',
+                'p.netpr',
+                'p.hsn as pohsn'
+            )
+            ->where('d.invno', $id)
+            ->get();
+
+        // data untuk select2
+        $vendors = Mvendor::select('supno', 'supna')->orderBy('supno')->get();
+        $po = DB::table('pohdr_tbl')
+            ->select('pono', 'supno')
+            ->whereNotNull('supno')
+            ->orderBy('pono')
+            ->get();
+        $hsnList = DB::table('mhsno_tbl')
+            ->select('hsn', 'bm')
+            ->orderBy('hsn')
+            ->get();
+
+        return view('purchasing.invoice.invoice_edit', compact('invoice', 'details', 'vendors', 'po', 'hsnList'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            DB::table('tsupih_tbl')
+                ->where('invno', $id)
+                ->update([
+                    'invdt'      => $request->invdt,
+                    'duedt'      => $request->duedt,
+                    'curco'      => $request->curco,
+                    'blnum'      => $request->blnum,
+                    'rinum'      => $request->rinum,
+                    'tfreight'   => $request->tfreight ?? 0,
+                    'updated_at' => now(),
+                    'updated_by' => Auth::user()->name,
+                ]);
+
+            // Update / insert detail
+            foreach ($request->pono ?? [] as $i => $pono) {
+                $opron = $request->opron[$i] ?? null;
+                $inqty = (float) str_replace(',', '', $request->inqty[$i] ?? 0);
+                $inprc = (float) str_replace(',', '', $request->inprc[$i] ?? 0);
+                $payload = [
+                    'pono'   => $pono,
+                    'opron'  => $opron,
+                    'inqty'  => $inqty,
+                    'inprc'  => $inprc,
+                    'inamt'  => $inqty * $inprc,
+                    'ppn'    => $request->ppn[$i] ?? 0,
+                    'ppnbm'  => $request->ppnbm[$i] ?? 0,
+                    'pph'    => $request->pph[$i] ?? 0,
+                ];
+
+                $id_su = $request->id_su[$i] ?? null;
+
+                if ($id_su) {
+                    $updated = DB::table('tsupid_tbl')
+                        ->where('id_su', $id_su)
+                        ->where('invno', $id)
+                        ->update($payload);
+
+                    if ($updated === 0) {
+                        DB::table('tsupid_tbl')
+                            ->where('invno', $id)
+                            ->where('pono', $pono)
+                            ->where('opron', $opron)
+                            ->update($payload);
+                    }
+                } else {
+                    // insert baris baru
+                    $payload = array_merge($payload, [
+                        'invno'      => $id,
+                        'potyp'      => $request->potyp ?? $request->potype ?? null,
+                        'curco'      => $request->curco,
+                        'stdqt'      => $request->stdqt[$i] ?? '',
+                    ]);
+                    DB::table('tsupid_tbl')->insert($payload);
+                }
+
+                // update inqty ke tabel podtl_tbl
+                if ($pono && $opron) {
+                    DB::table('podtl_tbl')
+                        ->where('pono', $pono)
+                        ->where('opron', $opron)
+                        ->update(['inqty' => $inqty]);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('invoice.index')
+                ->with('success', "Invoice $id berhasil diperbarui!");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Gagal update invoice: ' . $th->getMessage());
+            return back()->with('error', 'Gagal update invoice: ' . $th->getMessage());
+        }
+        Log::info('Update invoice', [
+            'invno' => $id,
+            'id_su' => $id_su,
+            'mode' => $id_su ? 'update' : 'insert',
+        ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
