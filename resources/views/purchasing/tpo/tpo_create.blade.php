@@ -177,6 +177,7 @@
     </main>
 
     @push('scripts')
+        {{-- get formc --}}
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const formc = document.getElementById('formc');
@@ -196,6 +197,7 @@
             });
         </script>
 
+        {{-- toggle HSN dari potype --}}
         <script>
             $(document).ready(function () {
                 function toggleHSBM() {
@@ -213,6 +215,7 @@
             });
         </script>
 
+        {{-- get currency from curco --}}
         <script>
             $(document).ready(function () {
                 $('#currency').on('change', function () {
@@ -260,9 +263,9 @@
                     });
                 });
             });
-            </script>
+        </script>
 
-
+        {{-- formating currency input --}}
         <script>
             function formatCurrency(value, currency) {
                 if (!value || isNaN(value)) return "";
