@@ -1,7 +1,7 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="{{ URL::asset('index.html'); }}" class="logo d-flex align-items-center">
+      <a href="/" class="logo d-flex align-items-center">
         <img src="{{ URL::asset('img/logomugi.png'); }}" alt="">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
