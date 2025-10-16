@@ -25,6 +25,7 @@ use App\Http\Controllers\TpoController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\BlawbController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,7 @@ Route::resource('/roce', OcController::class)->middleware('auth');
 
 Route::get('/tpo', [TpoController::class,'index'])->middleware('auth')->name('tpo.index');
 Route::get('/get-currency-rate/{curco}', [TpoController::class, 'getCurrencyRate']);
+Route::get('/api/products', [ProductController::class, 'getProducts'])->name('api.products');
 Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth')->name('tpo.create');
 Route::post('/tpo/store', [TpoController::class, 'store'])->middleware('auth')->name('tpo.store');
 Route::get('/tpo/{id}/detail', [TpoController::class, 'show'])->middleware('auth')->name('tpo.detail');

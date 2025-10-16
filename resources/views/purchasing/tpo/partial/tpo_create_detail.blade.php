@@ -18,17 +18,16 @@
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6 mt-3">
-                    <label for="opron-{{ $i }}" class="form-label">Barang PO <span class="text-danger">*</span></label>
-                    <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
-                        <option value="" disabled {{ !$oldOpron ? 'selected' : '' }}>Silahkan pilih Barang</option>
-                        @foreach($products as $p)
-                            <option value="{{ $p->opron }}" 
-                                data-prona="{{ $p->prona }}"
-                                data-stdqu="{{ $p->stdqu }}" 
-                                {{ $oldOpron == $p->opron ? 'selected' : '' }}>
-                                {{ $p->opron }} - {{ $p->prona }}
-                            </option>
-                        @endforeach
+                    <label for="opron-{{ $i }}" class="form-label">
+                        Barang PO <span class="text-danger">*</span>
+                    </label>
+                    <select class="select2 form-control"
+                        name="opron[]"
+                        id="opron-{{ $i }}"
+                        data-old="{{ old('opron.'.$i) }}"
+                        data-old-text="{{ optional($products->firstWhere('opron', old('opron.'.$i)))->opron }} - {{ optional($products->firstWhere('opron', old('opron.'.$i)))->prona }}"
+                        data-old-stdqu="{{ optional($products->firstWhere('opron', old('opron.'.$i)))->stdqu }}"
+                        required>
                     </select>
                     <input type="text" name="stdqu[]" id="stdqu-{{ $i }}" value="{{ old('stdqu.'.$i) }}" hidden>
                 </div>

@@ -168,12 +168,15 @@
                                         <div class="row">
                                             <div class="col-md-6 mt-3">
                                                 <label class="form-label">Barang</label><span class="text-danger"> *</span>
-                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" onchange="updateBarangLabel({{ $i }})" required>
-                                                    @foreach($products as $p)
-                                                    <option value="{{ $p->opron }}" data-prona="{{ $p->prona }}" data-stdqu="{{ $p->stdqu }}" {{ $d->opron==$p->opron?'selected':'' }}>
-                                                        {{ $p->opron }} - {{ $p->prona }}
-                                                    </option>
-                                                    @endforeach
+                                                <select
+                                                    class="select2 form-control"
+                                                    name="opron[]"
+                                                    id="opron-{{ $i }}"
+                                                    data-old="{{ $d->opron }}"
+                                                    data-old-text="{{ $d->opron }} - {{ $d->mpromas->prona }}"
+                                                    data-old-stdqu="{{ $d->stdqu }}"
+                                                    onchange="updateBarangLabel({{ $i }})"
+                                                    required>
                                                 </select>
                                                 <input type="text" name="stdqu[]" id="stdqu-{{ $i }}" value="{{ $d->stdqu }}" hidden>
                                             </div>
@@ -394,26 +397,99 @@
             });
         </script>
 
-        {{-- custom select2 agar tidak load semua data, hanya 10 --}}
+        {{-- get product saat load halaman awal --}}
         <script>
-            $('.select2').select2({
-                placeholder: "Silahkan pilih Supplier",
-                minimumResultsForSearch: 0,
-                templateResult: function (data, container) {
-                    // kalau tidak ada pencarian (params.term kosong) → batasi 10
-                    if ($('.select2-search__field').val() === '' && data._resultId) {
-                        // ambil index option dari ID yang dibikin Select2
-                        let index = parseInt(data._resultId.split('-').pop());
-                        if (index > 10) {
-                            return null; // hide item > 10
-                        }
-                    }
-                    return data.text;
-                }
+            $(window).on('load', function () {
+                $('[id^=opron-]').each(function () {
+                    const id = $(this).attr('id').split('-')[1];
+                    initSelect2Barang(id);
+                });
             });
         </script>
 
-        {{-- ambil nama produk pas awal load halaman --}}
+
+        {{-- List Barang API --}}
+        <script>
+            function initSelect2Barang(index) {
+                const selector = `#opron-${index}`;
+                const $select = $(selector);
+                if (!$select.length) return;
+
+                const oldVal = $select.attr('data-old');
+                const oldText = $select.attr('data-old-text');
+                const oldStdqu = $select.attr('data-old-stdqu');
+
+                console.log(oldVal, oldText, oldStdqu);
+
+                $select.select2({
+                    placeholder: 'Silahkan pilih Barang',
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    ajax: {
+                        url: '/api/products',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term || '',
+                                page: params.page || 1
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.text, // sudah lengkap dari API
+                                    data_prona: item.data_prona,
+                                    data_stdqu: item.data_stdqu
+                                })),
+                                pagination: { more: data.pagination.more }
+                            };
+                        },
+                        error: function (xhr, status, error) {
+                            if (status !== 'abort') {
+                                console.error('Select2 AJAX error:', status, error);
+                            }
+                        }
+                    },
+                    minimumInputLength: 0,
+                    allowClear: true
+                });
+
+                // kalau ada nilai lama (edit page)
+                if (oldVal && oldText) {
+                    const option = new Option(oldText, oldVal, true, true);
+                    $select.append(option).trigger('change');
+
+                    setTimeout(() => {
+                        $(`#stdqu-${index}`).val(oldStdqu);
+                        $(`#qty-label-${index}`).text(oldStdqu);
+                        const label = $(`#barang-label-${index}`);
+                        if (label.length) {
+                            label.text(`(${oldText})`);
+                        }
+                    }, 100);
+
+                    // fallback kalau belum muncul
+                    setTimeout(() => {
+                        const label = $(`#barang-label-${index}`);
+                        if (label.text().trim() === "" && oldText) {
+                            label.text(`(${oldText})`);
+                        }
+                    }, 300);
+                }
+
+                // Update label & stdqu saat user pilih barang baru
+                $select.on('select2:select', function (e) {
+                    const data = e.params.data;
+                    $(`#stdqu-${index}`).val(data.data_stdqu);
+                    $(`#qty-label-${index}`).text(data.data_stdqu);
+                    $(`#barang-label-${index}`).text(`(${data.text})`);
+                });
+            }
+        </script>
+
+        {{-- sinkronisasi label accordion pas awal load halaman --}}
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 @foreach($tpohdr->tpodtl as $i => $d)
@@ -603,8 +679,10 @@
 
                 accordion.appendChild(newItem);
 
-                // aktifkan select2
-                $(`#opron-${barangIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+                // Ambil product
+                if (typeof initSelect2Barang === 'function') {
+                    initSelect2Barang(barangIndex);
+                }
 
                 const currencySelect = document.getElementById("currency");
                 const input = document.getElementById(`price-${barangIndex}`);

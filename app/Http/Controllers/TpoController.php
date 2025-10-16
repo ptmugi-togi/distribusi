@@ -92,7 +92,7 @@ class TpoController extends Controller
             $qty = floatval($request->poqty[$i] ?? 0);
             $berat = $request->weigh[$i] ?? 0;
 
-            // 💡 Hitung net price per item
+            // Hitung net price per item
             $netpr = $qty * ($price - ($price * ($discount / 100)));
 
             $detailData = [
@@ -136,7 +136,7 @@ class TpoController extends Controller
      */
     public function edit($id)
     {
-        $tpohdr = Tpohdr::with('tpodtl')->findOrFail($id);
+        $tpohdr = Tpohdr::with('tpodtl.mpromas')->findOrFail($id);
         $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
         $products = Mpromas::select('opron','prona','stdqu')->orderBy('opron')->get();
 
@@ -178,7 +178,12 @@ class TpoController extends Controller
 
         // Loop data detail dari form
         foreach ($request->opron as $i => $opron) {
+            $price = floatval($request->price[$i] ?? 0);
+            $discount = floatval($request->odisp[$i] ?? 0);
+            $qty = floatval($request->poqty[$i] ?? 0);
             $idpo = $request->idpo[$i] ?? null;
+
+            $netpr = $qty * ($price - ($price * ($discount / 100)));
 
             $detailData = [
                 'pono'   => $tpohdr->pono,
@@ -188,6 +193,7 @@ class TpoController extends Controller
                 'poqty'  => $request->poqty[$i] ?? 0,
                 'stdqu'  => $request->stdqu[$i] ?? null,
                 'price'  => $request->price[$i] ?? 0,
+                'netpr'  => $netpr,
                 'berat'  => $request->weigh[$i] ?? 0,
                 'odisp'  => $request->odisp[$i] ?? 0,
                 'edeld'  => $request->edeld[$i] ?? null,

@@ -176,7 +176,7 @@
         </section>
     </main>
 
-    @push('scripts')
+    @push('scripts') 
         {{-- get formc --}}
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -226,7 +226,6 @@
                         url: `/get-currency-rate/${curco}`,
                         method: 'GET',
                         success: function (response) {
-                            console.log(response); // lihat di console
 
                             if (response.success) {
                                 const rate = parseFloat(response.crate);
@@ -265,6 +264,82 @@
             });
         </script>
 
+        {{-- get product --}}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                function initSelect2Barang(index) {
+                    const selector = `#opron-${index}`;
+                    const $select = $(selector);
+
+                    if (!$select.length) return;
+
+                    console.log("Init Select2 untuk:", selector);
+
+                    // ambil old value dari Blade (kalau ada)
+                    const oldVal = $select.attr('data-old'); // kita isi nanti dari Blade
+
+                    $select.select2({
+                        placeholder: 'Silahkan pilih Barang',
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        ajax: {
+                            url: '/api/products',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    q: params.term || '',
+                                    page: params.page || 1
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results.map(item => ({
+                                        id: item.id || item.opron,
+                                        text: `${item.id} - ${item.data_prona}`,
+                                        data_stdqu: item.data_stdqu
+                                    })),
+                                    pagination: { more: data.pagination.more }
+                                };
+                            },
+                            error: function (xhr, status, error) {
+                                if (status !== 'abort') console.error('Select2 AJAX error:', status, error);
+                            }
+                        },
+                        minimumInputLength: 0,
+                        allowClear: true
+                    });
+
+                    // kalau ada old value, tambahkan manual ke select biar tampil
+                    if (oldVal) {
+                        const oldText = $select.attr('data-old-text') || oldVal;
+                        const oldStdqu = $select.attr('data-old-stdqu') || '';
+
+                        const option = new Option(oldText, oldVal, true, true);
+                        $select.append(option).trigger('change');
+
+                        // update hidden field juga
+                        $(`#stdqu-${index}`).val(oldStdqu);
+                        $(`#qty-label-${index}`).text(oldStdqu);
+                        $(`#barang-label-${index}`).text(`(${oldText})`);
+                    }
+                }
+
+                // Simpan global function
+                window.initSelect2Barang = initSelect2Barang;
+
+                // Jalankan setelah semua elemen ada
+                $(window).on('load', function () {
+                    $('[id^=opron-]').each(function () {
+                        const id = $(this).attr('id').split('-')[1];
+                        initSelect2Barang(id);
+                    });
+                });
+            });
+        </script>
+
+
         {{-- formating currency input --}}
         <script>
             function formatCurrency(value, currency) {
@@ -288,14 +363,14 @@
 
                 if (!display || !hidden) return;
 
-                // input → update raw
+                // input -> update raw
                 display.addEventListener("input", (e) => {
                     let raw = cleanNumber(e.target.value);
                     let value = parseFloat(raw);
                     hidden.value = !isNaN(value) ? value : "";
                 });
 
-                // blur → tampilkan format
+                // blur -> tampilkan format
                 display.addEventListener("blur", (e) => {
                     if (hidden.value) {
                         e.target.value = formatCurrency(
@@ -305,7 +380,7 @@
                     }
                 });
 
-                // focus → tampilkan angka mentah
+                // focus -> tampilkan angka mentah
                 display.addEventListener("focus", (e) => {
                     if (hidden.value) {
                         e.target.value = hidden.value;
@@ -363,16 +438,16 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const currencySelect = document.getElementById("currency");
 
-                // init freight_cost → ikut currency yang dipilih
+                // init freight_cost -> ikut currency yang dipilih
                 attachCurrencyFormatter("freight_cost_display", "freight_cost", currencySelect);
 
-                // init currency_rate → selalu pakai IDR
+                // init currency_rate -> selalu pakai IDR
                 attachCurrencyFormatter("currency_rate_display", "currency_rate", currencySelect, "IDR");
 
                 // init semua price[]
                 initPriceFormatter();
 
-                // kalau currency ganti → reformat semua field
+                // kalau currency ganti -> reformat semua field
                 $('#currency').on('change', function () {
                     const newCurrency = $(this).val();
 
@@ -402,25 +477,7 @@
             });
         </script>
 
-        {{-- custom select2 agar tidak load semua data, hanya 10 --}}
-        <script>
-            $('.select2').select2({
-                placeholder: "Silahkan pilih Supplier",
-                minimumResultsForSearch: 0,
-                templateResult: function (data, container) {
-                    // kalau tidak ada pencarian (params.term kosong) → batasi 10
-                    if ($('.select2-search__field').val() === '' && data._resultId) {
-                        // ambil index option dari ID yang dibikin Select2
-                        let index = parseInt(data._resultId.split('-').pop());
-                        if (index > 10) {
-                            return null; // hide item > 10
-                        }
-                    }
-                    return data.text;
-                }
-            });
-        </script>
-
+        {{-- Formating currency + raw --}}
         <script>
             function getLocale(currency) {
                 switch(currency) {
@@ -483,13 +540,13 @@
 
                     attachPriceEvents(input, hidden, currencySelect);
 
-                    // kalau ada old value → langsung formatkan
+                    // kalau ada old value -> langsung formatkan
                     if (hidden && hidden.value) {
                         input.value = formatCurrency(hidden.value, currencySelect.value);
                     }
                 });
 
-                // kalau currency ganti → reformat semua input
+                // kalau currency ganti -> reformat semua input
                 $('#currency').on('change', function () {
                     const newCurrency = $(this).val();
                     if (!newCurrency) return;
@@ -566,17 +623,7 @@
                             <div class="row">
                                 <div class="col-md-6 mt-3">
                                     <label for="opron-${barangIndex}" class="form-label">Barang PO <span class="text-danger">*</span></label>
-                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" onchange="updateBarangLabel(${barangIndex})" required>
-                                        <option value="" disabled {{ !$oldOpron ? 'selected' : '' }}>Silahkan pilih Barang</option>
-                                        @foreach($products as $p)
-                                            <option value="{{ $p->opron }}" 
-                                                data-prona="{{ $p->prona }}" 
-                                                data-stdqu="{{ $p->stdqu }}"
-                                                {{ $oldOpron == $p->opron ? 'selected' : '' }}>
-                                                {{ $p->opron }} - {{ $p->prona }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <select class="select2 form-control" name="opron[]" id="opron-${barangIndex}" required></select>
                                     <input type="text" name="stdqu[]" id="stdqu-${barangIndex}" hidden>
                                 </div>
 
@@ -658,11 +705,13 @@
 
                 accordion.appendChild(newItem);
 
-                // re-init select2 biar dropdown tetap jalan
-                $(`#opron-${barangIndex}`).select2({ 
-                    theme: 'bootstrap-5',
-                    width: '100%' 
-                });
+                initSelect2Barang(barangIndex);
+
+
+                // panggil initSelect2Barang supaya pakai AJAX
+                if (typeof initSelect2Barang === 'function') {
+                    initSelect2Barang(barangIndex);
+                }
 
                 const newPrice = document.getElementById(`price-${barangIndex}`);
                 const newHidden = document.getElementById(`priceraw-${barangIndex}`);
