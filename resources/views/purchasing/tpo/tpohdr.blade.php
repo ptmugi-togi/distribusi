@@ -68,7 +68,7 @@
                           <form id="delete-tpo-{{ $tpo->pono }}" action="{{ url('/tpo/'.$tpo->pono.'/delete') }}" method="POST" style="display:inline;">
                               @csrf
                               @method('DELETE')
-                              <a class="badge bg-danger btn-delete-tpo" data-pono="{{ $tpo->pono }}" data-tooltip="true" data-bs-placement="top" title="Delete">
+                              <a class="badge bg-danger btn-delete-tpo" data-pono="{{ $tpo->pono }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
                                   <i class="bi bi-trash"></i>
                               </a>
                           </form>

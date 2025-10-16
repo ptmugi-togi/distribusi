@@ -62,7 +62,7 @@
                           @csrf
                           @method('DELETE')
                           <a
-                            class="badge bg-danger border-0 btn-delete-blawb" data-rinum="{{ $tbolh->rinum }}" data-tooltip="true" data-bs-placement="top" title="Delete">
+                            class="badge bg-danger border-0 btn-delete-blawb" data-rinum="{{ $tbolh->rinum }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
                             <i class="bi bi-trash"></i>
                           </a>
                         </form>

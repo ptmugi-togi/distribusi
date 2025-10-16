@@ -54,36 +54,13 @@
                         <td class="text-center">
                             <a href="/invoice/{{ $i->invno }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                             <a href="/invoice/{{ $i->invno }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <a href="#"
-                                class="badge bg-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalDeleteInvoice-{{ $i->invno }}"
-                                data-tooltip="true"
-                                data-bs-placement="top"
-                                title="Delete">
+                            <form id="delete-inv-{{ $i->invno }}" action="{{ url('/invoice/'.$i->invno.'/delete') }}" method="POST" style="display:inline;">
+                              @csrf
+                              @method('DELETE')
+                              <a class="badge bg-danger btn-delete-inv" data-invno="{{ $i->invno }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
                                     <i class="bi bi-trash"></i>
-                                </a>
-
-                            <div class="modal fade" id="modalDeleteInvoice-{{ $i->invno }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Hapus data Invoice?</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Yakin ingin menghapus data Invoice "{{ $i->invno }}" ini?</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <form action="/invoice/{{ $i->invno }}/delete" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Hapus</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                              </a>
+                            </form>
                         </td>
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($i->created_at)->format('Y-m-d H:i:s') }}">
                             {{ \Carbon\Carbon::parse($i->created_at)->format('d/m/Y H:i:s') }}
@@ -110,6 +87,45 @@
             { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
           ]
         });
+      });
+    </script>
+
+    {{-- modal delete data invoice --}}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          // Event delegation untuk semua tombol hapus
+          $(document).on('click', '.btn-delete-inv', function (e) {
+              e.preventDefault();
+
+              const invno = $(this).data('invno');
+              const form = document.getElementById(`delete-inv-${invno}`);
+
+              Swal.fire({
+                  title: 'Hapus Invoice?',
+                  text: `Yakin ingin menghapus data Invoice "${invno}" ini?`,
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: 'Ya, Hapus!',
+                  cancelButtonText: 'Batal',
+                  confirmButtonColor: '#d33',
+                  cancelButtonColor: '#6c757d'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      Swal.fire({
+                          title: 'Menghapus...',
+                          text: 'Mohon tunggu sebentar.',
+                          icon: 'info',
+                          allowOutsideClick: false,
+                          allowEscapeKey: false,
+                          showConfirmButton: false,
+                          didOpen: () => {
+                              Swal.showLoading();
+                              form.submit(); // kirim form DELETE
+                          }
+                      });
+                  }
+              });
+          });
       });
     </script>
 @endpush
