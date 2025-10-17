@@ -298,6 +298,7 @@
                                     results: data.results.map(item => ({
                                         id: item.id || item.opron,
                                         text: `${item.id} - ${item.data_prona}`,
+                                        data_prona: item.data_prona,
                                         data_stdqu: item.data_stdqu
                                     })),
                                     pagination: { more: data.pagination.more }
@@ -310,6 +311,27 @@
                         minimumInputLength: 0,
                         allowClear: true
                     });
+
+                    $select.on('select2:select', function (e) {
+                        const data = e.params.data;
+                        const index = selector.split('-')[1];
+
+                        // Tambahkan atribut ke option terpilih
+                        const option = $select.find('option[value="' + data.id + '"]');
+                        option.attr('data-prona', data.data_prona);
+                        option.attr('data-stdqu', data.data_stdqu);
+
+                        // Panggil update label
+                        updateBarangLabel(index);
+                    });
+
+                    $select.on('select2:clear', function (e) {
+                        const index = selector.split('-')[1];
+                        $(`#barang-label-${index}`).text('');
+                        $(`#stdqu-${index}`).val('');
+                        $(`#qty-label-${index}`).text('');
+                    });
+
 
                     // kalau ada old value, tambahkan manual ke select biar tampil
                     if (oldVal) {
