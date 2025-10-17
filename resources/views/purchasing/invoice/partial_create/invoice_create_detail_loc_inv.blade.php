@@ -27,7 +27,7 @@
                 <div class="col-md-6 mt-3">
                     <label for="poqty-{{ $i }}" class="form-label">PO Quantity</label>
                     <div class="input-group">
-                        <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-{{ $i }}" value="{{ old('poqty.'. $i) }}" readonly>
+                        <input type="number" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-{{ $i }}" value="{{ old('poqty.'. $i) }}" data-value="{{ old('poqty.'. $i) }}" readonly>
                         <span class="input-group-text unit-label"></span>
                         <input type="text" name="stdqt[]" class="stdqu-input" value="{{ old('stdqt.'. $i) }}" hidden>
                     </div>
@@ -36,19 +36,25 @@
                 <div class="col-md-6 mt-3">
                     <label for="inqty-{{ $i }}" class="form-label">Invoice Quantity</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" name="inqty[]" id="inqty-{{ $i }}" value="{{ old('inqty.'. $i) }}">
+                        <input type="number" class="form-control" name="inqty[]" id="inqty-{{ $i }}" value="{{ old('inqty.'. $i) }}" 
+                        oninput="let poqty = document.getElementById('poqty-{{ $i }}').value; if (Number(this.value) > Number(poqty)) { Swal.fire({ title: 'Peringatan', text: 'Jumlah Invoice qty tidak boleh lebih banyak dari jumlah PO qty', icon: 'error' }); this.value = Math.min(Number(this.value), Number(poqty)); }">
                         <span class="input-group-text unit-label"></span>
                     </div>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label for="netpr" class="form-label">Invoice Price</label>
-                    <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="netpr[]" id="netpr-{{ $i }}" value="{{ old('netpr.'. $i) }}" readonly>
+                <div class="col-md-4 mt-3">
+                    <label for="price" class="form-label">PO Price/unit</label>
+                    <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-{{ $i }}" value="{{ old('price.'. $i) }}" readonly>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label for="inprc" class="form-label">Invoice Amount</label>
+                <div class="col-md-4 mt-3">
+                    <label for="inprc" class="form-label">Invoice Price/unit</label>
                     <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ old('inprc.'. $i) }}">
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label for="inamt" class="form-label">Invoice Amount</label>
+                    <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ old('inamt.'. $i) }}" style="background-color: #e9ecef;" readonly>
                 </div>
 
                 <div class="col-md-4 mt-3">

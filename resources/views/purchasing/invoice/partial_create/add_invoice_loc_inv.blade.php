@@ -49,19 +49,25 @@
                         <div class="col-md-6 mt-3">
                             <label for="inqty-${invoiceIndex}" class="form-label">Invoice Quantity</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="inqty[]" id="inqty-${invoiceIndex}">
+                                <input type="text" class="form-control" name="inqty[]" id="inqty-${invoiceIndex}"
+                                oninput="let poqty = document.getElementById('poqty-${invoiceIndex }').value; if (Number(this.value) > Number(poqty)) { Swal.fire({ title: 'Peringatan', text: 'Jumlah Invoice qty tidak boleh lebih besar dari jumlah PO qty', icon: 'error' }); this.value = poqty; }">
                                 <span class="input-group-text unit-label"></span>
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label class="form-label">Invoice Price</label>
-                            <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="netpr[]" id="netpr-${invoiceIndex}" readonly>
+                        <div class="col-md-4 mt-3">
+                            <label class="form-label">PO Price/unit</label>
+                            <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-${invoiceIndex}" readonly>
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label class="form-label">Invoice Amount</label>
+                        <div class="col-md-4 mt-3">
+                            <label class="form-label">Invoice Price/unit</label>
                             <input type="text" class="form-control currency" name="inprc[]" id="inprc-${invoiceIndex}">
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <label for="inamt" class="form-label">Invoice Amount</label>
+                            <input type="text" class="form-control currency" name="inamt[]" id="inamt-${invoiceIndex}" style="background-color: #e9ecef;" readonly>
                         </div>
 
                         <div class="col-md-4 mt-3">

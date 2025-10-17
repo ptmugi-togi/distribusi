@@ -147,7 +147,7 @@
                                 opronOptions += `
                                     <option value="${item.opron}"
                                         data-qty="${item.poqty}"
-                                        data-price="${item.netpr}"
+                                        data-price="${item.price}"
                                         data-stdqu="${item.stdqu}">
                                         ${item.opron} - ${item.prona}
                                     </option>`;
@@ -171,7 +171,7 @@
                             const $body = $accordion.find('.accordion-body');
                             $body.find('.poqty').val(qty);
                             $body.find('.unit-label').text(stdqu);
-                            $body.find('input[name="netpr[]"]').val(price);
+                            $body.find('input[name="price[]"]').val(price);
                             $body.find('.stdqu-input').val(stdqu);
 
                         }
@@ -487,7 +487,7 @@
                                     $opron.append(
                                         `<option value="${item.opron}" 
                                             data-qty="${item.poqty}" 
-                                            data-price="${item.netpr}"
+                                            data-price="${item.price}"
                                             data-stdqu="${item.stdqu}">
                                             ${item.opron} - ${item.prona}
                                         </option>`
@@ -513,7 +513,7 @@
                     const parent = $(this).closest('.accordion-body');
                     parent.find('.poqty').val(qty);
                     parent.find('.unit-label').text(stdqu);
-                    parent.find('input[name="netpr[]"]').val(price);
+                    parent.find('input[name="price[]"]').val(price);
                     parent.find('.stdqu-input').val(stdqu);
                 });
 
@@ -531,6 +531,29 @@
                         return this.nodeType === 3;
                     }).first().replaceWith(` ${newLabel}`);
                 });
+            });
+        </script>
+
+        {{-- inamt auto generate --}}
+        <script>
+            $(document).on('input', 'input[name="inqty[]"], input[name="inprc[]"]', function () {
+                const $row = $(this).closest('.row');
+                const qty = parseFloat($row.find('input[name="inqty[]"]').val()) || 0;
+                const priceStr = $row.find('input[name="inprc[]"]').val();
+
+                // Hapus simbol mata uang, koma, titik, dll.
+                const price = parseFloat(String(priceStr).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+
+                const total = qty * price;
+
+                // Format hasil ke bentuk currency (Rp xxx,xx)
+                const formatted = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 2
+                }).format(total);
+
+                $row.find('input[name="inamt[]"]').val(formatted);
             });
         </script>
 

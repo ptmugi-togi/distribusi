@@ -107,16 +107,22 @@
                                     <input type="text" class="form-control" value="{{ $detail->inqty }}" disabled>
                                 </div>
 
-                                <div class="col-md-6 mt-2">
-                                    <label class="form-label">Invoice Price</label>
+                                <div class="col-md-4 mt-2">
+                                    <label class="form-label">PO Price/unit</label>
                                     <input type="text" class="form-control"
-                                        value="{{ formatCurrencyDetail($detail->netpr, $invoice->curco) }}" disabled>
+                                        value="{{ formatCurrencyDetail($detail->price, $invoice->curco) }}" disabled>
                                 </div>
 
-                                <div class="col-md-6 mt-2">
-                                    <label class="form-label">Invoice Amount</label>
+                                <div class="col-md-4 mt-2">
+                                    <label class="form-label">Invoice Price/unit</label>
                                     <input type="text" class="form-control"
                                         value="{{ formatCurrencyDetail($detail->inprc, $invoice->curco) }}" disabled>
+                                </div>
+
+                                <div class="col-md-4 mt-2">
+                                    <label class="form-label">Invoice Amount</label>
+                                    <input type="text" class="form-control"
+                                        value="{{ formatCurrencyDetail($detail->inamt, $invoice->curco) }}" disabled>
                                 </div>
 
                                 @if($invoice->details->first()->potyp === 'PI')

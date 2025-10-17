@@ -49,19 +49,25 @@
                         <div class="col-md-6 mt-3">
                             <label for="inqty-${invoiceImport}" class="form-label">Invoice Quantity</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="inqty[]" id="inqty-${invoiceImport}">
+                                <input type="text" class="form-control" name="inqty[]" id="inqty-${invoiceImport}"
+                                oninput="let poqty = document.getElementById('poqty-${invoiceImport }').value; if (Number(this.value) > Number(poqty)) { Swal.fire({ title: 'Peringatan', text: 'Jumlah Invoice qty tidak boleh lebih besar dari jumlah PO qty', icon: 'error' }); this.value = poqty; }">
                                 <span class="input-group-text unit-label"></span>
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label for="netpr-${invoiceImport}" class="form-label">Invoice Price</label>
-                            <input type="text" class="form-control currency" name="netpr[]" id="netpr-${invoiceImport}" style="background-color: #e9ecef;" readonly>
+                        <div class="col-md-4 mt-3">
+                            <label for="price-${invoiceImport}" class="form-label">PO Price/unit</label>
+                            <input type="text" class="form-control currency" name="price[]" id="price-${invoiceImport}" style="background-color: #e9ecef;" readonly>
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label for="inprc-${invoiceImport}" class="form-label">Invoice Amount</label>
+                        <div class="col-md-4 mt-3">
+                            <label for="inprc-${invoiceImport}" class="form-label">Invoice Price/unit</label>
                             <input type="text" class="form-control currency" name="inprc[]" id="inprc-${invoiceImport}">
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <label for="inamt-${invoiceImport}" class="form-label">Invoice Amount</label>
+                            <input type="text" class="form-control currency" name="inamt[]" id="inamt-${invoiceImport}" style="background-color: #e9ecef;" readonly>
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -106,7 +112,7 @@
 
                         <div class="col-md-2 mt-3">
                             <label for="pph-${invoiceImport}" class="form-label">PPh (%)</label>
-                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceImport}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" onblur="this.value = this.value.replace(',', '.')">
+                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceImport}" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" onblur="this.value = this.value.replace(',', '.')">
                         </div>
                     </div>
                 </div>

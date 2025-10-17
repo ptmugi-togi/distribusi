@@ -22,7 +22,6 @@
         @csrf
         @method('PUT')
 
-        {{-- Header --}}
         <div class="card p-4 shadow-sm">
             <div class="row">
             <div class="col-md-6 mt-2">
@@ -77,7 +76,6 @@
 
             <hr class="my-4">
 
-            {{-- ===== DETAIL SECTION ===== --}}
             <h4 class="mb-3">Invoice Detail</h4>
 
             @php $potyp = $invoice->details->first()->potyp; @endphp
@@ -100,7 +98,6 @@
                                 <div class="accordion-body">
                                     <div class="row">
 
-                                        {{-- NO PO --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">No. PO <span class="text-danger">*</span></label>
                                             <select class="select2 form-control" name="pono[]" id="import-pono-{{ $i }}" data-value="{{ $d->pono }}" required>
@@ -111,7 +108,6 @@
                                             <input type="text" name="id_su[]" value="{{ $d->id_su ?? '' }}" hidden>
                                         </div>
 
-                                        {{-- BARANG --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Barang <span class="text-danger">*</span></label>
                                             <select class="select2 form-control opron-select" name="opron[]" id="import-opron-{{ $i }}" data-value="{{ $d->opron }}" required>
@@ -121,7 +117,6 @@
                                             </select>
                                         </div>
 
-                                        {{-- PO Quantity --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO Quantity</label>
                                             <div class="input-group">
@@ -132,7 +127,6 @@
                                             </div>
                                         </div>
 
-                                        {{-- Invoice Quantity --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Invoice Quantity</label>
                                             <div class="input-group">
@@ -141,38 +135,32 @@
                                             </div>
                                         </div>
 
-                                        {{-- Invoice Price --}}
                                         <div class="col-md-6 mt-3">
-                                            <label class="form-label">Invoice Price</label>
+                                            <label class="form-label">PO Price/unit</label>
                                             <input type="text" class="form-control currency" style="background-color: #e9ecef;"
-                                                name="netpr[]" id="netpr-{{ $i }}" value="{{ $d->netpr ?? '' }}" readonly>
+                                                name="price[]" id="price-{{ $i }}" value="{{ $d->price ?? '' }}" readonly>
                                         </div>
 
-                                        {{-- Invoice Amount --}}
                                         <div class="col-md-6 mt-3">
-                                            <label class="form-label">Invoice Amount</label>
+                                            <label class="form-label">Invoice Price/unit</label>
                                             <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ $d->inprc ?? '' }}">
                                         </div>
 
-                                        {{-- Ex-Work Price --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Ex-Work Price</label>
                                             <input type="text" class="form-control currency" name="ewprc[]" value="{{ $d->ewprc ?? '' }}">
                                         </div>
 
-                                        {{-- FOB Charges --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">FOB Charges</label>
                                             <input type="text" class="form-control currency" name="fobch[]" value="{{ $d->fobch ?? '' }}">
                                         </div>
 
-                                        {{-- Insurance --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Insurance</label>
                                             <input type="text" class="form-control currency" name="incst[]" value="{{ $d->incst ?? '' }}">
                                         </div>
 
-                                        {{-- HS No. --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">HS No.</label>
                                             <select class="select2 form-select hsn-select" name="hsn[]">
@@ -185,13 +173,11 @@
                                             </select>
                                         </div>
 
-                                        {{-- BM --}}
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">BM (%)</label>
                                             <input type="number" class="form-control" name="bm[]" value="{{ $d->bm ?? '' }}">
                                         </div>
 
-                                        {{-- Pajak --}}
                                         <div class="col-md-2 mt-3">
                                             <label class="form-label">PPn (%)</label>
                                             <input type="number" class="form-control" name="ppn[]" value="{{ $d->ppn ?? '' }}">
@@ -236,7 +222,6 @@
                             aria-labelledby="heading-{{ $i }}" data-bs-parent="#accordionPoBarang">
                             <div class="accordion-body">
                                 <div class="row">
-                                    {{-- NO PO --}}
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">No. PO <span class="text-danger">*</span></label>
                                         <select class="select2 form-control" name="pono[]" id="locinv-pono-{{ $i }}" data-value="{{ $d->pono }}" required>
@@ -247,7 +232,6 @@
                                         <input type="text" name="id_su[]" value="{{ $d->id_su ?? '' }}" hidden>
                                     </div>
 
-                                    {{-- BARANG --}}
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Barang <span class="text-danger">*</span></label>
                                         <select class="select2 form-control opron-select" name="opron[]" id="locinv-opron-{{ $i }}" data-value="{{ $d->opron }}" required>
@@ -257,7 +241,6 @@
                                         </select>
                                     </div>
 
-                                    {{-- PO Quantity --}}
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">PO Quantity</label>
                                         <div class="input-group">
@@ -267,7 +250,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- Invoice Quantity --}}
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Invoice Quantity</label>
                                         <div class="input-group">
@@ -276,19 +258,21 @@
                                         </div>
                                     </div>
 
-                                    {{-- Invoice Price --}}
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Invoice Price</label>
-                                        <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="netpr[]" id="netpr-{{ $i }}" value="{{ $d->netpr ?? '' }}" readonly>
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">PO Price/unit</label>
+                                        <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-{{ $i }}" value="{{ $d->price ?? '' }}" readonly>
                                     </div>
 
-                                    {{-- Invoice Amount --}}
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Invoice Amount</label>
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">Invoice Price/unit</label>
                                         <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ $d->inprc ?? '' }}">
                                     </div>
 
-                                    {{-- Pajak --}}
+                                    <div class="col-md-4 mt-3">
+                                        <label class="form-label">Invoice Amount</label>
+                                        <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ $d->inamt ?? '' }}" style="background-color: #e9ecef;" readonly>
+                                    </div>
+
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PPn (%)</label>
                                         <input type="number" class="form-control" name="ppn[]" value="{{ $d->ppn ?? '' }}">
@@ -315,7 +299,6 @@
             </div>
             @endif
 
-            {{-- BUTTONS --}}
             <div class="mt-4 d-flex justify-content-between">
             <a href="{{ route('invoice.index') }}" class="btn btn-secondary">Kembali</a>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
@@ -325,7 +308,6 @@
     </section>
     </main>
 
-    {{-- include reusable add scripts --}}
     @include('purchasing.invoice.partial_create.add_invoice_import')
     @include('purchasing.invoice.partial_create.add_invoice_loc_inv')
 
@@ -340,7 +322,7 @@
                 const oldHsn = @json(old('hsn', []));
                 const oldPotype = @json(old('potype'));
 
-                // ✅ ambil supno & curco dari input readonly
+                // ambil supno & curco dari input readonly
                 const supno = $('input[name="supno"]').val();
                 const curco = $('input[name="curco"]').val() || 'IDR';
 
@@ -354,7 +336,7 @@
                     return;
                 }
 
-                // ✅ pakai supno dari input (bukan select)
+                // pakai supno dari input (bukan select)
                 if (!supno) return;
                 $.getJSON(`/get-po-by-supplier/${supno}`).then(async (response) => {
                     if (!response.success || response.data.length === 0) return;
@@ -389,7 +371,7 @@
                                 opronOptions += `
                                     <option value="${item.opron}"
                                         data-qty="${item.poqty}"
-                                        data-price="${item.netpr}"
+                                        data-price="${item.price}"
                                         data-stdqu="${item.stdqu}">
                                         ${item.opron} - ${item.prona}
                                     </option>`;
@@ -413,7 +395,7 @@
                             $body.find('.poqty').val(qty);
                             $body.find('.unit-label').text(stdqu);
                             $body.find('.stdqu-input').val(stdqu);
-                            $body.find('input[name="netpr[]"]').val(price);
+                            $body.find('input[name="price[]"]').val(price);
 
                             // format currency pakai curco input
                             if (typeof window.formatAllCurrency === 'function') {
@@ -438,7 +420,7 @@
                 const curco = $('input[name="curco"]').val() || 'IDR';
                 if (supno) preloadPoAndBarang(supno);
 
-                // ✅ kalau tambah detail, tetap pakai supno & curco
+                // kalau tambah detail, tetap pakai supno & curco
                 $(document).on('click', 'button[onclick^="addInvoice"]', function () {
                     if (supno) preloadPoAndBarang(supno);
                     if (typeof window.formatAllCurrency === 'function') {
@@ -486,7 +468,7 @@
                             opronOptions += `
                                 <option value="${item.opron}"
                                     data-qty="${item.poqty}"
-                                    data-price="${item.netpr}"
+                                    data-price="${item.price}"
                                     data-stdqu="${item.stdqu}">
                                     ${item.opron} - ${item.prona}
                                 </option>`;
@@ -504,7 +486,7 @@
                             $body.find('.poqty').val(qty);
                             $body.find('.unit-label').text(stdqu);
                             $body.find('.stdqu-input').val(stdqu);
-                            const $priceInput = $body.find('input[name="netpr[]"]');
+                            const $priceInput = $body.find('input[name="price[]"]');
                             $priceInput.val(price);
 
                             // ubah header accordion
@@ -540,7 +522,7 @@
                     $opron.html('<option value="">Loading Barang...</option>').trigger('change.select2');
                     $body.find('.poqty').val('');
                     $body.find('.unit-label').text('');
-                    $body.find('input[name="netpr[]"]').val('');
+                    $body.find('input[name="price[]"]').val('');
                     $body.find('.stdqu-input').val('');
 
                     if (!pono) return;
@@ -555,7 +537,7 @@
                                 options += `
                                     <option value="${item.opron}"
                                         data-qty="${item.poqty}"
-                                        data-price="${item.netpr}"
+                                        data-price="${item.price}"
                                         data-stdqu="${item.stdqu}">
                                         ${item.opron} - ${item.prona}
                                     </option>`;
@@ -580,7 +562,7 @@
                     $body.find('.poqty').val(qty);
                     $body.find('.unit-label').text(stdqu);
                     $body.find('.stdqu-input').val(stdqu);
-                    $body.find('input[name="netpr[]"]').val(price);
+                    $body.find('input[name="price[]"]').val(price);
 
                     const label = `${$sel.val()} - ${($sel.text().split(' - ')[1] || '')}`;
                     $body.closest('.accordion-item').find('.accordion-button')
