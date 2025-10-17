@@ -66,17 +66,17 @@
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPn (%)</label>
-                            <input type="number" class="form-control" name="ppn[]" id="ppn-${invoiceIndex}">
+                            <input type="number" class="form-control" name="ppn[]" id="ppn-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPnBM (%)</label>
-                            <input type="number" class="form-control" name="ppnbm[]" id="ppnbm-${invoiceIndex}">
+                            <input type="number" class="form-control" name="ppnbm[]" id="ppnbm-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPh (%)</label>
-                            <input type="number" class="form-control" name="pph[]" id="pph-${invoiceIndex}">
+                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
                         </div>
                     </div>
                 </div>
