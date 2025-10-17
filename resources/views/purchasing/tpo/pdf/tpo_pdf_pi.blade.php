@@ -134,9 +134,8 @@
             @php $total = 0; @endphp
             @foreach($tpohdr->tpodtl as $i => $d)
                 @php
-                    $total = ($d->price - ($d->price * ($d->odisp / 100))) * $d->poqty;
-                @endphp
-                @php
+                    $subtotal = ($d->price - ($d->price * ($d->odisp / 100))) * $d->poqty;
+                    $total += $subtotal;
                     $diskon += round(($d->price * ($d->odisp / 100)) * $d->poqty, 2);
                 @endphp
                 <tr>
@@ -150,7 +149,7 @@
                     </td>
                     <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
                     <td class="center">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
-                    <td class="right">{{ formatNumberOnly($total, $tpohdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($subtotal, $tpohdr->curco) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -181,7 +180,7 @@
                             </tr>
                             <tr>
                                 <td><b>Grand Total</b></td>
-                                <td class="right"><b>{{ formatNumberOnly($grandtotal, $tpohdr->curco) }}</b></td>
+                                <td class="right"><b>{{ formatNumberOnly($total, $tpohdr->curco) }}</b></td>
                             </tr>
                         </table>
                     </td>

@@ -35,7 +35,7 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="pono" class="form-label">Nomor PO</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" placeholder="Cth : BAxxx-2xxx" name="pono" id="pono" value="{{ old('pono') }}" required>
+                        <input type="text" class="form-control text-uppercase" placeholder="Cth : BAxxx-2xxx" name="pono" id="pono" value="{{ strtoupper(old('pono')) }}" required>
                         @error('pono')
                             <span class="text-danger">
                                 <strong>{{ $message }}</strong>
@@ -211,9 +211,13 @@
 
                 toggleHSBM();
 
+                // kalau ganti PO Type
                 $('#potype').on('change', toggleHSBM);
+
+                window.toggleHSBM = toggleHSBM;
             });
         </script>
+
 
         {{-- get currency from curco --}}
         <script>
@@ -726,6 +730,11 @@
                 `;
 
                 accordion.appendChild(newItem);
+
+                // cek potype untuk toggle HSN dan BM
+                if (typeof toggleHSBM === 'function') {
+                    toggleHSBM();
+                }
 
                 initSelect2Barang(barangIndex);
 
