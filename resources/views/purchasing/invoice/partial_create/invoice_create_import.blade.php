@@ -15,7 +15,7 @@
 
     <div class="col-md-6 mt-3">
         <label for="invno" class="form-label">Invoice no.</label><span class="text-danger"> *</span>
-        <input type="number" class="form-control" name="invno" id="invno-import" value="{{ old('invno') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        <input type="text" class="form-control" name="invno" id="invno-import" value="{{ old('invno') }}" required>
         @error('invno')
             <span class="text-danger">
                 <strong>{{ $message }}</strong>
