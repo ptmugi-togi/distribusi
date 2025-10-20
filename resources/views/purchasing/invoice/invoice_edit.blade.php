@@ -45,16 +45,21 @@
                 <input type="date" class="form-control" name="duedt" value="{{ $invoice->duedt }}" readonly style="background-color:#e9ecef;">
             </div>
 
-            <div class="col-md-6 mt-2">
-                <label class="form-label">Supplier</label>
-                <input type="text" class="form-control" name="supno" value="{{ $invoice->supno }}" hidden>
-                <input type="text" class="form-control" value="{{ $invoice->supno }} - {{ $invoice->vendor->supna }}" readonly style="background-color:#e9ecef;">
-            </div>
-            
-            <div class="col-md-6 mt-2">
-                <label class="form-label">Currency</label>
-                <input type="text" class="form-control" name="curco" value="{{ $invoice->curco }}" readonly style="background-color:#e9ecef;">
-            </div>
+        <div class="col-md-6 mt-2">
+            <label class="form-label">Supplier</label>
+            <input type="text" class="form-control" name="supno" value="{{ $invoice->supno }}" hidden>
+            <input type="text" class="form-control" value="{{ $invoice->supno }} - {{ $invoice->vendor->supna }}" readonly style="background-color:#e9ecef;">
+        </div>
+        
+        <div class="col-md-6 mt-2">
+            <label class="form-label">Currency</label>
+            <input type="text" class="form-control" name="curco" value="{{ $invoice->curco }}" readonly style="background-color:#e9ecef;">
+        </div>
+
+        <div class="col-md-6 mt-2">
+            <label for="taxno" class="form-label">Tax no.</label>
+            <input type="text" class="form-control" name="taxno" id="taxno" value="{{ $invoice->taxno }}" readonly style="background-color:#e9ecef;">
+        </div>
 
             @if($invoice->details->first()->potyp === 'PI')
             <div class="col-md-6 mt-2">
@@ -87,14 +92,14 @@
                         <div class="accordion-item" id="import-item-{{ $i }}">
                             <h2 class="accordion-header" id="heading-import-{{ $i }}">
                                 <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#import-body-{{ $i }}"
+                                        data-bs-toggle="collapse" data-bs-target="#import-body-{{ $i }}" data-bs-parent="#accordionInvoiceImport"
                                         aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="import-body-{{ $i }}">
                                     {{ $d->opron ?? 'Line' }}
                                 </button>
                             </h2>
 
                             <div id="import-body-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
-                                aria-labelledby="heading-import-{{ $i }}" data-bs-parent="#accordionInvoiceImport">
+                                aria-labelledby="heading-import-{{ $i }}">
                                 <div class="accordion-body">
                                     <div class="row">
 
@@ -123,14 +128,27 @@
                                                 <input type="text" class="form-control poqty" style="background-color: #e9ecef;"
                                                     name="poqty[]" id="poqty-{{ $i }}" value="{{ $d->poqty ?? '' }}" readonly>
                                                 <span class="input-group-text unit-label">{{ $d->stdqu ?? '' }}</span>
-                                                <input type="hidden" name="stdqt[]" class="stdqu-input" value="{{ $d->stdqu ?? '' }}">
+                                                <input type="hidden" name="stdqt[]" class="stdqu-input" value="{{ old('stdqt.'. $i) ?? $d->stdqu ?? '' }}">
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Invoice Quantity</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" name="inqty[]" id="inqty-{{ $i }}" value="{{ $d->inqty ?? '' }}">
+                                                <input type="text" class="form-control" name="inqty[]" id="inqty-{{ $i }}" 
+                                                value="{{ old('inqty.'. $i) ?? $d->inqty ?? '' }}"
+                                                oninput="
+                                                    this.value = this.value.replace(/[^0-9]/g, '');
+                                                    const poqty = Number(document.getElementById('poqty-{{ $i }}')?.value || 0);
+                                                    if (Number(this.value) > poqty) {
+                                                        Swal.fire({
+                                                            title: 'Peringatan',
+                                                            text: 'Jumlah Invoice qty tidak boleh lebih banyak dari jumlah PO qty',
+                                                            icon: 'error'
+                                                        });
+                                                        this.value = poqty;
+                                                    }
+                                                ">
                                                 <span class="input-group-text unit-label">{{ $d->stdqu ?? '' }}</span>
                                             </div>
                                         </div>
@@ -138,27 +156,27 @@
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO Price/unit</label>
                                             <input type="text" class="form-control currency" style="background-color: #e9ecef;"
-                                                name="price[]" id="price-{{ $i }}" value="{{ $d->price ?? '' }}" readonly>
+                                                name="price[]" id="price-{{ $i }}" value="{{ old('price.'. $i) ?? $d->price ?? '' }}" readonly>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Invoice Price/unit</label>
-                                            <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ $d->inprc ?? '' }}">
+                                            <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ old('inprc.'. $i) ?? $d->inprc ?? '' }}">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Ex-Work Price</label>
-                                            <input type="text" class="form-control currency" name="ewprc[]" value="{{ $d->ewprc ?? '' }}">
+                                            <input type="text" class="form-control currency" name="ewprc[]" value="{{ old('ewprc.'. $i) ?? $d->ewprc ?? '' }}">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">FOB Charges</label>
-                                            <input type="text" class="form-control currency" name="fobch[]" value="{{ $d->fobch ?? '' }}">
+                                            <input type="text" class="form-control currency" name="fobch[]" value="{{ old('fobch.'. $i) ?? $d->fobch ?? '' }}">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Insurance</label>
-                                            <input type="text" class="form-control currency" name="incst[]" value="{{ $d->incst ?? '' }}">
+                                            <input type="text" class="form-control currency" name="incst[]" value="{{ old('incst.'. $i) ?? $d->incst ?? '' }}">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
@@ -180,15 +198,15 @@
 
                                         <div class="col-md-2 mt-3">
                                             <label class="form-label">PPn (%)</label>
-                                            <input type="number" class="form-control" name="ppn[]" value="{{ $d->ppn ?? '' }}">
+                                            <input type="number" class="form-control" name="ppn[]" value="{{ old('ppn.'. $i) ?? $d->ppn ?? '' }}">
                                         </div>
                                         <div class="col-md-2 mt-3">
                                             <label class="form-label">PPnBM (%)</label>
-                                            <input type="number" class="form-control" name="ppnbm[]" value="{{ $d->ppnbm ?? '' }}">
+                                            <input type="number" class="form-control" name="ppnbm[]" value="{{ old('ppnbm.'. $i) ?? $d->ppnbm ?? '' }}">
                                         </div>
                                         <div class="col-md-2 mt-3">
                                             <label class="form-label">PPh (%)</label>
-                                            <input type="number" class="form-control" name="pph[]" value="{{ $d->pph ?? '' }}">
+                                            <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"  onblur="this.value = this.value.replace(',', '.')">
                                         </div>
                                     </div>
                                 </div>
@@ -212,14 +230,14 @@
                     <div class="accordion-item" id="accordion-item-{{ $i }}">
                         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-{{ $i }}">
                             <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}"
+                                    data-bs-toggle="collapse" data-bs-target="#barang-{{ $i }}" data-bs-parent="#accordionInvoiceLocInv"
                                     aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="barang-{{ $i }}">
                                 {{ $d->opron ?? 'Line' }}
                             </button>
                         </h2>
 
                         <div id="barang-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
-                            aria-labelledby="heading-{{ $i }}" data-bs-parent="#accordionPoBarang">
+                            aria-labelledby="heading-{{ $i }}">
                             <div class="accordion-body">
                                 <div class="row">
                                     <div class="col-md-6 mt-3">
@@ -244,46 +262,59 @@
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">PO Quantity</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-{{ $i }}" value="{{ $d->poqty ?? '' }}" readonly>
-                                            <span class="input-group-text unit-label">{{ $d->stdqu ?? '' }}</span>
-                                            <input type="hidden" name="stdqt[]" class="stdqu-input" value="{{ $d->stdqu ?? '' }}">
+                                            <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-{{ $i }}" value="{{ old('poqty.'. $i) ?? $d->poqty ?? '' }}" readonly>
+                                            <span class="input-group-text unit-label">{{ old('stdqt.'. $i) ?? $d->stdqu ?? '' }}</span>
+                                            <input type="hidden" name="stdqt[]" class="stdqu-input" value="{{ old('stdqt.'. $i) ?? $d->stdqu ?? '' }}">
                                         </div>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Invoice Quantity</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" name="inqty[]" id="inqty-{{ $i }}" value="{{ $d->inqty ?? '' }}">
-                                            <span class="input-group-text unit-label">{{ $d->stdqu ?? '' }}</span>
+                                            <input type="text" class="form-control" name="inqty[]" id="inqty-{{ $i }}" 
+                                            value="{{ old('inqty.'. $i) ?? $d->inqty ?? '' }}"
+                                            oninput="
+                                                this.value = this.value.replace(/[^0-9]/g, '');
+                                                const poqty = Number(document.getElementById('poqty-{{ $i }}')?.value || 0);
+                                                if (Number(this.value) > poqty) {
+                                                    Swal.fire({
+                                                        title: 'Peringatan',
+                                                        text: 'Jumlah Invoice qty tidak boleh lebih banyak dari jumlah PO qty',
+                                                        icon: 'error'
+                                                    });
+                                                    this.value = poqty;
+                                                }
+                                            ">
+                                            <span class="input-group-text unit-label">{{ old('stdqt.'. $i) ?? $d->stdqu ?? '' }}</span>
                                         </div>
                                     </div>
 
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PO Price/unit</label>
-                                        <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-{{ $i }}" value="{{ $d->price ?? '' }}" readonly>
+                                        <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-{{ $i }}" value="{{ old('price.'. $i) ?? $d->price ?? '' }}" readonly>
                                     </div>
 
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">Invoice Price/unit</label>
-                                        <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ $d->inprc ?? '' }}">
+                                        <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ old('inprc.'. $i) ?? $d->inprc ?? '' }}">
                                     </div>
 
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">Invoice Amount</label>
-                                        <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ $d->inamt ?? '' }}" style="background-color: #e9ecef;" readonly>
+                                        <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ old('inamt.'. $i) ?? $d->inamt ?? '' }}" style="background-color: #e9ecef;" readonly>
                                     </div>
 
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PPn (%)</label>
-                                        <input type="number" class="form-control" name="ppn[]" value="{{ $d->ppn ?? '' }}">
+                                        <input type="number" class="form-control" name="ppn[]" value="{{ old('ppn.'. $i) ?? $d->ppn ?? '' }}">
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PPnBM (%)</label>
-                                        <input type="number" class="form-control" name="ppnbm[]" value="{{ $d->ppnbm ?? '' }}">
+                                        <input type="number" class="form-control" name="ppnbm[]" value="{{ old('ppnbm.'. $i) ?? $d->ppnbm ?? '' }}">
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PPh (%)</label>
-                                        <input type="number" class="form-control" name="pph[]" value="{{ $d->pph ?? '' }}">
+                                        <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
                                     </div>
                                 </div>
                             </div>
@@ -308,8 +339,8 @@
     </section>
     </main>
 
-    @include('purchasing.invoice.partial_create.add_invoice_import')
-    @include('purchasing.invoice.partial_create.add_invoice_loc_inv')
+    @include('purchasing.invoice.partial_edit.add_invoice_import')
+    @include('purchasing.invoice.partial_edit.add_invoice_loc_inv')
 
     @push('scripts')
         {{-- oldvalue --}}
