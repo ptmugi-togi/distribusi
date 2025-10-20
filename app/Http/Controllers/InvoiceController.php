@@ -86,7 +86,7 @@ class InvoiceController extends Controller
     public function create()
     {
         $invoice = InvoiceHdr::with(['currency', 'branches', 'formcode'])->get();
-        $vendors = Mvendor::select('supno','supna')->orderBy('supno')->get();
+        $vendors = Mvendor::select('supno','supna', 'vgrp')->orderBy('supno')->get();
         $po = DB::table('pohdr_tbl')->select('pono','supno')->where('supno', '!=', '')->orderBy('pono')->get();
         $hsnList = DB::table('mhsno_tbl')
             ->select('hsn', 'bm')

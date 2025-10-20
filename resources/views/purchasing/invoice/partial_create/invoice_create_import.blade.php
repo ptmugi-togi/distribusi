@@ -3,7 +3,7 @@
         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="supno" id="supno-import" required>
             <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
-            @foreach($vendors as $v)
+            @foreach($vendors->where('vgrp', 'I') as $v)
                 <option
                     value="{{ $v->supno }}"
                     {{ old('supno') == $v->supno ? 'selected' : '' }}>

@@ -3,7 +3,7 @@
         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
         <select class="select2 form-control" name="supno" id="supno" required>
             <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
-            @foreach($vendors as $v)
+            @foreach($vendors->where('vgrp', 'L') as $v)
                 <option
                     value="{{ $v->supno }}"
                     {{ old('supno') == $v->supno ? 'selected' : '' }}>
@@ -48,6 +48,11 @@
             <option value="SGD" {{ old('curco') == 'SGD' ? 'selected' : '' }}>SGD (Dollar Singapura)</option>
             <option value="USD" {{ old('curco') == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>
         </select>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="taxno" class="form-label">Tax no.</label>
+        <input type="text" class="form-control" name="taxno" id="taxno" value="{{ old('taxno') }}">
     </div>
 </div>
 
