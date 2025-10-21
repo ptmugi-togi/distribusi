@@ -104,7 +104,7 @@
 
                                 <div class="col-md-6 mt-2">
                                     <label class="form-label">Invoice Quantity</label>
-                                    <input type="text" class="form-control" value="{{ $detail->inqty }}" disabled>
+                                    <input type="text" class="form-control" value="{{ $detail->inqty }} {{ $detail->stdqt }}" disabled>
                                 </div>
 
                                 <div class="col-md-4 mt-2">
