@@ -97,7 +97,7 @@
 
                         <div class="col-md-6 mt-3">
                             <label for="bm-${invoiceImport}" class="form-label">BM (%)</label>
-                            <input type="number" class="form-control" name="bm[]" id="bm-${invoiceImport}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                            <input type="number" class="form-control" name="bm[]" id="bm-${invoiceImport}" readonly style="background-color:#e9ecef;">
                         </div>
 
                         <div class="col-md-2 mt-3">

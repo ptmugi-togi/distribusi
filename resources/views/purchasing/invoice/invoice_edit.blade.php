@@ -153,15 +153,20 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <label class="form-label">PO Price/unit</label>
                                             <input type="text" class="form-control currency" style="background-color: #e9ecef;"
                                                 name="price[]" id="price-{{ $i }}" value="{{ old('price.'. $i) ?? $d->price ?? '' }}" readonly>
                                         </div>
 
-                                        <div class="col-md-6 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <label class="form-label">Invoice Price/unit</label>
                                             <input type="text" class="form-control currency" name="inprc[]" id="inprc-{{ $i }}" value="{{ old('inprc.'. $i) ?? $d->inprc ?? '' }}">
+                                        </div>
+
+                                        <div class="col-md-4 mt-3">
+                                            <label class="form-label">Invoice Amount</label>
+                                            <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ old('inamt.'. $i) ?? $d->inamt ?? '' }}" readonly style="background-color: #e9ecef;">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
@@ -193,7 +198,7 @@
 
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">BM (%)</label>
-                                            <input type="number" class="form-control" name="bm[]" value="{{ $d->bm ?? '' }}">
+                                            <input type="number" class="form-control" name="bm[]" value="{{ $d->bm ?? '' }}" readonly style="background-color:#e9ecef;">
                                         </div>
 
                                         <div class="col-md-2 mt-3">
@@ -301,7 +306,7 @@
 
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">Invoice Amount</label>
-                                        <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ old('inamt.'. $i) ?? $d->inamt ?? '' }}" style="background-color: #e9ecef;" readonly>
+                                        <input type="text" class="form-control currency" name="inamt[]" id="inamt-{{ $i }}" value="{{ old('inamt.'. $i) ?? $d->inamt ?? '' }}" readonly style="background-color: #e9ecef;">
                                     </div>
 
                                     <div class="col-md-4 mt-3">
@@ -686,6 +691,53 @@
             });
         </script>
 
+        {{-- inamt auto generate --}}
+        <script>
+            $(document).on('input', 'input[name="inqty[]"], input[name="inprc[]"]', function () {
+                const $row = $(this).closest('.row');
+                const qty = parseFloat($row.find('input[name="inqty[]"]').val()) || 0;
+                const priceStr = $row.find('input[name="inprc[]"]').val();
+
+                // Ambil currency code dari selector
+                const curco = $('.currency-selector').val() || $('input[name="curco"]').val() || 'IDR';
+
+                // Ambil locale dari kode currency
+                const localeMap = {
+                    IDR: 'id-ID',
+                    USD: 'en-US',
+                    EUR: 'de-DE',
+                    GBP: 'en-GB',
+                    MYR: 'ms-MY',
+                    SGD: 'en-SG',
+                    CHF: 'de-CH'
+                };
+                const locale = localeMap[curco] || 'id-ID';
+
+                // Bersihkan angka
+                const price = parseFloat(String(priceStr).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+
+                // Hitung total
+                const total = qty * price;
+
+                // Format hasil sesuai currency yang dipilih
+                const formatted = new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: curco,
+                    minimumFractionDigits: 2
+                }).format(total);
+
+                $row.find('input[name="inamt[]"]').val(formatted);
+            });
+        </script>
+
+        {{-- bm dari hsn --}}
+        <script>
+            $(document).on('change', '.hsn-select', function () {
+                const selectedBM = $(this).find(':selected').data('bm') || '';
+                $(this).closest('.accordion-body').find('input[name="bm[]"]').val(selectedBM);
+            });
+        </script>
+
         {{-- select2 init --}}
         <script>
             $(document).on('shown.bs.collapse', '.accordion-collapse', function () {
@@ -699,7 +751,6 @@
                 });
             });
         </script>
-
 
         {{-- sweetalert konfirmasi & sukses --}}
         <script>

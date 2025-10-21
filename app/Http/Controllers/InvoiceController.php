@@ -256,33 +256,28 @@ class InvoiceController extends Controller
         DB::beginTransaction();
 
         try {
-            DB::table('tsupih_tbl')
-                ->where('invno', $id)
-                ->update([
-                    'invdt'      => $request->invdt,
-                    'duedt'      => $request->duedt,
-                    'curco'      => $request->curco,
-                    'blnum'      => $request->blnum,
-                    'rinum'      => $request->rinum,
-                    'tfreight'   => $request->tfreight ?? 0,
-                    'updated_at' => now(),
-                    'updated_by' => Auth::user()->name,
-                ]);
-
             // Update / insert detail
             foreach ($request->pono ?? [] as $i => $pono) {
                 $opron = $request->opron[$i] ?? null;
                 $inqty = (float) str_replace(',', '', $request->inqty[$i] ?? 0);
                 $inprc = (float) str_replace(',', '', $request->inprc[$i] ?? 0);
+                $inamt = (float) str_replace(',', '', $request->inamt[$i] ?? ($inqty * $inprc));
+
                 $payload = [
                     'pono'   => $pono,
                     'opron'  => $opron,
                     'inqty'  => $inqty,
+                    'stdqt'  => $request->stdqt[$i],
                     'inprc'  => $inprc,
-                    'inamt'  => $inqty * $inprc,
-                    'ppn'    => $request->ppn[$i] ?? 0,
-                    'ppnbm'  => $request->ppnbm[$i] ?? 0,
-                    'pph'    => $request->pph[$i] ?? 0,
+                    'inamt'  => $inamt,
+                    'ewprc'  => $request->ewprc[$i],
+                    'fobch' => $request->fobch[$i],
+                    'incst'  => $request->incst[$i],
+                    'hsn'    => $request->hsn[$i],
+                    'bm'     => $request->bm[$i],
+                    'ppn'    => $request->ppn[$i],
+                    'ppnbm'  => $request->ppnbm[$i],
+                    'pph'    => $request->pph[$i],
                 ];
 
                 $id_su = $request->id_su[$i] ?? null;

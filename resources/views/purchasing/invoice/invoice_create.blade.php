@@ -541,15 +541,31 @@
                 const qty = parseFloat($row.find('input[name="inqty[]"]').val()) || 0;
                 const priceStr = $row.find('input[name="inprc[]"]').val();
 
-                // Hapus simbol mata uang, koma, titik, dll.
+                // Ambil currency code dari selector
+                const curco = $('.currency-selector').val() || $('input[name="curco"]').val() || 'IDR';
+
+                // Ambil locale dari kode currency
+                const localeMap = {
+                    IDR: 'id-ID',
+                    USD: 'en-US',
+                    EUR: 'de-DE',
+                    GBP: 'en-GB',
+                    MYR: 'ms-MY',
+                    SGD: 'en-SG',
+                    CHF: 'de-CH'
+                };
+                const locale = localeMap[curco] || 'id-ID';
+
+                // Bersihkan angka
                 const price = parseFloat(String(priceStr).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
 
+                // Hitung total
                 const total = qty * price;
 
-                // Format hasil ke bentuk currency (Rp xxx,xx)
-                const formatted = new Intl.NumberFormat('id-ID', {
+                // Format hasil sesuai currency yang dipilih
+                const formatted = new Intl.NumberFormat(locale, {
                     style: 'currency',
-                    currency: 'IDR',
+                    currency: curco,
                     minimumFractionDigits: 2
                 }).format(total);
 
