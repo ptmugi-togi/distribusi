@@ -4,52 +4,53 @@
 
     function addInvoiceLocInv() {
         const accordion = document.getElementById('accordionInvoiceLocInv');
+        const currentIndex = invoiceIndex;
 
         const newItem = document.createElement('div');
         newItem.classList.add('accordion-item');
-        newItem.id = `accordion-item-${invoiceIndex}`;
+        newItem.id = `accordion-item-${currentIndex}`;
 
         newItem.innerHTML = `
-            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-${invoiceIndex}">
+            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-${currentIndex}">
                 <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#barang-${invoiceIndex}"
-                        aria-expanded="false" aria-controls="barang-${invoiceIndex}">
+                        data-bs-toggle="collapse" data-bs-target="#barang-${currentIndex}"
+                        aria-expanded="false" aria-controls="barang-${currentIndex}">
                 </button>
-                <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeInvoice(${invoiceIndex})">
+                <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeInvoice(${currentIndex})">
                     <i class="bi bi-trash-fill"></i>
                 </button>
             </h2>
-            <div id="barang-${invoiceIndex}" class="accordion-collapse collapse"
-                aria-labelledby="heading-${invoiceIndex}" data-bs-parent="#accordionInvoiceLocInv">
+            <div id="barang-${currentIndex}" class="accordion-collapse collapse"
+                aria-labelledby="heading-${currentIndex}" data-bs-parent="#accordionInvoiceLocInv">
                 <div class="accordion-body">
                     <div class="row">
                         <div class="col-md-6 mt-3">
                             <label class="form-label">No. PO <span class="text-danger">*</span></label>
-                            <select class="select2 form-control" name="pono[]" id="locinv-pono-${invoiceIndex}" required>
+                            <select class="select2 form-control" name="pono[]" id="locinv-pono-${currentIndex}" required>
                                 <option value="" disabled selected>Silahkan pilih Supplier terlebih dahulu</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Barang <span class="text-danger">*</span></label>
-                            <select class="select2 form-control" name="opron[]" id="locinv-opron-${invoiceIndex}" required>
+                            <select class="select2 form-control" name="opron[]" id="locinv-opron-${currentIndex}" required>
                                 <option value="" disabled selected>Silahkan pilih PO No. terlebih dahulu</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="poqty-${invoiceIndex}" class="form-label">PO Quantity</label>
+                            <label for="poqty-${currentIndex}" class="form-label">PO Quantity</label>
                             <div class="input-group">
-                                <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-${invoiceIndex}" readonly>
+                                <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-${currentIndex}" readonly>
                                 <span class="input-group-text unit-label"></span>
                                 <input type="text" name="stdqt[]" class="stdqu-input" hidden>
                             </div>
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="inqty-${invoiceIndex}" class="form-label">Invoice Quantity</label>
+                            <label for="inqty-${currentIndex}" class="form-label">Invoice Quantity</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="inqty[]" id="inqty-${invoiceIndex}"
+                                <input type="text" class="form-control" name="inqty[]" id="inqty-${currentIndex}"
                                 oninput="let poqty = document.getElementById('poqty-${invoiceIndex }').value; if (Number(this.value) > Number(poqty)) { Swal.fire({ title: 'Peringatan', text: 'Jumlah Invoice qty tidak boleh lebih besar dari jumlah PO qty', icon: 'error' }); this.value = poqty; }">
                                 <span class="input-group-text unit-label"></span>
                             </div>
@@ -57,32 +58,32 @@
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PO Price/unit</label>
-                            <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-${invoiceIndex}" readonly>
+                            <input type="text" class="form-control currency" style="background-color: #e9ecef;" name="price[]" id="price-${currentIndex}" readonly>
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">Invoice Price/unit</label>
-                            <input type="text" class="form-control currency" name="inprc[]" id="inprc-${invoiceIndex}">
+                            <input type="text" class="form-control currency" name="inprc[]" id="inprc-${currentIndex}">
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label for="inamt" class="form-label">Invoice Amount</label>
-                            <input type="text" class="form-control currency" name="inamt[]" id="inamt-${invoiceIndex}" style="background-color: #e9ecef;" readonly>
+                            <input type="text" class="form-control currency" name="inamt[]" id="inamt-${currentIndex}" style="background-color: #e9ecef;" readonly>
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPn (%)</label>
-                            <input type="number" class="form-control" name="ppn[]" id="ppn-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                            <input type="number" class="form-control" name="ppn[]" id="ppn-${currentIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPnBM (%)</label>
-                            <input type="number" class="form-control" name="ppnbm[]" id="ppnbm-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+                            <input type="number" class="form-control" name="ppnbm[]" id="ppnbm-${currentIndex}" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                         </div>
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPh (%)</label>
-                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
+                            <input type="text" class="form-control" name="pph[]" id="pph-${currentIndex}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
                         </div>
                     </div>
                 </div>
@@ -91,12 +92,15 @@
 
         accordion.appendChild(newItem);
 
-        // re-init select2 & currency formatting untuk elemen baru
-        $(`#locinv-pono-${invoiceIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
-        $(`#locinv-opron-${invoiceIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+        // otomatis buka accordion yang baru dibuat
+        const collapse = new bootstrap.Collapse(document.getElementById(`barang-${currentIndex}`), { show: true });
 
-        const supno = selectedSupplier || $('select[name="supno"]').val();
-        const $ponoSelect = $(`#locinv-pono-${invoiceIndex}`);
+        // re-init select2 & currency formatting untuk elemen baru
+        $(`#locinv-pono-${currentIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+        $(`#locinv-opron-${currentIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
+
+        const supno = $('select[name="supno"]').val();
+        const $ponoSelect = $(`#locinv-pono-${currentIndex}`);
 
         if (supno) {
             $ponoSelect.html('<option value="">Loading...</option>');
@@ -125,7 +129,7 @@
 
         // observer currency formatting biar langsung berlaku
         const currencySelect = $('.currency-selector').val() || 'IDR';
-        document.querySelectorAll(`#accordion-item-${invoiceIndex} .currency`).forEach(function(input) {
+        document.querySelectorAll(`#accordion-item-${currentIndex} .currency`).forEach(function(input) {
             const rawValue = input.value.replace(/[^\d]/g, '');
             if (rawValue) {
                 input.value = new Intl.NumberFormat('id-ID', {

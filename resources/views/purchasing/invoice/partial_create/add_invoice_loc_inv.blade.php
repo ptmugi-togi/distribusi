@@ -91,6 +91,9 @@
 
         accordion.appendChild(newItem);
 
+        // otomatis buka accordion yang baru dibuat
+        const collapse = new bootstrap.Collapse(document.getElementById(`barang-${invoiceIndex}`), { show: true });
+
         // re-init select2 & currency formatting untuk elemen baru
         $(`#locinv-pono-${invoiceIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });
         $(`#locinv-opron-${invoiceIndex}`).select2({ theme: 'bootstrap-5', width: '100%' });

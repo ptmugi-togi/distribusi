@@ -72,6 +72,10 @@ class TpoController extends Controller
             'freight_cost',
         ]);
 
+        if (empty($HeaderData['curco'])) {
+            $HeaderData['curco'] = 'IDR';
+        }
+
         // ambil currency rate hanya saat PO create
         if (empty($request->currency_rate)) {
             $currency = Mcurco::find($request->curco);
@@ -86,37 +90,37 @@ class TpoController extends Controller
 
         // simpan yang di tabel detail
         if ($request->has('opron') && $header) {
-        foreach ($request->opron as $i => $opron) {
-            $price = floatval($request->price[$i] ?? 0);
-            $discount = floatval($request->odisp[$i] ?? 0);
-            $qty = floatval($request->poqty[$i] ?? 0);
-            $berat = $request->weigh[$i] ?? 0;
+            foreach ($request->opron as $i => $opron) {
+                $price = floatval($request->price[$i] ?? 0);
+                $discount = floatval($request->odisp[$i] ?? 0);
+                $qty = floatval($request->poqty[$i] ?? 0);
+                $berat = $request->weigh[$i] ?? 0;
 
-            // Hitung net price per item
-            $netpr = $qty * ($price - ($price * ($discount / 100)));
+                // Hitung net price per item
+                $netpr = $qty * ($price - ($price * ($discount / 100)));
 
-            $detailData = [
-                'pono'   => $header->pono,
-                'formc'  => $header->formc,
-                'supno'  => $header->supno,
-                'opron'  => $opron,
-                'poqty'  => $qty,
-                'stdqu'  => $request->stdqu[$i] ?? null,
-                'price'  => $price,
-                'netpr'  => $netpr,
-                'berat'  => $berat,
-                'odisp'  => $discount,
-                'edeld'  => $request->edeld[$i] ?? null,
-                'earrd'  => $request->earrd[$i] ?? null,
-                'hsn'    => $request->hsn[$i] ?? null,
-                'bm'     => $request->bm[$i] ?? null,
-                'pphd'   => $request->pphd[$i] ?? null,
-                'noted'  => $request->noted[$i] ?? null,
-            ];
+                $detailData = [
+                    'pono'   => $header->pono,
+                    'formc'  => $header->formc,
+                    'supno'  => $header->supno,
+                    'opron'  => $opron,
+                    'poqty'  => $qty,
+                    'stdqu'  => $request->stdqu[$i] ?? null,
+                    'price'  => $price,
+                    'netpr'  => $netpr,
+                    'berat'  => $berat,
+                    'odisp'  => $discount,
+                    'edeld'  => $request->edeld[$i] ?? null,
+                    'earrd'  => $request->earrd[$i] ?? null,
+                    'hsn'    => $request->hsn[$i] ?? null,
+                    'bm'     => $request->bm[$i] ?? null,
+                    'pphd'   => $request->pphd[$i] ?? null,
+                    'noted'  => $request->noted[$i] ?? null,
+                ];
 
-            Tpodtl::create($detailData);
+                Tpodtl::create($detailData);
+            }
         }
-    }
 
         return redirect()->route('tpo.index')->with('success', 'Data PO "' . $header->pono . '" berhasil ditambahkan');
     }

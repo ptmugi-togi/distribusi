@@ -121,6 +121,9 @@
 
         accordion.appendChild(newItem);
 
+        // otomatis buka accordion yang baru dibuat
+        const collapse = new bootstrap.Collapse(document.getElementById(`barang-${invoiceImport}`), { show: true });
+
         // re-init select2
         $(`#import-pono-${invoiceImport}`).select2({ theme: 'bootstrap-5', width: '100%' });
         $(`#import-opron-${invoiceImport}`).select2({ theme: 'bootstrap-5', width: '100%' });

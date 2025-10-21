@@ -81,7 +81,7 @@
                     <div class="col-md-3 mt-3">
                         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
                         <select class="select2 form-control" name="curco" id="currency" style="width: 100%;" required>
-                            <option value="" {{ old('curco') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Currency Code</option>
+                            <option value="IDR" {{ old('curco') == '' ? 'selected' : '' }} disabled selected>IDR (Rupiah Indonesia)</option>
                             <option value="CHF" {{ old('curco') == 'CHF' ? 'selected' : '' }}>CHF (Franc Swiss)</option>
                             <option value="EUR" {{ old('curco') == 'EUR' ? 'selected' : '' }}>EUR (Euro)</option>
                             <option value="GBP" {{ old('curco') == 'GBP' ? 'selected' : '' }}>GBP (Pound Sterling)</option>
@@ -94,8 +94,8 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="currency_rate" class="form-label" id="currency_rate_label">Kurs (IDR)</label>
-                        <input type="text" class="form-control" id="currency_rate_display" value="{{ old('currency_rate') ? 'Rp ' . number_format(old('currency_rate'), 2, ',', '.') : '' }}" required>
-                        <input type="text" class="form-control" name="currency_rate" id="currency_rate" value="{{ old('currency_rate') }}" hidden required>
+                        <input type="text" class="form-control" id="currency_rate_display" value="{{ old('currency_rate') ? 'Rp ' . number_format(old('currency_rate'), 2, ',', '.') : '1' }}" required>
+                        <input type="text" class="form-control" name="currency_rate" id="currency_rate" value="{{ old('currency_rate') ? old('currency_rate') : '1' }}" hidden required>
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -113,8 +113,8 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="delco" class="form-label">Dikirim Ke</label>
-                        <select class="select2 form-control" name="delco" id="delco" style="width: 100%;">
+                        <label for="delco" class="form-label">Dikirim Ke</label><span class="text-danger"> *</span>
+                        <select class="select2 form-control" name="delco" id="delco" style="width: 100%;" required>
                             <option value="" {{ old('delco') ? '' : 'selected' }} disabled selected>Silahkan pilih tujuan pengiriman</option>
                             <option value="PST" {{ old('delco') == 'PST' ? 'selected' : '' }}>PST (Pusat)</option>
                             <option value="CKG" {{ old('delco') == 'CKG' ? 'selected' : '' }}>CKG (Cakung)</option>
@@ -364,7 +364,6 @@
                 });
             });
         </script>
-
 
         {{-- formating currency input --}}
         <script>
@@ -730,6 +729,9 @@
                 `;
 
                 accordion.appendChild(newItem);
+
+                // otomatis buka accordion yang baru dibuat
+                const collapse = new bootstrap.Collapse(document.getElementById(`barang-${barangIndex}`), { show: true });
 
                 // cek potype untuk toggle HSN dan BM
                 if (typeof toggleHSBM === 'function') {

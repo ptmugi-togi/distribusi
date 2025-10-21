@@ -607,7 +607,7 @@
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </h2>
-                    <div id="barang-${barangIndex}" class="accordion-collapse collapse">
+                    <div id="barang-${barangIndex}" class="accordion-collapse collapse" data-bs-parent="#accordionPoBarang">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6 mt-3">
@@ -678,6 +678,9 @@
                 `;
 
                 accordion.appendChild(newItem);
+
+                // otomatis buka accordion yang baru dibuat
+                const collapse = new bootstrap.Collapse(document.getElementById(`barang-${barangIndex}`), { show: true });
 
                 // Ambil product
                 if (typeof initSelect2Barang === 'function') {
