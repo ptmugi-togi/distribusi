@@ -63,7 +63,7 @@ class InvoiceController extends Controller
     {
         $items = DB::table('podtl_tbl as d')
             ->join('mpromas as m', 'd.opron', '=', 'm.opron')
-            ->select('d.opron', 'm.prona', 'd.poqty', 'd.stdqu', 'd.price')
+            ->select('d.opron', 'm.prona', 'd.poqty', 'd.inqty', 'd.stdqu', 'd.price')
             ->where('d.pono', $pono)
             ->get();
 

@@ -97,7 +97,7 @@
                                 </div>
 
                                 <div class="col-md-6 mt-2">
-                                    <label class="form-label">PO Quantity</label>
+                                    <label class="form-label">Outstanding PO Quantity</label>
                                     <input type="text" class="form-control"
                                         value="{{ $detail->poqty }} {{ $detail->stdqt }}" disabled>
                                 </div>

@@ -123,7 +123,7 @@
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label class="form-label">PO Quantity</label>
+                                            <label class="form-label">Outstanding PO Quantity</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control poqty" style="background-color: #e9ecef;"
                                                     name="poqty[]" id="poqty-{{ $i }}" value="{{ $d->poqty ?? '' }}" readonly>
@@ -265,7 +265,7 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">PO Quantity</label>
+                                        <label class="form-label">Outstanding PO Quantity</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control poqty" style="background-color: #e9ecef;" name="poqty[]" id="poqty-{{ $i }}" value="{{ old('poqty.'. $i) ?? $d->poqty ?? '' }}" readonly>
                                             <span class="input-group-text unit-label">{{ old('stdqt.'. $i) ?? $d->stdqu ?? '' }}</span>

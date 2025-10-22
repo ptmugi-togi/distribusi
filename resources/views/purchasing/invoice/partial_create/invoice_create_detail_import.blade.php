@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="import-poqty-{{ $i }}" class="form-label">PO Quantity</label>
+                    <label for="import-poqty-{{ $i }}" class="form-label">Outstanding PO Quantity</label>
                     <div class="input-group">
                         <input type="number" class="form-control poqty" id="import-poqty-{{ $i }}" style="background-color: #e9ecef;" value="{{ old('poqty.'. $i) }}" readonly>
                         <span class="input-group-text unit-label"></span>

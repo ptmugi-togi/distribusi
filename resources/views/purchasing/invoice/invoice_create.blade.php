@@ -144,14 +144,18 @@
                         if (res.success && res.data.length > 0) {
                             let opronOptions = '<option value="" disabled>Pilih Barang</option>';
                             res.data.forEach(item => {
-                                opronOptions += `
-                                    <option value="${item.opron}"
-                                        data-qty="${item.poqty}"
-                                        data-price="${item.price}"
-                                        data-stdqu="${item.stdqu}">
-                                        ${item.opron} - ${item.prona}
-                                    </option>`;
-                            });
+                                const sisaQty = item.poqty - item.inqty;
+                                if (sisaQty <= 0) {
+                                    $opron.append(
+                                        `<option value="${item.opron}"
+                                            data-qty="${item.poqty}"
+                                            data-price="${item.price}"
+                                            data-stdqu="${item.stdqu}">
+                                            ${item.opron} - ${item.prona}
+                                        </option>`
+                                    );
+                                }
+                            };
                             $opronSelect.html(opronOptions).trigger('change.select2');
 
                             if (opron) {
@@ -165,11 +169,14 @@
 
                             const selected = $opronSelect.find(':selected');
                             const qty = selected.data('qty') || '';
+                            const inqty = selected.data('inqty') || '';
                             const stdqu = selected.data('stdqu') || '';
                             const price = selected.data('price') || '';
 
+                            const remainingQty = Math.max(qty - inqty, 0);
+
                             const $body = $accordion.find('.accordion-body');
-                            $body.find('.poqty').val(qty);
+                            $body.find('.poqty').val(remainingQty);
                             $body.find('.unit-label').text(stdqu);
                             $body.find('input[name="price[]"]').val(price);
                             $body.find('.stdqu-input').val(stdqu);
@@ -482,17 +489,29 @@
                             $opron.empty();
 
                             if (res.success && res.data.length > 0) {
+                                let barang = false;
+
                                 $opron.append('<option value="" disabled selected>Pilih Barang</option>');
                                 res.data.forEach(item => {
-                                    $opron.append(
-                                        `<option value="${item.opron}" 
-                                            data-qty="${item.poqty}" 
-                                            data-price="${item.price}"
-                                            data-stdqu="${item.stdqu}">
-                                            ${item.opron} - ${item.prona}
-                                        </option>`
-                                    );
+                                    const sisaQty = item.poqty - item.inqty;
+                                    if (sisaQty > 0) {
+                                        barang = true;
+                                        $opron.append(
+                                            `<option value="${item.opron}" 
+                                                data-qty="${item.poqty}" 
+                                                data-inqty="${item.inqty}"
+                                                data-price="${item.price}"
+                                                data-stdqu="${item.stdqu}">
+                                                ${item.opron} - ${item.prona}
+                                            </option>`
+                                        );
+                                    };
                                 });
+
+                                if (!barang) {
+                                    $opron.html('<option value="" disabled selected>Tidak ada barang untuk PO ini</option>');
+                                }
+
                             } else {
                                 $opron.html('<option value="">Tidak ada barang untuk PO ini</option>');
                             }
@@ -507,11 +526,14 @@
                 $(document).on('change', 'select[name="opron[]"]', function () {
                     const selectedOption = $(this).find(':selected');
                     const qty = selectedOption.data('qty') || '';
+                    const inqty = selectedOption.data('inqty') || '';
                     const stdqu = selectedOption.data('stdqu') || '';
                     const price = selectedOption.data('price') || '';
 
+                    const remainingQty = Math.max(qty - inqty, 0);
+
                     const parent = $(this).closest('.accordion-body');
-                    parent.find('.poqty').val(qty);
+                    parent.find('.poqty').val(remainingQty);
                     parent.find('.unit-label').text(stdqu);
                     parent.find('input[name="price[]"]').val(price);
                     parent.find('.stdqu-input').val(stdqu);

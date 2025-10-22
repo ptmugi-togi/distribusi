@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="poqty-${currentIndex}" class="form-label">PO Quantity</label>
+                            <label for="poqty-${currentIndex}" class="form-label">Outstanding PO Quantity</label>
                             <div class="input-group">
                                 <input type="text" class="form-control poqty" id="poqty-${currentIndex}" style="background-color: #e9ecef;" readonly>
                                 <span class="input-group-text unit-label"></span>
