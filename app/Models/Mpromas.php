@@ -13,4 +13,9 @@ class Mpromas extends Model
     protected $keyType = 'integer';
     protected $primaryKey = 'mproma';
     protected $fillable = ['status','opron','prona','nama_supplier','stdqu','itype_id','brand_name','pgrup','sgrup_id','ssgrup_id','lssgrup','weigh','meast','measl','measp','volum','abccl','capac','platf','mstok','spnum','garansi','pbilp','ijtype','id_cls'];
+
+    public function tpodtls()
+    {
+        return $this->hasMany(TpoDtl::class, 'opron', 'opron');
+    }
 }

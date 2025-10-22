@@ -21,6 +21,12 @@ use App\Http\Controllers\StmasController;
 use App\Http\Controllers\CusmasCabController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OcController;
+use App\Http\Controllers\TpoController;
+use App\Http\Controllers\PdfController;
+use App\Http\Controllers\BlawbController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,7 +43,7 @@ Route::get('/', [LoginController::class,'index'])->name('login')->middleware('gu
 Route::post('/login', [LoginController::class,'auth']);
 Route::post('/logout', [LoginController::class,'logout']);
 
-Route::get('/dashboard', function () { return view('home'); })->middleware('auth');
+Route::get('/dashboard', function () { return view('home'); })->middleware('auth')->name('dashboard');
 
 Route::get('/register', [LoginController::class,'registerUser'])->middleware('auth');
 Route::get('/cekUsername', [LoginController::class,'cekUsername']);
@@ -101,5 +107,36 @@ Route::get('/roce/renoOc',[OcController::class,'renoOc'])->middleware('auth');
 Route::get('/roce/customerOc',[OcController::class,'customerOc'])->middleware('auth');
 Route::resource('/roce', OcController::class)->middleware('auth');
 
+Route::get('/tpo', [TpoController::class,'index'])->middleware('auth')->name('tpo.index');
+Route::get('/get-currency-rate/{curco}', [TpoController::class, 'getCurrencyRate']);
+Route::get('/api/products', [ProductController::class, 'getProducts'])->name('api.products');
+Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth')->name('tpo.create');
+Route::post('/tpo/store', [TpoController::class, 'store'])->middleware('auth')->name('tpo.store');
+Route::get('/tpo/{id}/detail', [TpoController::class, 'show'])->middleware('auth')->name('tpo.detail');
+Route::get('/tpo/{id}/edit', [TpoController::class, 'edit'])->middleware('auth')->name('tpo.edit');
+Route::put('/tpo/{id}', [TpoController::class, 'update'])->middleware('auth')->name('tpo.update');
+Route::delete('/tpo/{id}/delete', [TpoController::class, 'destroy'])->middleware('auth');
 
-// test
+Route::get('/pdf/preview/{id}', [PdfController::class, 'preview'])->name('pdf.preview'); // sementara dinonaktifkan
+Route::get('/pdf/print/{pono}', [PdfController::class, 'print'])->name('pdf.print');
+Route::get('/pdf/previewPi/{id}', [PdfController::class, 'previewPi'])->name('pdf_pi.preview'); // sementara dinonaktifkan
+Route::get('/pdf/printPi/{pono}', [PdfController::class, 'printPi'])->name('pdf_pi.print');
+
+Route::get('/blawb', [BlawbController::class,'index'])->middleware('auth')->name('blawb.index');
+Route::get('/blawb/create', [BlawbController::class,'create'])->middleware('auth')->name('blawb.create');
+Route::post('/blawb/store', [BlawbController::class,'store'])->middleware('auth')->name('blawb.store');
+Route::get('/blawb/{id}/detail', [BlawbController::class,'show'])->middleware('auth')->name('blawb.detail');
+Route::get('/blawb/{id}/edit', [BlawbController::class,'edit'])->middleware('auth')->name('blawb.edit');
+Route::put('/blawb/{id}', [BlawbController::class,'update'])->middleware('auth')->name('blawb.update');
+Route::delete('/blawb/{id}/delete', [BlawbController::class,'destroy'])->middleware('auth')->name('blawb.delete');
+
+Route::get('/invoice', [InvoiceController::class,'index'])->middleware('auth')->name('invoice.index');
+Route::get('/invoice/create', [InvoiceController::class,'create'])->middleware('auth')->name('invoice.create');
+Route::get('/get-rinum-by-supplier/{supno}', [InvoiceController::class, 'getRinumBySupplier']);
+Route::get('/get-po-by-supplier/{supno}', [InvoiceController::class, 'getPoBySupplier']);
+Route::get('/get-items-by-po/{pono}', [InvoiceController::class, 'getItemsByPo']);
+Route::post('/invoice/store', [InvoiceController::class,'store'])->middleware('auth')->name('invoice.store');
+Route::get('/invoice/{id}/detail', [InvoiceController::class,'show'])->middleware('auth')->name('invoice.detail');
+Route::get('/invoice/{id}/edit', [InvoiceController::class,'edit'])->middleware('auth')->name('invoice.edit');
+Route::put('/invoice/{id}', [InvoiceController::class,'update'])->middleware('auth')->name('invoice.update');
+Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->middleware('auth')->name('invoice.delete');

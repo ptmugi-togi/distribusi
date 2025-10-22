@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mpgrups', function (Blueprint $table) {
-            $table->string('pgrup')->primary();
-            $table->string('descr');
+        Schema::table('pohdr_tbl', function (Blueprint $table) {
+            $table->integer('stamp')->nullable()->after('pph');
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mpgrups');
+        Schema::table('pohdr_tbl', function (Blueprint $table) {
+            $table->dropColumn('stamp');
+        });
     }
 };

@@ -118,6 +118,33 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#purchasing-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cart"></i><span>Purchasing</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('blawb.index') }}">
+            <i class="bi bi-circle"></i><span>BL / AWB</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('invoice.index') }}">
+            <i class="bi bi-circle"></i><span>Invoice</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('tpo.index') }}">
+            <i class="bi bi-circle"></i><span>PO</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
