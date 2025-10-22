@@ -3,7 +3,7 @@
 @section('container')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Dashboardawdwadwa</h1>
+        <h1>Dashboard/h1>
         {{-- <nav>
             <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -30,8 +30,8 @@
                         <h6>Filter</h6>
                       </li>
 
-                      <li><a class="dropdown-item" href="#">Todayaweawdwa</a></li>
-                      <li><a class="dropdown-item" href="#">This Monthqweqw</a></li>
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
                   </div>
