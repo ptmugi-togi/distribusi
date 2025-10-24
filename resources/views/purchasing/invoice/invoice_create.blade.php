@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/purchasing/invoice.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
 @endpush
 
 @section('container')
