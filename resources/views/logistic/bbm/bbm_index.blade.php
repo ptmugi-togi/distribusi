@@ -43,7 +43,7 @@
                     @foreach ($bbmhdr as $b)
                     <tr>
                         <td class="text-center">{{ $b->warco ?? '-' }}</td>
-                        <td class="text-center">{{ $b->formc}}</td>
+                        <td class="text-center">{{ $b->formc}} ({{ $b->mformcode->desc_c ?? '-' }})</td>
                         <td class="text-center">{{ substr($b->bbmid, -6) }}</td>
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
