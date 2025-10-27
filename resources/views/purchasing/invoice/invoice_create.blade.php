@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/purchasing/invoice.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
 @endpush
 
 @section('container')
@@ -142,46 +142,36 @@
                         const res = await $.getJSON(`/get-items-by-po/${pono}`);
 
                         if (res.success && res.data.length > 0) {
-                            let opronOptions = '<option value="" disabled>Pilih Barang</option>';
+                            let optionsHtml = '<option value="" disabled selected>Pilih Barang</option>';
                             res.data.forEach(item => {
                                 const sisaQty = item.poqty - item.inqty;
-                                if (sisaQty <= 0) {
-                                    $opron.append(
-                                        `<option value="${item.opron}"
+                                if (sisaQty > 0) {
+                                    optionsHtml += `
+                                        <option value="${item.opron}"
                                             data-qty="${item.poqty}"
+                                            data-inqty="${item.inqty}"
                                             data-price="${item.price}"
                                             data-stdqu="${item.stdqu}">
                                             ${item.opron} - ${item.prona}
-                                        </option>`
-                                    );
+                                        </option>`;
                                 }
-                            };
-                            $opronSelect.html(opronOptions).trigger('change.select2');
+                            });
 
-                            if (opron) {
-                                $opronSelect.val(opron).trigger('change'); // pilih value
-                                $opronSelect.trigger({
-                                    type: 'select2:select',
-                                    params: { data: { id: opron, text: $opronSelect.find(':selected').text() } }
-                                });
-                            }
+                            // ganti isi select
+                            $opronSelect.html(optionsHtml).trigger('change.select2');
 
-
-                            const selected = $opronSelect.find(':selected');
-                            const qty = selected.data('qty') || '';
-                            const inqty = selected.data('inqty') || '';
-                            const stdqu = selected.data('stdqu') || '';
-                            const price = selected.data('price') || '';
-
-                            const remainingQty = Math.max(qty - inqty, 0);
-
-                            const $body = $accordion.find('.accordion-body');
-                            $body.find('.poqty').val(remainingQty);
-                            $body.find('.unit-label').text(stdqu);
-                            $body.find('input[name="price[]"]').val(price);
-                            $body.find('.stdqu-input').val(stdqu);
-
+                            // kasih jeda dikit biar select2 render
+                            setTimeout(() => {
+                                if (opron) {
+                                    $opronSelect.val(opron).trigger('change');
+                                    $opronSelect.trigger({
+                                        type: 'select2:select',
+                                        params: { data: { id: opron, text: $opronSelect.find(':selected').text() } }
+                                    });
+                                }
+                            }, 150);
                         }
+
                         if (hsn && $hsnSelect.length) {
                             $hsnSelect.val(hsn).trigger('change.select2');
                         }
@@ -709,7 +699,6 @@
                                         const before = el.value;
                                         const parsed = parseCurrencyString(before);
                                         el.value = parsed.toString();
-                                        console.log('Currency cleaned:', el.name, '| Before:', before, '| After:', el.value);
                                     });
 
                                     form.submit();

@@ -118,6 +118,19 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#logistic-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-truck"></i><span>Logistic</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('bbm.index') }}">
+            <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#purchasing-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-cart"></i><span>Purchasing</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
