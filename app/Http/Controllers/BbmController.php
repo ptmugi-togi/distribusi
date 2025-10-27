@@ -167,7 +167,7 @@ class BbmController extends Controller
 
             return redirect()
                 ->route('bbm.index')
-                ->with('success', 'Data BBM ' . $bbmid . ' berhasil disimpan.');
+                ->with('success', 'Data BBM "' . $bbmid . '" berhasil disimpan.');
 
         } catch (\Exception $e) {
             DB::rollBack();

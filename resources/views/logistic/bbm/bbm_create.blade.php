@@ -117,7 +117,7 @@
                             Maksimal 200 karakter
                         </div>
                         @error('noteh')
-                            <span class="invalid-feedback text-danger" role="alert">
+                            <span class="text-danger">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
@@ -134,20 +134,25 @@
                                         data-bs-toggle="collapse" data-bs-target="#invno-{{ $i }}"
                                         aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="invno-{{ $i }}">
                                 </button>
+                                @if($i > 0)
+                                    <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                @endif
                             </h2>
                             <div id="invno-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
                                 aria-labelledby="heading-{{ $i }}" data-bs-parent="#accordionInvno">
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
-                                            <label for="invno" class="form-label">Invoice No.<span class="text-danger">*</span></label>
+                                            <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
                                             <select class="select2 form-control" name="invno[]" id="invno-{{ $i }}" required>
                                                 <option value="" disabled {{ old('invno.'. $i) ? '' : 'selected' }}>Silahkan Pilih Receiving Instruction terlebih dahulu</option>
                                             </select>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="opron" class="form-label">Barang<span class="text-danger">*</span></label>
+                                            <label for="opron" class="form-label">Barang</label><span class="text-danger"> *</span>
                                             <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" required>
                                                 <option value="" disabled {{ old('opron.'. $i) ? '' : 'selected' }}>Silahkan Pilih Invoice No. terlebih dahulu</option>
                                             </select>
@@ -163,7 +168,7 @@
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label>
+                                            <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                                             <div class="input-group">
                                                 <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]" value="{{ old('trqty.'. $i) }}"
                                                 oninput="
@@ -188,7 +193,7 @@
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                                            <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
                                             <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}" value="{{ old('lotno.'. $i) }}">
                                         </div>
 
@@ -200,7 +205,7 @@
                                         <div class="col-md-6 mt-3">
                                             <label for="locco" class="form-label">Warehouse Location</label>
                                             <select class="form-control select2" name="locco[]" id="locco-{{ $i }}" required>
-                                                <option value="" disabled selected>Pilih Lokasi</option>
+                                                <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
                                             </select>
                                         </div>
 
@@ -234,6 +239,23 @@
     </main>
 
     @push('scripts')
+        @include('logistic.bbm.partial_create.add_bbm')
+
+        <script>
+            let selectedWarehouse = null;
+            let selectedReceivingInstruction = null;
+
+            // simpan pilihan warehouse 
+            $(document).on('change', 'select[name="warco"]', function () {
+                selectedWarehouse = $(this).val();
+            });
+
+            // simpan pilihan receiving instruction
+            $(document).on('change', 'select[name="refcno"]', function () {
+                selectedReceivingInstruction = $(this).val();
+            });
+        </script>
+
         {{-- old value --}}
         <script>
             $(document).ready(function () {
@@ -244,6 +266,7 @@
                 const oldFormc = @json(old('formc'));
                 const oldWarco = @json(old('warco'));
                 const oldRefcno = @json(old('refcno'));
+                const oldLocco = @json(old('locco'));
 
                 // Tunggu sampai semua select2 siap
                 setTimeout(() => {
@@ -253,6 +276,8 @@
                     if(oldWarco) $('#warco').val(oldWarco).trigger('change');
 
                     if(oldRefcno) $('#refcno').val(oldRefcno).trigger('change');
+
+                    if(oldLocco) $('#locco').val(oldLocco).trigger('change');
                 }, 500); // delay 0.5 detik biar select2 udah siap
             });
         </script>
@@ -285,25 +310,26 @@
             // Saat Receiving Instruction berubah -> ambil invoice
             $('#refcno').on('change', function () {
                 const rinum = $(this).val();
-                const invoiceSelect = $('select[name="invno[]"]').first();
 
-                invoiceSelect.empty().append('<option value="">Loading...</option>');
-                
-                $.ajax({
-                    url: `/get-invoice/${rinum}`,
-                    type: 'GET',
-                    success: function (data) {
-                        invoiceSelect.empty().append('<option value="" disabled selected>Pilih Invoice</option>');
-                        data.forEach(function (item) {
-                            invoiceSelect.append(`<option value="${item.invno}">${item.invno}</option>`);
-                        });
+                $('select[name="invno[]"]').each(function (i) {
+                    const select = $(this);
+                    select.empty().append('<option value="">Loading...</option>');
 
-                        // kalau ada oldinvno
-                        const oldInvno = @json(old('invno', []));
-                        if (oldInvno[0]) {
-                            invoiceSelect.val(oldInvno[0]).trigger('change');
+                    $.ajax({
+                        url: `/get-invoice/${rinum}`,
+                        type: 'GET',
+                        success: function (data) {
+                            select.empty().append('<option value="" disabled selected>Pilih Invoice No.</option>');
+                            data.forEach(function (item) {
+                                select.append(`<option value="${item.invno}">${item.invno}</option>`);
+                            });
+
+                            const oldInvno = @json(old('invno', []));
+                            if (oldInvno[i]) {
+                                select.val(oldInvno[i]).trigger('change');
+                            }
                         }
-                    }
+                    });
                 });
             });
 
@@ -322,9 +348,8 @@
                         barangSelect.empty().append('<option value="" disabled selected>Pilih Barang</option>');
                         data.forEach(function (item) {
                             barangSelect.append(
-                                `<option value="${item.opron}" 
-                                    data-name="${item.prona}" 
-                                    data-qty="${item.inqty}" 
+                                `<option value="${item.opron}"
+                                    data-qty="${item.inqty}"
                                     data-stdqt="${item.stdqt}"
                                     data-pono="${item.pono}">
                                     ${item.opron} - ${item.prona}
@@ -332,10 +357,9 @@
                             );
                         });
 
-                        // kalau ada oldopron
                         const oldOpron = @json(old('opron', []));
-                        if (oldOpron[0]) {
-                            barangSelect.val(oldOpron[0]).trigger('change');
+                        if (oldOpron[index]) {
+                            barangSelect.val(oldOpron[index]).trigger('change');
                         }
                     }
                 });
@@ -387,6 +411,14 @@
                             });
                             loccoSelectDetail.trigger('change.select2');
                         });
+
+                        // kalau ada oldlocco
+                        const oldLocco = @json(old('locco', []));
+                        $('select[name="locco[]"]').each(function (i) {
+                            if (oldLocco[i]) {
+                                $(this).val(oldLocco[i]).trigger('change');
+                            }
+                        });
                     },
                     error: function () {
                         loccoSelect.empty().append('<option value="" disabled selected>Gagal memuat lokasi</option>');
@@ -394,6 +426,25 @@
                 });
             });
 
+            // ubah judul accordion jadi invno
+            $(document).on('change', 'select[name="invno[]"]', function () {
+                const selectedOption = $(this).find(':selected');
+                const invno = selectedOption.val() || '';
+                const newLabel = invno ? `No Invoice: ${invno}` : '';
+
+                const parentItem = $(this).closest('.accordion-item');
+                const headerButton = parentItem.find('.accordion-button');
+
+                // kalau belum ada teks, tambahkan
+                if (headerButton.text().trim() === '') {
+                    headerButton.append(` ${newLabel}`);
+                } else {
+                    // ganti teks yang lama dengan label baru
+                    headerButton.contents().filter(function () {
+                        return this.nodeType === 3;
+                    }).first().replaceWith(` ${newLabel}`);
+                }
+            });
         </script>
     
         {{-- modal konfirmasi simpan data --}}
