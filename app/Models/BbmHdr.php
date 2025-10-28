@@ -41,6 +41,11 @@ class BbmHdr extends Model
         return $this->hasMany(BbmDtl::class, 'bbmid', 'bbmid');
     }
 
+    public function mformcode()
+    {
+        return $this->belongsTo(Mformcode::class, 'formc', 'formc');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -48,7 +53,7 @@ class BbmHdr extends Model
 
     public function vendor()
     {
-        return $this->belongsTo(Vendor::class, 'vendor_id', 'id');
+        return $this->belongsTo(Mvendor::class, 'vendor_id', 'id');
     }
 
     public function tsupih()

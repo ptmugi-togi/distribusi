@@ -11,7 +11,7 @@ use App\Models\BbmHdr;
 use App\Models\BbmDtl;
 use App\Models\Mformcode;
 use App\Models\InvoiceHdr;
-use App\Models\Vendor;
+use App\Models\Mvendor;
 
 
 class BbmController extends Controller
@@ -21,8 +21,8 @@ class BbmController extends Controller
      */
     public function index()
     {
-        $bbmhdr = BbmHdr::all();
-
+        $bbmhdr = BbmHdr::with('mformcode')->get();
+        
         return view('logistic.bbm.bbm_index', compact('bbmhdr'));
     }
 
@@ -143,22 +143,55 @@ class BbmController extends Controller
                     'noted'   => $request->noted[$i],
                 ];
 
-                DB::table('stobw_tbl')->insert([
-                    'braco'  => $request->braco,
-                    'warco'  => $request->warco,
-                    'opron'  => $request->opron[$i],
-                    'toqoh'  => $request->trqty[$i],
-                ]);
+                $exist = DB::table('stobw_tbl')
+                    ->where('warco', $request->warco)
+                    ->where('braco', $request->branco)
+                    ->count();
 
-                DB::table('stobl_tbl')->insert([
-                    'braco'  => $request->braco,
-                    'warco'  => $request->warco,
-                    'opron'  => $request->opron[$i],
-                    'qunit'  => $request->stdqt[$i],
-                    'locco'  => $request->locco[$i],
-                    'lotno'  => $request->lotno[$i],
-                    'toqoh'  => $request->trqty[$i],
-                ]);
+                if ($exist == 0) {
+                    DB::table('stobw_tbl')->insert([
+                        'braco'  => $request->branco,
+                        'warco'  => $request->warco,
+                        'opron'  => $request->opron[$i],
+                        'toqoh'  => $request->trqty[$i],
+                    ]);
+                } else {
+                    DB::table('stobw_tbl')
+                        ->where('warco', $request->warco)
+                        ->where('braco', $request->branco)
+                        ->where('opron', $request->opron[$i])
+                        ->update([
+                            'toqoh'  => DB::raw('toqoh + ' . $request->trqty[$i]),
+                        ]);
+                }
+
+                $exist = DB::table('stobl_tbl')
+                    ->where('warco', $request->warco)
+                    ->where('braco', $request->branco)
+                    ->count();
+
+                if ($exist == 0) {
+                    DB::table('stobl_tbl')->insert([
+                        'braco'  => $request->branco,
+                        'warco'  => $request->warco,
+                        'opron'  => $request->opron[$i],
+                        'qunit'  => $request->stdqt[$i],
+                        'locco'  => $request->locco[$i],
+                        'lotno'  => $request->lotno[$i],
+                        'toqoh'  => $request->trqty[$i],
+                    ]);
+                } else {
+                    DB::table('stobl_tbl')
+                        ->where('warco', $request->warco)
+                        ->where('braco', $request->branco)
+                        ->where('opron', $request->opron[$i])
+                        ->where('qunit', $request->stdqt[$i])
+                        ->where('locco', $request->locco[$i])
+                        ->where('lotno', $request->lotno[$i])
+                        ->update([
+                            'toqoh'  => DB::raw('toqoh + ' . $request->trqty[$i]),
+                        ]);
+                }
             }
 
             BbmDtl::insert($details);
@@ -181,23 +214,91 @@ class BbmController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $bbm = BbmHdr::with('mformcode','bbmdtl')->findOrFail($id);
+        return view('logistic.bbm.bbm_detail', compact('bbm'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        // Ambil header
+        $bbm = DB::table('tstorh as h')
+            ->leftJoin('mvendor_tbl as v', 'h.supno', '=', 'v.supno')
+            ->select('h.*', 'v.supna')
+            ->where('h.bbmid', $id)
+            ->first();
+
+        if (!$bbm) {
+            return redirect()->route('bbm.index')->with('error', 'Data BBM tidak ditemukan.');
+        }
+
+        // Ambil detail dengan join ke mpromas untuk ambil prona
+        $details = DB::table('tstord as d')
+            ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
+            ->select(
+                'd.*',
+                'p.prona',
+                'd.trqty',
+                'd.qunit',
+                'd.pono'
+            )
+            ->where('d.trano', $bbm->trano)
+            ->get();
+
+        // Dropdown
+        $mwarco = DB::table('mwarco_tbl')->get();
+        $tsupih = DB::table('tsupih_tbl')->get();
+        $loccos = DB::table('mlocco_tbl')->get();
+
+        return view('logistic.bbm.bbm_edit', compact('bbm', 'details', 'mwarco', 'tsupih', 'loccos'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            // Update header
+            DB::table('tstorh')
+                ->where('id', $id)
+                ->update([
+                    'formc' => $request->formc,
+                    'warco' => $request->warco,
+                    'tradt' => $request->tradt,
+                    'refcno' => $request->refcno,
+                    'reffc' => $request->reffc,
+                    'refno' => $request->refno,
+                    'supno' => $request->supno,
+                    'blnum' => $request->blnum,
+                    'vesel' => $request->vesel,
+                    'noteh' => $request->noteh,
+                    'updated_at' => now(),
+                ]);
+
+            // Update detail berdasarkan trano
+            $trano = DB::table('tstorh')->where('id', $id)->value('trano');
+
+            $details = DB::table('tstord')->where('trano', $trano)->get();
+
+            foreach ($details as $i => $d) {
+                DB::table('tstord')
+                    ->where('id', $d->id)
+                    ->update([
+                        'trqty' => $request->trqty[$i] ?? $d->trqty,
+                        'lotno' => $request->lotno[$i] ?? $d->lotno,
+                        'locco' => $request->locco[$i] ?? $d->locco,
+                        'noted' => $request->noted[$i] ?? $d->noted,
+                        'updated_at' => now(),
+                    ]);
+            }
+
+            DB::commit();
+            return redirect()->route('bbm.index')->with('success', 'Data BBM berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -205,6 +306,16 @@ class BbmController extends Controller
      */
     public function destroy(string $id)
     {
-        
+        try {
+            $bbm = BbmHdr::findOrFail($id);
+            $bbm->bbmdtl()->delete();
+            $bbm->delete();
+
+            return redirect()->route('bbm.index')
+                ->with('success', 'Data BBM berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('bbm.index')
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
     }
 }
