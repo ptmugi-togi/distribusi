@@ -40,6 +40,6 @@ class BbmDtl extends Model
 
     public function tsupid()
     {
-        return $this->belongsTo(invoiceDtl::class, 'invno', 'invno');
+        return $this->belongsTo(InvoiceDtl::class, 'invno', 'invno');
     }
 }
