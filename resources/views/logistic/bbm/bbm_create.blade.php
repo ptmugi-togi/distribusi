@@ -66,9 +66,11 @@
                         <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color: #e9ecef">
                     </div>
 
+                    <input type="text" name="priod" id="priod" value="{{ $priod }}" hidden>
+
                     <div class="col-md-6 mt-3">
                         <label for="tradt" class="form-label">Stock Receipt Date</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ date('Y-m-01') }}">
+                        <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ $minDate }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -189,12 +191,12 @@
 
                                         <div class="col-md-6 mt-3">
                                             <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                                            <input type="number" class="form-control" name="lotno[]" id="lotno-{{ $i }}" value="{{ old('lotno.'. $i) }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+                                            <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}" value="{{ old('lotno.'. $i) }}" required>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
                                             <label for="lotnoend-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
-                                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-{{ $i }}" readonly
+                                            <input type="text" class="form-control" name="lotnoend[]" id="lotnoend-{{ $i }}" readonly
                                                 style="background-color: #e9ecef;" value="{{ old('lotnoend.'. $i) }}">
                                         </div>
 
@@ -450,15 +452,47 @@
         <script>
             $(document).on('input', 'input[name="lotno[]"], input[name="trqty[]"]', function () {
                 const index = $(this).attr('id').split('-')[1];
-                const lotStart = parseInt($(`#lotno-${index}`).val()) || 0;
+                const lotStart = $(`#lotno-${index}`).val();
                 const trqty = parseInt($(`#trqty-${index}`).val()) || 0;
 
-                if (lotStart > 0 && trqty > 0) {
-                    const lotEnd = lotStart + trqty - 1;
-                    $(`#lotnoend-${index}`).val(lotEnd);
-                } else {
+                if (!lotStart || trqty <= 0) {
                     $(`#lotnoend-${index}`).val('');
+                    return;
                 }
+
+                // Cari semua angka di string
+                const matches = [...lotStart.matchAll(/\d+/g)];
+                if (matches.length === 0) {
+                    $(`#lotnoend-${index}`).val(lotStart);
+                    return;
+                }
+
+                let chosenMatch;
+
+                if (matches.length === 1) {
+                    // Cuma satu angka → pakai itu
+                    chosenMatch = matches[0];
+                } else {
+                    // Lebih dari 1 angka → pilih angka terakhir yang "kemungkinan serial"
+                    // misal 2024-0005 → ambil 0005 karena lebih pendek dari 2024
+                    chosenMatch = matches.reduce((prev, curr) => {
+                        return curr[0].length <= prev[0].length ? curr : prev;
+                    });
+                }
+
+                const number = parseInt(chosenMatch[0]);
+                const nextNumber = number + trqty - 1;
+
+                // Pertahankan jumlah digit nol di depan
+                const paddedNext = String(nextNumber).padStart(chosenMatch[0].length, '0');
+
+                // Ganti hanya angka yang dipilih
+                const lotEnd =
+                    lotStart.slice(0, chosenMatch.index) +
+                    paddedNext +
+                    lotStart.slice(chosenMatch.index + chosenMatch[0].length);
+
+                $(`#lotnoend-${index}`).val(lotEnd);
             });
         </script>
     

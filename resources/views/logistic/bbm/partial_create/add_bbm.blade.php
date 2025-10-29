@@ -73,12 +73,12 @@
 
                         <div class="col-md-6 mt-3">
                             <label for="lotno-${bbmDetail}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                            <input type="number" class="form-control" name="lotno[]" id="lotno-${bbmDetail}">
+                            <input type="text" class="form-control" name="lotno[]" id="lotno-${bbmDetail}">
                         </div>
 
                         <div class="col-md-6 mt-3">
                             <label for="lotnoend-${bbmDetail}" class="form-label">Serial / Batch No. (Akhir)</label><span class="text-danger"> *</span>
-                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}">
+                            <input type="text" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}" readonly style="background-color: #e9ecef">
                         </div>
 
                         <div class="col-md-6 mt-3">

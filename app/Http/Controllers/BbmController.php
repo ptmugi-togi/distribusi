@@ -58,6 +58,35 @@ class BbmController extends Controller
         return response()->json($locco);
     }
 
+    // untuk generate lotno
+    private function generateLotList($lotStart, $trqty)
+    {
+        preg_match_all('/\d+/', $lotStart, $matches, PREG_OFFSET_CAPTURE);
+
+        if (count($matches[0]) === 0) {
+            return [$lotStart];
+        }
+
+        // Pilih angka terakhir yang paling pendek (biasanya serial)
+        $chosen = collect($matches[0])
+            ->sortBy(fn($m) => strlen($m[0]))
+            ->first();
+
+        $number = (int)$chosen[0];
+        $padLength = strlen($chosen[0]);
+        $startPos = $chosen[1];
+        $endPos = $startPos + $padLength;
+
+        $lotList = [];
+        for ($i = 0; $i < $trqty; $i++) {
+            $newNum = str_pad($number + $i, $padLength, '0', STR_PAD_LEFT);
+            $newLot = substr($lotStart, 0, $startPos) . $newNum . substr($lotStart, $endPos);
+            $lotList[] = $newLot;
+        }
+
+        return $lotList;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -82,13 +111,26 @@ class BbmController extends Controller
 
         $trano = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
 
+        $periodeAktif = DB::table('tperiode')
+            ->where('braco', auth()->user()->cabang)
+            ->where('status', 'O')
+            ->orderBy('periode', 'desc')
+            ->first();
+
+        if ($periodeAktif) {
+            $priod = $periodeAktif->periode;
+            $year = substr($periodeAktif->periode, 0, 4);
+            $month = substr($periodeAktif->periode, 4, 2);
+            $minDate = "$year-$month-01";
+        }
+
         $tsupih = DB::table('tsupih_tbl')
         ->leftJoin('mvendor_tbl', 'tsupih_tbl.supno', '=', 'mvendor_tbl.supno')
         ->leftJoin('tbolh', 'tsupih_tbl.rinum', '=', 'tbolh.rinum')
         ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
         ->get();
 
-        return view('logistic.bbm.bbm_create', compact('bbmhdr', 'mwarco', 'tsupih', 'trano'));
+        return view('logistic.bbm.bbm_create', compact('bbmhdr', 'mwarco', 'trano', 'priod', 'minDate', 'periodeAktif', 'tsupih'));
     }
 
     /**
@@ -107,6 +149,7 @@ class BbmController extends Controller
                 'warco'   => $request->warco,
                 'formc'   => $request->formc,
                 'trano'   => $request->trano,
+                'priod'   => $request->priod,
                 'tradt'   => $request->tradt,
                 'reffc'   => $request->reffc,
                 'refno'   => $request->refno,
@@ -122,17 +165,19 @@ class BbmController extends Controller
             ]);
 
             foreach ($request->invno as $i => $invno) {
-                $lotStart = (int) $request->lotno[$i];
+                $lotStart = $request->lotno[$i];
                 $trqty = (int) $request->trqty[$i];
-                $lotEnd = $lotStart + $trqty - 1;
 
-                for ($sn = $lotStart; $sn <= $lotEnd; $sn++) {
+                // Buat lotno string
+                $lotList = $this->generateLotList($lotStart, $trqty);
+
+                foreach ($lotList as $lotno) {
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $request->trano,
                         'invno' => $invno,
                         'opron' => $request->opron[$i],
-                        'lotno' => $sn,
+                        'lotno' => $lotno,
                         'trqty' => 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
@@ -140,6 +185,7 @@ class BbmController extends Controller
                     ]);
                 }
 
+                // Update stok summary
                 $existW = DB::table('stobw_tbl')
                     ->where('warco', $request->warco)
                     ->where('braco', $request->braco)
@@ -151,26 +197,25 @@ class BbmController extends Controller
                         'braco' => $request->braco,
                         'warco' => $request->warco,
                         'opron' => $request->opron[$i],
-                        'toqoh' => $trqty, // total qty masuk pertama kali
+                        'toqoh' => $trqty,
                     ]);
                 } else {
                     DB::table('stobw_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
                         ->where('opron', $request->opron[$i])
-                        ->update([
-                            'toqoh' => DB::raw('toqoh + ' . $trqty), // tambah total qty
-                        ]);
+                        ->update(['toqoh' => DB::raw('toqoh + ' . $trqty)]);
                 }
 
-                for ($sn = $lotStart; $sn <= $lotEnd; $sn++) {
+                // Update stok per lot
+                foreach ($lotList as $lotno) {
                     $existL = DB::table('stobl_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
                         ->where('opron', $request->opron[$i])
                         ->where('qunit', $request->stdqt[$i])
                         ->where('locco', $request->locco[$i])
-                        ->where('lotno', $sn)
+                        ->where('lotno', $lotno)
                         ->first();
 
                     if (!$existL) {
@@ -180,7 +225,7 @@ class BbmController extends Controller
                             'opron' => $request->opron[$i],
                             'qunit' => $request->stdqt[$i],
                             'locco' => $request->locco[$i],
-                            'lotno' => $sn,
+                            'lotno' => $lotno,
                             'toqoh' => 1,
                         ]);
                     } else {
@@ -190,24 +235,18 @@ class BbmController extends Controller
                             ->where('opron', $request->opron[$i])
                             ->where('qunit', $request->stdqt[$i])
                             ->where('locco', $request->locco[$i])
-                            ->where('lotno', $sn)
-                            ->update([
-                                'toqoh' => DB::raw('toqoh + 1'),
-                            ]);
+                            ->where('lotno', $lotno)
+                            ->update(['toqoh' => DB::raw('toqoh + 1')]);
                     }
                 }
             }
 
             DB::commit();
-
-            return redirect()
-                ->route('bbm.index')
-                ->with('success', 'Data BBM "' . $bbmid . '" berhasil disimpan.');
-
+            return redirect()->route('bbm.index')->with('success', "Data BBM \"$bbmid\" berhasil disimpan.");
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal simpan BBM:', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
         }
     }
 
@@ -275,29 +314,25 @@ class BbmController extends Controller
                 return redirect()->route('bbm.index')->with('error', 'Data BBM tidak ditemukan.');
             }
 
-            // Update header
-            DB::table('tstorh')
-                ->where('bbmid', $bbmid)
-                ->update([
-                    'noteh' => $request->noteh,
-                    'updated_at' => now(),
-                    'updated_by' => Auth::user()->name,
-                ]);
+            DB::table('tstorh')->where('bbmid', $bbmid)->update([
+                'noteh' => $request->noteh,
+                'updated_at' => now(),
+                'updated_by' => Auth::user()->name,
+            ]);
 
+            // Hapus stok lama
             $oldDetails = DB::table('tstord')
                 ->select('opron', 'locco', 'lotno', 'trqty', 'qunit')
                 ->where('trano', $bbm->trano)
                 ->get();
 
             foreach ($oldDetails as $old) {
-                // Kurangi stok summary di stobw_tbl
                 DB::table('stobw_tbl')
                     ->where('warco', $bbm->warco)
                     ->where('braco', $bbm->braco)
                     ->where('opron', $old->opron)
                     ->decrement('toqoh', $old->trqty);
 
-                // Kurangi stok per lotno di stobl_tbl
                 DB::table('stobl_tbl')
                     ->where('warco', $bbm->warco)
                     ->where('braco', $bbm->braco)
@@ -308,25 +343,23 @@ class BbmController extends Controller
                     ->decrement('toqoh', 1);
             }
 
-            // Hapus stok yang sudah habis (toqoh <= 0)
             DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
             DB::table('stobl_tbl')->where('toqoh', '<=', 0)->delete();
-
             DB::table('tstord')->where('trano', $bbm->trano)->delete();
 
+            // Insert ulang
             foreach ($request->invno as $i => $invno) {
-                $lotStart = (int) $request->lotno[$i];
+                $lotStart = $request->lotno[$i];
                 $trqty = (int) $request->trqty[$i];
-                $lotEnd = $lotStart + $trqty - 1;
+                $lotList = $this->generateLotList($lotStart, $trqty);
 
-                // Simpan ke detail
-                for ($sn = $lotStart; $sn <= $lotEnd; $sn++) {
+                foreach ($lotList as $lotno) {
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $bbm->trano,
                         'invno' => $invno,
                         'opron' => $request->opron[$i],
-                        'lotno' => $sn,
+                        'lotno' => $lotno,
                         'trqty' => 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
@@ -334,7 +367,6 @@ class BbmController extends Controller
                     ]);
                 }
 
-                // Tambah stok summary di stobw_tbl
                 $existW = DB::table('stobw_tbl')
                     ->where('warco', $bbm->warco)
                     ->where('braco', $bbm->braco)
@@ -356,15 +388,14 @@ class BbmController extends Controller
                         ->update(['toqoh' => DB::raw('toqoh + ' . $trqty)]);
                 }
 
-                // Tambah stok per lotno di stobl_tbl
-                for ($sn = $lotStart; $sn <= $lotEnd; $sn++) {
+                foreach ($lotList as $lotno) {
                     $existL = DB::table('stobl_tbl')
                         ->where('warco', $bbm->warco)
                         ->where('braco', $bbm->braco)
                         ->where('opron', $request->opron[$i])
                         ->where('qunit', $request->stdqt[$i])
                         ->where('locco', $request->locco[$i])
-                        ->where('lotno', $sn)
+                        ->where('lotno', $lotno)
                         ->first();
 
                     if (!$existL) {
@@ -374,7 +405,7 @@ class BbmController extends Controller
                             'opron' => $request->opron[$i],
                             'qunit' => $request->stdqt[$i],
                             'locco' => $request->locco[$i],
-                            'lotno' => $sn,
+                            'lotno' => $lotno,
                             'toqoh' => 1,
                         ]);
                     } else {
@@ -384,7 +415,7 @@ class BbmController extends Controller
                             ->where('opron', $request->opron[$i])
                             ->where('qunit', $request->stdqt[$i])
                             ->where('locco', $request->locco[$i])
-                            ->where('lotno', $sn)
+                            ->where('lotno', $lotno)
                             ->update(['toqoh' => DB::raw('toqoh + 1')]);
                     }
                 }
@@ -395,10 +426,9 @@ class BbmController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal update BBM:', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat update: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat update: ' . $e->getMessage());
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

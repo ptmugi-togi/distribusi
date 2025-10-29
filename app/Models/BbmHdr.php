@@ -21,6 +21,7 @@ class BbmHdr extends Model
         'warco',
         'formc',
         'trano',
+        'priod',
         'tradt',
         'refwh',
         'reffc',
