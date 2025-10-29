@@ -45,12 +45,12 @@
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Receiving Instruction</label>
-                    <input type="text" class="form-control" value="{{ $bbm->refcno }}" disabled>
+                    <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Supplier</label>
-                    <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->supna }}" disabled>
+                    <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -76,12 +76,12 @@
                     @foreach ($bbm->bbmdtl as $i => $detail)
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading-{{ $i }}">
-                            <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse-{{ $i }}" aria-expanded="{{ $i == 0 ? 'true' : 'false' }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-{{ $i }}" aria-expanded="false">
                                 No Invoice: {{ $detail->invno }}
                             </button>
                         </h2>
-                        <div id="collapse-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
+                        <div id="collapse-{{ $i }}" class="accordion-collapse collapse"
                             aria-labelledby="heading-{{ $i }}">
                             <div class="accordion-body">
                                 <div class="row">
@@ -92,14 +92,14 @@
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Barang</label>
-                                        <input type="text" class="form-control" value="{{ $detail->opron }} - {{ $detail->prona }}" disabled>
+                                        <input type="text" class="form-control" value="{{ $detail->opron }} - {{ $detail->mpromas->prona }}" disabled>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Invoice Quantity</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" value="{{ $detail->inqty }}" disabled>
-                                            <span class="input-group-text">{{ $detail->stdqt }}</span>
+                                            <input type="text" class="form-control" value="{{ $detail->tsupid->inqty }}" disabled>
+                                            <span class="input-group-text">{{ $detail->qunit }}</span>
                                         </div>
                                     </div>
 
@@ -107,13 +107,8 @@
                                         <label class="form-label">Receipt Quantity</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{ $detail->trqty }}" disabled>
-                                            <span class="input-group-text">{{ $detail->stdqt }}</span>
+                                            <span class="input-group-text">{{ $detail->qunit }}</span>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Product No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->opron }}" disabled>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -123,7 +118,7 @@
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">PO No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>
+                                        <input type="text" class="form-control" value="{{ $detail->tsupid->pono }}" disabled>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -143,7 +138,7 @@
                 </div>
             </div>
 
-            <div class="text-end mt-4">
+            <div class="mt-4">
                 <a href="{{ route('bbm.index') }}" class="btn btn-secondary">Kembali</a>
             </div>
         </div>

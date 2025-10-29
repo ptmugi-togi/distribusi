@@ -31,8 +31,8 @@
                 <input type="text" name="braco" value="{{ auth()->user()->cabang }}" hidden>
                 <div class="row">
                     <div class="col-md-6 mt-3">
-                        <label for="formc" class="form-label">Formc</label>
-                        <select class="form-control select2" id="formc" name="formc">
+                        <label for="formc" class="form-label">Formc</label><span class="text-danger"> *</span>
+                        <select class="form-control select2" id="formc" name="formc" required>
                             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih Formc</option>
                             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
                             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="warco" class="form-label">Warehouse</label>
+                        <label for="warco" class="form-label">Warehouse</label><span class="text-danger"> *</span>
                         <select class="form-control select2" name="warco" id="warco" required>
                             <option value="" disabled selected>Pilih Warehouse</option>
                             @foreach ($mwarco as $m)
@@ -68,12 +68,12 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="tradt" class="form-label">Stock Receipt Date</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required required min="{{ date('Y-m-01') }}">
+                        <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ date('Y-m-01') }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="refcno" class="form-label">Receiving Instruction</label><span class="text-danger"> *</span>
-                        <select class="form-control select2" id="refcno" name="refcno">
+                        <select class="form-control select2" id="refcno" name="refcno" required>
                             <option value="" disabled selected>Pilih Receiving Instruction</option>
                             @foreach ($tsupih as $t)
                                 <option value="{{ $t->rinum }}" {{ old('rinum') == $t->rinum ? 'selected' : '' }}
@@ -131,8 +131,8 @@
                             <div class="accordion-item" id="accordion-item-{{ $i }}">
                             <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-{{ $i }}">
                                 <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#invno-{{ $i }}"
-                                        aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="invno-{{ $i }}">
+                                        data-bs-toggle="collapse" data-bs-target="#details-{{ $i }}"
+                                        aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-{{ $i }}">
                                 </button>
                                 @if($i > 0)
                                     <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
@@ -140,8 +140,8 @@
                                     </button>
                                 @endif
                             </h2>
-                            <div id="invno-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
-                                aria-labelledby="heading-{{ $i }}" data-bs-parent="#accordionInvno">
+                            <div id="details-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
+                                aria-labelledby="heading-{{ $i }}" data-bs-parent="#accordionDetails">
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
@@ -170,7 +170,7 @@
                                         <div class="col-md-6 mt-3">
                                             <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]" value="{{ old('trqty.'. $i) }}"
+                                                <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]" value="{{ old('trqty.'. $i, 1) }}" min="1"
                                                 oninput="
                                                     this.value = this.value.replace(/[^0-9]/g, '');
                                                     const inqty = Number(document.getElementById('inqty-{{ $i }}')?.value || 0);
@@ -182,19 +182,20 @@
                                                         });
                                                         this.value = inqty;
                                                     }
-                                                ">
+                                                " required>
                                                 <span class="input-group-text unit-label"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="opron-{{ $i }}" class="form-label">Product No.</label>
-                                            <input type="text" class="form-control" id="opron-input-{{ $i }}" value="{{ old('opron.'. $i) }}" readonly style="background-color: #e9ecef">
+                                            <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                                            <input type="number" class="form-control" name="lotno[]" id="lotno-{{ $i }}" value="{{ old('lotno.'. $i) }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                                            <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}" value="{{ old('lotno.'. $i) }}">
+                                            <label for="lotnoend-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
+                                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-{{ $i }}" readonly
+                                                style="background-color: #e9ecef;" value="{{ old('lotnoend.'. $i) }}">
                                         </div>
 
                                         <div class="col-md-6 mt-3">
@@ -203,7 +204,7 @@
                                         </div>
 
                                         <div class="col-md-6 mt-3">
-                                            <label for="locco" class="form-label">Warehouse Location</label>
+                                            <label for="locco" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
                                             <select class="form-control select2" name="locco[]" id="locco-{{ $i }}" required>
                                                 <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
                                             </select>
@@ -369,7 +370,6 @@
             $(document).on('change', 'select[name="opron[]"]', function () {
                 const selected = $(this).find(':selected');
                 const index = $(this).attr('id').split('-')[1];
-                const opron = $(this).val();
                 const qty = selected.data('qty');
                 const stdqt = selected.data('stdqt');
                 const pono = selected.data('pono');
@@ -378,7 +378,6 @@
                 $(`#inqty-${index}`).next('.input-group-text').text(stdqt);
                 $(`#trqty-${index}`).next('.input-group-text').text(stdqt);
                 $(`#stdqt-${index}`).val(stdqt);
-                $(`#opron-input-${index}`).val(opron);
                 $(`#pono-${index}`).val(pono);
             });
 
@@ -443,6 +442,22 @@
                     headerButton.contents().filter(function () {
                         return this.nodeType === 3;
                     }).first().replaceWith(` ${newLabel}`);
+                }
+            });
+        </script>
+
+        {{-- otomatis ambil lotno akhir --}}
+        <script>
+            $(document).on('input', 'input[name="lotno[]"], input[name="trqty[]"]', function () {
+                const index = $(this).attr('id').split('-')[1];
+                const lotStart = parseInt($(`#lotno-${index}`).val()) || 0;
+                const trqty = parseInt($(`#trqty-${index}`).val()) || 0;
+
+                if (lotStart > 0 && trqty > 0) {
+                    const lotEnd = lotStart + trqty - 1;
+                    $(`#lotnoend-${index}`).val(lotEnd);
+                } else {
+                    $(`#lotnoend-${index}`).val('');
                 }
             });
         </script>

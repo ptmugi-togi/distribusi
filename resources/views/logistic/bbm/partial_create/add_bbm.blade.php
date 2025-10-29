@@ -16,15 +16,15 @@
         newItem.innerHTML = `
             <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-${bbmDetail}">
                 <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#barang-${bbmDetail}"
-                        aria-expanded="false" aria-controls="barang-${bbmDetail}">
+                        data-bs-toggle="collapse" data-bs-target="#details-${bbmDetail}"
+                        aria-expanded="false" aria-controls="details-${bbmDetail}">
                 </button>
                 <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail(${bbmDetail})">
                     <i class="bi bi-trash-fill"></i>
                 </button>
             </h2>
 
-            <div id="barang-${bbmDetail}" class="accordion-collapse collapse"
+            <div id="details-${bbmDetail}" class="accordion-collapse collapse"
                 aria-labelledby="heading-${bbmDetail}" data-bs-parent="#accordionBbm">
                 <div class="accordion-body">
                      <div class="row">
@@ -72,13 +72,13 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="opron-${bbmDetail}" class="form-label">Product No.</label>
-                            <input type="text" class="form-control" id="opron-input-${bbmDetail}" readonly style="background-color: #e9ecef">
+                            <label for="lotno-${bbmDetail}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                            <input type="number" class="form-control" name="lotno[]" id="lotno-${bbmDetail}">
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="lotno-${bbmDetail}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                            <input type="text" class="form-control" name="lotno[]" id="lotno-${bbmDetail}">
+                            <label for="lotnoend-${bbmDetail}" class="form-label">Serial / Batch No. (Akhir)</label><span class="text-danger"> *</span>
+                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}">
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -109,7 +109,7 @@
         accordion.appendChild(newItem);
 
         // otomatis buka accordion yang baru dibuat
-        const collapse = new bootstrap.Collapse(document.getElementById(`barang-${bbmDetail}`), { show: true });
+        const collapse = new bootstrap.Collapse(document.getElementById(`details-${bbmDetail}`), { show: true });
 
         // re-init select2
         $(`#invno-${bbmDetail}`).select2({ theme: 'bootstrap-5', width: '100%' });
