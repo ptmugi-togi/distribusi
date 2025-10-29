@@ -53,11 +53,11 @@ class BbmHdr extends Model
 
     public function vendor()
     {
-        return $this->belongsTo(Mvendor::class, 'vendor_id', 'id');
+        return $this->belongsTo(Mvendor::class, 'supno', 'supno');
     }
 
     public function tsupih()
     {
-        return $this->belongsTo(InvoiceHdr::class, 'invno', 'bbmid');
+        return $this->belongsTo(InvoiceHdr::class, 'refno', 'rinum');
     }
 }

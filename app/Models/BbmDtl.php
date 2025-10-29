@@ -33,4 +33,13 @@ class BbmDtl extends Model
         return $this->belongsTo(BbmHdr::class, 'bbmid', 'bbmid');
     }
 
+    public function mpromas()
+    {
+        return $this->belongsTo(Mpromas::class, 'opron', 'opron');
+    }
+
+    public function tsupid()
+    {
+        return $this->belongsTo(invoiceDtl::class, 'invno', 'invno');
+    }
 }
