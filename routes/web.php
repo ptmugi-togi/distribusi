@@ -150,5 +150,5 @@ Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
-Route::put('/bbm/{id}', [BbmController::class,'update'])->middleware('auth')->name('bbm.update');
+Route::put('/bbm/{bbmid}', [BbmController::class,'update'])->middleware('auth')->name('bbm.update');
 Route::delete('/bbm/{id}/delete', [BbmController::class,'destroy'])->middleware('auth')->name('bbm.delete');

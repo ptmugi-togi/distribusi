@@ -1,13 +1,13 @@
 <script>
 
-    let bbmDetail = {{ count(old('opron', [null])) }};
+    let bbmDetail = document.querySelectorAll('#accordionBbm .accordion-item').length || 0;
 
     function addBbm() {
 
         const accordion = document.getElementById('accordionBbm');
 
-        const warco = selectedWarehouse || $('#warco').val();
-        const refcno = selectedReceivingInstruction || $('#refcno').val();
+        const warco = $('#warco').val();
+        const refcno = "{{ $bbm->refno }}";
 
         const newItem = document.createElement('div');
         newItem.classList.add('accordion-item');
@@ -17,7 +17,7 @@
             <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-${bbmDetail}">
                 <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#details-${bbmDetail}"
-                        aria-expanded="false" aria-controls="details-${bbmDetail}">
+                        aria-expanded="false" aria-controls="details-${bbmDetail}" data-bs-parent="#accordionBbm">
                 </button>
                 <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail(${bbmDetail})">
                     <i class="bi bi-trash-fill"></i>
@@ -78,7 +78,7 @@
 
                         <div class="col-md-6 mt-3">
                             <label for="lotnoend-${bbmDetail}" class="form-label">Serial / Batch No. (Akhir)</label><span class="text-danger"> *</span>
-                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}">
+                            <input type="number" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}" readonly style="background-color: #e9ecef">
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -142,14 +142,6 @@
                     } else {
                         $invSelect.html('<option value="">Tidak ada Invoice untuk Receiving Instruction ini</option>');
                     }
-
-                    // isi juga semua dropdown invno[] lain yang masih kosong
-                    $('select[name="invno[]"]').each(function () {
-                        const select = $(this);
-                        if (select.find('option').length <= 1) {
-                            select.html($invSelect.html()).trigger('change.select2');
-                        }
-                    });
                 },
                 error: function () {
                     $invSelect.html('<option value="">Gagal memuat data Invoice</option>');
@@ -183,14 +175,6 @@
                     } else {
                         $locSelect.html('<option value="">Tidak ada lokasi untuk warehouse ini</option>');
                     }
-
-                    // isi juga semua locco[] lain yang masih kosong
-                    $('select[name="locco[]"]').each(function () {
-                        const select = $(this);
-                        if (select.find('option').length <= 1) {
-                            select.html($locSelect.html()).trigger('change.select2');
-                        }
-                    });
                 },
                 error: function () {
                     $locSelect.html('<option value="">Gagal memuat data Lokasi</option>');
