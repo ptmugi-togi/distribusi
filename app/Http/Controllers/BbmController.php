@@ -23,8 +23,17 @@ class BbmController extends Controller
     public function index()
     {
         $bbmhdr = BbmHdr::with('mformcode')->get();
+
+        $userBraco = Auth::user()->cabang;
+
+        $latestPeriod = DB::table('tperiode')
+            ->where('braco', Auth::user()->cabang)
+            ->orderByDesc('periode')
+            ->first();
+
+        $periodClosed = $latestPeriod && $latestPeriod->status === 'C';
         
-        return view('logistic.bbm.bbm_index', compact('bbmhdr'));
+        return view('logistic.bbm.bbm_index', compact('bbmhdr', 'userBraco', 'periodClosed'));
     }
 
     public function getInvoice($rinum)

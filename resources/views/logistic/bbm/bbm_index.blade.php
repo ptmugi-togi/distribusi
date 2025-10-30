@@ -36,6 +36,7 @@
                         <th class="text-center">Receipt Date</th>
                         <th class="text-center">Reference</th>
                         <th class="text-center">Action</th>
+                        <th class="text-center">Braco</th>
                         <th class="text-center">Created At</th>
                     </tr>
                   </thead>
@@ -51,15 +52,18 @@
                         <td class="text-center">{{ $b->reffc }} {{ $b->refno }}</td>
                         <td class="text-center">
                             <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                            <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                            <form id="delete-inv-{{ $b->bbmid }}" action="{{ url('/bbm/'.$b->bbmid.'/delete') }}" method="POST" style="display:inline;">
-                              @csrf
-                              @method('DELETE')
-                              <a class="badge bg-danger btn-delete-inv" data-bbmid="{{ $b->bbmid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
-                                    <i class="bi bi-trash"></i>
-                              </a>
-                            </form>
+                            @if (!$periodClosed && $b->braco == auth()->user()->cabang)
+                              <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                              <form id="delete-inv-{{ $b->bbmid }}" action="{{ url('/bbm/'.$b->bbmid.'/delete') }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <a class="badge bg-danger btn-delete-inv" data-bbmid="{{ $b->bbmid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                      <i class="bi bi-trash"></i>
+                                </a>
+                              </form>
+                            @endif
                         </td>
+                        <td class="text-center">{{ $b->braco ?? '-' }}</td>
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->created_at)->format('Y-m-d H:i:s') }}">
                             {{ \Carbon\Carbon::parse($b->created_at)->format('d/m/Y H:i:s') }}
                         </td>
@@ -82,7 +86,7 @@
           order: [[3, 'desc']], // sorting berdasarkan created at
           stateSave: false,
           columnDefs: [
-            { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
+            { targets: [6, 7], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
           ]
         });
       });
