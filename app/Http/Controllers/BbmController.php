@@ -190,6 +190,7 @@ class BbmController extends Controller
                         'trqty' => 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
+                        'pono' => $request->pono[$i],
                         'noted' => $request->noted[$i],
                     ]);
                 }
@@ -372,6 +373,7 @@ class BbmController extends Controller
                         'trqty' => 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
+                        'pono' => $request->pono[$i],
                         'noted' => $request->noted[$i],
                     ]);
                 }

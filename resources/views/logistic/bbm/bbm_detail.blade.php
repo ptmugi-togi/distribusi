@@ -118,7 +118,7 @@
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">PO No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->tsupid->pono }}" disabled>
+                                        <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
