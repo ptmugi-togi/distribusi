@@ -217,6 +217,14 @@ class BbmController extends Controller
                         ->update(['toqoh' => DB::raw('toqoh + ' . $trqty)]);
                 }
 
+                // Update rcqty di podtl_tbl
+                DB::table('podtl_tbl')
+                    ->where('pono', $request->pono[$i])
+                    ->where('opron', $request->opron[$i])
+                    ->update([
+                        'rcqty' => DB::raw('rcqty + '.$trqty)
+                    ]);
+
                 // Update stok per lot
                 foreach ($lotList as $lotno) {
                     $existL = DB::table('stobl_tbl')
@@ -351,6 +359,13 @@ class BbmController extends Controller
                     ->where('locco', $old->locco)
                     ->where('lotno', $old->lotno)
                     ->decrement('toqoh', 1);
+
+                DB::table('podtl_tbl')
+                    ->where('pono', $old->pono)
+                    ->where('opron', $old->opron)
+                    ->update([
+                        'rcqty' => DB::raw('rcqty - '.$old->trqty)
+                    ]);
             }
 
             DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
@@ -430,6 +445,12 @@ class BbmController extends Controller
                             ->update(['toqoh' => DB::raw('toqoh + 1')]);
                     }
                 }
+                DB::table('podtl_tbl')
+                    ->where('pono', $request->pono[$i])
+                    ->where('opron', $request->opron[$i])
+                    ->update([
+                        'rcqty' => DB::raw('rcqty + '.$trqty)
+                    ]);
             }
 
             DB::commit();
