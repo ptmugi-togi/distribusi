@@ -125,7 +125,7 @@
                 {{ $bbmhdr->braco }}<br>
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
-                {{ $bbmhdr->tradt }}<br>
+                {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
                 {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
                 {{ $bbmhdr->tbolh->nocal ?? '-' }}
             </td>
