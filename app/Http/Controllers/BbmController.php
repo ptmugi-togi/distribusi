@@ -46,15 +46,61 @@ class BbmController extends Controller
         return response()->json($invoices);
     }
 
-    public function getBarang($invno)
+    public function getPoList()
     {
-        $barang = DB::table('tsupid_tbl as t')
-            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
-            ->where('t.invno', $invno)
-            ->select('t.opron as opron', 'm.prona as prona', 't.inqty as inqty', 't.stdqt as stdqt', 't.pono as pono')
+        $braco = Auth::user()->cabang;
+
+        $pos = DB::table('pohdr_tbl as h')
+            ->where('h.braco', $braco)
+            ->whereExists(function($q){
+                $q->select(DB::raw(1))
+                ->from('podtl_tbl as d')
+                ->whereColumn('d.pono', 'h.pono')
+                ->whereColumn('d.rcqty', '<', 'd.poqty');
+            })
+            ->select('h.pono')
+            ->orderBy('h.pono', 'desc')
             ->get();
 
-        return response()->json($barang);
+        return response()->json($pos);
+    }
+
+    public function getPoSupplier($pono)
+    {
+        $data = DB::table('pohdr_tbl as h')
+            ->leftJoin('mvendor_tbl as v', 'h.supno', '=', 'v.supno')
+            ->where('h.pono', $pono)
+            ->select('h.supno', 'v.supna')
+            ->first();
+
+        return response()->json($data);
+    }
+
+    public function getBarang($invno, Request $request)
+    {
+        $formc = $request->query('formc');
+
+        if ($formc === 'IA') {
+            // invno di IA = PONO
+            return DB::table('podtl_tbl as p')
+                ->leftJoin('mpromas as m','p.opron','=','m.opron')
+                ->where('p.pono', $invno)
+                ->whereColumn('p.rcqty','<','p.poqty') // hanya yg belum full receive
+                ->select('p.opron','m.prona','p.poqty as inqty','p.stdqu as stdqt','p.pono')
+                ->get();
+        }
+
+        // IB (default): t.inqty dari invoice, hide yang sudah full: rcqty >= inqty
+        return DB::table('tsupid_tbl as t')
+            ->leftJoin('mpromas as m','t.opron','=','m.opron')
+            ->leftJoin('podtl_tbl as p', function($j){
+                $j->on('t.opron','=','p.opron')
+                ->on('t.pono','=','p.pono');
+            })
+            ->where('t.invno', $invno)
+            ->whereColumn('p.rcqty','<','t.inqty')
+            ->select('t.opron','m.prona','t.inqty','t.stdqt','t.pono')
+            ->get();
     }
 
     public function getLocco($warco)

@@ -61,4 +61,9 @@ class BbmHdr extends Model
     {
         return $this->belongsTo(InvoiceHdr::class, 'refno', 'rinum');
     }
+
+    public function tbolh()
+    {
+        return $this->belongsTo(Tbolh::class, 'blnum', 'blnum');
+    }
 }
