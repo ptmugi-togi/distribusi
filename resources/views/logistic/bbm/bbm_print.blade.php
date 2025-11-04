@@ -110,7 +110,10 @@
                 WAREHOUSE <br>
                 SRN NO. <br>
                 SRN DATE <br>
-                REFERENCE <br>
+                @if ($bbmhdr->formc == 'IB')
+                    REFERENCE <br>
+                @endif
+                PO NO. <br>
                 CALCULATION
             </td>
             <td class="center td-top" style="width:1%">
@@ -126,7 +129,10 @@
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
-                {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
+                @if ($bbmhdr->formc == 'IB')
+                    {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
+                @endif
+                {{ $bbmhdr->refno }}<br>
                 {{ $bbmhdr->tbolh->nocal ?? '-' }}
             </td>
         </tr>
@@ -175,7 +181,10 @@
         <div class="footer-summary">
             <div style="border-top:1px dashed #00000049; margin-bottom:10px; padding-top: 5px;"></div>
 
-            <div>REMARK :</div>
+            <div>
+                REMARK :<br>
+                {{ $bbmhdr->noteh }}
+            </div>
 
             <table class="no-border" style="width:100%; margin-top:40px;">
                 <tr>
