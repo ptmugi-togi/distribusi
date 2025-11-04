@@ -43,25 +43,34 @@
                     <input type="date" class="form-control" value="{{ $bbm->tradt }}" disabled>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Receiving Instruction</label>
-                    <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
-                </div>
+                @if($bbm->formc == 'IB')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Receiving Instruction</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+                @else
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">PO No</label>
+                        <input type="text" class="form-control" value="{{ $bbm->refno }}" disabled>
+                    </div>
+                @endif
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Supplier</label>
                     <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">BL No.</label>
-                    <input type="text" class="form-control" value="{{ $bbm->blnum }}" disabled>
-                </div>
+                @if ($bbm->formc == 'IB')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">BL No.</label>
+                        <input type="text" class="form-control" value="{{ $bbm->blnum }}" disabled>
+                    </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Vessel</label>
-                    <input type="text" class="form-control" value="{{ $bbm->vesel }}" disabled>
-                </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Vessel</label>
+                        <input type="text" class="form-control" value="{{ $bbm->vesel }}" disabled>
+                    </div>
+                @endif
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
@@ -78,30 +87,46 @@
                         <h2 class="accordion-header" id="heading-{{ $i }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapse-{{ $i }}" aria-expanded="false">
-                                No Invoice: {{ $detail->invno }}
+                                @if ($detail->formc == 'IB')
+                                    No Invoice: {{ $detail->invno }}
+                                @else
+                                    Product: {{ $detail->opron }} - {{ $detail->mpromas->prona }}
+                                @endif
                             </button>
                         </h2>
                         <div id="collapse-{{ $i }}" class="accordion-collapse collapse"
                             aria-labelledby="heading-{{ $i }}">
                             <div class="accordion-body">
                                 <div class="row">
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Invoice No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->invno }}" disabled>
-                                    </div>
+                                    @if ($bbm->formc == 'IB')
+                                        <div class="col-md-6 mt-3">
+                                            <label class="form-label">Invoice No.</label>
+                                            <input type="text" class="form-control" value="{{ $detail->invno }}" disabled>
+                                        </div>
+                                    @endif
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Barang</label>
                                         <input type="text" class="form-control" value="{{ $detail->opron }} - {{ $detail->mpromas->prona }}" disabled>
                                     </div>
 
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Invoice Quantity</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" value="{{ $detail->tsupid->inqty }}" disabled>
-                                            <span class="input-group-text">{{ $detail->qunit }}</span>
+                                    @if ($bbm->formc == 'IB')
+                                        <div class="col-md-6 mt-3">
+                                            <label class="form-label">Invoice Quantity</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="{{ $detail->tsupid->inqty }}" disabled>
+                                                <span class="input-group-text">{{ $detail->qunit }}</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="col-md-6 mt-3">
+                                            <label class="form-label">PO Quantity</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="{{ $detail->podtl->poqty }}" disabled>
+                                                <span class="input-group-text">{{ $detail->qunit }}</span>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Receipt Quantity</label>

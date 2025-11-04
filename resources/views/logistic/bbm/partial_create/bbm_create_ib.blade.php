@@ -1,8 +1,4 @@
-{{-- === IB (IMPORT) === --}}
-@php
-  // pakai $tsupih dari controller create()
-@endphp
-
+{{-- IB (IMPORT) --}}
 <div class="row mt-4">
   <h4 class="my-2">Header (Import / IB)</h4>
 
@@ -58,6 +54,7 @@
           <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
             data-bs-toggle="collapse" data-bs-target="#details-ib-{{ $i }}"
             aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-ib-{{ $i }}">
+            <span class="accordion-title"></span>
           </button>
           @if($i > 0)
             <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeIB({{ $i }})">
@@ -187,7 +184,7 @@
     });
   });
 
-  // barang -> fill qty/unit/pono
+  // barang -> fill otomatis qty/unit/pono
   $(document).on('change', 'select.opron-ib', function(){
     const sel = $(this).find(':selected');
     const idx = this.id.split('-').pop();
@@ -236,7 +233,7 @@
     const tpl = `
       <div class="accordion-item" id="accordion-ib-item-${i}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-ib-${i}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ib-${i}" aria-expanded="false" aria-controls="details-ib-${i}"></button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ib-${i}" aria-expanded="false" aria-controls="details-ib-${i}"><span class="accordion-title"></span></button>
           <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeIB(${i})"><i class="bi bi-trash-fill"></i></button>
         </h2>
         <div id="details-ib-${i}" class="accordion-collapse collapse" aria-labelledby="heading-ib-${i}" data-bs-parent="#accordionIB">
@@ -307,6 +304,18 @@
       $.get(`{{ url('/get-invoice') }}/${rinum}`, function(data){
         $inv.empty().append('<option value="" disabled selected>Pilih Invoice No.</option>');
         data.forEach(item => $inv.append(`<option value="${item.invno}">${item.invno}</option>`));
+      });
+    }
+
+    // kalau WARCO sudah dipilih -> load warehouse ke row baru IB juga
+    const warco = $('#warco').val();
+    if(warco){
+      const $sel = $(`#locco-ib-${i}`);
+      $sel.empty().append('<option value="">Loading...</option>');
+      $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
+        $sel.empty().append('<option disabled selected>Pilih Lokasi</option>');
+        data.forEach(item => $sel.append(`<option value="${item.locco}">${item.locco}</option>`));
+        $sel.trigger('change.select2');
       });
     }
   }

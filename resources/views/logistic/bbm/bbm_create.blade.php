@@ -113,27 +113,28 @@
         });
 
         // ubah nama accordion 
-        $(document).on('change', 'select[name="invno[]"]', function () {
-            function updateAccordionTitle(parent, text){
-                const headerButton = parent.find('.accordion-button');
-                headerButton.text(text);
+        function setAccordionTitle(item){
+            const formc = $('#formc').val();
+
+            if(formc === 'IB'){
+                const invno = item.find('select[name*="invno"]').val() || '';
+                item.find('.accordion-title').text(invno ? `Invoice : ${invno}` : '-');
             }
 
-            // IB (invoice)
-            $(document).on('change','select[name="invno[]"]', function(){
-                if($('#formc').val()==='IB'){
-                    const invno = $(this).val() || '';
-                    updateAccordionTitle($(this).closest('.accordion-item'), invno ? `Invoice : ${invno}` : '');
-                }
-            });
+            if(formc === 'IA'){
+                const prona = item.find('select[name*="opron"] option:selected').text() || '';
+                item.find('.accordion-title').text(prona ? `Product : ${prona}` : '-');
+            }
+        }
 
-            // IA (barang)
-            $(document).on('change','select[name="opron[]"]', function(){
-                if($('#formc').val()==='IA'){
-                    const prona = $(this).find(':selected').text() || '';
-                    updateAccordionTitle($(this).closest('.accordion-item'), prona ? `Product : ${prona}` : '');
-                }
-            });
+        // change listener IB
+        $(document).on('change','select[name*="invno"]', function(){
+            setAccordionTitle($(this).closest('.accordion-item'));
+        });
+
+        // change listener IA
+        $(document).on('change','select[name*="opron"]', function(){
+            setAccordionTitle($(this).closest('.accordion-item'));
         });
 
         // sweetalert qty input

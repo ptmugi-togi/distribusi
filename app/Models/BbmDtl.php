@@ -42,4 +42,9 @@ class BbmDtl extends Model
     {
         return $this->belongsTo(InvoiceDtl::class, 'invno', 'invno');
     }
+
+    public function podtl()
+    {
+        return $this->belongsTo(Tpodtl::class, 'pono', 'pono');
+    }
 }

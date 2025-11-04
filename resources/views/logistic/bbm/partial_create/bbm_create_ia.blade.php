@@ -1,4 +1,4 @@
-{{-- === IA (LOCAL PURCHASE) === --}}
+{{-- IA (LOCAL PURCHASE) --}}
 <div class="row mt-4">
   <h4 class="my-2">Header (Local / IA)</h4>
 
@@ -35,6 +35,7 @@
           <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
             data-bs-toggle="collapse" data-bs-target="#details-ia-{{ $i }}"
             aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-ia-{{ $i }}">
+            <span class="accordion-title"></span>
           </button>
           @if($i > 0)
             <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeIA({{ $i }})">
@@ -221,7 +222,7 @@
     const tpl = `
       <div class="accordion-item" id="accordion-ia-item-${i}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-ia-${i}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ia-${i}" aria-expanded="false" aria-controls="details-ia-${i}"></button>
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ia-${i}" aria-expanded="false" aria-controls="details-ia-${i}"><span class="accordion-title"></span></button>
           <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeIA(${i})"><i class="bi bi-trash-fill"></i></button>
         </h2>
         <div id="details-ia-${i}" class="accordion-collapse collapse" aria-labelledby="heading-ia-${i}" data-bs-parent="#accordionIA">
@@ -233,7 +234,7 @@
               <div class="col-md-6 mt-3">
                 <label class="form-label">Barang (dari PO)</label><span class="text-danger"> *</span>
                 <select class="select2 form-control opron-ia" name="opron[]" id="opron-ia-${i}" required>
-                  <option value="" disabled selected>Pilih PO No terlebih dahulu</option>
+                  <option value="" disabled selected></option>
                 </select>
               </div>
 
@@ -297,6 +298,18 @@
       $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
         $sel.empty().append('<option value="" disabled selected>Pilih Barang (PO)</option>');
         data.forEach(item => $sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`));
+      });
+    }
+
+    // kalau WARCO sudah dipilih -> load warehouse ke row baru IB juga
+    const warco = $('#warco').val();
+    if(warco){
+      const $sel = $(`#locco-ia-${i}`);
+      $sel.empty().append('<option value="">Loading...</option>');
+      $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
+        $sel.empty().append('<option disabled selected>Pilih Lokasi</option>');
+        data.forEach(item => $sel.append(`<option value="${item.locco}">${item.locco}</option>`));
+        $sel.trigger('change.select2');
       });
     }
   }
