@@ -51,6 +51,12 @@
                         </td>
                         <td class="text-center">{{ $b->reffc }} {{ $b->refno }}</td>
                         <td class="text-center">
+                            {{-- preview --}}
+                            {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+
+                            {{-- print --}}
+                            <a href="{{ route('bbm.printBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                            
                             <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)
                               <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

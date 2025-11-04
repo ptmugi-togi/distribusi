@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\TpoHdr;
+use App\Models\BbmHdr;
 use Mpdf\Mpdf;
 
 class PdfController extends Controller
@@ -106,4 +107,108 @@ class PdfController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="PI-'.$tpohdr->pono.'.pdf"');
     }
-}
+
+    public function previewBbm($id)
+    {
+        $bbmhdr = \App\Models\BbmHdr::with([
+            'bbmdtl.mpromas',
+            'tsupih',
+            'mformcode',
+            'vendor',
+            'tbolh'
+        ])->findOrFail($id);
+
+        $bbmdtl = collect($bbmhdr->bbmdtl)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name,
+                $i->mpromas->prona,
+                $i->pono,
+                $i->invno,
+                $i->trqty,
+                $i->qun,
+                $i->locco,
+                trim($i->noted)
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+            $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            return $first;
+        });
+
+        $html = view('logistic.bbm.bbm_print', [
+            'bbmhdr' => $bbmhdr,
+            'bbmdtl' => $bbmdtl
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output(); 
+    }
+
+    public function printBbm($id)
+    {
+        $bbmhdr = \App\Models\BbmHdr::with([
+            'bbmdtl.mpromas',
+            'tsupih',
+            'mformcode',
+            'vendor',
+            'tbolh'
+        ])->findOrFail($id);
+
+        // increment counter print
+        DB::table('tstorh')
+            ->where('bbmid', $id)
+            ->update([
+                'prctr' => DB::raw('prctr + 1')
+            ]);
+
+        $bbmdtl = collect($bbmhdr->bbmdtl)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name,
+                $i->mpromas->prona,
+                $i->pono,
+                $i->invno,
+                $i->trqty,
+                $i->qun,
+                $i->locco,
+                trim($i->noted)
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+            $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            return $first;
+        });
+
+        $html = view('logistic.bbm.bbm_print', [
+            'bbmhdr' => $bbmhdr,
+            'bbmdtl' => $bbmdtl
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        // save PDF jadi string
+        $filename = $bbmhdr->braco.'-'.$bbmhdr->formc.$bbmhdr->trano.'.pdf';
+        $pdfContent = $mpdf->Output($filename, 'S');
+
+        return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+}   

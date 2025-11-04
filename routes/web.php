@@ -155,3 +155,4 @@ Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')-
 Route::put('/bbm/{bbmid}', [BbmController::class,'update'])->middleware('auth')->name('bbm.update');
 Route::delete('/bbm/{id}/delete', [BbmController::class,'destroy'])->middleware('auth')->name('bbm.delete');
 Route::get('/bbm/previewBbm/{id}', [PdfController::class, 'previewBbm'])->name('bbm.previewBbm');
+Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.printBbm');
