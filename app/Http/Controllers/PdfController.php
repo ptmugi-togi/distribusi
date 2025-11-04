@@ -125,14 +125,13 @@ class PdfController extends Controller
                 $i->mpromas->prona,
                 $i->pono,
                 $i->invno,
-                $i->trqty,
-                $i->qun,
                 $i->locco,
                 trim($i->noted)
             ]);
         })->map(function($group){
             $first = $group->first();
             $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            $first->trqty = $group->sum('trqty'); //sum jika sama hanya beda sn
             return $first;
         });
 
@@ -178,14 +177,13 @@ class PdfController extends Controller
                 $i->mpromas->prona,
                 $i->pono,
                 $i->invno,
-                $i->trqty,
-                $i->qun,
                 $i->locco,
                 trim($i->noted)
             ]);
         })->map(function($group){
             $first = $group->first();
             $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            $first->trqty = $group->sum('trqty'); //sum jika sama hanya beda sn
             return $first;
         });
 
