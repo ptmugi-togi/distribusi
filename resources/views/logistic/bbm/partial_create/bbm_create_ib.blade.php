@@ -88,24 +88,30 @@
                   <span class="input-group-text unit-label-ib"></span>
                   <input type="text" class="stdqt-ib" name="stdqt[]" id="stdqt-ib-{{ $i }}" hidden>
                 </div>
-              </div>
-
-              <div class="col-md-6 mt-3">
-                <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
-                <div class="input-group">
-                  <input type="number" class="form-control trqty-ib" id="trqty-ib-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-                  <span class="input-group-text unit-label-ib"></span>
+                <div class="form-check mt-3">
+                    <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[{{ $i }}]" id="nolot-{{ $i }}">
+                    <label class="form-check-label" for="nolot-{{ $i }}">
+                        Non Lot / Without Serial
+                    </label>
                 </div>
               </div>
 
               <div class="col-md-6 mt-3">
-                <label class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="lotno[]" id="lotno-ib-{{ $i }}" value="{{ old('lotno.'.$i) }}" required>
+                  <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                  <div class="input-group">
+                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
+                    <span class="input-group-text unit-label-ia"></span>
+                  </div>
+              </div>
+              
+              <div class="col-md-6 mt-3 lot-section">
+                <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}">
               </div>
 
-              <div class="col-md-6 mt-3">
-                <label class="form-label">Serial / Batch No. (Akhir)</label>
-                <input type="text" class="form-control lotnoend-ib" name="lotnoend[]" id="lotnoend-ib-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
+              <div class="col-md-6 mt-3 lot-section">
+                  <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
+                  <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
               </div>
 
               <div class="col-md-6 mt-3">
@@ -230,7 +236,7 @@
   // add/remove row IB
   window.addIB = function(){
     const i = $('#accordionIB .accordion-item').length;
-    const tpl = `
+    const dtl = `
       <div class="accordion-item" id="accordion-ib-item-${i}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-ib-${i}">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ib-${i}" aria-expanded="false" aria-controls="details-ib-${i}"><span class="accordion-title"></span></button>
@@ -258,21 +264,27 @@
                   <span class="input-group-text unit-label-ib"></span>
                   <input type="text" class="stdqt-ib" name="stdqt[]" id="stdqt-ib-${i}" hidden>
                 </div>
-              </div>
-              <div class="col-md-6 mt-3">
-                <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
-                <div class="input-group">
-                  <input type="number" class="form-control trqty-ib" id="trqty-ib-${i}" name="trqty[]" value="1" min="1" required>
-                  <span class="input-group-text unit-label-ib"></span>
+                <div class="form-check mt-3">
+                    <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${i}]" id="nolot-${i}">
+                    <label class="form-check-label" for="nolot-${i}">
+                        Non Lot / Without Serial
+                    </label>
                 </div>
               </div>
               <div class="col-md-6 mt-3">
-                <label class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="lotno[]" id="lotno-ib-${i}" required>
+                  <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                  <div class="input-group">
+                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
+                    <span class="input-group-text unit-label-ia"></span>
+                  </div>
               </div>
-              <div class="col-md-6 mt-3">
-                <label class="form-label">Serial / Batch No. (Akhir)</label>
-                <input type="text" class="form-control lotnoend-ib" name="lotnoend[]" id="lotnoend-ib-${i}" readonly style="background-color:#e9ecef;">
+              <div class="col-md-6 mt-3 lot-section">
+                <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}">
+              </div>
+              <div class="col-md-6 mt-3 lot-section">
+                  <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
+                  <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
               </div>
               <div class="col-md-6 mt-3">
                 <label class="form-label">PO No.</label>
@@ -293,8 +305,11 @@
           </div>
         </div>
       </div>`;
-    $('#accordionIB').append(tpl);
+    $('#accordionIB').append(dtl);
     $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
+    setTimeout(()=>{
+        $(`#details-ib-${i}`).collapse('show');
+    },100);
 
     // kalau RI sudah dipilih, load invoice ke row baru
     const rinum = $('#refno_ib').val();

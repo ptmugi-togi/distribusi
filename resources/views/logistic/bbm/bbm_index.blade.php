@@ -49,7 +49,11 @@
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                         </td>
-                        <td class="text-center">{{ $b->reffc }} {{ $b->refno }}</td>
+                        @if ($b->formc == 'IB')
+                          <td class="text-center">{{ $b->reffc }} {{ $b->refno }}</td>
+                        @else
+                          <td class="text-center">{{ $b->refno }}</td>
+                        @endif
                         <td class="text-center">
                             {{-- preview --}}
                             {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}

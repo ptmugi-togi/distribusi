@@ -220,28 +220,49 @@ class BbmController extends Controller
             ]);
 
             foreach ($request->invno as $i => $invno) {
-                $lotStart = $request->lotno[$i];
+
+                $isNoLot = isset($request->nolot[$i]) && $request->nolot[$i] == 1;
+                $lotStart = $request->lotno[$i] ?: '-';
                 $trqty = (int) $request->trqty[$i];
 
-                // Buat lotno string
-                $lotList = $this->generateLotList($lotStart, $trqty);
+                if($isNoLot){
+                    $lotList = [$lotStart];
+                }else{
+                    $lotList = $this->generateLotList($lotStart, $trqty);
+                }
 
-                foreach ($lotList as $lotno) {
+                // TSTORD
+                if($isNoLot){
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $request->trano,
                         'invno' => $invno,
                         'opron' => $request->opron[$i],
-                        'lotno' => $lotno,
-                        'trqty' => 1,
+                        'lotno' => $lotList[0],
+                        'trqty' => $trqty,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
                         'pono' => $request->pono[$i],
                         'noted' => $request->noted[$i],
                     ]);
+                } else {
+                    foreach ($lotList as $lotno) {
+                        DB::table('tstord')->insert([
+                            'bbmid' => $bbmid,
+                            'trano' => $request->trano,
+                            'invno' => $invno,
+                            'opron' => $request->opron[$i],
+                            'lotno' => $lotno,
+                            'trqty' => 1,
+                            'qunit' => $request->stdqt[$i],
+                            'locco' => $request->locco[$i],
+                            'pono' => $request->pono[$i],
+                            'noted' => $request->noted[$i],
+                        ]);
+                    }
                 }
 
-                // Update stok summary
+                // stobw_tbl summary
                 $existW = DB::table('stobw_tbl')
                     ->where('warco', $request->warco)
                     ->where('braco', $request->braco)
@@ -263,7 +284,7 @@ class BbmController extends Controller
                         ->update(['toqoh' => DB::raw('toqoh + ' . $trqty)]);
                 }
 
-                // Update rcqty di podtl_tbl
+                // podtl update
                 DB::table('podtl_tbl')
                     ->where('pono', $request->pono[$i])
                     ->where('opron', $request->opron[$i])
@@ -271,15 +292,16 @@ class BbmController extends Controller
                         'rcqty' => DB::raw('rcqty + '.$trqty)
                     ]);
 
-                // Update stok per lot
-                foreach ($lotList as $lotno) {
+                // stobl_tbl
+                if($isNoLot){
+
                     $existL = DB::table('stobl_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
                         ->where('opron', $request->opron[$i])
                         ->where('qunit', $request->stdqt[$i])
                         ->where('locco', $request->locco[$i])
-                        ->where('lotno', $lotno)
+                        ->where('lotno', $lotList[0])
                         ->first();
 
                     if (!$existL) {
@@ -289,8 +311,8 @@ class BbmController extends Controller
                             'opron' => $request->opron[$i],
                             'qunit' => $request->stdqt[$i],
                             'locco' => $request->locco[$i],
-                            'lotno' => $lotno,
-                            'toqoh' => 1,
+                            'lotno' => $lotList[0],
+                            'toqoh' => $trqty,
                         ]);
                     } else {
                         DB::table('stobl_tbl')
@@ -299,8 +321,42 @@ class BbmController extends Controller
                             ->where('opron', $request->opron[$i])
                             ->where('qunit', $request->stdqt[$i])
                             ->where('locco', $request->locco[$i])
+                            ->where('lotno', $lotList[0])
+                            ->update(['toqoh' => DB::raw("toqoh + $trqty")]);
+                    }
+
+                } else {
+
+                    foreach ($lotList as $lotno) {
+                        $existL = DB::table('stobl_tbl')
+                            ->where('warco', $request->warco)
+                            ->where('braco', $request->braco)
+                            ->where('opron', $request->opron[$i])
+                            ->where('qunit', $request->stdqt[$i])
+                            ->where('locco', $request->locco[$i])
                             ->where('lotno', $lotno)
-                            ->update(['toqoh' => DB::raw('toqoh + 1')]);
+                            ->first();
+
+                        if (!$existL) {
+                            DB::table('stobl_tbl')->insert([
+                                'braco' => $request->braco,
+                                'warco' => $request->warco,
+                                'opron' => $request->opron[$i],
+                                'qunit' => $request->stdqt[$i],
+                                'locco' => $request->locco[$i],
+                                'lotno' => $lotno,
+                                'toqoh' => 1,
+                            ]);
+                        } else {
+                            DB::table('stobl_tbl')
+                                ->where('warco', $request->warco)
+                                ->where('braco', $request->braco)
+                                ->where('opron', $request->opron[$i])
+                                ->where('qunit', $request->stdqt[$i])
+                                ->where('locco', $request->locco[$i])
+                                ->where('lotno', $lotno)
+                                ->update(['toqoh' => DB::raw('toqoh + 1')]);
+                        }
                     }
                 }
             }
@@ -345,7 +401,11 @@ class BbmController extends Controller
             ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
             ->leftJoin('tsupid_tbl as s', function ($join){
                 $join->on('d.invno', '=', 's.invno')
-                     ->on('d.opron', '=', 's.opron');
+                    ->on('d.opron', '=', 's.opron');
+            })
+            ->leftJoin('podtl_tbl as t', function($join){
+                $join->on('d.pono','=','t.pono')
+                    ->on('d.opron','=','t.opron');
             })
             ->select(
                 'd.*',
@@ -355,10 +415,11 @@ class BbmController extends Controller
                 's.inqty',
                 's.stdqt',
                 's.pono as spono',
+                't.poqty',
                 'd.pono as dpono'
             )
-            ->where('d.trano', $bbm->trano)
-            ->get();
+        ->where('d.trano', $bbm->trano)
+        ->get();
 
         // Dropdown
         $mwarco = DB::table('mwarco_tbl')->get();

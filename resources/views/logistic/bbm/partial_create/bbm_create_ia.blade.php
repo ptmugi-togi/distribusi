@@ -69,21 +69,30 @@
               </div>
 
               <div class="col-md-6 mt-3">
-                <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
-                <div class="input-group">
-                  <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-                  <span class="input-group-text unit-label-ia"></span>
-                </div>
+                  <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                  <div class="input-group">
+                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
+                    <span class="input-group-text unit-label-ia"></span>
+                  </div>
+              </div>
+                
+              <div class="col-md-6 mt-4">
+                  <div class="form-check mt-3">
+                      <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[{{ $i }}]" id="nolot-{{ $i }}">
+                      <label class="form-check-label" for="nolot-{{ $i }}">
+                          Non Lot / Without Serial
+                      </label>
+                  </div>
               </div>
 
-              <div class="col-md-6 mt-3">
-                <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}" required>
+              <div class="col-md-6 mt-3 lot-section">
+                  <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                  <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}">
               </div>
 
-              <div class="col-md-6 mt-3">
-                <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
-                <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
+              <div class="col-md-6 mt-3 lot-section">
+                  <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
+                  <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
               </div>
 
               <div class="col-md-6 mt-3">
@@ -172,6 +181,18 @@
     $('[id^="pono-ia-"]').val(pono);
   });
 
+  // checkbox lotno
+  $(document).on('change', '.nolot-checkbox', function(){
+    let container   = $(this).closest('.row, .accordion-body'); 
+    if($(this).is(':checked')){
+        container.find('.lot-section').hide();
+        container.find('.lotno-input').val('-'); // default supaya backend ga error
+    }else{
+        container.find('.lot-section').show();
+        container.find('.lotno-input').val('');
+    }
+  });
+
   // pilih barang (IA)
   $(document).on('change', 'select.opron-ia', function(){
     const $opt = $(this).find(':selected');
@@ -219,7 +240,7 @@
   // add/remove row IA
   window.addIA = function(){
     const i = $('#accordionIA .accordion-item').length;
-    const tpl = `
+    const dtl = `
       <div class="accordion-item" id="accordion-ia-item-${i}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-ia-${i}">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-ia-${i}" aria-expanded="false" aria-controls="details-ia-${i}"><span class="accordion-title"></span></button>
@@ -255,12 +276,21 @@
                 </div>
               </div>
 
-              <div class="col-md-6 mt-3">
-                <label class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="lotno[]" id="lotno-ia-${i}" required>
+              <div class="col-md-6 mt-4">
+                  <div class="form-check mt-3">
+                      <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${i}]" id="nolot-[${i}]">
+                      <label class="form-check-label" for="nolot-${i}">
+                          Non Lot / Without Serial
+                      </label>
+                  </div>
               </div>
 
-              <div class="col-md-6 mt-3">
+              <div class="col-md-6 mt-3 lot-section">
+                <label class="form-label">Serial / Batch No.</label>
+                <input type="text" class="form-control" name="lotno[]" id="lotno-ia-${i}">
+              </div>
+
+              <div class="col-md-6 mt-3 lot-section">
                 <label class="form-label">Serial / Batch No. (Akhir)</label>
                 <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-${i}" readonly style="background-color:#e9ecef;">
               </div>
@@ -287,8 +317,11 @@
           </div>
         </div>
       </div>`;
-    $('#accordionIA').append(tpl);
+    $('#accordionIA').append(dtl);
     $('.select2').select2({ width:'100%', theme: 'bootstrap-5' });
+    setTimeout(()=>{
+        $(`#details-ia-${i}`).collapse('show');
+    },100);
 
     // kalau PO sudah dipilih, load barang ke row baru
     const pono = $('#refcno_ia_submit').val();
