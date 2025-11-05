@@ -71,7 +71,19 @@
               <div class="col-md-6 mt-3">
                   <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                   <div class="input-group">
-                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
+                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
+                    oninput="
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        const inqty = Number(document.getElementById('inqty-ia-{{ $i }}')?.value || 0);
+                        if (Number(this.value) > inqty) {
+                            Swal.fire({
+                                title: 'Peringatan',
+                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah PO qty',
+                                icon: 'error'
+                            });
+                            this.value = inqty;
+                        }
+                    ">
                     <span class="input-group-text unit-label-ia"></span>
                   </div>
               </div>
@@ -80,7 +92,7 @@
                   <div class="form-check mt-3">
                       <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[{{ $i }}]" id="nolot-{{ $i }}">
                       <label class="form-check-label" for="nolot-{{ $i }}">
-                          Non Lot / Without Serial
+                          Without Serial / Batch No
                       </label>
                   </div>
               </div>
@@ -271,7 +283,19 @@
               <div class="col-md-6 mt-3">
                 <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                 <div class="input-group">
-                  <input type="number" class="form-control trqty-ia" id="trqty-ia-${i}" name="trqty[]" value="1" min="1" required>
+                  <input type="number" class="form-control trqty-ia" id="trqty-ia-${i}" name="trqty[]" value="1" min="1" required
+                  oninput="
+                      this.value = this.value.replace(/[^0-9]/g, '');
+                      const inqty = Number(document.getElementById('inqty-ia-${i}')?.value || 0);
+                      if (Number(this.value) > inqty) {
+                          Swal.fire({
+                              title: 'Peringatan',
+                              text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah PO qty',
+                              icon: 'error'
+                          });
+                          this.value = inqty;
+                      }
+                  ">
                   <span class="input-group-text unit-label-ia"></span>
                 </div>
               </div>
@@ -280,7 +304,7 @@
                   <div class="form-check mt-3">
                       <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${i}]" id="nolot-[${i}]">
                       <label class="form-check-label" for="nolot-${i}">
-                          Non Lot / Without Serial
+                          Without Serial / Batch No
                       </label>
                   </div>
               </div>

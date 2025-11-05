@@ -144,6 +144,7 @@ Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->mid
 
 Route::get('/bbm', [BbmController::class,'index'])->middleware('auth')->name('bbm.index');
 Route::get('/bbm/create', [BbmController::class,'create'])->middleware('auth')->name('bbm.create');
+Route::get('/generate-trano', [BbmController::class,'generateTrano'])->name('generate-trano');
 Route::get('/get-invoice/{rinum}', [BbmController::class, 'getInvoice'])->name('bbm.getInvoice');
 Route::get('/get-barang/{invno}', [BbmController::class, 'getBarang'])->name('bbm.getBarang');
 Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.getLocco');

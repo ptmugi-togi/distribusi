@@ -142,29 +142,38 @@ class BbmController extends Controller
         return $lotList;
     }
 
+    // generate trano sesuai warco, braco, formc
+    public function generateTrano(Request $request)
+    {
+        $braco = auth()->user()->cabang;
+        $warco = $request->warco;
+        $formc = $request->formc;
+        $year = date('y');
+
+        $last = DB::table('tstorh')
+            ->where('braco', $braco)
+            ->where('warco', $warco)
+            ->where('formc', $formc)
+            ->whereRaw("LEFT(trano,2) = ?", [$year])
+            ->orderBy('trano','desc')
+            ->value('trano');
+
+        if ($last) {
+            $number = (int)substr($last, 2) + 1;
+        } else {
+            $number = 1;
+        }
+
+        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $bbmhdr = BbmHdr::all();
-
         $mwarco = DB::table('mwarco_tbl')->get();
-
-        $last = DB::table('tstorh')
-        ->orderBy('trano', 'desc')
-        ->value('trano');
-
-        $year = date('y'); // ambil tahun sekarang
-
-        if ($last && substr($last, 0, 2) == $year) {
-            // jika masih tahun yang sama lanjutkan urutannya
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        $trano = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
 
         $periodeAktif = DB::table('tperiode')
             ->where('braco', auth()->user()->cabang)
@@ -180,12 +189,12 @@ class BbmController extends Controller
         }
 
         $tsupih = DB::table('tsupih_tbl')
-        ->leftJoin('mvendor_tbl', 'tsupih_tbl.supno', '=', 'mvendor_tbl.supno')
-        ->leftJoin('tbolh', 'tsupih_tbl.rinum', '=', 'tbolh.rinum')
-        ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
-        ->get();
+            ->leftJoin('mvendor_tbl', 'tsupih_tbl.supno', '=', 'mvendor_tbl.supno')
+            ->leftJoin('tbolh', 'tsupih_tbl.rinum', '=', 'tbolh.rinum')
+            ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
+            ->get();
 
-        return view('logistic.bbm.bbm_create', compact('bbmhdr', 'mwarco', 'trano', 'priod', 'minDate', 'periodeAktif', 'tsupih'));
+        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','priod','minDate','periodeAktif','tsupih'));
     }
 
     /**
@@ -447,7 +456,7 @@ class BbmController extends Controller
 
             // Hapus stok lama
             $oldDetails = DB::table('tstord')
-                ->select('opron', 'locco', 'lotno', 'trqty', 'qunit')
+                ->select('opron', 'locco', 'lotno', 'trqty', 'qunit', 'pono')
                 ->where('trano', $bbm->trano)
                 ->get();
 

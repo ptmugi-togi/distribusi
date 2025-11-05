@@ -91,27 +91,39 @@
                 <div class="form-check mt-3">
                     <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[{{ $i }}]" id="nolot-{{ $i }}">
                     <label class="form-check-label" for="nolot-{{ $i }}">
-                        Non Lot / Without Serial
+                        Without Serial / Batch No
                     </label>
                 </div>
               </div>
 
               <div class="col-md-6 mt-3">
-                  <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                  <label for="trqty-ib-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                   <div class="input-group">
-                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
-                    <span class="input-group-text unit-label-ia"></span>
+                    <input type="number" class="form-control trqty-ib" id="trqty-ib-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
+                    oninput="
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        const inqty = Number(document.getElementById('inqty-ib-{{ $i }}')?.value || 0);
+                        if (Number(this.value) > inqty) {
+                            Swal.fire({
+                                title: 'Peringatan',
+                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah Invoice qty',
+                                icon: 'error'
+                            });
+                            this.value = inqty;
+                        }
+                    ">
+                    <span class="input-group-text unit-label-ib"></span>
                   </div>
               </div>
               
               <div class="col-md-6 mt-3 lot-section">
-                <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label>
-                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}">
+                <label for="lotno-ib-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ib-{{ $i }}" value="{{ old('lotno.'.$i) }}">
               </div>
 
               <div class="col-md-6 mt-3 lot-section">
-                  <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
-                  <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
+                  <label for="lotnoend-ib-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
+                  <input type="text" class="form-control lotnoend-ib" name="lotnoend[]" id="lotnoend-ib-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
               </div>
 
               <div class="col-md-6 mt-3">
@@ -267,24 +279,36 @@
                 <div class="form-check mt-3">
                     <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${i}]" id="nolot-${i}">
                     <label class="form-check-label" for="nolot-${i}">
-                        Non Lot / Without Serial
+                        Without Serial / Batch No
                     </label>
                 </div>
               </div>
               <div class="col-md-6 mt-3">
-                  <label for="trqty-ia-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                  <label for="trqty-ib-${i}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
                   <div class="input-group">
-                    <input type="number" class="form-control trqty-ia" id="trqty-ia-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required>
-                    <span class="input-group-text unit-label-ia"></span>
+                    <input type="number" class="form-control trqty-ib" id="trqty-ib-${i}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
+                    oninput="
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                        const inqty = Number(document.getElementById('inqty-ib-${i}')?.value || 0);
+                        if (Number(this.value) > inqty) {
+                            Swal.fire({
+                                title: 'Peringatan',
+                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah Invoice qty',
+                                icon: 'error'
+                            });
+                            this.value = inqty;
+                        }
+                    ">
+                    <span class="input-group-text unit-label-ib"></span>
                   </div>
               </div>
               <div class="col-md-6 mt-3 lot-section">
-                <label for="lotno-ia-{{ $i }}" class="form-label">Serial / Batch No.</label>
-                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ia-{{ $i }}" value="{{ old('lotno.'.$i) }}">
+                <label for="lotno-ib-${i}" class="form-label">Serial / Batch No.</label>
+                <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ib-${i}" value="{{ old('lotno.'.$i) }}">
               </div>
               <div class="col-md-6 mt-3 lot-section">
-                  <label for="lotnoend-ia-{{ $i }}" class="form-label">Serial / Batch No. (Akhir)</label>
-                  <input type="text" class="form-control lotnoend-ia" name="lotnoend[]" id="lotnoend-ia-{{ $i }}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
+                  <label for="lotnoend-ib-${i}" class="form-label">Serial / Batch No. (Akhir)</label>
+                  <input type="text" class="form-control lotnoend-ib" name="lotnoend[]" id="lotnoend-ib-${i}" readonly style="background-color:#e9ecef;" value="{{ old('lotnoend.'.$i) }}">
               </div>
               <div class="col-md-6 mt-3">
                 <label class="form-label">PO No.</label>

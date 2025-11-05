@@ -93,6 +93,18 @@
             if(oldFormc){ $('#formc').val(oldFormc).trigger('change'); }
         });
 
+        // generate trano
+        $('#formc, #warco').on('change', function(){
+            let warco = $('#warco').val();
+            let formc = $('#formc').val();
+
+            if(warco && formc){
+                $.get("{{ route('generate-trano') }}", {formc, warco}, function(res){
+                    $('#trano').val(res);
+                });
+            }
+        });
+
         // switch section by FormC
         $('#formc').on('change', function(){
             const formc = $(this).val();
