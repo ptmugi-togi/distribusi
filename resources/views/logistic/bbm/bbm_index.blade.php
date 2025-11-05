@@ -30,8 +30,8 @@
                 <table id="myTable" class="table table-striped nowrap" style="width:100%">
                   <thead>
                     <tr>
-                        <th class="text-center">Warco</th>
-                        <th class="text-center">Form Code</th>
+                        <th class="text-center">WH</th>
+                        <th class="text-center">BBM</th>
                         <th class="text-center">No BBM</th>
                         <th class="text-center">Receipt Date</th>
                         <th class="text-center">Reference</th>
@@ -44,15 +44,15 @@
                     @foreach ($bbmhdr as $b)
                     <tr>
                         <td class="text-center">{{ $b->warco ?? '-' }}</td>
-                        <td class="text-center">{{ $b->formc}} ({{ $b->mformcode->desc_c ?? '-' }})</td>
-                        <td class="text-center">{{ substr($b->bbmid, -6) }}</td>
+                        <td class="">({{ $b->mformcode->desc_c ?? '-' }})</td>
+                        <td class="text-center">{{ $b->formc }} {{ substr($b->bbmid, -6) }}</td>
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                         </td>
                         @if ($b->formc == 'IB')
-                          <td class="text-center">{{ $b->reffc }} {{ $b->refno }}</td>
+                          <td class="">{{ $b->reffc }} {{ $b->refno }}</td>
                         @else
-                          <td class="text-center">{{ $b->refno }}</td>
+                          <td class="">{{ $b->refno }}</td>
                         @endif
                         <td class="text-center">
                             {{-- preview --}}

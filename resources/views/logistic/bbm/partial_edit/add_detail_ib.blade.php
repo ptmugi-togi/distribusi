@@ -2,7 +2,7 @@
 
     let bbmDetail = document.querySelectorAll('#accordionBbm .accordion-item').length || 0;
 
-    function addBbm() {
+    function addIB() {
 
         const accordion = document.getElementById('accordionBbm');
 
@@ -49,6 +49,12 @@
                                 <span class="input-group-text unit-label"></span>
                                 <input type="text" id="stdqt-${bbmDetail}" class="stdqu-input" name="stdqt[]" hidden>
                             </div>
+                            <div class="form-check mt-3">
+                                <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${bbmDetail}]" id="nolot-${bbmDetail}">
+                                <label class="form-check-label" for="nolot-${bbmDetail}">
+                                    Without Serial / Batch No
+                                </label>
+                            </div>
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -71,13 +77,13 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label for="lotno-${bbmDetail}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                            <input type="text" class="form-control" name="lotno[]" id="lotno-${bbmDetail}">
+                        <div class="col-md-6 mt-3 lot-section">
+                            <label for="lotno-${bbmDetail}" class="form-label">Serial / Batch No.</label>
+                            <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-${bbmDetail}">
                         </div>
 
-                        <div class="col-md-6 mt-3">
-                            <label for="lotnoend-${bbmDetail}" class="form-label">Serial / Batch No. (Akhir)</label><span class="text-danger"> *</span>
+                        <div class="col-md-6 mt-3 lot-section">
+                            <label for="lotnoend-${bbmDetail}" class="form-label">Serial / Batch No. (Akhir)</label>
                             <input type="text" class="form-control" name="lotnoend[]" id="lotnoend-${bbmDetail}" readonly style="background-color: #e9ecef">
                         </div>
 
@@ -190,4 +196,21 @@
         accordionItem.remove();
     }
 
+</script>
+
+<script>
+    function setAccordionTitleIB(item){
+        const invno = item.find('select[name*="invno"]').val() || '';
+        item.find('.accordion-title').text(invno ? `Invoice : ${invno}` : `Invoice : -`);
+    }
+
+    // listen IB
+    $(document).on('change','select[name*="invno"]', function(){
+        const item = $(this).closest('.accordion-item');
+        setAccordionTitleIB(item);
+    });
+
+    setTimeout(() => {
+        setAccordionTitleIB($('#accordion-item-'+i));
+    },100);
 </script>

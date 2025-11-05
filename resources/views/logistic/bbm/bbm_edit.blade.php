@@ -56,9 +56,16 @@
                         required min="{{ date('Y-m-01') }}" readonly style="background-color:#e9ecef">
                 </div>
 
+                @if ($bbm->formc == 'IB')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Receiving Instruction</label>
+                        <input type="text" class="form-control" id="reffc" value="{{ $bbm->reffc }} {{ $bbm->refno }}" readonly style="background-color:#e9ecef">
+                    </div>
+                @endif
+                
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Receiving Instruction</label>
-                    <input type="text" class="form-control" id="reffc" value="{{ $bbm->reffc }} {{ $bbm->refno }}" readonly style="background-color:#e9ecef">
+                    <label class="form-label">PO No</label>
+                    <input type="text" class="form-control" id="reffc" value="{{ $bbm->refno }}" readonly style="background-color:#e9ecef">
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -69,15 +76,17 @@
                     <input type="text" class="form-control" name="supno" id="supno" value="{{ old('supno', $bbm->supno ?? '') }}" hidden>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">BL No.</label>
-                    <input type="text" class="form-control" name="blnum" id="blnum" value="{{ old('blnum', $bbm->blnum ?? '') }}" readonly style="background-color:#e9ecef">
-                </div>
+                @if ($bbm->formc == 'IB')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">BL No.</label>
+                        <input type="text" class="form-control" name="blnum" id="blnum" value="{{ old('blnum', $bbm->blnum ?? '') }}" readonly style="background-color:#e9ecef">
+                    </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Vessel</label>
-                    <input type="text" class="form-control" name="vesel" id="vesel" value="{{ old('vesel', $bbm->vesel ?? '') }}" readonly style="background-color:#e9ecef">
-                </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Vessel</label>
+                        <input type="text" class="form-control" name="vesel" id="vesel" value="{{ old('vesel', $bbm->vesel ?? '') }}" readonly style="background-color:#e9ecef">
+                    </div>
+                @endif
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
@@ -98,7 +107,11 @@
                                     <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#details-{{ $i }}"
                                             aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" data-bs-parent="#accordionBbm">
-                                        {{ 'No Invoice: ' . $d->invno ?? 'Detail ' . ($i+1) }}
+                                            @if($bbm->formc == 'IB')
+                                                {{ 'No Invoice: ' . $d->invno ?? 'Detail ' . ($i+1) }}
+                                            @else
+                                                {{ 'Product: ' . $d->opron . ' - ' . $d->prona ?? 'Detail ' . ($i+1) }}
+                                            @endif
                                     </button>
                                     @if($i > 0)
                                         <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
@@ -110,12 +123,18 @@
                                 <div id="details-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
                                     <div class="accordion-body">
                                         <div class="row">
-                                            <div class="col-md-6 mt-3">
-                                                <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                                                <select class="select2 form-control" name="invno[]" id="invno-{{ $i }}" required>
-                                                    <option value="{{ $d->invno }}" selected>{{ $d->invno }}</option>
-                                                </select>
-                                            </div>
+                                            @if($bbm->formc == 'IA')
+                                                <input type="hidden" name="invno[]" value="{{ $bbm->refno }}">
+                                            @endif
+
+                                            @if ($bbm->formc =='IB')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
+                                                    <select class="select2 form-control" name="invno[]" id="invno-{{ $i }}" required>
+                                                        <option value="{{ $d->invno }}" selected>{{ $d->invno }}</option>
+                                                    </select>
+                                                </div>
+                                            @endif
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="opron" class="form-label">Barang</label><span class="text-danger"> *</span>
@@ -124,17 +143,29 @@
                                                 </select>
                                             </div>
                                             
-                                            <div class="col-md-6 mt-3">
-                                                <label for="inqty-{{ $i }}" class="form-label">Invoice Quantity</label>
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" id="inqty-{{ $i }}"
-                                                        style="background-color: #e9ecef;"
-                                                        value="{{ old('inqty.'. $i, $d->inqty ?? '') }}" readonly>
-                                                    <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
-                                                    <input type="text" id="stdqt-{{ $i }}" class="stdqu-input"
-                                                        name="stdqt[]" value="{{ old('stdqt.'. $i, $d->stdqt ?? '') }}" hidden>
+                                            @if($bbm->formc == 'IB')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="inqty-{{ $i }}" class="form-label">Invoice Quantity</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="inqty-{{ $i }}"
+                                                            style="background-color: #e9ecef;"
+                                                            value="{{ old('inqty.'. $i, $d->inqty ?? '') }}" readonly>
+                                                        <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @else
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="inqty-{{ $i }}"
+                                                            style="background-color: #e9ecef;"
+                                                            value="{{ old('inqty.'. $i, $d->poqty ?? '') }}" readonly>
+                                                        <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->stdqt ?? '') }}" hidden>
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
@@ -160,12 +191,12 @@
                                             <div class="col-md-6 mt-3">
                                                 <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                 <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
-                                                    value="{{ $d->dpono ?? $d->spono ?? '' }}"
+                                                    value="{{ $d->pono ?? $d->pono ?? '' }}"
                                                     readonly style="background-color: #e9ecef">
                                             </div>
 
                                             <div class="col-md-6 mt-3">
-                                                <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                                                <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
                                                 <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
                                                     value="{{ old('lotno.'. $i, $d->lotno ?? '') }}">
                                             </div>
@@ -191,9 +222,16 @@
                         @endforeach
                     </div>
             </div>
-            <div class="text-end">
-                <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addBbm()">Tambah Detail BBM</button>
-            </div>
+
+            @if($bbm->formc == 'IB')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIB()">Tambah Detail BBM</button>
+                </div>    
+            @else
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIA()">Tambah Detail BBM</button>
+                </div>    
+            @endif
 
             <div class="mt-3 d-flex justify-content-between">
                 <a href="{{ route('bbm.index') }}" class="btn btn-secondary">Kembali</a>
@@ -204,8 +242,12 @@
 </main>
 
     @push('scripts')
-        @include('logistic.bbm.partial_edit.add_bbm')
-        
+        @if($bbm->formc == 'IA')
+            @include('logistic.bbm.partial_edit.add_detail_ia')
+        @else
+            @include('logistic.bbm.partial_edit.add_detail_ib')
+        @endif
+
         <script>
             let selectedWarehouse = "{{ $bbm->warco }}";
             let selectedReceivingInstruction = "{{ $bbm->refno }}";
@@ -395,6 +437,18 @@
                 $(`#stdqt-${index}`).val(stdqt);
                 $(`#opron-input-${index}`).val(opron);
                 $(`#pono-${index}`).val(pono);
+            });
+
+            // checkbox lotno
+            $(document).on('change', '.nolot-checkbox', function(){
+                let container   = $(this).closest('.row, .accordion-body'); 
+                if($(this).is(':checked')){
+                    container.find('.lot-section').hide();
+                    container.find('.lotno-input').val('-'); // default supaya backend ga error
+                }else{
+                    container.find('.lot-section').show();
+                    container.find('.lotno-input').val('');
+                }
             });
 
             // saat warehouse dipilih -> isi select locco

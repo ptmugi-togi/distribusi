@@ -421,11 +421,9 @@ class BbmController extends Controller
                 'p.prona',
                 'd.trqty',
                 'd.qunit',
-                's.inqty',
-                's.stdqt',
-                's.pono as spono',
+                DB::raw('COALESCE(s.inqty, t.poqty) as inqty'),
+                DB::raw('COALESCE(s.stdqt, t.stdqu) as stdqt'),
                 't.poqty',
-                'd.pono as dpono'
             )
         ->where('d.trano', $bbm->trano)
         ->get();
@@ -570,7 +568,7 @@ class BbmController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('bbm.index')->with('success', 'Data BBM berhasil diperbarui.');
+            return redirect()->route('bbm.index')->with('success', 'Data BBM ' . $bbm->bbmid . ' berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal update BBM:', ['error' => $e->getMessage()]);
