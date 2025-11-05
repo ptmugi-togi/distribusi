@@ -121,7 +121,7 @@
                             <option value="D3" {{ old('delco') == 'D3' ? 'selected' : '' }}>D3 (Duren 3)</option>
                         </select>
                     </div>
-                    <input type="text" class="form-control" name="braco" id="braco" value="{{ old('braco') }}" hidden>
+                    <input type="text" class="form-control" name="braco" id="braco" value="{{ old('braco', auth()->user()->cabang) }}" hidden>
                 </div>
 
                 <div class="row">
@@ -185,14 +185,6 @@
 
                 $('#potype').on('change', function () {
                     formc.value = map[this.value] || '';
-                });
-            });
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const braco = document.getElementById('braco');
-                
-                $('#delco').on('change', function () {
-                    braco.value = this.value;
                 });
             });
         </script>
