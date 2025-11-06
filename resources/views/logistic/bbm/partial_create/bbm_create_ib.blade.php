@@ -23,9 +23,14 @@
   </div>
 
   <div class="col-md-6 mt-3">
-    <label class="form-label">Supplier</label>
-    <input type="text" class="form-control" id="supplier_ib" readonly style="background-color:#e9ecef;">
-    <input type="text" name="supno" id="supno_ib" data-req="ib" hidden>
+      <label for="supplier_ia" class="form-label">Supplier</label>
+      <select class="form-control select2" id="supplier_ib" disabled>
+          <option value="" disabled selected>Pilih Supplier</option>
+          @foreach ($vendors->where('vgrp', 'I') as $v)
+              <option value="{{ $v->supno }}">{{ $v->supno }} - {{ $v->supna }}</option>
+          @endforeach
+      </select>
+      <input type="text" name="supno" id="supno_ib" hidden>
   </div>
 
   <div class="col-md-6 mt-3">
@@ -68,16 +73,17 @@
           <div class="accordion-body">
             <div class="row">
               <div class="col-md-6 mt-3">
-                <label class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                <select class="select2 form-control invno-ib" name="invno[]" id="invno-ib-{{ $i }}" required>
+                <label class="form-label">Invoice No.</label>
+                <select class="select2 form-control invno-ib" id="invno-ib-{{ $i }}" required>
                   <option value="" disabled {{ old('invno.'.$i) ? '' : 'selected' }}>Silahkan Pilih RI terlebih dahulu</option>
                 </select>
+                <input type="text" class="invno-hidden" name="invno[]" id="invno-ib-hidden-{{ $i }}" data-index="{{ $i }}">
               </div>
 
               <div class="col-md-6 mt-3">
                 <label class="form-label">Barang</label><span class="text-danger"> *</span>
                 <select class="select2 form-control opron-ib" name="opron[]" id="opron-ib-{{ $i }}" required>
-                  <option value="" disabled {{ old('opron.'.$i) ? '' : 'selected' }}>Silahkan Pilih Invoice No. terlebih dahulu</option>
+                  <option value="" disabled {{ old('opron.'.$i) ? '' : 'selected' }}>Pilih Barang</option>
                 </select>
               </div>
 
@@ -102,11 +108,15 @@
                     <input type="number" class="form-control trqty-ib" id="trqty-ib-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
                     oninput="
                         this.value = this.value.replace(/[^0-9]/g, '');
-                        const inqty = Number(document.getElementById('inqty-ib-{{ $i }}')?.value || 0);
+                        const inqty = Number(document.getElementById('inqty-ia-{{ $i }}')?.value || 0);
+
+                        // kalau gak ada qty PO → jangan validasi
+                        if(!inqty || inqty <= 0){ return; }
+
                         if (Number(this.value) > inqty) {
                             Swal.fire({
                                 title: 'Peringatan',
-                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah Invoice qty',
+                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah PO qty',
                                 icon: 'error'
                             });
                             this.value = inqty;
@@ -170,7 +180,7 @@
 
     $('#reffc_ib').val(formc);
     $('#refno_ib').val(rinum);
-    $('#supplier_ib').val(supno && supna ? `${supno} - ${supna}` : '');
+    $('#supplier_ib').val(supno).trigger('change.select2');
     $('#supno_ib').val(supno);
     $('#blnum_ib').val(blnum);
     $('#vesel_ib').val(vesel);
@@ -200,6 +210,16 @@
         $barang.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`);
       });
     });
+  });
+
+  // buat kirim supno ke db
+  $('#supplier_ib').on('change', function(){
+      $('#supno_ib').val($(this).val());
+  });
+
+  $(document).on('change', '.invno-ib', function(){
+      const idx = this.id.split('-').pop();
+      $('#invno-ib-hidden-' + idx).val($(this).val());
   });
 
   // barang -> fill otomatis qty/unit/pono
@@ -266,7 +286,7 @@
               <div class="col-md-6 mt-3">
                 <label class="form-label">Barang</label><span class="text-danger"> *</span>
                 <select class="select2 form-control opron-ib" name="opron[]" id="opron-ib-${i}" required>
-                  <option value="" disabled selected>Pilih Invoice No. terlebih dahulu</option>
+                  <option value="" disabled selected>Pilih Barang</option>
                 </select>
               </div>
               <div class="col-md-6 mt-3">
@@ -289,11 +309,15 @@
                     <input type="number" class="form-control trqty-ib" id="trqty-ib-${i}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
                     oninput="
                         this.value = this.value.replace(/[^0-9]/g, '');
-                        const inqty = Number(document.getElementById('inqty-ib-${i}')?.value || 0);
+                        const inqty = Number(document.getElementById('inqty-ia-{{ $i }}')?.value || 0);
+
+                        // kalau gak ada qty PO → jangan validasi
+                        if(!inqty || inqty <= 0){ return; }
+
                         if (Number(this.value) > inqty) {
                             Swal.fire({
                                 title: 'Peringatan',
-                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah Invoice qty',
+                                text: 'Jumlah Receipt qty tidak boleh lebih banyak dari jumlah PO qty',
                                 icon: 'error'
                             });
                             this.value = inqty;
@@ -357,6 +381,7 @@
         $sel.trigger('change.select2');
       });
     }
+    applyNoPoInvMode();
   }
 
   window.removeIB = function(i){

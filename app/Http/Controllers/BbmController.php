@@ -399,7 +399,7 @@ class BbmController extends Controller
      */
     public function show(string $id)
     {
-        $bbm = BbmHdr::with('mformcode','bbmdtl.mpromas', 'bbmdtl.tsupid', 'bbmdtl.podtl', 'tsupih', 'vendor')->findOrFail($id);
+        $bbm = BbmHdr::with('mformcode','bbmdtls.mpromas', 'bbmdtls.tsupid', 'bbmdtls.podtl', 'tsupih', 'vendor')->findOrFail($id);
         return view('logistic.bbm.bbm_detail', compact('bbm'));
     }
 

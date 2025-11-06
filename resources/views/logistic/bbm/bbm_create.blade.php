@@ -100,13 +100,14 @@
             if(isNoPoInv) {
                   $('#refcno_ia').prop('disabled', true).val('');
                   $('#refcno_ib').prop('disabled', true).val('');
-                  $('.invno-ib').each(function(i){
-                      $(this).prop('disabled', true);
+                  $('select.invno-ib').each(function(){
+                      const idx = this.id.split('-').pop();
+                      
                       $(this).html(`<option value="-" selected>-</option>`);
+                      $(this).prop('disabled', true);
 
-                      $(`input.invno-hidden[data-index="${i}"]`).val('-');
+                      $('#invno-ib-hidden-' + idx).val('-');
                   });
-
 
                   $('input[name="refcno"]').val('-');
                   $('input[name="refno"]').val('-');
@@ -117,7 +118,7 @@
               } else {
                   $('#refcno_ia').prop('disabled', false);
                   $('#refcno_ib').prop('disabled', false);
-                  $('.invno-ib').prop('readonly', false);
+                  $('.invno-ib').prop('disabled', false);
 
                   $('input[name="refcno"]').val('');
                   $('input[name="refno"]').val('');

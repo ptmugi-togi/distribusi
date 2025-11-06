@@ -82,16 +82,12 @@
             <div class="row mt-4">
                 <h3>BBM Detail</h3>
                 <div class="accordion" id="accordionBbm">
-                    @foreach ($bbm->bbmdtl as $i => $detail)
+                    @foreach ($bbm->bbmdtls as $i => $detail)
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading-{{ $i }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapse-{{ $i }}" aria-expanded="false">
-                                @if ($detail->formc == 'IB')
-                                    No Invoice: {{ $detail->invno }}
-                                @else
                                     Product: {{ $detail->opron }} - {{ $detail->mpromas->prona }}
-                                @endif
                             </button>
                         </h2>
                         <div id="collapse-{{ $i }}" class="accordion-collapse collapse"
@@ -114,7 +110,7 @@
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Invoice Quantity</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" value="{{ $detail->tsupid->inqty }}" disabled>
+                                                <input type="text" class="form-control" value="{{ optional($detail->podtl)->poqty ?? '' }}" disabled>
                                                 <span class="input-group-text">{{ $detail->qunit }}</span>
                                             </div>
                                         </div>
@@ -122,7 +118,7 @@
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO Quantity</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" value="{{ $detail->podtl->poqty }}" disabled>
+                                                <input type="text" class="form-control" value="{{ optional($detail->podtl)->poqty ?? '' }}" disabled>
                                                 <span class="input-group-text">{{ $detail->qunit }}</span>
                                             </div>
                                         </div>

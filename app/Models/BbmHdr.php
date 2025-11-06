@@ -37,7 +37,7 @@ class BbmHdr extends Model
         'user_id',
     ];
 
-    public function bbmdtl()
+    public function bbmdtls()
     {
         return $this->hasMany(BbmDtl::class, 'bbmid', 'bbmid');
     }
