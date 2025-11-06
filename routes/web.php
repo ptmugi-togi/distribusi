@@ -147,6 +147,7 @@ Route::get('/bbm/create', [BbmController::class,'create'])->middleware('auth')->
 Route::get('/generate-trano', [BbmController::class,'generateTrano'])->name('generate-trano');
 Route::get('/get-invoice/{rinum}', [BbmController::class, 'getInvoice'])->name('bbm.getInvoice');
 Route::get('/get-barang/{invno}', [BbmController::class, 'getBarang'])->name('bbm.getBarang');
+Route::get('/get-supplier-items/{supno}', [BbmController::class, 'getSupplierItems']);
 Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.getLocco');
 Route::get('/get-po-list', [BbmController::class, 'getPoList'])->name('bbm.getPoList');
 Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->name('bbm.getPoSupplier');

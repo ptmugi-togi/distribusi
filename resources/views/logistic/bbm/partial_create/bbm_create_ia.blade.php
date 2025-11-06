@@ -14,9 +14,14 @@
   </div>
 
   <div class="col-md-6 mt-3">
-    <label class="form-label">Supplier</label>
-    <input type="text" class="form-control" id="supplier_ia" readonly style="background-color:#e9ecef;">
-    <input type="text" name="supno" id="supno_ia" data-req="ia" hidden>
+      <label for="supplier_ia" class="form-label">Supplier</label>
+      <select class="form-control select2" id="supplier_ia" disabled>
+          <option value="" disabled selected>Pilih Supplier</option>
+          @foreach ($vendors->where('vgrp', 'L') as $v)
+              <option value="{{ $v->supno }}">{{ $v->supno }} - {{ $v->supna }}</option>
+          @endforeach
+      </select>
+      <input type="text" name="supno" id="supno_ia" hidden>
   </div>
 
   <div class="col-md-12 mt-3">
@@ -53,9 +58,9 @@
               <input type="text" name="invno[]" class="invno-ia" id="invno-ia-{{ $i }}" value="{{ old('refcno') }}" hidden>
 
               <div class="col-md-6 mt-3">
-                <label class="form-label">Barang (dari PO)</label><span class="text-danger"> *</span>
+                <label class="form-label">Barang</label><span class="text-danger"> *</span>
                 <select class="select2 form-control opron-ia" name="opron[]" id="opron-ia-{{ $i }}" required>
-                  <option value="" disabled {{ old('opron.'.$i) ? '' : 'selected' }}>Pilih PO No terlebih dahulu</option>
+                  <option value="" disabled {{ old('opron.'.$i) ? '' : 'selected' }}>Pilih Barang</option>
                 </select>
               </div>
 
@@ -75,6 +80,10 @@
                     oninput="
                         this.value = this.value.replace(/[^0-9]/g, '');
                         const inqty = Number(document.getElementById('inqty-ia-{{ $i }}')?.value || 0);
+
+                        // kalau gak ada qty PO → jangan validasi
+                        if(!inqty || inqty <= 0){ return; }
+
                         if (Number(this.value) > inqty) {
                             Swal.fire({
                                 title: 'Peringatan',
@@ -153,6 +162,11 @@
     if($(this).val()==='IA'){ loadPOList(); }
   });
 
+  // buat kirim supno ke db
+  $('#supplier_ia').on('change', function(){
+      $('#supno_ia').val($(this).val());
+  });
+
   // saat PO berubah -> isi supplier, set hidden, load barang (PO detail)
   $('#refcno_ia').on('change', function(){
     const pono = $(this).val();
@@ -161,8 +175,11 @@
 
     // supplier by PO
     $.get(`{{ url('/get-po-supplier') }}/${pono}`, function(res){
-      $('#supplier_ia').val(res?.supno && res?.supna ? `${res.supno} - ${res.supna}` : (res?.supno || ''));
-      $('#supno_ia').val(res?.supno || '');
+      const labelTxt = res?.supno && res?.supna ? `${res.supno} - ${res.supna}` : (res?.supno || '');
+
+      $('#supplier_ia').val(res?.supno).trigger('change');
+
+      $('#supno_ia').val(res?.supno || ''); 
     });
 
     // load barang untuk semua row accordion IA
@@ -209,7 +226,9 @@
   $(document).on('change', 'select.opron-ia', function(){
     const $opt = $(this).find(':selected');
     const idx = this.id.split('-').pop();
-    const qty = $opt.data('qty'), stdqt = $opt.data('stdqt'), pono = $opt.data('pono');
+    const qty = $opt.data('qty') || 0; 
+    const pono = $opt.data('pono') || '-';
+    const stdqt = $opt.data('stdqt');
 
     $(`#inqty-ia-${idx}`).val(qty);
     $(`#stdqt-ia-${idx}`).val(stdqt);
@@ -265,9 +284,9 @@
               <input type="text" name="invno[]" class="invno-ia" id="invno-ia-${i}" value="${$('#refcno_ia_submit').val()||''}" hidden>
 
               <div class="col-md-6 mt-3">
-                <label class="form-label">Barang (dari PO)</label><span class="text-danger"> *</span>
+                <label class="form-label">Barang</label><span class="text-danger"> *</span>
                 <select class="select2 form-control opron-ia" name="opron[]" id="opron-ia-${i}" required>
-                  <option value="" disabled selected></option>
+                  <option value="" disabled selected>Pilih Barang</option>
                 </select>
               </div>
 
@@ -286,7 +305,11 @@
                   <input type="number" class="form-control trqty-ia" id="trqty-ia-${i}" name="trqty[]" value="1" min="1" required
                   oninput="
                       this.value = this.value.replace(/[^0-9]/g, '');
-                      const inqty = Number(document.getElementById('inqty-ia-${i}')?.value || 0);
+                      const inqty = Number(document.getElementById('inqty-ia-{{ $i }}')?.value || 0);
+
+                      // kalau gak ada qty PO → jangan validasi
+                      if(!inqty || inqty <= 0){ return; }
+
                       if (Number(this.value) > inqty) {
                           Swal.fire({
                               title: 'Peringatan',
@@ -353,7 +376,7 @@
       const $sel = $(`#opron-ia-${i}`);
       $sel.empty().append('<option value="">Loading...</option>');
       $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
-        $sel.empty().append('<option value="" disabled selected>Pilih Barang (PO)</option>');
+        $sel.empty().append('<option value="" disabled selected>Pilih Barang</option>');
         data.forEach(item => $sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`));
       });
     }
@@ -368,6 +391,11 @@
         data.forEach(item => $sel.append(`<option value="${item.locco}">${item.locco}</option>`));
         $sel.trigger('change.select2');
       });
+    }
+    applyNoPoInvMode();
+
+    if( $('#noPoInv').is(':checked') ){
+        loadMasterProductAll();
     }
   }
 
