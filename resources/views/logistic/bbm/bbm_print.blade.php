@@ -122,6 +122,9 @@
                 : <br>
                 : <br>
                 : <br>
+                @if ($bbmhdr->formc == 'IB')
+                    : <br>
+                @endif
                 :
             </td>
             <td class="left td-top" style="width:16%">
@@ -151,7 +154,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($bbmdtl as $i)
+            @foreach($bbmdtls as $i)
                 <tr>
                     <td class="center">{{ $loop->index + 1 }}</td>
                     <td class="center">{{ $i->opron ?? '-' }}</td>

@@ -111,14 +111,14 @@ class PdfController extends Controller
     public function previewBbm($id)
     {
         $bbmhdr = \App\Models\BbmHdr::with([
-            'bbmdtl.mpromas',
+            'bbmdtls.mpromas',
             'tsupih',
             'mformcode',
             'vendor',
             'tbolh'
         ])->findOrFail($id);
 
-        $bbmdtl = collect($bbmhdr->bbmdtl)->groupBy(function($i){
+        $bbmdtls = collect($bbmhdr->bbmdtls)->groupBy(function($i){
             return implode('|', [
                 $i->opron,
                 $i->mpromas->brand_name,
@@ -137,7 +137,7 @@ class PdfController extends Controller
 
         $html = view('logistic.bbm.bbm_print', [
             'bbmhdr' => $bbmhdr,
-            'bbmdtl' => $bbmdtl
+            'bbmdtls' => $bbmdtls
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([
@@ -156,7 +156,7 @@ class PdfController extends Controller
     public function printBbm($id)
     {
         $bbmhdr = \App\Models\BbmHdr::with([
-            'bbmdtl.mpromas',
+            'bbmdtls.mpromas',
             'tsupih',
             'mformcode',
             'vendor',
@@ -170,7 +170,7 @@ class PdfController extends Controller
                 'prctr' => DB::raw('prctr + 1')
             ]);
 
-        $bbmdtl = collect($bbmhdr->bbmdtl)->groupBy(function($i){
+        $bbmdtls = collect($bbmhdr->bbmdtls)->groupBy(function($i){
             return implode('|', [
                 $i->opron,
                 $i->mpromas->brand_name,
@@ -189,7 +189,7 @@ class PdfController extends Controller
 
         $html = view('logistic.bbm.bbm_print', [
             'bbmhdr' => $bbmhdr,
-            'bbmdtl' => $bbmdtl
+            'bbmdtls' => $bbmdtls
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([
