@@ -228,7 +228,7 @@
                     }
                 });
             });
-        }
+          }
 
           // switch section by FormC
           $('#formc').on('change', function(){

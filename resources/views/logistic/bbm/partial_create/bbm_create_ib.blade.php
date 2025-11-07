@@ -77,7 +77,7 @@
                 <select class="select2 form-control invno-ib" id="invno-ib-{{ $i }}" required>
                   <option value="" disabled {{ old('invno.'.$i) ? '' : 'selected' }}>Silahkan Pilih RI terlebih dahulu</option>
                 </select>
-                <input type="text" class="invno-hidden" name="invno[]" id="invno-ib-hidden-{{ $i }}" data-index="{{ $i }}">
+                <input type="text" class="invno-hidden" name="invno[]" id="invno-ib-hidden-{{ $i }}" data-index="{{ $i }}" hidden>
               </div>
 
               <div class="col-md-6 mt-3">
