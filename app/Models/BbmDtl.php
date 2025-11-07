@@ -45,6 +45,6 @@ class BbmDtl extends Model
 
     public function podtl()
     {
-        return $this->belongsTo(Tpodtl::class, 'pono', 'pono');
+        return $this->belongsTo(TpoDtl::class, 'pono', 'pono');
     }
 }
