@@ -61,13 +61,13 @@
                         <label class="form-label">Receiving Instruction</label>
                         <input type="text" class="form-control" id="reffc" value="{{ $bbm->reffc }} {{ $bbm->refno }}" readonly style="background-color:#e9ecef">
                     </div>
+                @else
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">PO No</label>
+                        <input type="text" class="form-control" id="reffc" value="{{ $bbm->refno }}" readonly style="background-color:#e9ecef">
+                    </div>
                 @endif
-                
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">PO No</label>
-                    <input type="text" class="form-control" id="reffc" value="{{ $bbm->refno }}" readonly style="background-color:#e9ecef">
-                </div>
-
+                    
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Supplier</label>
                     <input type="text" class="form-control" id="supplier"
@@ -107,11 +107,7 @@
                                     <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#details-{{ $i }}"
                                             aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" data-bs-parent="#accordionBbm">
-                                            @if($bbm->formc == 'IB')
-                                                {{ 'No Invoice: ' . $d->invno ?? 'Detail ' . ($i+1) }}
-                                            @else
                                                 {{ 'Product: ' . $d->opron . ' - ' . $d->prona ?? 'Detail ' . ($i+1) }}
-                                            @endif
                                     </button>
                                     @if($i > 0)
                                         <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
@@ -124,13 +120,13 @@
                                     <div class="accordion-body">
                                         <div class="row">
                                             @if($bbm->formc == 'IA')
-                                                <input type="hidden" name="invno[]" value="{{ $bbm->refno }}">
+                                                <input type="text" name="invno[]" value="{{ $bbm->refno }}" hidden>
                                             @endif
 
                                             @if ($bbm->formc =='IB')
                                                 <div class="col-md-6 mt-3">
-                                                    <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                                                    <select class="select2 form-control" name="invno[]" id="invno-{{ $i }}" required>
+                                                    <label for="invno" class="form-label">Invoice No.</label>
+                                                    <select class="select2 form-control" name="invno[]" id="invno-{{ $i }}" {{ (!$bbm->refno || $bbm->refno == '-') ? 'disabled' : '' }}>
                                                         <option value="{{ $d->invno }}" selected>{{ $d->invno }}</option>
                                                     </select>
                                                 </div>
@@ -150,7 +146,7 @@
                                                         <input type="number" class="form-control" id="inqty-{{ $i }}"
                                                             style="background-color: #e9ecef;"
                                                             value="{{ old('inqty.'. $i, $d->inqty ?? '') }}" readonly>
-                                                        <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
+                                                        <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
                                             @else
@@ -160,12 +156,12 @@
                                                         <input type="number" class="form-control" id="inqty-{{ $i }}"
                                                             style="background-color: #e9ecef;"
                                                             value="{{ old('inqty.'. $i, $d->poqty ?? '') }}" readonly>
-                                                        <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
+                                                        <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
                                             @endif
 
-                                            <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->stdqt ?? '') }}" hidden>
+                                            <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->qunit ?? '') }}" hidden>
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
@@ -175,6 +171,7 @@
                                                         oninput="
                                                             this.value = this.value.replace(/[^0-9]/g, '');
                                                             const inqty = Number(document.getElementById('inqty-{{ $i }}')?.value || 0);
+                                                            if(!inqty || inqty <= 0){ return; }
                                                             if (Number(this.value) > inqty) {
                                                                 Swal.fire({
                                                                     title: 'Peringatan',
@@ -184,7 +181,7 @@
                                                                 this.value = inqty;
                                                             }
                                                         ">
-                                                    <span class="input-group-text unit-label">{{ $d->stdqt }}</span>
+                                                    <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                 </div>
                                             </div>
 
@@ -252,7 +249,6 @@
             let selectedWarehouse = "{{ $bbm->warco }}";
             let selectedReceivingInstruction = "{{ $bbm->refno }}";
         </script>
-
 
         <script>
             // simpan pilihan warehouse 
@@ -494,26 +490,84 @@
                     }
                 });
             });
+        </script>
 
-            // ubah judul accordion jadi invno
-            $(document).on('change', 'select[name="invno[]"]', function () {
-                const selectedOption = $(this).find(':selected');
-                const invno = selectedOption.val() || '';
-                const newLabel = invno ? `No Invoice: ${invno}` : '';
+        {{-- ambil data barang jika tidak ada pono atau invno --}}
+        <script>
+            function loadMasterProductAll(){
+                $('select.opron-editIA, select.opron-editIB').each(function(){
+                    $(this).select2({
+                        placeholder: 'Pilih Barang',
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        allowClear: true,
+                        ajax: {
+                            url: '{{ route("api.products") }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params){
+                                return { q: params.term || '', page: params.page || 1 };
+                            },
+                            processResults: function(data){
+                                return {
+                                    results: (data.results || []).map(item => ({
+                                        id: item.id,
+                                        text: item.text,
+                                        stdqt: item.data_stdqu
+                                    })),
+                                    pagination: { more: data.pagination.more }
+                                };
+                            }
+                        },
+                        minimumInputLength: 0,
+                        templateResult: function (data) {
+                            if (!data.id) return data.text;
+                            const el = data.element;
+                            if (el) $(el).attr('data-stdqt', data.stdqt || '');
+                            return data.text;
+                        },
+                        templateSelection: function (data) {
+                            if (!data.id) return data.text;
+                            const el = data.element;
+                            if (el) $(el).attr('data-stdqt', data.stdqt || '');
+                            return data.text;
+                        }
+                    });
+                });
+            }
 
-                const parentItem = $(this).closest('.accordion-item');
-                const headerButton = parentItem.find('.accordion-button');
-
-                // kalau belum ada teks, tambahkan
-                if (headerButton.text().trim() === '') {
-                    headerButton.append(` ${newLabel}`);
-                } else {
-                    // ganti teks yang lama dengan label baru
-                    headerButton.contents().filter(function () {
-                        return this.nodeType === 3;
-                    }).first().replaceWith(` ${newLabel}`);
-                }
+            $(document).ready(function(){
+                applyEditProductSource();
             });
+
+            function applyEditProductSource(){
+
+                const pono = "{{ $bbm->refno }}"; // ini PO atau INVNO tergantung form type
+
+                // reset select dulu
+                $('select.opron-editIA, select.opron-editIB').each(function(){
+                    $(this).select2('destroy');
+                    $(this).select2({ width:'100%', theme:'bootstrap-5' });
+                });
+
+                // fallback
+                if(!pono || pono.trim() === '' || pono.trim() === '-' ){
+                    loadMasterProductAll();
+                    return;
+                }
+
+                // kalau refno ada → load product dari PO
+                $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
+                    $('select.opron-editIA').each(function(){
+                        const sel = $(this);
+                        data.forEach(item => {
+                            sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}">${item.opron} - ${item.prona}</option>`)
+                        });
+                    });
+                });
+
+                // kalau ada IB logic nanti tambahin untuk load invoice nya
+            }
         </script>
 
         {{-- otomatis ambil lotno akhir --}}

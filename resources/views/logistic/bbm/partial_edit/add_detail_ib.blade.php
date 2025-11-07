@@ -6,7 +6,7 @@
 
         const accordion = document.getElementById('accordionBbm');
 
-        const warco = $('#warco').val();
+        const warco = "{{ $bbm->warco }}";
         const refcno = "{{ $bbm->refno }}";
 
         const newItem = document.createElement('div');
@@ -18,6 +18,7 @@
                 <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#details-${bbmDetail}"
                         aria-expanded="false" aria-controls="details-${bbmDetail}" data-bs-parent="#accordionBbm">
+                    <span class="accordion-title"></span>
                 </button>
                 <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail(${bbmDetail})">
                     <i class="bi bi-trash-fill"></i>
@@ -29,15 +30,15 @@
                 <div class="accordion-body">
                      <div class="row">
                         <div class="col-md-6 mt-3">
-                            <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                            <select class="select2 form-control" name="invno[]" id="invno-${bbmDetail}" required>
+                            <label for="invno" class="form-label">Invoice No.</label>
+                            <select class="select2 form-control" name="invno[]" id="invno-${bbmDetail}">
                                 <option value="" disabled selected>Silahkan Pilih Receiving Instruction terlebih dahulu</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 mt-3">
                             <label for="opron" class="form-label">Barang</label><span class="text-danger"> *</span>
-                            <select class="select2 form-control" name="opron[]" id="opron-${bbmDetail}" required>
+                            <select class="select2 form-control opron-editIB" name="opron[]" id="opron-${bbmDetail}" required>
                                 <option value="" disabled selected>Silahkan Pilih Invoice No. terlebih dahulu</option>
                             </select>
                         </div>
@@ -64,6 +65,7 @@
                                 oninput="
                                     this.value = this.value.replace(/[^0-9]/g, '');
                                     const inqty = Number(document.getElementById('inqty-${bbmDetail}')?.value || 0);
+                                    if(!inqty || inqty <= 0){ return; }
                                     if (Number(this.value) > inqty) {
                                         Swal.fire({
                                             title: 'Peringatan',
@@ -123,6 +125,16 @@
         $(`#locco-${bbmDetail}`).select2({ theme: 'bootstrap-5', width: '100%' });
 
         // Ambil data invoice berdasarkan Receiving Instruction
+        if(!refcno || refcno.trim()==='' || refcno.trim()==='-'){
+            $(`#invno-${bbmDetail}`).prop('disabled', true);
+
+            $(`#invno-${bbmDetail}`).html('<option value="" disabled selected>-</option>');
+
+            $(`#invno-${bbmDetail}`).val('-');
+
+            loadMasterProductAll();
+        }
+
         if (refcno) {
             const $invSelect = $(`#invno-${bbmDetail}`);
             $invSelect.html('<option value="">Loading...</option>');
@@ -146,7 +158,7 @@
                             invSelect.val(oldInvno[bbmDetail]).trigger('change');
                         }
                     } else {
-                        $invSelect.html('<option value="">Tidak ada Invoice untuk Receiving Instruction ini</option>');
+                        $invSelect.html('<option value="">-</option>');
                     }
                 },
                 error: function () {
@@ -200,17 +212,13 @@
 
 <script>
     function setAccordionTitleIB(item){
-        const invno = item.find('select[name*="invno"]').val() || '';
-        item.find('.accordion-title').text(invno ? `Invoice : ${invno}` : `Invoice : -`);
+        const text = item.find('select[name*="opron"] option:selected').text() || '';
+        item.find('.accordion-title').text(text ? `Product : ${text}` : `Product : -`);
     }
 
     // listen IB
-    $(document).on('change','select[name*="invno"]', function(){
+    $(document).on('change','select[name*="opron"]', function(){
         const item = $(this).closest('.accordion-item');
         setAccordionTitleIB(item);
     });
-
-    setTimeout(() => {
-        setAccordionTitleIB($('#accordion-item-'+i));
-    },100);
 </script>

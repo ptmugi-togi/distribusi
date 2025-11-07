@@ -22,9 +22,11 @@ class BbmController extends Controller
      */
     public function index()
     {
-        $bbmhdr = BbmHdr::with('mformcode')->get();
-
         $userBraco = Auth::user()->cabang;
+
+        $bbmhdr = BbmHdr::with('mformcode')
+                        ->where('braco', $userBraco)
+                        ->get();
 
         $latestPeriod = DB::table('tperiode')
             ->where('braco', Auth::user()->cabang)
@@ -475,6 +477,7 @@ class BbmController extends Controller
                 ->get();
 
             foreach ($oldDetails as $old) {
+
                 DB::table('stobw_tbl')
                     ->where('warco', $bbm->warco)
                     ->where('braco', $bbm->braco)
@@ -488,103 +491,103 @@ class BbmController extends Controller
                     ->where('qunit', $old->qunit)
                     ->where('locco', $old->locco)
                     ->where('lotno', $old->lotno)
-                    ->decrement('toqoh', 1);
+                    ->decrement('toqoh', $old->trqty);
 
                 DB::table('podtl_tbl')
                     ->where('pono', $old->pono)
                     ->where('opron', $old->opron)
-                    ->update([
-                        'rcqty' => DB::raw('rcqty - '.$old->trqty)
-                    ]);
+                    ->update(['rcqty' => DB::raw("rcqty - $old->trqty")]);
             }
 
             DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
             DB::table('stobl_tbl')->where('toqoh', '<=', 0)->delete();
             DB::table('tstord')->where('trano', $bbm->trano)->delete();
 
-            // Insert ulang
-            foreach ($request->invno as $i => $invno) {
-                $lotStart = $request->lotno[$i];
-                $trqty = (int) $request->trqty[$i];
-                $lotList = $this->generateLotList($lotStart, $trqty);
 
-                foreach ($lotList as $lotno) {
+            // Insert Ulang baru
+            foreach ($request->opron as $i => $opron) {
+
+                $invno = $request->invno[$i] ?? '-';
+                $lotStart = $request->lotno[$i] ?? '-';
+                $trqty = (int) $request->trqty[$i];
+                $qunit = $request->stdqt[$i]; // IB pakai stdqt
+                $locco = $request->locco[$i];
+                $pono  = $request->pono[$i] ?? '-';
+                $noted = $request->noted[$i] ?? null;
+
+                $isNoLot = ($lotStart === '-' || $lotStart === null || $lotStart === '');
+
+                if($isNoLot){
+
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $bbm->trano,
                         'invno' => $invno,
-                        'opron' => $request->opron[$i],
-                        'lotno' => $lotno,
-                        'trqty' => 1,
-                        'qunit' => $request->stdqt[$i],
-                        'locco' => $request->locco[$i],
-                        'pono' => $request->pono[$i],
-                        'noted' => $request->noted[$i],
+                        'opron' => $opron,
+                        'lotno' => '-',
+                        'trqty' => $trqty,
+                        'qunit' => $qunit,
+                        'locco' => $locco,
+                        'pono'  => $pono,
+                        'noted' => $noted,
                     ]);
-                }
 
-                $existW = DB::table('stobw_tbl')
-                    ->where('warco', $bbm->warco)
-                    ->where('braco', $bbm->braco)
-                    ->where('opron', $request->opron[$i])
-                    ->first();
-
-                if (!$existW) {
-                    DB::table('stobw_tbl')->insert([
-                        'braco' => $bbm->braco,
-                        'warco' => $bbm->warco,
-                        'opron' => $request->opron[$i],
-                        'toqoh' => $trqty,
-                    ]);
                 } else {
-                    DB::table('stobw_tbl')
-                        ->where('warco', $bbm->warco)
-                        ->where('braco', $bbm->braco)
-                        ->where('opron', $request->opron[$i])
-                        ->update(['toqoh' => DB::raw('toqoh + ' . $trqty)]);
-                }
 
-                foreach ($lotList as $lotno) {
-                    $existL = DB::table('stobl_tbl')
-                        ->where('warco', $bbm->warco)
-                        ->where('braco', $bbm->braco)
-                        ->where('opron', $request->opron[$i])
-                        ->where('qunit', $request->stdqt[$i])
-                        ->where('locco', $request->locco[$i])
-                        ->where('lotno', $lotno)
-                        ->first();
+                    $lotList = $this->generateLotList($lotStart, $trqty);
 
-                    if (!$existL) {
-                        DB::table('stobl_tbl')->insert([
-                            'braco' => $bbm->braco,
-                            'warco' => $bbm->warco,
-                            'opron' => $request->opron[$i],
-                            'qunit' => $request->stdqt[$i],
-                            'locco' => $request->locco[$i],
+                    foreach ($lotList as $lotno) {
+                        DB::table('tstord')->insert([
+                            'bbmid' => $bbmid,
+                            'trano' => $bbm->trano,
+                            'invno' => $invno,
+                            'opron' => $opron,
                             'lotno' => $lotno,
-                            'toqoh' => 1,
+                            'trqty' => 1,
+                            'qunit' => $qunit,
+                            'locco' => $locco,
+                            'pono'  => $pono,
+                            'noted' => $noted,
                         ]);
-                    } else {
-                        DB::table('stobl_tbl')
-                            ->where('warco', $bbm->warco)
-                            ->where('braco', $bbm->braco)
-                            ->where('opron', $request->opron[$i])
-                            ->where('qunit', $request->stdqt[$i])
-                            ->where('locco', $request->locco[$i])
-                            ->where('lotno', $lotno)
-                            ->update(['toqoh' => DB::raw('toqoh + 1')]);
                     }
                 }
+
+                // STOWB (by barang)
+                DB::table('stobw_tbl')->updateOrInsert(
+                    ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron],
+                    ['toqoh' => DB::raw("COALESCE(toqoh,0) + $trqty")]
+                );
+
+                // STOBL (by lot)
+                if($isNoLot){
+
+                    DB::table('stobl_tbl')->updateOrInsert(
+                        ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron, 'qunit' => $qunit, 'locco' => $locco, 'lotno' => '-'],
+                        ['toqoh' => DB::raw("COALESCE(toqoh,0) + $trqty")]
+                    );
+
+                } else {
+
+                    foreach ($this->generateLotList($lotStart, $trqty) as $lotno) {
+
+                        DB::table('stobl_tbl')->updateOrInsert(
+                            ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron, 'qunit' => $qunit, 'locco' => $locco, 'lotno' => $lotno],
+                            ['toqoh' => DB::raw("COALESCE(toqoh,0) + 1")]
+                        );
+                    }
+                }
+
+                // update progress PO
                 DB::table('podtl_tbl')
-                    ->where('pono', $request->pono[$i])
-                    ->where('opron', $request->opron[$i])
-                    ->update([
-                        'rcqty' => DB::raw('rcqty + '.$trqty)
-                    ]);
+                    ->where('pono', $pono)
+                    ->where('opron', $opron)
+                    ->update(['rcqty' => DB::raw("rcqty + $trqty")]);
             }
 
+
             DB::commit();
-            return redirect()->route('bbm.index')->with('success', 'Data BBM ' . $bbm->bbmid . ' berhasil diperbarui.');
+            return redirect()->route('bbm.index')->with('success', "Data BBM $bbmid berhasil diperbarui.");
+
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal update BBM:', ['error' => $e->getMessage()]);

@@ -47,6 +47,7 @@ window.addIA = function(){
                             oninput="
                                 this.value = this.value.replace(/[^0-9]/g, '');
                                 const inqty = Number(document.getElementById('inqty-${i}')?.value || 0);
+                                if(!inqty || inqty <= 0){ return; }
                                 if (Number(this.value) > inqty) {
                                     Swal.fire({
                                         title: 'Peringatan',
@@ -87,7 +88,7 @@ window.addIA = function(){
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Warehouse Location</label><span class="text-danger">*</span>
                         <select class="form-control select2" name="locco[]" id="locco-${i}" required>
-                            <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
+                            <option value="" disabled selected>Pilih Lokasi</option>
                         </select>
                     </div>
 
@@ -104,13 +105,20 @@ window.addIA = function(){
     $('#accordionBbm').append(dtl);
     $('.select2').select2({ width:'100%', theme:'bootstrap-5' });
 
+    // otomatis buka accordion yang baru dibuat
+    const collapse = new bootstrap.Collapse(document.getElementById(`details-${i}`), { show: true });
+
     // load barang based on PO
-    $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
-        const sel = $(`#opron-${i}`);
-        data.forEach(item => {
-            sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`)
+    if(!pono || pono.trim() === '' || pono.trim()==='-'){
+        loadMasterProductAll(); // ini akan apply ke select2 yg baru ditambah juga
+    }else{
+        $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
+            const sel = $(`#opron-${i}`);
+            data.forEach(item => {
+                sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`)
+            });
         });
-    });
+    };
 
     // load warehouse
     $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
