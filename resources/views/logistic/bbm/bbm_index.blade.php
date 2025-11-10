@@ -56,7 +56,7 @@
                         @endif
                         <td class="text-center">
                             {{-- preview --}}
-                            {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                            {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                             {{-- print --}}
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)

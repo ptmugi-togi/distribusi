@@ -115,7 +115,8 @@ class PdfController extends Controller
             'tsupih',
             'mformcode',
             'vendor',
-            'tbolh'
+            'tbolh',
+            'bbmdtls.bbmhdr'
         ])->findOrFail($id);
 
         $bbmdtls = collect($bbmhdr->bbmdtls)->groupBy(function($i){
@@ -160,7 +161,8 @@ class PdfController extends Controller
             'tsupih',
             'mformcode',
             'vendor',
-            'tbolh'
+            'tbolh',
+            'bbmdtls.bbmhdr'
         ])->findOrFail($id);
 
         // increment counter print

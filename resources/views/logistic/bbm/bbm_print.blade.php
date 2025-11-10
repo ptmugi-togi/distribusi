@@ -90,18 +90,24 @@
                 {{ $bbmhdr->vendor->city }}
             </td>
             <td class="left td-top" style="width:10%">
-                B / L<br>
-                VESSEL<br>
+                @if ($bbmhdr->formc == 'IB')
+                    B / L<br>
+                    VESSEL<br>
+                @endif
                 SRN TYPE
             </td>
             <td class="left td-top" style="width:1%">
-                :<br>
-                :<br>
+                @if ($bbmhdr->formc == 'IB')
+                    :<br>
+                    :<br>
+                @endif
                 :
             </td>
             <td class="left td-top" style="width:20%, whitespace:normal, word-wrap:break-word">
-                {{ $bbmhdr->blnum ?? '-' }}<br>
-                {{ $bbmhdr->vesel ?? '-' }}<br>
+                @if ($bbmhdr->formc == 'IB')
+                    {{ $bbmhdr->blnum ?? '-' }}<br>
+                    {{ $bbmhdr->vesel ?? '-' }}<br>
+                @endif
                 {{ $bbmhdr->mformcode->desc_c }}
             </td>
             <td class="left td-top" style="width:2%"></td>
@@ -110,11 +116,11 @@
                 WAREHOUSE <br>
                 SRN NO. <br>
                 SRN DATE <br>
+                PO NO. <br>
                 @if ($bbmhdr->formc == 'IB')
                     REFERENCE <br>
+                    CALCULATION 
                 @endif
-                PO NO. <br>
-                CALCULATION
             </td>
             <td class="center td-top" style="width:1%">
                 : <br>
@@ -124,19 +130,19 @@
                 : <br>
                 @if ($bbmhdr->formc == 'IB')
                     : <br>
+                    :
                 @endif
-                :
             </td>
             <td class="left td-top" style="width:16%">
                 {{ $bbmhdr->braco }}<br>
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
+                {{ $bbmhdr->refno }}<br>
                 @if ($bbmhdr->formc == 'IB')
                     {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
+                    {{ $bbmhdr->tbolh->nocal ?? '-' }}
                 @endif
-                {{ $bbmhdr->refno }}<br>
-                {{ $bbmhdr->tbolh->nocal ?? '-' }}
             </td>
         </tr>
     </table>
@@ -172,8 +178,8 @@
                         </table>
                         @endif
                     </td>
-                    <td class="center">{{ $i->trqty }} {{ $i->qun }}</td>
-                    <td class="center">{{ $i->locco }}</td>
+                    <td class="center">{{ $i->trqty }} {{ $i->qunit }}</td>
+                    <td class="center">{{ $i->locco_descr }}</td>
                 </tr>
             @endforeach
         </tbody>
