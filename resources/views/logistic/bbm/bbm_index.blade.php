@@ -52,7 +52,7 @@
                         @if ($b->formc == 'IB')
                           <td class="">{{ $b->reffc }} {{ $b->refno }}</td>
                         @else
-                          <td class="">{{ $b->refno }}</td>
+                          <td class="">{{ $b->refno ?? '-' }}</td>
                         @endif
                         <td class="text-center">
                             {{-- preview --}}

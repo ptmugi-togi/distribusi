@@ -36,6 +36,7 @@
             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih Formc</option>
             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
+            <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -82,6 +83,10 @@
       {{-- SECTION IB (IMPORT) --}}
       <div id="section-import" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_ib')
+      </div>
+
+      <div id="section-if" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_if')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -159,7 +164,7 @@
               if(isNoPoInv){
                   loadMasterProductAll();
               }else{
-                $('select.opron-ia, select.opron-ib').each(function(){
+                $('select.opron-ia, select.opron-ib, select.opron-if').each(function(){
                     $(this).select2('destroy');
                     $(this).select2({ width:'100%', theme:'bootstrap-5' });
                     
@@ -189,7 +194,7 @@
 
           // ambil master product jika nopoinv checked
           function loadMasterProductAll(){
-            $('select.opron-ia, select.opron-ib').each(function(){
+            $('select.opron-ia, select.opron-ib, select.opron-if').each(function(){
                 $(this).select2({
                     placeholder: 'Pilih Barang',
                     theme: 'bootstrap-5',
@@ -246,6 +251,15 @@
                 $('#section-local').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
+              } else if(formc === 'IF'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').fadeIn();
+                $('#section-if').find('[data-req="if"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+                applyNoPoInvMode();
+                loadMasterProductAll();
               }
               applyNoPoInvMode();
           });

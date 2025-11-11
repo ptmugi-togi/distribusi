@@ -61,20 +61,22 @@
                         <label class="form-label">Receiving Instruction</label>
                         <input type="text" class="form-control" id="reffc" value="{{ $bbm->reffc }} {{ $bbm->refno }}" readonly style="background-color:#e9ecef">
                     </div>
-                @else
+                @elseif ($bbm->formc == 'PO')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">PO No</label>
                         <input type="text" class="form-control" id="reffc" value="{{ $bbm->refno }}" readonly style="background-color:#e9ecef">
                     </div>
                 @endif
-                    
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Supplier</label>
-                    <input type="text" class="form-control" id="supplier"
-                        value="{{ old('supno', ($bbm->supno ?? '').(($bbm->supno??'') && ($bbm->supna??'') ? ' - ' : '').($bbm->supna ?? '')) }}"
-                        readonly style="background-color:#e9ecef;">
-                    <input type="text" class="form-control" name="supno" id="supno" value="{{ old('supno', $bbm->supno ?? '') }}" hidden>
-                </div>
+
+                @if ($bbm->formc != 'IF')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" class="form-control" id="supplier"
+                            value="{{ old('supno', ($bbm->supno ?? '').(($bbm->supno??'') && ($bbm->supna??'') ? ' - ' : '').($bbm->supna ?? '')) }}"
+                            readonly style="background-color:#e9ecef;">
+                        <input type="text" class="form-control" name="supno" id="supno" value="{{ old('supno', $bbm->supno ?? '') }}" hidden>
+                    </div>
+                @endif    
 
                 @if ($bbm->formc == 'IB')
                     <div class="col-md-6 mt-3">
@@ -149,7 +151,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @else
+                                            @elseif ($bbm->formc == 'PO')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -185,12 +187,14 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6 mt-3">
-                                                <label for="pono-{{ $i }}" class="form-label">PO No.</label>
-                                                <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
-                                                    value="{{ $d->pono ?? $d->pono ?? '' }}"
-                                                    readonly style="background-color: #e9ecef">
-                                            </div>
+                                            @if ($bbm->formc != 'IF')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="pono-{{ $i }}" class="form-label">PO No.</label>
+                                                    <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
+                                                        value="{{ $d->pono ?? $d->pono ?? '' }}"
+                                                        readonly style="background-color: #e9ecef">
+                                                </div>
+                                            @endif
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
@@ -224,10 +228,14 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIB()">Tambah Detail BBM</button>
                 </div>    
-            @else
+            @elseif($bbm->formc == 'IA')
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIA()">Tambah Detail BBM</button>
                 </div>    
+            @elseif($bbm->formc == 'IF')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIF()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -241,17 +249,20 @@
     @push('scripts')
         @if($bbm->formc == 'IA')
             @include('logistic.bbm.partial_edit.add_detail_ia')
-        @else
+        @elseif($bbm->formc == 'IB')
             @include('logistic.bbm.partial_edit.add_detail_ib')
+        @elseif($bbm->formc == 'IF')
+            @include('logistic.bbm.partial_edit.add_detail_if')
         @endif
 
+        {{-- simpan warehouse & refno --}}
         <script>
             let selectedWarehouse = "{{ $bbm->warco }}";
             let selectedReceivingInstruction = "{{ $bbm->refno }}";
         </script>
 
+        {{-- simpan pilihan warehouse  --}}
         <script>
-            // simpan pilihan warehouse 
             $(document).on('change', 'select[name="warco"]', function () {
                 selectedWarehouse = $(this).val();
             });
@@ -495,7 +506,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editIA, select.opron-editIB').each(function(){
+                $('select.opron-editIA, select.opron-editIB, select.opron-editIF').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',
@@ -569,6 +580,30 @@
                 // kalau ada IB logic nanti tambahin untuk load invoice nya
             }
         </script>
+
+        @if (empty($bbm->refno) || empty($bbm->pono))
+        <script>
+        $(document).ready(function() {
+            const sel = $('#opron-{{ $i }}');
+            const currentVal = sel.val(); // ambil value lama (barang yang sudah tersimpan)
+
+            $.get('{{ url("/get-product-all") }}', function(data) {
+                // tambahkan semua produk ke select (tapi jangan reset, biar data lama tetap ada)
+                data.forEach(item => {
+                    // cek supaya gak nambah option duplikat
+                    if (sel.find(`option[value="${item.opron}"]`).length === 0) {
+                        sel.append(`<option value="${item.opron}">${item.opron} - ${item.opname}</option>`);
+                    }
+                });
+
+                // set kembali ke barang lama kalau ada
+                if (currentVal) {
+                    sel.val(currentVal).trigger('change');
+                }
+            });
+        });
+        </script>
+        @endif
 
         {{-- otomatis ambil lotno akhir --}}
         <script>

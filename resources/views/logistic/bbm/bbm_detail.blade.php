@@ -48,17 +48,19 @@
                         <label class="form-label">Receiving Instruction</label>
                         <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
                     </div>
-                @else
+                @elseif ($bbm->formc == 'PO')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">PO No</label>
                         <input type="text" class="form-control" value="{{ $bbm->refno }}" disabled>
                     </div>
                 @endif
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Supplier</label>
-                    <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
-                </div>
+                @if ($bbm->formc != 'IF')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
+                    </div>
+                @endif
 
                 @if ($bbm->formc == 'IB')
                     <div class="col-md-6 mt-3">
@@ -114,7 +116,7 @@
                                                 <span class="input-group-text">{{ $detail->qunit }}</span>
                                             </div>
                                         </div>
-                                    @else
+                                    @elseif ($bbm->formc == 'PO')
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO Quantity</label>
                                             <div class="input-group">
@@ -137,10 +139,12 @@
                                         <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">PO No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>
-                                    </div>
+                                    @if ($bbm->formc != 'IF')
+                                        <div class="col-md-6 mt-3">
+                                            <label class="form-label">PO No.</label>
+                                            <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>
+                                        </div>
+                                    @endif
 
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Warehouse Location</label>

@@ -18,8 +18,8 @@
         </option>
       @endforeach
     </select>
-    <input type="text" name="reffc" id="reffc_ib" hidden>
-    <input type="text" name="refno" id="refno_ib" hidden>
+    <input type="text" name="reffc" id="reffc_ib">
+    <input type="text" name="refno" id="refno_ib">
   </div>
 
   <div class="col-md-6 mt-3">

@@ -230,7 +230,7 @@ class BbmController extends Controller
                 'tradt'   => $request->tradt,
                 'reffc'   => $request->reffc,
                 'refno'   => $request->refno,
-                'supno'   => $request->supno,
+                'supno'   => $request->supno ?? '',
                 'blnum'   => $request->blnum,
                 'vesel'   => $request->vesel,
                 'noteh'   => $request->noteh,
