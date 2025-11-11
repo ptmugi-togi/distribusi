@@ -84,10 +84,12 @@
     <table class="no-border" style="margin-top:10px;">
         <tr>
             <td class="left td-top" style="width:33%">
-                RECEIVED FROM :<br>
-                {{ $bbmhdr->vendor->supna }}<br>
-                {{ $bbmhdr->vendor->address }}<br>
-                {{ $bbmhdr->vendor->city }}
+                @if ($bbmhdr->formc != 'IF')
+                    RECEIVED FROM :<br>
+                    {{ $bbmhdr->vendor->supna }}<br>
+                    {{ $bbmhdr->vendor->address }}<br>
+                    {{ $bbmhdr->vendor->city }}
+                @endif
             </td>
             <td class="left td-top" style="width:10%">
                 @if ($bbmhdr->formc == 'IB')
