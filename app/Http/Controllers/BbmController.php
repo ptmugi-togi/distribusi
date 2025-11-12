@@ -476,66 +476,91 @@ class BbmController extends Controller
         DB::beginTransaction();
 
         try {
+            // Ambil data header BBM
             $bbm = DB::table('tstorh')->where('bbmid', $bbmid)->first();
             if (!$bbm) {
                 return redirect()->route('bbm.index')->with('error', 'Data BBM tidak ditemukan.');
             }
 
+            // Update header
             DB::table('tstorh')->where('bbmid', $bbmid)->update([
-                'noteh' => $request->noteh,
+                'noteh'      => $request->noteh,
                 'updated_at' => now(),
                 'updated_by' => Auth::user()->name,
             ]);
 
-            // Hapus stok lama
+            // Tentukan jenis transaksi
+            $isOF = ($bbm->formc === 'OF');
+
+            // Ambil detail lama & rollback stok
             $oldDetails = DB::table('tstord')
                 ->select('opron', 'locco', 'lotno', 'trqty', 'qunit', 'pono')
                 ->where('trano', $bbm->trano)
                 ->get();
 
             foreach ($oldDetails as $old) {
+                // Kembalikan stok lama dulu (revert)
+                if ($isOF) {
+                    // kalau OF, stok sebelumnya dikurangi, maka sekarang ditambah balik
+                    DB::table('stobw_tbl')
+                        ->where('warco', $bbm->warco)
+                        ->where('braco', $bbm->braco)
+                        ->where('opron', $old->opron)
+                        ->increment('toqoh', $old->trqty);
 
-                DB::table('stobw_tbl')
-                    ->where('warco', $bbm->warco)
-                    ->where('braco', $bbm->braco)
-                    ->where('opron', $old->opron)
-                    ->decrement('toqoh', $old->trqty);
+                    DB::table('stobl_tbl')
+                        ->where('warco', $bbm->warco)
+                        ->where('braco', $bbm->braco)
+                        ->where('opron', $old->opron)
+                        ->where('qunit', $old->qunit)
+                        ->where('locco', $old->locco)
+                        ->where('lotno', $old->lotno)
+                        ->increment('toqoh', $old->trqty);
+                } else {
+                    // kalau IF, stok sebelumnya ditambah, maka sekarang dikurangi
+                    DB::table('stobw_tbl')
+                        ->where('warco', $bbm->warco)
+                        ->where('braco', $bbm->braco)
+                        ->where('opron', $old->opron)
+                        ->decrement('toqoh', $old->trqty);
 
-                DB::table('stobl_tbl')
-                    ->where('warco', $bbm->warco)
-                    ->where('braco', $bbm->braco)
-                    ->where('opron', $old->opron)
-                    ->where('qunit', $old->qunit)
-                    ->where('locco', $old->locco)
-                    ->where('lotno', $old->lotno)
-                    ->decrement('toqoh', $old->trqty);
+                    DB::table('stobl_tbl')
+                        ->where('warco', $bbm->warco)
+                        ->where('braco', $bbm->braco)
+                        ->where('opron', $old->opron)
+                        ->where('qunit', $old->qunit)
+                        ->where('locco', $old->locco)
+                        ->where('lotno', $old->lotno)
+                        ->decrement('toqoh', $old->trqty);
+                }
 
-                DB::table('podtl_tbl')
-                    ->where('pono', $old->pono)
-                    ->where('opron', $old->opron)
-                    ->update(['rcqty' => DB::raw("rcqty - $old->trqty")]);
+                // Update progress PO hanya untuk IF
+                if (!$isOF) {
+                    DB::table('podtl_tbl')
+                        ->where('pono', $old->pono)
+                        ->where('opron', $old->opron)
+                        ->update(['rcqty' => DB::raw("rcqty - $old->trqty")]);
+                }
             }
 
+            // Bersihkan data nol dan hapus detail lama
             DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
             DB::table('stobl_tbl')->where('toqoh', '<=', 0)->delete();
             DB::table('tstord')->where('trano', $bbm->trano)->delete();
 
-
-            // Insert Ulang baru
+            // Insert ulang detail baru
             foreach ($request->opron as $i => $opron) {
-
-                $invno = $request->invno[$i] ?? '-';
+                $invno   = $request->invno[$i] ?? '-';
                 $lotStart = $request->lotno[$i] ?? '-';
-                $trqty = (int) $request->trqty[$i];
-                $qunit = $request->stdqt[$i]; // IB pakai stdqt
-                $locco = $request->locco[$i];
-                $pono  = $request->pono[$i] ?? '-';
-                $noted = $request->noted[$i] ?? null;
+                $trqty   = (int) $request->trqty[$i];
+                $qunit   = $request->stdqt[$i];
+                $locco   = $request->locco[$i];
+                $pono    = $request->pono[$i] ?? '-';
+                $noted   = $request->noted[$i] ?? null;
 
                 $isNoLot = ($lotStart === '-' || $lotStart === null || $lotStart === '');
 
-                if($isNoLot){
-
+                if ($isNoLot) {
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $bbm->trano,
@@ -548,11 +573,8 @@ class BbmController extends Controller
                         'pono'  => $pono,
                         'noted' => $noted,
                     ]);
-
                 } else {
-
                     $lotList = $this->generateLotList($lotStart, $trqty);
-
                     foreach ($lotList as $lotno) {
                         DB::table('tstord')->insert([
                             'bbmid' => $bbmid,
@@ -569,42 +591,55 @@ class BbmController extends Controller
                     }
                 }
 
+                // Update stok barang
+                $operator = $isOF ? '-' : '+';
+
                 // STOWB (by barang)
                 DB::table('stobw_tbl')->updateOrInsert(
                     ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron],
-                    ['toqoh' => DB::raw("COALESCE(toqoh,0) + $trqty")]
+                    ['toqoh' => DB::raw("COALESCE(toqoh,0) $operator $trqty")]
                 );
 
                 // STOBL (by lot)
-                if($isNoLot){
-
+                if ($isNoLot) {
                     DB::table('stobl_tbl')->updateOrInsert(
-                        ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron, 'qunit' => $qunit, 'locco' => $locco, 'lotno' => '-'],
-                        ['toqoh' => DB::raw("COALESCE(toqoh,0) + $trqty")]
+                        [
+                            'braco' => $bbm->braco,
+                            'warco' => $bbm->warco,
+                            'opron' => $opron,
+                            'qunit' => $qunit,
+                            'locco' => $locco,
+                            'lotno' => '-'
+                        ],
+                        ['toqoh' => DB::raw("COALESCE(toqoh,0) $operator $trqty")]
                     );
-
                 } else {
-
                     foreach ($this->generateLotList($lotStart, $trqty) as $lotno) {
-
                         DB::table('stobl_tbl')->updateOrInsert(
-                            ['braco' => $bbm->braco, 'warco' => $bbm->warco, 'opron' => $opron, 'qunit' => $qunit, 'locco' => $locco, 'lotno' => $lotno],
-                            ['toqoh' => DB::raw("COALESCE(toqoh,0) + 1")]
+                            [
+                                'braco' => $bbm->braco,
+                                'warco' => $bbm->warco,
+                                'opron' => $opron,
+                                'qunit' => $qunit,
+                                'locco' => $locco,
+                                'lotno' => $lotno
+                            ],
+                            ['toqoh' => DB::raw("COALESCE(toqoh,0) $operator 1")]
                         );
                     }
                 }
 
-                // update progress PO
-                DB::table('podtl_tbl')
-                    ->where('pono', $pono)
-                    ->where('opron', $opron)
-                    ->update(['rcqty' => DB::raw("rcqty + $trqty")]);
+                // Update progress PO
+                if (!$isOF) {
+                    DB::table('podtl_tbl')
+                        ->where('pono', $pono)
+                        ->where('opron', $opron)
+                        ->update(['rcqty' => DB::raw("rcqty + $trqty")]);
+                }
             }
-
 
             DB::commit();
             return redirect()->route('bbm.index')->with('success', "Data BBM $bbmid berhasil diperbarui.");
-
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal update BBM:', ['error' => $e->getMessage()]);

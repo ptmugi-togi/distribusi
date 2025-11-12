@@ -28,7 +28,7 @@
             @csrf
             @method('PUT')
 
-            <input type="text" name="braco" value="{{ auth()->user()->cabang }}" hidden>
+            <input type="text" name="braco" id="braco" value="{{ auth()->user()->cabang }}" hidden>
 
             <div class="row">
                 <div class="col-md-6 mt-3">
@@ -68,7 +68,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
@@ -151,7 +151,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc == 'PO')
+                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'OF')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -187,7 +187,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF')
+                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -236,6 +236,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIF()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'OF')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -253,6 +257,8 @@
             @include('logistic.bbm.partial_edit.add_detail_ib')
         @elseif($bbm->formc == 'IF')
             @include('logistic.bbm.partial_edit.add_detail_if')
+        @elseif($bbm->formc == 'OF')
+            @include('logistic.bbm.partial_edit.add_detail_of')
         @endif
 
         {{-- simpan warehouse & refno --}}
@@ -506,7 +512,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editIA, select.opron-editIB, select.opron-editIF').each(function(){
+                $('select.opron-editIA, select.opron-editIB, select.opron-editIF, select.opron-editOF').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',
@@ -580,30 +586,6 @@
                 // kalau ada IB logic nanti tambahin untuk load invoice nya
             }
         </script>
-
-        @if (empty($bbm->refno) || empty($bbm->pono))
-        <script>
-        $(document).ready(function() {
-            const sel = $('#opron-{{ $i }}');
-            const currentVal = sel.val(); // ambil value lama (barang yang sudah tersimpan)
-
-            $.get('{{ url("/get-product-all") }}', function(data) {
-                // tambahkan semua produk ke select (tapi jangan reset, biar data lama tetap ada)
-                data.forEach(item => {
-                    // cek supaya gak nambah option duplikat
-                    if (sel.find(`option[value="${item.opron}"]`).length === 0) {
-                        sel.append(`<option value="${item.opron}">${item.opron} - ${item.opname}</option>`);
-                    }
-                });
-
-                // set kembali ke barang lama kalau ada
-                if (currentVal) {
-                    sel.val(currentVal).trigger('change');
-                }
-            });
-        });
-        </script>
-        @endif
 
         {{-- otomatis ambil lotno akhir --}}
         <script>
