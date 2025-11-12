@@ -27,7 +27,7 @@
       @csrf
 
       {{-- Global header (muncul dari awal) --}}
-      <input type="text" name="braco" value="{{ auth()->user()->cabang }}" hidden>
+      <input type="text" name="braco" id="braco" value="{{ auth()->user()->cabang }}" hidden>
 
       <div class="row">
         <div class="col-md-6 mt-3">
@@ -37,6 +37,7 @@
             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
+            <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ISSUE ADJUSTMENT)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -87,6 +88,10 @@
 
       <div id="section-if" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_if')
+      </div>
+
+      <div id="section-of" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_of')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -245,17 +250,32 @@
 
               if(formc === 'IA'){
                 $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-of').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
               }else if(formc === 'IB'){
                 $('#section-local').remove();
+                $('#section-if').remove();
+                $('#section-of').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } else if(formc === 'IF'){
                 $('#section-local').remove();
                 $('#section-import').remove();
+                $('#section-of').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+                applyNoPoInvMode();
+                loadMasterProductAll();
+              } else if(formc === 'OF'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-of').fadeIn();
+                $('#section-of').find('[data-req="of"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
                 applyNoPoInvMode();

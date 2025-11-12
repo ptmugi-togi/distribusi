@@ -195,6 +195,8 @@
                 </div>
               </div>
 
+              <input type="text" class="stdqt-if" name="stdqt[]" id="stdqt-if-${i}" hidden>
+
               <div class="col-md-6 mt-3">
                   <div class="form-check">
                       <input class="form-check-input nolot-checkbox" type="checkbox" value="1" name="nolot[${i}]" id="nolot-[${i}]">

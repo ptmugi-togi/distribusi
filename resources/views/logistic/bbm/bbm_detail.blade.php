@@ -55,7 +55,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
@@ -139,7 +139,7 @@
                                         <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
-                                    @if ($bbm->formc != 'IF')
+                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO No.</label>
                                             <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>
