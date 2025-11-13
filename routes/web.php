@@ -27,6 +27,7 @@ use App\Http\Controllers\BlawbController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BbmController;
+use App\Http\Controllers\BbkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -144,15 +145,13 @@ Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->mid
 
 Route::get('/bbm', [BbmController::class,'index'])->middleware('auth')->name('bbm.index');
 Route::get('/bbm/create', [BbmController::class,'create'])->middleware('auth')->name('bbm.create');
-Route::get('/generate-trano', [BbmController::class,'generateTrano'])->name('generate-trano');
+Route::get('/generate-trano-bbm', [BbmController::class,'generateTrano'])->name('generate-trano-bbm');
 Route::get('/get-invoice/{rinum}', [BbmController::class, 'getInvoice'])->name('bbm.getInvoice');
 Route::get('/get-barang/{invno}', [BbmController::class, 'getBarang'])->name('bbm.getBarang');
-Route::get('/get-barang/{braco}/{warco}/{locco}', [BbmController::class, 'getBarangOF']); //get barang untuk OF
 Route::get('/get-supplier-items/{supno}', [BbmController::class, 'getSupplierItems']);
 Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.getLocco');
 Route::get('/get-po-list', [BbmController::class, 'getPoList'])->name('bbm.getPoList');
 Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->name('bbm.getPoSupplier');
-Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbmController::class, 'getStobl']);
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
@@ -160,4 +159,12 @@ Route::put('/bbm/{bbmid}', [BbmController::class,'update'])->middleware('auth')-
 Route::delete('/bbm/{id}/delete', [BbmController::class,'destroy'])->middleware('auth')->name('bbm.delete');
 Route::get('/bbm/previewBbm/{id}', [PdfController::class, 'previewBbm'])->name('bbm.previewBbm');
 Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.printBbm');
-Route::post('/reduce-stock', [BbmController::class, 'reduceStock']); //mengurangi stok jika OF
+
+Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
+Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
+Route::get('/generate-trano-bbk', [BbkController::class,'generateTrano'])->name('generate-trano-bbk');
+Route::get('/get-barang/{braco}/{warco}/{locco}', [BbkController::class, 'getBarangOF']); //get barang untuk OF
+Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl']);
+Route::post('/reduce-stock', [BbkController::class, 'reduceStock']); //mengurangi stok jika OF
+Route::post('/bbk/store', [BbkController::class,'store'])->middleware('auth')->name('bbk.store');
+Route::delete('/bbk/{id}/delete', [BbkController::class,'destroy'])->middleware('auth')->name('bbk.delete');
