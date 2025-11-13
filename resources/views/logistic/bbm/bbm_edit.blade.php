@@ -68,7 +68,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
+                @if ($bbm->formc != 'IF')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
@@ -151,7 +151,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'OF')
+                                            @elseif ($bbm->formc != 'IF')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -187,7 +187,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
+                                            @if ($bbm->formc != 'IF')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -236,10 +236,6 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIF()">Tambah Detail BBM</button>
                 </div>
-            @elseif($bbm->formc == 'OF')
-                <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail BBM</button>
-                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -257,10 +253,7 @@
             @include('logistic.bbm.partial_edit.add_detail_ib')
         @elseif($bbm->formc == 'IF')
             @include('logistic.bbm.partial_edit.add_detail_if')
-        @elseif($bbm->formc == 'OF')
-            @include('logistic.bbm.partial_edit.add_detail_of')
         @endif
-
         {{-- simpan warehouse & refno --}}
         <script>
             let selectedWarehouse = "{{ $bbm->warco }}";
@@ -512,7 +505,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editIA, select.opron-editIB, select.opron-editIF, select.opron-editOF').each(function(){
+                $('select.opron-editIA, select.opron-editIB, select.opron-editIF').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',
