@@ -31,9 +31,9 @@
 
       <div class="row">
         <div class="col-md-6 mt-3">
-          <label for="formc" class="form-label">Formc</label><span class="text-danger"> *</span>
+          <label for="formc" class="form-label">BBM</label><span class="text-danger"> *</span>
           <select class="form-control select2" id="formc" name="formc" required>
-            <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih Formc</option>
+            <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih BBM</option>
             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
