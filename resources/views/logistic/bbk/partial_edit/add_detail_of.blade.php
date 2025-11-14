@@ -1,8 +1,8 @@
 <script>
 window.addOF = function(){
 
-    const i = $('#accordionBbm .accordion-item').length;
-    const warco = "{{ $bbm->warco }}";
+    const i = $('#accordionBbk .accordion-item').length;
+    const warco = "{{ $bbk->warco }}";
 
     let dtl = `
     <div class="accordion-item" id="accordion-item-${i}">
@@ -12,12 +12,12 @@ window.addOF = function(){
                 aria-expanded="false" aria-controls="details-${i}">
                 <span class="accordion-title"></span>
             </button>
-            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail(${i})">
+            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbkDetail(${i})">
                 <i class="bi bi-trash-fill"></i>
             </button>
         </h2>
 
-        <div id="details-${i}" class="accordion-collapse collapse" data-bs-parent="#accordionBbm">
+        <div id="details-${i}" class="accordion-collapse collapse" data-bs-parent="#accordionBbk">
             <div class="accordion-body">
                 <div class="row">
                     <div class="col-md-6 mt-3">
@@ -30,14 +30,14 @@ window.addOF = function(){
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Barang</label><span class="text-danger"> *</span>
                         <select class="select2 form-control opron-editOF" name="opron[]" id="opron-${i}" required>
-                            <option value="" disabled selected>Pilih Barang</option>
+                            <option value="" disabled selected>Pilih Warehouse Location Terlebih Dahulu</option>
                         </select>
                     </div>
 
                     <div class="col-md-6 mt-3 lot-section">
                         <label for="lotno-of-${i}" class="form-label">Serial / Batch No.</label>
                         <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-of-${i}">
-                            <option value="">Pilih SN / Batch No</option>
+                            <option value="">Pilih Barang Terlebih Dahulu</option>
                         </select>
                     </div>
 
@@ -69,7 +69,7 @@ window.addOF = function(){
         </div>
     </div>`;
 
-    $('#accordionBbm').append(dtl);
+    $('#accordionBbk').append(dtl);
     $('.select2').select2({ width:'100%', theme:'bootstrap-5' });
 
     // otomatis buka accordion yang baru dibuat
@@ -84,8 +84,8 @@ window.addOF = function(){
     // ambil data barang
     $(document).on('change', '.locco-editOF', function() {
         const idx = this.id.split('-').pop();
-        const braco = "{{ $bbm->braco }}";
-        const warco = "{{ $bbm->warco }}";
+        const braco = "{{ $bbk->braco }}";
+        const warco = "{{ $bbk->warco }}";
         const locco = $(this).val();
         const $barangSelect = $(`#opron-${idx}`);
 
@@ -96,7 +96,7 @@ window.addOF = function(){
         $.get(`/get-barang/${braco}/${warco}/${locco}`, function(data) {
             $barangSelect.empty();
             if (data.length > 0) {
-                $barangSelect.append('<option value="">Pilih Barang</option>');
+                $barangSelect.append('<option value="" disabled selected>Pilih Barang</option>');
                 data.forEach(item => {
                     $barangSelect.append(`
                         <option value="${item.opron}"
@@ -106,7 +106,7 @@ window.addOF = function(){
                     `);
                 });
             } else {
-                $barangSelect.append('<option value="">Tidak ada barang di lokasi ini</option>');
+                $barangSelect.append('<option value="" disabled selected>Tidak ada barang di lokasi ini</option>');
             }
         }).fail(() => {
             Swal.fire({ icon: 'error', title: 'Gagal Ambil Data Barang', text: 'Terjadi kesalahan di server.' });
@@ -119,8 +119,8 @@ window.addOF = function(){
     $(document).on('change', '.opron-editOF', function() {
         const idx = this.id.split('-').pop();
         const $opt = $(this).find(':selected');
-        const braco = "{{ $bbm->braco }}";
-        const warco = "{{ $bbm->warco }}";
+        const braco = "{{ $bbk->braco }}";
+        const warco = "{{ $bbk->warco }}";
         const opron = $(this).val();
 
         const $lotSelect = $(`#lotno-of-${idx}`);
@@ -129,7 +129,7 @@ window.addOF = function(){
         $.get(`/get-stobl/${braco}/${warco}/${opron}`, function(data) {
             $lotSelect.empty();
             if (data.length > 0) {
-                $lotSelect.append('<option value="">Pilih SN / Batch No</option>');
+                $lotSelect.append('<option value="" disabled selected>Pilih SN / Batch No</option>');
                 data.forEach(item => {
                     $lotSelect.append(`
                         <option value="${item.lotno}" data-toqoh="${item.toqoh}" data-stdqt="${item.qunit}">
@@ -138,7 +138,7 @@ window.addOF = function(){
                     `);
                 });
             } else {
-                $lotSelect.append('<option value="">Tidak ada stok</option>');
+                $lotSelect.append('<option value="" disabled selected>Tidak ada stok</option>');
                 Swal.fire({ icon: 'warning', title: 'Stok Kosong', text: 'Barang ini tidak memiliki stok tersedia.' });
             }
         }).fail(() => {
@@ -179,7 +179,7 @@ window.addOF = function(){
 
 };
 
-window.removebbmDetail = function(i){
+window.removebbkDetail = function(i){
     $(`#accordion-item-${i}`).remove();
 }
 </script>
