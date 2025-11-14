@@ -197,7 +197,7 @@
         const $toqohInput = $(`#toqoh-of-${idx}`);
         const $toqohUnit = $(`.unit-label-of`);
 
-        $lotSelect.prop('disabled', true).html('<option>Memuat LOT...</option>');
+        $lotSelect.prop('disabled', true).html('<option>Memuat Stok Barang...</option>');
         $.get(`/get-stobl/${braco}/${warco}/${opron}`, function(data) {
             $lotSelect.empty();
 

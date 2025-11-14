@@ -128,7 +128,7 @@ window.addOF = function(){
         const opron = $(this).val();
 
         const $lotSelect = $(`#lotno-of-${idx}`);
-        $lotSelect.prop('disabled', true).html('<option>Memuat LOT...</option>');
+        $lotSelect.prop('disabled', true).html('<option>Memuat Stok Barang...</option>');
 
         $.get(`/get-stobl/${braco}/${warco}/${encodeURIComponent(opron)}`, function(data) {
             $lotSelect.empty();
