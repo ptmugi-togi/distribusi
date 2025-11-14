@@ -451,12 +451,6 @@ class BbkController extends Controller
                     ]);
                 }
 
-                /*
-                * ========================
-                *  KURANGI STOK BARU
-                * ========================
-                */
-
                 // --- STOBW (global qty) ---
                 $stobw = DB::table('stobw_tbl')
                     ->where('braco', $bbk->braco)

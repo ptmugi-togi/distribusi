@@ -121,13 +121,13 @@
                                             </div>
 
                                             <div class="col-md-6 mt-3">
-                                                <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                                                <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
                                                 <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
-                                                    value="{{ old('lotno.'. $i, $d->lotno ?? '') }}">
+                                                    value="{{ old('lotno.'. $i, $d->lotno ?? '') }}" required>
                                             </div>
 
                                             <div class="col-md-6 mt-3">
-                                                <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label>
+                                                <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
                                                 <select class="form-control select2 locco-select" name="locco[]" id="locco-{{ $i }}" data-selected="{{ $d->locco }}" required>
                                                     <option value="{{ $d->locco }}" selected>{{ $d->locco }}</option>
                                                 </select>

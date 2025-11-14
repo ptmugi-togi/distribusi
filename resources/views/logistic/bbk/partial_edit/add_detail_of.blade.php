@@ -35,8 +35,8 @@ window.addOF = function(){
                     </div>
 
                     <div class="col-md-6 mt-3 lot-section">
-                        <label for="lotno-of-${i}" class="form-label">Serial / Batch No.</label>
-                        <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-of-${i}">
+                        <label for="lotno-of-${i}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                        <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-of-${i}" required>
                             <option value="">Pilih Barang Terlebih Dahulu</option>
                         </select>
                     </div>
