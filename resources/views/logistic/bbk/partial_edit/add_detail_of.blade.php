@@ -79,6 +79,10 @@ window.addOF = function(){
     $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
         const sel = $(`#locco-${i}`);
         data.forEach(item => sel.append(`<option value="${item.locco}">${item.locco}</option>`));
+        if (data.length > 0) {
+            sel.val(data[0].locco);
+            sel.trigger('change');
+        }
     });
 
     // ambil data barang
@@ -126,7 +130,7 @@ window.addOF = function(){
         const $lotSelect = $(`#lotno-of-${idx}`);
         $lotSelect.prop('disabled', true).html('<option>Memuat LOT...</option>');
 
-        $.get(`/get-stobl/${braco}/${warco}/${opron}`, function(data) {
+        $.get(`/get-stobl/${braco}/${warco}/${encodeURIComponent(opron)}`, function(data) {
             $lotSelect.empty();
             if (data.length > 0) {
                 $lotSelect.append('<option value="" disabled selected>Pilih SN / Batch No</option>');

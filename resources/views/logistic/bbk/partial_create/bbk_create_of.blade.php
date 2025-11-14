@@ -102,6 +102,11 @@
                 $sel.append(`<option value="${item.locco}">${item.locco}</option>`);
             });
             $sel.prop('disabled', false);
+            // default pilih locco pertama
+            if (data.length > 0) {
+                $sel.val(data[0].locco);
+                $sel.trigger('change');
+            }
             }).fail(() => {
             Swal.fire({
                 icon: 'error',

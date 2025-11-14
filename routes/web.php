@@ -164,7 +164,7 @@ Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bb
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
 Route::get('/generate-trano-bbk', [BbkController::class,'generateTrano'])->name('generate-trano-bbk');
 Route::get('/get-barang/{braco}/{warco}/{locco}', [BbkController::class, 'getBarangOF']); //get barang untuk OF
-Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl']);
+Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl'])->where('opron', '.*');
 Route::post('/reduce-stock', [BbkController::class, 'reduceStock']); //mengurangi stok jika OF
 Route::post('/bbk/store', [BbkController::class,'store'])->middleware('auth')->name('bbk.store');
 Route::get('/bbk/{id}/detail', [BbkController::class,'show'])->middleware('auth')->name('bbk.detail');
