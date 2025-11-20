@@ -141,50 +141,6 @@
                 window.open("{{ route('sms.preview') }}?" + params.toString(), "_blank");
             });
         </script>
-
-        {{-- Modal Konfirmasi generate data --}}
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.getElementById('form-sms');
-
-                if (!form) return; //
-
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    if (!form.checkValidity()) {
-                        form.classList.add('was-validated');
-                        return;
-                    }
-
-                    Swal.fire({
-                        title: 'Konfirmasi Simpan',
-                        text: 'Apakah Anda yakin ingin menyimpan data BL / AWB ini?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Simpan!',
-                        cancelButtonText: 'Batal',
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Menyimpan...',
-                                text: 'Mohon tunggu sebentar.',
-                                icon: 'info',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                                showConfirmButton: false,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                    form.submit();
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-        </script>
     @endpush
 
 @endsection
