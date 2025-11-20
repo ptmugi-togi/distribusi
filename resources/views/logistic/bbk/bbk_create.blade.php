@@ -56,7 +56,7 @@
           <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color:#e9ecef">
         </div>
 
-        <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}">
+        <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
 
         <div class="col-md-6 mt-3">
           <label for="tradt" class="form-label">Stock Receipt Date</label><span class="text-danger"> *</span>
