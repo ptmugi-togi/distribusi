@@ -37,7 +37,7 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="asof" class="form-label">As of</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" name="asof" id="asof" value="{{ old('asof') }}" required>
+                        <input type="date" class="form-control" name="asof" id="asof" value="{{ old('asof') }}" min="{{ $minDate }}" max="{{ date('Y-m-d') }}" required>
                     </div>
 
                     <div class="col-md-6 mt-3">

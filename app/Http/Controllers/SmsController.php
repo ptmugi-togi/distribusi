@@ -30,7 +30,21 @@ class SmsController extends Controller
 
         $mssgrup = DB::table('mssgrup_tbl')->get();
 
-        return view('reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup'));
+        $openPeriod = DB::table('tperiode')
+            ->where('status', 'O')
+            ->orderBy('periode', 'asc')
+            ->first();
+
+        $minDate = null;
+
+        if ($openPeriod) {
+            $year = substr($openPeriod->periode, 0, 4);
+            $month = substr($openPeriod->periode, 4, 2);
+
+            $minDate = "$year-$month-01";
+        }
+
+        return view('reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
     }
 
     /**
@@ -43,51 +57,73 @@ class SmsController extends Controller
 
     public function getData(Request $req)
     {
-        $period = DB::table('tstorh')
-            ->where('warco', $req->warco)
-            ->whereRaw("CAST(tradt AS DATE) <= ?", [$req->asof])
-            ->orderByDesc('tradt')
-            ->value('priod');
+        $warco = $req->warco;
+        $asof  = $req->asof;
 
-        if (!$period) {
-            return ['error' => 'Period tidak ditemukan'];
+        // Cari periode open terakhir di tperiode
+        $lastOpen = DB::table('tperiode')
+            ->where('status', 'O')
+            ->orderByDesc('periode')
+            ->value('periode');
+
+        if (!$lastOpen) {
+            return ['error' => 'Tidak ada periode OPEN di tperiode'];
         }
 
-        // cek status periode
-        $isOpen = DB::table('tperiode')
-            ->where('periode', $period)
-            ->value('status');
+        // Cari periode transaksi terbesar di tstorh & tsisnh
+        $maxStorh = DB::table('tstorh')
+            ->where('warco', $warco)
+            ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
+            ->max('priod');
 
-        if ($isOpen !== 'O') {
-            return ['error' => "Periode $period sudah close"];
+        $maxSisnh = DB::table('tsisnh')
+            ->where('warco', $warco)
+            ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
+            ->max('priod');
+
+        $maxTransPeriod = max($maxStorh ?? 0, $maxSisnh ?? 0);
+
+        if (!$maxTransPeriod) {
+            return ['error' => 'Tidak ada transaksi sebelum Asof'];
         }
 
-        // ambil OPRON yg ada transaksi (masuk atau keluar)
+        // Bangun array periode mulai lastOpen sampai maxTransPeriod
+        $periods = [];
+        $cursor = \Carbon\Carbon::createFromFormat('Ym', $lastOpen);
+        $end    = \Carbon\Carbon::createFromFormat('Ym', $maxTransPeriod);
+
+        while ($cursor->lte($end)) {
+            $periods[] = $cursor->format('Ym');
+            $cursor->addMonth();
+        }
+
+        // Ambil OPRON dari semua periode
         $opronMasuk = DB::table('tstord as d')
             ->join('tstorh as h', 'h.bbmid', '=', 'd.bbmid')
-            ->where('h.warco', $req->warco)
-            ->where('h.priod', $period)
-            ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$req->asof])
+            ->where('h.warco', $warco)
+            ->whereIn('h.priod', $periods)
+            ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
             ->pluck('d.opron');
 
         $opronKeluar = DB::table('toutg as d')
             ->join('tsisnh as h', 'h.bbkid', '=', 'd.bbkid')
-            ->where('h.warco', $req->warco)
-            ->where('h.priod', $period)
-            ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$req->asof])
+            ->where('h.warco', $warco)
+            ->whereIn('h.priod', $periods)
+            ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
             ->pluck('d.opron');
 
-        // merge & unique
         $oprons = $opronMasuk->merge($opronKeluar)->unique()->values();
 
         if ($oprons->isEmpty()) {
-            return collect(); // tidak ada transaksi
+            return collect();
         }
+
+        // Siapkan list periode untuk di-embed di DB::raw
+        $periodList = "'" . implode("','", $periods) . "'";
 
         $data = DB::table('mpromas as p')
             ->whereIn('p.opron', $oprons)
 
-            // stok awal
             ->leftJoin(DB::raw("
                 (
                     SELECT opron, SUM(bbqoh) AS awal
@@ -96,28 +132,26 @@ class SmsController extends Controller
                 ) AS sa
             "), "sa.opron", "=", "p.opron")
 
-            // barang masuk
             ->leftJoin(DB::raw("
                 (
                     SELECT d.opron, SUM(d.trqty) AS masuk
                     FROM tstord d
                     JOIN tstorh h ON h.bbmid = d.bbmid
-                    WHERE h.warco = '{$req->warco}'
-                    AND h.priod = '{$period}'
-                    AND CAST(h.tradt AS DATE) <= '{$req->asof}'
+                    WHERE h.warco = '{$warco}'
+                    AND h.priod IN ({$periodList})
+                    AND CAST(h.tradt AS DATE) <= '{$asof}'
                     GROUP BY d.opron
                 ) AS tm
             "), "tm.opron", "=", "p.opron")
 
-            // barang keluar
             ->leftJoin(DB::raw("
                 (
                     SELECT d.opron, SUM(d.trqty) AS keluar
                     FROM toutg d
                     JOIN tsisnh h ON h.bbkid = d.bbkid
-                    WHERE h.warco = '{$req->warco}'
-                    AND h.priod = '{$period}'
-                    AND CAST(h.tradt AS DATE) <= '{$req->asof}'
+                    WHERE h.warco = '{$warco}'
+                    AND h.priod IN ({$periodList})
+                    AND CAST(h.tradt AS DATE) <= '{$asof}'
                     GROUP BY d.opron
                 ) AS tk
             "), "tk.opron", "=", "p.opron")
