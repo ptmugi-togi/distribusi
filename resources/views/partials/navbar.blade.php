@@ -123,15 +123,15 @@
         </a>
         <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ route('bbm.index') }}">
-            <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
+            <a href="{{ route('bbk.index') }}">
+            <i class="bi bi-circle"></i><span>BBK (Bon Barang Keluar)</span>
             </a>
           </li>
         </ul>
         <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ route('bbk.index') }}">
-            <i class="bi bi-circle"></i><span>BBK (Bon Barang Keluar)</span>
+            <a href="{{ route('bbm.index') }}">
+            <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
             </a>
           </li>
         </ul>
@@ -159,6 +159,19 @@
           <li>
             <a href="{{ route('tpo.index') }}">
             <i class="bi bi-circle"></i><span>PO</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-file-earmark-text"></i></i><span>Reports</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('sms.create') }}">
+            <i class="bi bi-circle"></i><span>Stock Movement Summary</span>
             </a>
           </li>
         </ul>
