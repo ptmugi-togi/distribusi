@@ -56,7 +56,7 @@
           <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color:#e9ecef">
         </div>
 
-        <input type="text" name="priod" id="priod" value="{{ $priod }}" hidden>
+        <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}">
 
         <div class="col-md-6 mt-3">
           <label for="tradt" class="form-label">Stock Receipt Date</label><span class="text-danger"> *</span>
@@ -77,6 +77,21 @@
 </main>
 
     @push('scripts')
+        {{-- ambil priod dari yyyymm tradt --}}
+        <script>
+          document.getElementById('tradt').addEventListener('change', function () {
+              let tanggal = this.value;
+
+              if (tanggal) {
+                  let year = tanggal.substring(0, 4);
+                  let month = tanggal.substring(5, 7);
+
+                  let priod = year + month;
+                  document.getElementById('priod').value = priod;
+              }
+          });
+        </script>
+        
         <script>
           let isNoPoInv = false;
 
