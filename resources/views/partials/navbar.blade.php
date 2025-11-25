@@ -170,6 +170,13 @@
         </a>
         <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="{{ route('bpb.index') }}">
+            <i class="bi bi-circle"></i><span>BPB (Bon Permintaan Barang)</span>
+            </a>
+          </li>
+        </ul>
+        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
             <a href="{{ route('sms.create') }}">
             <i class="bi bi-circle"></i><span>Stock Movement Summary</span>
             </a>

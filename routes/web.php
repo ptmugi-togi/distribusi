@@ -29,6 +29,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BbmController;
 use App\Http\Controllers\BbkController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\BpbController;
 
 /*
 |--------------------------------------------------------------------------
@@ -175,3 +176,13 @@ Route::delete('/bbk/{id}/delete', [BbkController::class,'destroy'])->middleware(
 
 Route::get('/sms/create', [SmsController::class,'create'])->middleware('auth')->name('sms.create');
 Route::get('/stock/preview', [SmsController::class, 'preview'])->name('sms.preview');
+
+Route::get('/bpb', [BpbController::class,'index'])->middleware('auth')->name('bpb.index');
+Route::get('/bpb/create', [BpbController::class,'create'])->middleware('auth')->name('bpb.create');
+Route::get('/generate-reqno-bpb', [BpbController::class,'generateReqno'])->name('generate-reqno-bpb');
+Route::get('/get-warco-detail/{code}', [BpbController::class, 'getWarcoDetail']);
+Route::post('/bpb/store', [BpbController::class,'store'])->middleware('auth')->name('bpb.store');
+Route::get('/bpb/{id}/detail', [BpbController::class,'show'])->middleware('auth')->name('bpb.detail');
+Route::get('/bpb/{id}/edit', [BpbController::class,'edit'])->middleware('auth')->name('bpb.edit');
+Route::put('/bpb/{bpbid}', [BpbController::class,'update'])->middleware('auth')->name('bpb.update');
+Route::delete('/bpb/{id}/delete', [BpbController::class,'destroy'])->middleware('auth')->name('bpb.delete');
