@@ -136,7 +136,7 @@
       
 
       <div id="section-ra">
-        @include('reports.bpb.partial_create.bpb_create_ra')
+        @include('logistic.bpb.partial_create.bpb_create_ra')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">

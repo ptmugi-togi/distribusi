@@ -49,7 +49,7 @@
 
             <div class="col-md-6 mt-3">
             <label for="reqno" class="form-label">Requisition No.</label>
-            <input type="text" class="form-control" id="reqno" value="{{ $bpb->reqno ?? '' }}" readonly style="background-color:#e9ecef">
+            <input type="text" class="form-control" name="reqno" id="reqno" value="{{ $bpb->reqno ?? '' }}" readonly style="background-color:#e9ecef">
             </div>
 
             <div class="col-md-6 mt-3">
@@ -177,7 +177,7 @@
   </section>
 </main>
 
-@include('reports.bpb.partial_edit.bpb_edit_ra')
+@include('logistic.bpb.partial_edit.bpb_edit_ra')
 
     @push('scripts')
         <script>
