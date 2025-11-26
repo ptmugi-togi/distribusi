@@ -20,7 +20,7 @@ class BpbController extends Controller
     {
         $bpbhdr = BpbHdr::all();
 
-        return view('reports.bpb.bpb_index', compact('bpbhdr'));
+        return view('logistic.bpb.bpb_index', compact('bpbhdr'));
     }
     
     public function generateReqno(Request $request)
@@ -85,7 +85,7 @@ class BpbController extends Controller
 
         $defaultDelCo = $mwarco->first()->warco ?? null;
 
-        return view('reports.bpb.bpb_create', compact('periodeAktif', 'minDate', 'mbranch', 'mwarco', 'defaultDelCo'));
+        return view('logistic.bpb.bpb_create', compact('periodeAktif', 'minDate', 'mbranch', 'mwarco', 'defaultDelCo'));
     }
 
     /**
@@ -154,7 +154,7 @@ class BpbController extends Controller
     public function show(string $id)
     {
         $bpb = BpbHdr::with('bpbdtls', 'mwarco', 'mpromas')->findOrFail($id);
-        return view('reports.bpb.bpb_detail', compact('bpb'));
+        return view('logistic.bpb.bpb_detail', compact('bpb'));
     }
 
     /**
@@ -165,7 +165,7 @@ class BpbController extends Controller
         // ambil header
         $bpb = BpbHdr::with('bpbdtls')->findOrFail($id);
 
-        return view('reports.bpb.bpb_edit', compact('bpb'));
+        return view('logistic.bpb.bpb_edit', compact('bpb'));
     }
 
     /**

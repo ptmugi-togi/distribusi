@@ -186,3 +186,5 @@ Route::get('/bpb/{id}/detail', [BpbController::class,'show'])->middleware('auth'
 Route::get('/bpb/{id}/edit', [BpbController::class,'edit'])->middleware('auth')->name('bpb.edit');
 Route::put('/bpb/{bpbid}', [BpbController::class,'update'])->middleware('auth')->name('bpb.update');
 Route::delete('/bpb/{id}/delete', [BpbController::class,'destroy'])->middleware('auth')->name('bpb.delete');
+Route::get('/bpb/previewBpb/{id}', [PdfController::class, 'previewBpb'])->name('bpb.previewBpb');
+Route::get('/bpb/printBpb/{id}', [PdfController::class, 'printBpb'])->name('bpb.printBpb');
