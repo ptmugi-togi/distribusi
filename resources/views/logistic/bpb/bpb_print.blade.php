@@ -109,7 +109,7 @@
             <td style="width:13%; vertical-align:top;">
                 {{ $bpbhdr->braco }}<br>
                 RA{{ $bpbhdr->sorno }}<br>
-                {{ $bpbhdr->reqdt }}<br>
+                {{ \Carbon\Carbon::parse($bpbhdr->reqdt)->format('d-m-Y') }}<br>
             </td>
         </tr>
     </table>
@@ -181,7 +181,7 @@
                         @endif
                     </td>
                     <td class="center">{{ $i->rqqty }} {{ $i->mpromas->stdqu }}</td>
-                    <td class="center">{{ $i->eariv }}</td>
+                    <td class="center">{{ \Carbon\Carbon::parse($i->eariv)->format('d-m-Y') }}</td>
                 </tr>
             @endforeach
         </tbody>

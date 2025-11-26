@@ -48,7 +48,7 @@
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                         </td>
-                        <td class="">{{ $b->rfc01 }} {{ $b->ref01 ?? '-' }}</td>
+                        <td class="">{{ $b->sorfc }} {{ $b->sorno}}</td>
                         <td class="text-center">{{ $b->rqfor ?? '-' }}</td>
                         <td class="text-center">{{ $b->delco ?? '-' }}</td>
                         <td class="text-center">
