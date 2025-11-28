@@ -142,6 +142,13 @@
             </a>
           </li>
         </ul>
+        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('ta.index') }}">
+            <i class="bi bi-circle"></i><span>TA (Transfer Note)</span>
+            </a>
+          </li>
+        </ul>
       </li>
 
       <li class="nav-item">

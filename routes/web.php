@@ -30,6 +30,7 @@ use App\Http\Controllers\BbmController;
 use App\Http\Controllers\BbkController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\BpbController;
+use App\Http\Controllers\TaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -188,3 +189,17 @@ Route::put('/bpb/{bpbid}', [BpbController::class,'update'])->middleware('auth')-
 Route::delete('/bpb/{id}/delete', [BpbController::class,'destroy'])->middleware('auth')->name('bpb.delete');
 Route::get('/bpb/previewBpb/{id}', [PdfController::class, 'previewBpb'])->name('bpb.previewBpb');
 Route::get('/bpb/printBpb/{id}', [PdfController::class, 'printBpb'])->name('bpb.printBpb');
+
+Route::get('/ta', [TaController::class,'index'])->middleware('auth')->name('ta.index');
+Route::get('/ta/create', [TaController::class,'create'])->middleware('auth')->name('ta.create');
+Route::post('/ta/store', [TaController::class,'store'])->middleware('auth')->name('ta.store');
+Route::get('/generate-trano-ta', [TaController::class,'generateTrano'])->name('generate-trano-ta');
+Route::get('/get-sa', [TaController::class,'getSa'])->name('get-sa');
+Route::get('/get-barang-ra/{ra_id}', [TaController::class, 'getBarangByRA']);
+Route::get('/get-lotno/{ra_id}/{opron}', [TaController::class, 'getLotByRA'])->where('opron', '.*');
+Route::get('/ta/{id}/detail', [TaController::class,'show'])->middleware('auth')->name('ta.detail');
+Route::get('/ta/{id}/edit', [TaController::class,'edit'])->middleware('auth')->name('ta.edit');
+Route::put('/ta/{id}', [TaController::class,'update'])->middleware('auth')->name('ta.update');
+Route::delete('/ta/{id}/delete', [TaController::class,'destroy'])->middleware('auth')->name('ta.delete');
+Route::get('/ta/previewTa/{id}', [PdfController::class, 'previewTa'])->name('ta.previewTa');
+Route::get('/ta/printTa/{id}', [PdfController::class, 'printTa'])->name('ta.printTa');
