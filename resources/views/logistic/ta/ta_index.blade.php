@@ -53,7 +53,7 @@
                             {{-- <a href="{{ route('ta.previewTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                             {{-- print --}}
-                            {{-- <a href="{{ route('ta.printTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                            <a href="{{ route('ta.printTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                             
                             <a href="/ta/{{ $t->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                               <a href="/ta/{{ $t->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

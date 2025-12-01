@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\TpoHdr;
 use App\Models\BbmHdr;
 use App\Models\BpbHdr;
+use App\Models\TaHdr;
 use Mpdf\Mpdf;
 
 class PdfController extends Controller
@@ -275,6 +276,75 @@ class PdfController extends Controller
 
         // save PDF jadi string
         $filename = $bpbhdr->braco.'-'.$bpbhdr->formc.$bpbhdr->reqno.'.pdf';
+        $pdfContent = $mpdf->Output($filename, 'S');
+
+        return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+    
+    public function previewTa($id)
+    {
+        $tahdr = TaHdr::with([
+            'mbranch',
+            'mwarco',
+            'mformcode',
+            'tadtls.mpromas',
+        ])->findOrFail($id);
+
+        $tadtls = $tahdr->tadtls;
+
+        $html = view('logistic.ta.ta_print', [
+            'tahdr' => $tahdr,
+            'tadtls' => $tadtls,
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output();
+    }
+
+    public function printTa($id)
+    {
+        $tahdr = TaHdr::with([
+            'mbranch',
+            'mwarco',
+            'mformcode',
+            'tadtls.mpromas',
+        ])->findOrFail($id);
+
+        $tadtls = $tahdr->tadtls;
+
+        $html = view('logistic.ta.ta_print', [
+            'tahdr' => $tahdr,
+            'tadtls' => $tadtls,
+        ])->render();
+
+        // increment counter total print
+        DB::table('tsisnh')
+        ->where('bbkid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        // save PDF jadi string
+        $filename = $tahdr->braco.'-'.$tahdr->formc.$tahdr->trano.'.pdf';
         $pdfContent = $mpdf->Output($filename, 'S');
 
         return response($pdfContent)
