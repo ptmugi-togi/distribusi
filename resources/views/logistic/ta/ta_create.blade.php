@@ -177,9 +177,9 @@
                   });
 
                   // ambil trana dan tradres sesuai rqbrc
-                  if(res.warco){
-                      $('#trana').val(res.warco.warna);
-                      $('#tradres').val(res.warco.address);
+                  if(res.braco){
+                      $('#trana').val(res.braco.brana);
+                      $('#tradres').val(res.braco.address);
                   }
               });
               $('.opron-ta').empty().append('<option value="" disabled selected>Pilih Requisition Terlebih Dahulu</option>');
@@ -211,7 +211,7 @@
                   Swal.fire({
                       icon: 'error',
                       title: 'Qty Melebihi Batas',
-                      text: `Receipt Qty tidak boleh lebih dari ${maxIn}`
+                      text: `Issue Qty tidak boleh lebih dari ${maxIn}`
                   });
                   $(this).val(maxIn);
               }

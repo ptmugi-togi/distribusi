@@ -60,7 +60,7 @@
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Transfer to Name</label>
-                    <input type="text" class="form-control" value="{{ $ta->mbranch->warna }}" disabled>
+                    <input type="text" class="form-control" value="{{ $ta->mbranch->brana }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">

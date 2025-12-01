@@ -199,6 +199,7 @@ Route::get('/get-barang-ra/{ra_id}', [TaController::class, 'getBarangByRA']);
 Route::get('/get-lotno/{ra_id}/{opron}', [TaController::class, 'getLotByRA'])->where('opron', '.*');
 Route::get('/ta/{id}/detail', [TaController::class,'show'])->middleware('auth')->name('ta.detail');
 Route::get('/ta/{id}/edit', [TaController::class,'edit'])->middleware('auth')->name('ta.edit');
+Route::get('/get-rqqty/{sano}/{opron}', [TaController::class, 'getRqqty']);
 Route::put('/ta/{id}', [TaController::class,'update'])->middleware('auth')->name('ta.update');
 Route::delete('/ta/{id}/delete', [TaController::class,'destroy'])->middleware('auth')->name('ta.delete');
 Route::get('/ta/previewTa/{id}', [PdfController::class, 'previewTa'])->name('ta.previewTa');

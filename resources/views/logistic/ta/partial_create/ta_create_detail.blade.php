@@ -145,8 +145,8 @@
         $(`#unit-label-ta-${idx}`).text(unit);
         $(`#qunit-ta-${idx}`).val(unit);
 
-        $(`#rqqty-ta-${idx}`).empty();
-        $(`#locco-ta-${idx}`).empty();
+        $(`#rqqty-ta-${idx}`).val('');
+        $(`#locco-ta-${idx}`).val('');
     });
 
     // Ketika user pilih LOTNO -> update qty & unit

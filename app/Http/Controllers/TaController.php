@@ -54,13 +54,13 @@ class TaController extends Controller
             ->where('braco', $rqbrc)
             ->get();
 
-        $warco = DB::table('mwarco_tbl')
+        $braco = DB::table('mbranches')
             ->where('braco', $rqbrc)
             ->first();
 
         return response()->json([
           'sa' => $sa,
-          'warco' => $warco
+          'braco' => $braco
         ]);
     }
 
@@ -93,6 +93,34 @@ class TaController extends Controller
                 'tsreqd.rqqty'
             )
             ->get();
+    }
+
+    private function generateLotList($lotStart, $trqty)
+    {
+        preg_match_all('/\d+/', $lotStart, $matches, PREG_OFFSET_CAPTURE);
+
+        if (count($matches[0]) === 0) {
+            return [$lotStart];
+        }
+
+        // Pilih angka terakhir yang paling pendek (biasanya serial)
+        $chosen = collect($matches[0])
+            ->sortBy(fn($m) => strlen($m[0]))
+            ->first();
+
+        $number = (int)$chosen[0];
+        $padLength = strlen($chosen[0]);
+        $startPos = $chosen[1];
+        $endPos = $startPos + $padLength;
+
+        $lotList = [];
+        for ($i = 0; $i < $trqty; $i++) {
+            $newNum = str_pad($number + $i, $padLength, '0', STR_PAD_LEFT);
+            $newLot = substr($lotStart, 0, $startPos) . $newNum . substr($lotStart, $endPos);
+            $lotList[] = $newLot;
+        }
+
+        return $lotList;
     }
 
     /**
@@ -233,16 +261,165 @@ class TaController extends Controller
      */
     public function edit(string $id)
     {
-        $ta = TaHdr::with('tadtls', 'mbranch', 'mwarco')->findOrFail($id);
-        return view('logistic.ta.ta_edit', compact('ta'));
+        $ta = TaHdr::with('mbranch', 'mwarco', 'mpromas')->findOrFail($id);
+        $tadtls = Tadtl::with('mpromas')->where('bbkid', $id)->get();
+
+        return view('logistic.ta.ta_edit', compact('ta', 'tadtls'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $bbkid)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $ta = DB::table('tsisnh')->where('bbkid', $bbkid)->first();
+            if (!$ta) {
+                return redirect()->route('bbk.index')->with('error', 'Data TA tidak ditemukan.');
+            }
+
+            // Update header
+            DB::table('tsisnh')->where('bbkid', $bbkid)->update([
+                'noteh'      => $request->noteh,
+                'updated_at' => now(),
+                'updated_by' => Auth::user()->name,
+            ]);
+
+            // Ambil detail lama (untuk rollback stok)
+            $oldDetails = DB::table('toutg')
+                ->select('opron', 'locco', 'lotno', 'trqty', 'qunit')
+                ->where('trano', $ta->trano)
+                ->get();
+
+            // Rollback stok lama
+            foreach ($oldDetails as $old) {
+
+                // Rollback stobw
+                DB::table('stobw_tbl')
+                    ->where('braco', $ta->braco)
+                    ->where('warco', $ta->warco)
+                    ->where('opron', $old->opron)
+                    ->increment('toqoh', $old->trqty);
+
+                // Rollback stobl
+                DB::table('stobl_tbl')
+                    ->where('braco', $ta->braco)
+                    ->where('warco', $ta->warco)
+                    ->where('opron', $old->opron)
+                    ->where('qunit', $old->qunit)
+                    ->where('locco', $old->locco)
+                    ->where('lotno', $old->lotno)
+                    ->increment('toqoh', $old->trqty);
+            }
+
+            // Bersihkan stok nol
+            DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
+            DB::table('stobl_tbl')->where('toqoh', '<=', 0)->delete();
+
+            // Hapus detail lama
+            DB::table('toutg')->where('trano', $ta->trano)->delete();
+
+            // Insert detail baru + kurangi stok baru
+            foreach ($request->opron as $i => $opron) {
+
+                $lotStart = $request->lotno[$i] ?? '-';
+                $trqty    = (int)$request->trqty[$i];
+                $qunit    = $request->qunit[$i];
+                $locco    = $request->locco[$i];
+                $noted    = $request->noted[$i] ?? null;
+
+                // Tentukan LOT LIST hanya sekali
+                if ($lotStart === '-' || $lotStart === '' || $lotStart === null) {
+                    $lotList = ['-'];
+                } else {
+                    $lotList = $this->generateLotList($lotStart, $trqty);
+                }
+
+                // Insert detail baru ke toutg
+                foreach ($lotList as $lotno) {
+                    DB::table('toutg')->insert([
+                        'bbkid' => $bbkid,
+                        'formc' => $ta->formc,
+                        'trano' => $ta->trano,
+                        'opron' => $opron,
+                        'lotno' => $lotno,
+                        'trqty' => ($lotno === '-' ? $trqty : 1),
+                        'qunit' => $qunit,
+                        'locco' => $locco,
+                        'noted' => $noted,
+                    ]);
+                }
+
+                // STOBW (global qty)
+                $stobw = DB::table('stobw_tbl')
+                    ->where('braco', $ta->braco)
+                    ->where('warco', $ta->warco)
+                    ->where('opron', $opron)
+                    ->first();
+
+                if (!$stobw) {
+                    DB::table('stobw_tbl')->insert([
+                        'braco' => $ta->braco,
+                        'warco' => $ta->warco,
+                        'opron' => $opron,
+                        'toqoh' => 0,
+                    ]);
+                }
+
+                DB::table('stobw_tbl')
+                    ->where('braco', $ta->braco)
+                    ->where('warco', $ta->warco)
+                    ->where('opron', $opron)
+                    ->decrement('toqoh', $trqty);
+
+
+                // STOBL (lot qty)
+                foreach ($lotList as $lotno) {
+
+                    $qtyToDecrease = ($lotno === '-' ? $trqty : 1);
+
+                    $stobl = DB::table('stobl_tbl')
+                        ->where('braco', $ta->braco)
+                        ->where('warco', $ta->warco)
+                        ->where('opron', $opron)
+                        ->where('qunit', $qunit)
+                        ->where('locco', $locco)
+                        ->where('lotno', $lotno)
+                        ->first();
+
+                    if (!$stobl) {
+                        DB::table('stobl_tbl')->insert([
+                            'braco' => $ta->braco,
+                            'warco' => $ta->warco,
+                            'opron' => $opron,
+                            'qunit' => $qunit,
+                            'locco' => $locco,
+                            'lotno' => $lotno,
+                            'toqoh' => 0,
+                        ]);
+                    }
+
+                    DB::table('stobl_tbl')
+                        ->where('braco', $ta->braco)
+                        ->where('warco', $ta->warco)
+                        ->where('opron', $opron)
+                        ->where('qunit', $qunit)
+                        ->where('locco', $locco)
+                        ->where('lotno', $lotno)
+                        ->decrement('toqoh', $qtyToDecrease);
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('ta.index')->with('success', "Data TA $bbkid berhasil diperbarui.");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Gagal update TA:', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Terjadi kesalahan saat update: ' . $e->getMessage());
+        }
     }
 
     /**
