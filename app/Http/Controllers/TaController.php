@@ -17,9 +17,20 @@ class TaController extends Controller
      */
     public function index()
     {
-        $tahdr = TaHdr::all();
+        $userBraco = Auth::user()->cabang;
 
-        return view('logistic.ta.ta_index', compact('tahdr'));
+        $tahdr = TaHdr::with('mformcode')
+                        ->where('braco', $userBraco)
+                        ->get();
+
+        $latestPeriod = DB::table('tperiode')
+            ->where('braco', Auth::user()->cabang)
+            ->orderByDesc('periode')
+            ->first();
+
+        $periodClosed = $latestPeriod && $latestPeriod->status === 'C';
+
+        return view('logistic.ta.ta_index', compact('tahdr', 'userBraco', 'periodClosed'));
     }
 
     public function generateTrano(Request $request)

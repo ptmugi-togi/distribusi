@@ -18,9 +18,20 @@ class BpbController extends Controller
      */
     public function index()
     {
-        $bpbhdr = BpbHdr::all();
+        $userBraco = Auth::user()->cabang;
 
-        return view('logistic.bpb.bpb_index', compact('bpbhdr'));
+        $bpbhdr = BpbHdr::with('mformcode')
+                        ->where('braco', $userBraco)
+                        ->get();
+
+        $latestPeriod = DB::table('tperiode')
+            ->where('braco', Auth::user()->cabang)
+            ->orderByDesc('periode')
+            ->first();
+
+        $periodClosed = $latestPeriod && $latestPeriod->status === 'C';
+
+        return view('logistic.bpb.bpb_index', compact('bpbhdr', 'userBraco', 'periodClosed'));
     }
     
     public function generateReqno(Request $request)

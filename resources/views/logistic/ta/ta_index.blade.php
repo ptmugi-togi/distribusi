@@ -41,34 +41,36 @@
                   <tbody>
                     @foreach ($tahdr as $t)
                     @if ($t->formc === 'TA')
-                    <tr>
-                        <td class="text-center">TA {{ $t->trano ?? '-' }}</td>
-                        <td class="text-center" data-order="{{ \Carbon\Carbon::parse($t->tradt)->format('Y-m-d') }}">
-                            {{ \Carbon\Carbon::parse($t->tradt)->format('d/m/Y') }}
-                        </td>
-                        <td class="">{{ $t->rqbrc ?? '-' }}</td>
-                        <td class="text-center">{{ $t->ref01 ?? '-' }}</td>
-                        <td class="text-center">
-                            {{-- preview --}}
-                            {{-- <a href="{{ route('ta.previewTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                      <tr>
+                          <td class="text-center">TA {{ $t->trano ?? '-' }}</td>
+                          <td class="text-center" data-order="{{ \Carbon\Carbon::parse($t->tradt)->format('Y-m-d') }}">
+                              {{ \Carbon\Carbon::parse($t->tradt)->format('d/m/Y') }}
+                          </td>
+                          <td class="">{{ $t->rqbrc ?? '-' }}</td>
+                          <td class="text-center">{{ $t->ref01 ?? '-' }}</td>
+                          <td class="text-center">
+                              {{-- preview --}}
+                              {{-- <a href="{{ route('ta.previewTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
-                            {{-- print --}}
-                            <a href="{{ route('ta.printTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                            
-                            <a href="/ta/{{ $t->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                              <a href="/ta/{{ $t->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                              <form id="delete-ta-{{ $t->bbkid }}" action="{{ url('/ta/'.$t->bbkid.'/delete') }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <a class="badge bg-danger btn-delete-ta" data-bbkid="{{ $t->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
-                                      <i class="bi bi-trash"></i>
-                                </a>
-                              </form>
-                        </td>
-                        <td class="text-center" data-order="{{ \Carbon\Carbon::parse($t->created_at)->format('Y-m-d H:i:s') }}">
-                            {{ \Carbon\Carbon::parse($t->created_at)->format('d/m/Y H:i:s') }}
-                        </td>
-                    </tr>
+                              {{-- print --}}
+                              @if (!$periodClosed && $t->braco == auth()->user()->cabang)
+                                <a href="{{ route('ta.printTa', $t->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                
+                                <a href="/ta/{{ $t->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                                <a href="/ta/{{ $t->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <form id="delete-ta-{{ $t->bbkid }}" action="{{ url('/ta/'.$t->bbkid.'/delete') }}" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <a class="badge bg-danger btn-delete-ta" data-bbkid="{{ $t->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                        <i class="bi bi-trash"></i>
+                                  </a>
+                                </form>
+                              @endif
+                          </td>
+                          <td class="text-center" data-order="{{ \Carbon\Carbon::parse($t->created_at)->format('Y-m-d H:i:s') }}">
+                              {{ \Carbon\Carbon::parse($t->created_at)->format('d/m/Y H:i:s') }}
+                          </td>
+                      </tr>
                     @endif
                     @endforeach
                   </tbody>
