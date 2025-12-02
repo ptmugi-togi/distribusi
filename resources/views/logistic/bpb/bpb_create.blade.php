@@ -77,11 +77,9 @@
                     {{ auth()->user()->cabang }}
                 </option>
                 @foreach ($mbranch as $m)
-                    @if($m->braco != 'PST')
-                        <option value="{{ $m->braco }}" {{ old('reqto') == $m->braco ? 'selected' : '' }}>
-                            {{ $m->braco }}
-                        </option>
-                    @endif
+                    <option value="{{ $m->braco }}" {{ old('reqto') == $m->braco ? 'selected' : '' }}>
+                        {{ $m->braco }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -140,7 +138,7 @@
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
-        <a href="{{ route('bbk.index') }}" class="btn btn-secondary">Kembali</a>
+        <a href="{{ route('bpb.index') }}" class="btn btn-secondary">Kembali</a>
         <button type="submit" class="btn btn-primary">Simpan Data</button>
       </div>
     </form>

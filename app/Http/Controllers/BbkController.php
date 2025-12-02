@@ -107,6 +107,9 @@ class BbkController extends Controller
         $mwarco = DB::table('mwarco_tbl')->get();
         $vendors = DB::table('mvendor_tbl')->get();
 
+        $priod = null;
+        $minDate = null;
+
         $periodeAktif = DB::table('tperiode')
             ->where('braco', auth()->user()->cabang)
             ->where('status', 'O')
