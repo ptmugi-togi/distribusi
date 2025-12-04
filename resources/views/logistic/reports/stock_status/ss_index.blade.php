@@ -76,7 +76,6 @@
                                 </tr>
                             </thead>
                             <tbody id="lotTableBody">
-                                <!-- data akan diappend lewat JS -->
                             </tbody>
                         </table>
 
@@ -111,12 +110,14 @@
                             rows = `<tr><td colspan="2" class="text-center">Tidak ada data lot</td></tr>`;
                         } else {
                             data.forEach(item => {
-                                rows += `
-                                    <tr>
-                                        <td>${item.lotno}</td>
-                                        <td>${item.toqoh}</td>
-                                    </tr>
-                                `;
+                                if (item.toqoh !== 0) {
+                                    rows += `
+                                        <tr>
+                                            <td>${item.lotno}</td>
+                                            <td>${item.toqoh}</td>
+                                        </tr>
+                                    `;
+                                }
                             });
                         }
 
@@ -126,7 +127,6 @@
                         modal.show();
                     }
                 });
-
             });
 
         });
