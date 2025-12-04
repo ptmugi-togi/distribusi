@@ -141,6 +141,10 @@
             $(`#locco-ta-${idx}`).val(locco);
         });
     }
+    
+    window.removetaDetail = function(i){
+        $(`#accordion-item-${i}`).remove();
+    }
 
     window.removeTA = function(i){
         $(`#accordion-ta-item-${i}`).remove();

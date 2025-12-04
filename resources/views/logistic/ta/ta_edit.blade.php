@@ -83,10 +83,13 @@
                     <h3>TA Detail</h3>
                     <div class="accordion" id="accordionTA">
                         @foreach ($tadtls as $i => $detail)
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="heading-{{ $i }}">
+                        <div class="accordion-item" id="accordion-item-{{ $i }}">
+                            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-{{ $i }}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $i }}">
                                     Product: {{ $detail->opron }} - {{ $detail->mpromas->prona }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removetaDetail({{ $i }})">
+                                    <i class="bi bi-trash-fill"></i>
                                 </button>
                             </h2>
                             <div id="collapse-{{ $i }}" class="accordion-collapse collapse">
