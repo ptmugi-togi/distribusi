@@ -31,6 +31,7 @@ use App\Http\Controllers\BbkController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\BpbController;
 use App\Http\Controllers\TaController;
+use App\Http\Controllers\StockStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -204,3 +205,6 @@ Route::put('/ta/{id}', [TaController::class,'update'])->middleware('auth')->name
 Route::delete('/ta/{id}/delete', [TaController::class,'destroy'])->middleware('auth')->name('ta.delete');
 Route::get('/ta/previewTa/{id}', [PdfController::class, 'previewTa'])->name('ta.previewTa');
 Route::get('/ta/printTa/{id}', [PdfController::class, 'printTa'])->name('ta.printTa');
+
+Route::get('/stock-status', [StockStatusController::class,'index'])->middleware('auth')->name('ss.index');
+Route::get('/stock-status/lot/{opron}', [StockStatusController::class, 'getLot'])->where('opron', '.*');

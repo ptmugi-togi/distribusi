@@ -121,35 +121,44 @@
         <a class="nav-link collapsed" data-bs-target="#logistic-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-truck"></i><span>Logistic</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="logistic-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('bbk.index') }}">
-            <i class="bi bi-circle"></i><span>BBK (Bon Barang Keluar)</span>
+              <i class="bi bi-circle"></i><span>BBK (Bon Barang Keluar)</span>
             </a>
           </li>
-        </ul>
-        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('bbm.index') }}">
-            <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
+              <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
             </a>
           </li>
-        </ul>
-        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('bpb.index') }}">
-            <i class="bi bi-circle"></i><span>BPB (Bon Permintaan Barang)</span>
+              <i class="bi bi-circle"></i><span>BPB (Bon Permintaan Barang)</span>
             </a>
           </li>
-        </ul>
-        <ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('ta.index') }}">
-            <i class="bi bi-circle"></i><span>TA (Transfer Note)</span>
+              <i class="bi bi-circle"></i><span>TA (Transfer Note)</span>
             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#subLogistic-nav" data-bs-toggle="collapse" href="#">
+              <i class="bi bi-file-earmark-text"></i><span>Reports</span>
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+
+            <ul id="subLogistic-nav" class="nav-content collapse">
+              <li>
+                <a href="{{ route('ss.index') }}">
+                  <i class="bi bi-circle"></i><span>Stock Status</span>
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </li>
+
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#purchasing-nav" data-bs-toggle="collapse" href="#">
@@ -161,15 +170,11 @@
             <i class="bi bi-circle"></i><span>BL / AWB</span>
             </a>
           </li>
-        </ul>
-        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('invoice.index') }}">
             <i class="bi bi-circle"></i><span>Invoice</span>
             </a>
           </li>
-        </ul>
-        <ul id="purchasing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('tpo.index') }}">
             <i class="bi bi-circle"></i><span>PO</span>
