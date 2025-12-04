@@ -51,7 +51,7 @@
                           <td class="">{{ $s->warco ?? '-' }}</td>
                           <td class="">{{ $s->locco ?? '-' }}</td>
                           <td class="text-center">{{ $s->opron ?? '-' }}</td>
-                          <td class="text-center">{{ $s->prona ?? '-' }}</td>
+                          <td class="">{{ $s->prona ?? '-' }}</td>
                           <td class="text-center">{{ $s->total_stock ?? '-' }}</td>
                       </tr>
                     @endforeach

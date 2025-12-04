@@ -30,6 +30,7 @@ class StockStatusController extends Controller
                 'stobl_tbl.locco',
                 DB::raw('(SELECT SUM(toqoh) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron) AS total_stock')
             )
+            ->havingRaw('total_stock > 0')
             ->where('stobw_tbl.braco', $userBraco)
             ->groupBy('stobw_tbl.opron', 'stobw_tbl.braco', 'stobw_tbl.warco', 'mpromas.prona', 'stobl_tbl.locco')
             ->get();
