@@ -97,6 +97,7 @@ class TaController extends Controller
             ->join('tsreqd', 'tsreqd.opron', '=', 'stobl_tbl.opron')
             ->where('tsreqd.bpbid', $ra_id)
             ->where('stobl_tbl.opron', $opron)
+            ->where('stobl_tbl.toqoh', '>', 0)
             ->select(
                 'stobl_tbl.lotno',
                 'stobl_tbl.toqoh',
