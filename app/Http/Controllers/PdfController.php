@@ -118,6 +118,7 @@ class PdfController extends Controller
             'mformcode',
             'vendor',
             'tbolh',
+            'mbranches',
             'bbmdtls.bbmhdr'
         ])->findOrFail($id);
 
@@ -164,6 +165,7 @@ class PdfController extends Controller
             'mformcode',
             'vendor',
             'tbolh',
+            'mbranches',
             'bbmdtls.bbmhdr'
         ])->findOrFail($id);
 

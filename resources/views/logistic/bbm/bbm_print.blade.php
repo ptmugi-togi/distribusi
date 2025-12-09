@@ -84,11 +84,21 @@
     <table class="no-border" style="margin-top:10px;">
         <tr>
             <td class="left td-top" style="width:33%">
-                @if ($bbmhdr->formc != 'IF')
+                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL')
                     RECEIVED FROM :<br>
                     {{ $bbmhdr->vendor->supna }}<br>
                     {{ $bbmhdr->vendor->address }}<br>
                     {{ $bbmhdr->vendor->city }}
+                @elseif ($bbmhdr->formc == 'IL')
+                    RECEIVED FROM :<br>
+                    <table class="no-border" style="margin-left: 5px; overflow: wrap;">
+                        <tr>
+                            <td>
+                                {{ $bbmhdr->braco }}<br>
+                                {{ $bbmhdr->mbranches->address }}<br>
+                            </td>
+                        </tr>
+                    </table>
                 @endif
             </td>
             <td class="left td-top" style="width:10%">
@@ -116,9 +126,16 @@
             <td class="left td-top" style="width:10%">
                 BRANCH <br>
                 WAREHOUSE <br>
-                SRN NO. <br>
-                SRN DATE <br>
-                PO NO. <br>
+                @if ($bbmhdr->formc != 'IL')
+                    SRN NO. <br>
+                    SRN DATE <br>
+                    PO NO. <br>
+                @elseif ($bbmhdr->formc == 'IL')
+                    NO. <br>
+                    DATE <br>
+                    NO. TA <br>
+                    REFERENCE
+                @endif
                 @if ($bbmhdr->formc == 'IB')
                     REFERENCE <br>
                     CALCULATION 
@@ -133,6 +150,8 @@
                 @if ($bbmhdr->formc == 'IB')
                     : <br>
                     :
+                @elseif($bbmhdr->formc == 'IL')
+                    :
                 @endif
             </td>
             <td class="left td-top" style="width:16%">
@@ -140,8 +159,13 @@
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
-                {{ $bbmhdr->refno }}<br>
-                @if ($bbmhdr->formc == 'IB')
+                @if ($bbmhdr->formc != 'IL')
+                    {{ $bbmhdr->refno }}<br>
+                @endif
+                @if ($bbmhdr->formc == 'IL')
+                    {{ $bbmhdr->tnfcd }} {{ $bbmhdr->tnnum }}<br>
+                    {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}
+                @elseif ($bbmhdr->formc == 'IB')
                     {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
                     {{ $bbmhdr->tbolh->nocal ?? '-' }}
                 @endif
@@ -156,7 +180,11 @@
                 <th style="width: 6%">NO.</th>
                 <th style="width: 15%">PRODUCT NO.</th>
                 <th style="width: 15%">BRAND</th>
-                <th style="width: 42%">PRODUCT NAME</th>
+                @if ($bbmhdr->formc != 'IL')
+                    <th style="width: 42%">PRODUCT NAME</th>
+                @else
+                    <th style="width: 42%">PRODUCT DESCRIPTION</th>
+                @endif
                 <th style="width: 11%">QUANTITY</th>
                 <th style="width: 10%">LOCATION</th>
             </tr>
@@ -164,20 +192,26 @@
         <tbody>
             @foreach($bbmdtls as $i)
                 <tr>
-                    <td class="center">{{ $loop->index + 1 }}</td>
+                    <td class="center">{{ $loop->index + 1 }}.</td>
                     <td class="center">{{ $i->opron ?? '-' }}</td>
                     <td class="left">{{ $i->mpromas->brand_name ?? '-' }}</td>
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
                         <br>
                         <br>
-                        PO# : {{ $i->pono }} , INVOICE# : {{ $i->invno }}
+                        @if ($bbmhdr->formc != 'IL')
+                            PO# : {{ $i->pono }} , INVOICE# : {{ $i->invno }}
+                        @elseif ($bbmhdr->formc == 'IL')
+                            C/W : {{ $i->noted }} <br>
+                        @endif
                         <br>
                         S/N : {{ $i->lotno_merged }}
-                        @if(!empty($i->noted))
-                        <table class="no-border" style="margin-left: 5px; overflow: wrap;">
-                            <tr><td>{{ $i->noted }}</td></tr>
-                        </table>
+                        @if ($bbmhdr->formc != 'IL')
+                            @if(!empty($i->noted))
+                            <table class="no-border" style="margin-left: 5px; overflow: wrap;">
+                                <tr><td>{{ $i->noted }}</td></tr>
+                            </table>
+                            @endif
                         @endif
                     </td>
                     <td class="center">{{ $i->trqty }} {{ $i->qunit }}</td>

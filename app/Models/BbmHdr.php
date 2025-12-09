@@ -59,6 +59,11 @@ class BbmHdr extends Model
         return $this->belongsTo(Mvendor::class, 'supno', 'supno');
     }
 
+    public function mbranches()
+    {
+        return $this->belongsTo(Mbranch::class, 'braco', 'braco');
+    }
+
     public function tsupih()
     {
         return $this->belongsTo(InvoiceHdr::class, 'refno', 'rinum');
