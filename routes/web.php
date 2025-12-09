@@ -208,3 +208,7 @@ Route::get('/ta/printTa/{id}', [PdfController::class, 'printTa'])->name('ta.prin
 
 Route::get('/stock-status', [StockStatusController::class,'index'])->middleware('auth')->name('ss.index');
 Route::get('/stock-status/lot/{opron}', [StockStatusController::class, 'getLot'])->where('opron', '.*');
+
+Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
+Route::get('/get-opron', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
+

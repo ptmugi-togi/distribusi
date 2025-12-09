@@ -37,6 +37,7 @@
             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
+            <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -87,6 +88,10 @@
 
       <div id="section-if" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_if')
+      </div>
+
+      <div id="section-il" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_il')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -261,22 +266,33 @@
               if(formc === 'IA'){
                 $('#section-import').remove();
                 $('#section-if').remove();
+                $('#section-il').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
               }else if(formc === 'IB'){
                 $('#section-local').remove();
                 $('#section-if').remove();
+                $('#section-il').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } else if(formc === 'IF'){
                 $('#section-local').remove();
                 $('#section-import').remove();
+                $('#section-il').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
                 applyNoPoInvMode();
                 loadMasterProductAll();
+              } else if(formc === 'IL'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').fadeIn();
+                $('#section-il').find('[data-req="il"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
               }
               applyNoPoInvMode();
           });

@@ -179,6 +179,45 @@ class BbmController extends Controller
         return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
+    public function getTa(Request $request)
+    {
+        $refno = $request->refno;
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->where('tn.rfc01', 'RA')
+            ->where('tn.ref01', $refno)
+            ->where('tn.rqbrc', $userBranch)
+            ->select(
+                'tn.formc',
+                'tn.trano',
+            )
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByTa(Request $request)
+    {
+        $trano = $request->trano;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('trano', $trano)
+            ->select(
+                't.opron', 
+                't.trqty', 
+                't.qunit', 
+                't.lotno',
+                't.locco',
+                'm.prona'
+                )
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -210,7 +249,10 @@ class BbmController extends Controller
             ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
             ->get();
 
-        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors','priod','minDate','periodeAktif','tsupih'));
+        $tsreqh = DB::table('tsreqh')->get();
+        $tsisnh = DB::table('tsisnh')->where('formc', 'TA')->get();
+
+        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors','priod','minDate','periodeAktif','tsupih', 'tsreqh', 'tsisnh'));
     }
 
     /**
@@ -234,6 +276,8 @@ class BbmController extends Controller
                 'tradt' => $request->tradt,
                 'reffc' => $request->reffc,
                 'refno' => $request->refno,
+                'tnfcd' => $request->tnfcd,
+                'tnnum' => $request->tnnum,
                 'supno' => $request->supno ?? '',
                 'blnum' => $request->blnum,
                 'vesel' => $request->vesel,
@@ -246,7 +290,10 @@ class BbmController extends Controller
             ]);
 
             foreach ($request->invno as $i => $invno) {
-                $isNoLot = isset($request->nolot[$i]) && $request->nolot[$i] == 1;
+                $isNoLot = (
+                    (isset($request->nolot[$i]) && $request->nolot[$i] == 1) ||
+                    ($request->lotno[$i] === '-' || $request->lotno[$i] === null)
+                );
                 $lotStart = $request->lotno[$i] ?: '-';
                 $trqty = (int) $request->trqty[$i];
                 $useOpron = $request->opron[$i];
@@ -273,13 +320,13 @@ class BbmController extends Controller
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
                         'trano' => $request->trano,
-                        'invno' => $useInvno,
+                        'invno' => $useInvno ?? '-',
                         'opron' => $useOpron,
                         'lotno' => $lotno,
                         'trqty' => $isNoLot ? $trqty : 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
-                        'pono'  => $usePono,
+                        'pono'  => $usePono ?? '-',
                         'noted' => $request->noted[$i],
                     ]);
                 }
@@ -311,6 +358,17 @@ class BbmController extends Controller
                             'toqoh' => DB::raw("COALESCE(toqoh, 0) + " . ($isNoLot ? $trqty : 1))
                         ]
                     );
+                }
+                // Update progress Stock Requisition (tsreqd)
+                if ($request->formc === 'IL') {
+                    DB::table('tsreqd')
+                        ->where('braco', $request->braco)
+                        ->where('formc', $request->reffc)
+                        ->where('reqno', $request->refno)
+                        ->where('opron', $useOpron)
+                        ->update([
+                            'rcqty' => DB::raw("rcqty + $trqty")
+                        ]);
                 }
 
                 // Update progress PO kalau ada
