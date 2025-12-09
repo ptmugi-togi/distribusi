@@ -55,7 +55,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'OF' && $bbm->formc != 'IL')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
@@ -71,6 +71,18 @@
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Vessel</label>
                         <input type="text" class="form-control" value="{{ $bbm->vesel }}" disabled>
+                    </div>
+                @endif
+
+                @if ($bbm->formc == 'IL')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Stock Requisition No.</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }}{{ $bbm->refno }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Transfer Note No.</label>
+                        <input type="text" class="form-control" value="{{ $bbm->tnfcd }}{{ $bbm->tnnum }}" disabled>
                     </div>
                 @endif
 
@@ -139,7 +151,7 @@
                                         <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
-                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'OF')
+                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'OF' && $bbm->formc != 'IL')
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO No.</label>
                                             <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>

@@ -56,14 +56,16 @@
                         @endif
                         <td class="text-center">
                             {{-- preview --}}
-                            {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                            <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
 
                             {{-- print --}}
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)
-                            <a href="{{ route('bbm.printBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                            
-                            <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                              <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                              <a href="{{ route('bbm.printBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                              
+                              <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                              @if ($b->formc != 'IL')
+                                <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                              @endif
                               <form id="delete-inv-{{ $b->bbmid }}" action="{{ url('/bbm/'.$b->bbmid.'/delete') }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')

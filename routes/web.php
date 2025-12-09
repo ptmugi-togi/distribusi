@@ -156,6 +156,8 @@ Route::get('/get-supplier-items/{supno}', [BbmController::class, 'getSupplierIte
 Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.getLocco');
 Route::get('/get-po-list', [BbmController::class, 'getPoList'])->name('bbm.getPoList');
 Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->name('bbm.getPoSupplier');
+Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
+Route::get('/get-opron', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
@@ -208,7 +210,4 @@ Route::get('/ta/printTa/{id}', [PdfController::class, 'printTa'])->name('ta.prin
 
 Route::get('/stock-status', [StockStatusController::class,'index'])->middleware('auth')->name('ss.index');
 Route::get('/stock-status/lot/{opron}', [StockStatusController::class, 'getLot'])->where('opron', '.*');
-
-Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
-Route::get('/get-opron', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
 
