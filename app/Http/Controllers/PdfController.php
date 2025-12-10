@@ -120,7 +120,18 @@ class PdfController extends Controller
             'tbolh',
             'mbranches',
             'bbmdtls.bbmhdr'
+
         ])->findOrFail($id);
+
+        $tahdr = \DB::table('tsisnh AS t')
+            ->leftJoin('mbranches AS m', 'm.braco', '=', 't.braco')
+            ->select(
+                't.*',
+                'm.address'
+            )
+            ->where('t.rfc01', $bbmhdr->reffc)
+            ->where('t.ref01', $bbmhdr->refno)
+            ->first();
 
         $bbmdtls = collect($bbmhdr->bbmdtls)->groupBy(function($i){
             return implode('|', [
@@ -141,7 +152,8 @@ class PdfController extends Controller
 
         $html = view('logistic.bbm.bbm_print', [
             'bbmhdr' => $bbmhdr,
-            'bbmdtls' => $bbmdtls
+            'bbmdtls' => $bbmdtls,
+            'tahdr' => $tahdr
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([
@@ -169,6 +181,16 @@ class PdfController extends Controller
             'bbmdtls.bbmhdr'
         ])->findOrFail($id);
 
+        $tahdr = \DB::table('tsisnh AS t')
+            ->leftJoin('mbranches AS m', 'm.braco', '=', 't.braco')
+            ->select(
+                't.*',
+                'm.address'
+            )
+            ->where('t.rfc01', $bbmhdr->reffc)
+            ->where('t.ref01', $bbmhdr->refno)
+            ->first();
+
         // increment counter print
         DB::table('tstorh')
             ->where('bbmid', $id)
@@ -195,7 +217,8 @@ class PdfController extends Controller
 
         $html = view('logistic.bbm.bbm_print', [
             'bbmhdr' => $bbmhdr,
-            'bbmdtls' => $bbmdtls
+            'bbmdtls' => $bbmdtls,
+            'tahdr' => $tahdr
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([

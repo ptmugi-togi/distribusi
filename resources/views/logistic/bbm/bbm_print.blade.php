@@ -94,8 +94,8 @@
                     <table class="no-border" style="margin-left: 5px; overflow: wrap;">
                         <tr>
                             <td>
-                                {{ $bbmhdr->braco }}<br>
-                                {{ $bbmhdr->mbranches->address }}<br>
+                                {{ $tahdr->braco }}<br>
+                                {{ $tahdr->address }}<br>
                             </td>
                         </tr>
                     </table>
