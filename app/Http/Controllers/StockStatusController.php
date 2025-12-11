@@ -43,6 +43,7 @@ class StockStatusController extends Controller
     {
         $lot = Stobl::where('opron', $opron)
                     ->select('lotno', 'toqoh')
+                    ->where('braco', Auth::user()->cabang)
                     ->get();
 
         return response()->json($lot);
