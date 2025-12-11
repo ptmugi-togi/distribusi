@@ -80,6 +80,7 @@ class TaController extends Controller
         $data = DB::table('tsreqd')
             ->join('mpromas', 'mpromas.opron', '=', 'tsreqd.opron')
             ->where('tsreqd.bpbid', $ra_id)
+            ->whereColumn('tsreqd.qtyta', '<', 'tsreqd.rqqty')
             ->select(
                 'tsreqd.opron',
                 'tsreqd.rqqty',
@@ -226,6 +227,14 @@ class TaController extends Controller
                             'qtyit' => DB::raw("qtyit + $trqty"),
                         ]);
                 }
+
+                DB::table('tsreqd')
+                    ->where('opron', $opron)
+                    ->where('formc', $request->rfc01)
+                    ->where('reqno', $request->ref01)
+                    ->update([
+                        'qtyta' => DB::raw("qtyta + $trqty"),
+                    ]);
             }
 
             DB::commit();
