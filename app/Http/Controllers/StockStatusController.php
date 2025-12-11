@@ -28,8 +28,8 @@ class StockStatusController extends Controller
                 'stobw_tbl.warco',
                 'mpromas.prona',
                 'stobl_tbl.locco',
-                DB::raw('(SELECT SUM(qtyit) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco) AS total_transit'),
-                DB::raw('(SELECT SUM(toqoh) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco) AS total_stock')
+                DB::raw('(SELECT SUM(qtyit) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco AND stobl_tbl.warco = stobw_tbl.warco) AS total_transit'),
+                DB::raw('(SELECT SUM(toqoh) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco AND stobl_tbl.warco = stobw_tbl.warco) AS total_stock')
             )
             ->havingRaw('total_stock > 0')
             ->where('stobw_tbl.braco', $userBraco)
@@ -39,11 +39,15 @@ class StockStatusController extends Controller
         return view('logistic.reports.stock_status.ss_index', compact('ss'));
     }
 
-    public function getLot($opron)
+    public function getLot(Request $request, $opron)
     {
+        $userBraco = Auth::user()->cabang;
+        $warco = $request->warco;
+
         $lot = Stobl::where('opron', $opron)
+                    ->where('braco', $userBraco)
+                    ->where('warco', $warco)
                     ->select('lotno', 'toqoh')
-                    ->where('braco', Auth::user()->cabang)
                     ->get();
 
         return response()->json($lot);

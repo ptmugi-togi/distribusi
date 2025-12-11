@@ -47,7 +47,7 @@
                   </thead>
                   <tbody>
                     @foreach ($ss as $s)
-                      <tr class="clickable-row" data-opron="{{ $s->opron }}">
+                      <tr class="clickable-row" data-opron="{{ $s->opron }}" data-warco="{{ $s->warco }}">
                           <td class="text-center">{{ $s->braco ?? '-' }}</td>
                           <td class="">{{ $s->warco ?? '-' }}</td>
                           <td class="">{{ $s->locco ?? '-' }}</td>
@@ -99,12 +99,14 @@
 
             $(document).on('click', '.clickable-row', function() {
                 let opron = $(this).data('opron');
+                let warco = $(this).data('warco');
 
                 $("#lotTableBody").html(`<tr><td colspan="2" class="text-center">Loading...</td></tr>`);
 
                 $.ajax({
                     url: `/stock-status/lot/${opron}`,
                     method: "GET",
+                    data: {warco: warco},
                     success: function(data) {
                         let rows = "";
 
