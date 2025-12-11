@@ -252,7 +252,7 @@
             res.forEach(item => {
                 $itemSelect.append(`
                     <option value="${item.opron}" data-rqqty="${item.rqqty}" data-stdqu="${item.stdqu}">
-                        ${item.opron}
+                        ${item.opron} - ${item.prona}
                     </option>
                 `);
             });
