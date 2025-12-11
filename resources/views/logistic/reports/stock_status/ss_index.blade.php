@@ -41,6 +41,7 @@
                         <th class="text-center">Location</th>
                         <th class="text-center">Kode Stok</th>
                         <th class="text-center">Nama Barang</th>
+                        <th class="text-center">In Transit</th>
                         <th class="text-center">Jumlah Stok</th>
                     </tr>
                   </thead>
@@ -52,6 +53,7 @@
                           <td class="">{{ $s->locco ?? '-' }}</td>
                           <td class="text-center">{{ $s->opron ?? '-' }}</td>
                           <td class="">{{ $s->prona ?? '-' }}</td>
+                          <td class="text-center">{{ $s->total_transit ?? '-' }}</td>
                           <td class="text-center">{{ $s->total_stock ?? '-' }}</td>
                       </tr>
                     @endforeach

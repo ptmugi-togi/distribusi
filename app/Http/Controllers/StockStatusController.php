@@ -28,7 +28,8 @@ class StockStatusController extends Controller
                 'stobw_tbl.warco',
                 'mpromas.prona',
                 'stobl_tbl.locco',
-                DB::raw('(SELECT SUM(toqoh) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron) AS total_stock')
+                DB::raw('(SELECT SUM(qtyit) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco) AS total_transit'),
+                DB::raw('(SELECT SUM(toqoh) FROM stobl_tbl WHERE stobl_tbl.opron = stobw_tbl.opron AND stobl_tbl.braco = stobw_tbl.braco) AS total_stock')
             )
             ->havingRaw('total_stock > 0')
             ->where('stobw_tbl.braco', $userBraco)
