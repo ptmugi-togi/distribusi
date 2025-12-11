@@ -59,10 +59,12 @@ class TaController extends Controller
 
     public function getSa(Request $request)
     {
+/*************  ✨ Windsurf Command 🌟  *************/
         $rqbrc = $request->rqbrc;
 
         $sa = DB::table('tsreqh')
             ->where('braco', $rqbrc)
+            ->orderByDesc('reqno')
             ->get();
 
         $braco = DB::table('mbranches')
@@ -73,6 +75,7 @@ class TaController extends Controller
           'sa' => $sa,
           'braco' => $braco
         ]);
+/*******  ed9a6381-748a-415c-989c-9520607e96f3  *******/
     }
 
     public function getBarangByRA($ra_id)
