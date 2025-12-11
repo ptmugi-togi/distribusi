@@ -188,6 +188,13 @@
                 const $sel = $(this);
                 const oldValue = $sel.val();
 
+                 if (!response || response.length === 0) {
+                    $sel
+                        .append('<option value="" disabled selected>Tidak ada barang tersedia</option>')
+                        .prop('disabled', true);
+                    return;
+                }
+
                 $sel.empty().append('<option value="" disabled selected>Pilih Barang</option>');
 
                 response.forEach(item => {

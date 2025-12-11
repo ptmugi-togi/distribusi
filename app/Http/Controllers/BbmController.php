@@ -184,10 +184,27 @@ class BbmController extends Controller
         $refno = $request->refno;
         $userBranch = auth()->user()->cabang;
 
+        $reffcValue = 'RA'; 
+
+        $availableTranos = DB::table('toutg as t')
+            ->whereNotExists(function ($query) use ($reffcValue, $refno) {
+                $query->select(DB::raw(1))
+                    ->from('tstord as td')
+                    
+                    ->whereRaw('td.opron = t.opron') 
+                    ->whereRaw('td.lotno = t.lotno')
+                    ->where('td.reffc', $reffcValue) 
+                    ->where('td.refno', $refno);
+            })
+            ->pluck('t.trano')
+            ->unique();
+
+        // Filter TSISNH
         $data = DB::table('tsisnh as tn')
-            ->where('tn.rfc01', 'RA')
+            ->where('tn.rfc01', $reffcValue)
             ->where('tn.ref01', $refno)
             ->where('tn.rqbrc', $userBranch)
+            ->whereIn('tn.trano', $availableTranos)
             ->select(
                 'tn.formc',
                 'tn.trano',
@@ -195,7 +212,7 @@ class BbmController extends Controller
             ->distinct()
             ->get();
 
-        return response()->json($data);
+        return count($data) > 0 ? response()->json($data) : response()->json([]);
     }
 
     public function getOpronByTa(Request $request)
@@ -204,7 +221,19 @@ class BbmController extends Controller
 
         $data = DB::table('toutg as t')
             ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
-            ->where('trano', $trano)
+            
+            ->where('t.trano', $trano)
+            
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tstord as td')
+                    
+                    ->whereRaw('td.opron = t.opron') 
+                    ->whereRaw('td.lotno = t.lotno')
+                    ->whereRaw('td.reffc = t.reffc') 
+                    ->whereRaw('td.refno = t.refno');
+            })
+            
             ->select(
                 't.opron', 
                 't.trqty', 
@@ -212,7 +241,7 @@ class BbmController extends Controller
                 't.lotno',
                 't.locco',
                 'm.prona'
-                )
+            )
             ->get();
 
         return response()->json($data);
@@ -226,6 +255,7 @@ class BbmController extends Controller
         $bbmhdr = BbmHdr::all();
         $mwarco = DB::table('mwarco_tbl')->get();
         $vendors = DB::table('mvendor_tbl')->get();
+        $userBraco = auth()->user()->cabang;
 
         $priod = null;
         $minDate = null;
@@ -249,10 +279,14 @@ class BbmController extends Controller
             ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
             ->get();
 
-        $tsreqh = DB::table('tsreqh')->get();
+        $tsreqh = DB::table('tsreqh')
+                ->select('formc', 'reqno')
+                ->where('braco', $userBraco)
+                ->distinct()
+                ->get();
         $tsisnh = DB::table('tsisnh')->where('formc', 'TA')->get();
 
-        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors','priod','minDate','periodeAktif','tsupih', 'tsreqh', 'tsisnh'));
+        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors', 'userBraco', 'priod','minDate','periodeAktif','tsupih', 'tsreqh', 'tsisnh'));
     }
 
     /**
@@ -326,6 +360,8 @@ class BbmController extends Controller
                         'trqty' => $isNoLot ? $trqty : 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
+                        'reffc' => $request->reffc,
+                        'refno' => $request->refno,
                         'pono'  => $usePono ?? '-',
                         'noted' => $request->noted[$i],
                     ]);
@@ -369,6 +405,30 @@ class BbmController extends Controller
                         ->update([
                             'rcqty' => DB::raw("rcqty + $trqty")
                         ]);
+                    
+                    $taCode = DB::table('toutg')
+                        ->where('opron', $useOpron)
+                        ->where('lotno', $request->lotno[$i])
+                        ->value('bbkid');
+
+                    $actualBraco = substr($taCode, 0, 3);
+                    $actualWarco = substr($taCode, 3, 4);
+
+                    DB::table('stobw_tbl')
+                        ->where('braco', $actualBraco)
+                        ->where('warco', $actualWarco)
+                        ->where('opron', $useOpron)
+                        ->decrement('qtyit', $trqty);
+
+                    foreach ($lotList as $lotno) {
+                        DB::table('stobl_tbl')
+                            ->where('braco', $actualBraco)
+                            ->where('warco', $actualWarco)
+                            ->where('opron', $useOpron)
+                            ->where('locco', $request->locco[$i])
+                            ->where('lotno', $lotno)
+                            ->decrement('qtyit', $trqty);
+                    }
                 }
 
                 // Update progress PO kalau ada

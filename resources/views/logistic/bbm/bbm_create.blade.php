@@ -47,6 +47,9 @@
           <select class="form-control select2" name="warco" id="warco" required>
             <option value="" disabled selected>Pilih Warehouse</option>
             @foreach ($mwarco as $m)
+              @if ($m->braco != $userBraco)
+                @continue
+              @endif
               <option value="{{ $m->warco }}" {{ old('warco') == $m->warco ? 'selected' : '' }}>
                 {{ $m->warco }}
               </option>
