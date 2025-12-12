@@ -74,7 +74,7 @@
         <br>
         <tr>
             <td class="center" style="width:30%">
-                <h1>STOCK TANSFER NOTE</h1>
+                <h1>STOCK TRANSFER NOTE</h1>
             </td>
         </tr>
     </table>
@@ -190,20 +190,20 @@
                 </tr>
 
                 <tr>
-                    @if(!empty($tahdr->mformcode?->pos1) || !empty($tahdr->mformcode?->name1))
-                        <td class="center">( {{ $tahdr->mformcode?->name1 ?? '....................' }} )</td>
+                    @if(!empty($tahdr->mformcode?->pos1))
+                        <td class="center">( {{ trim($tahdr->mformcode?->name1 ?? '') !== '' ? $tahdr->mformcode->name1 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($tahdr->mformcode?->pos2) || !empty($tahdr->mformcode?->name2))
-                        <td class="center">( {{ $tahdr->mformcode->name2 }} )</td>
+                    @if(!empty($tahdr->mformcode?->pos2))
+                        <td class="center">( {{ trim($tahdr->mformcode?->name2 ?? '') !== '' ? $tahdr->mformcode->name2 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($tahdr->mformcode?->pos3) || !empty($tahdr->mformcode?->name3))
-                        <td class="center">( {{ $tahdr->mformcode->name3 }} )</td>
+                    @if(!empty($tahdr->mformcode?->pos3))
+                        <td class="center">( {{ trim($tahdr->mformcode?->name3 ?? '') !== '' ? $tahdr->mformcode->name3 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($tahdr->mformcode?->pos4) || !empty($tahdr->mformcode?->name4))
-                        <td class="center">( {{ $tahdr->mformcode->name4 }} )</td>
+                    @if(!empty($tahdr->mformcode?->pos4))
+                        <td class="center">( {{ trim($tahdr->mformcode?->name4 ?? '') !== '' ? $tahdr->mformcode->name4 : '....................' }} )</td>
                     @endif
                 </tr>
             </table>
