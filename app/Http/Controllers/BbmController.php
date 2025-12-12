@@ -183,36 +183,25 @@ class BbmController extends Controller
     {
         $refno = $request->refno;
         $userBranch = auth()->user()->cabang;
+        $reffcValue = 'RA';
 
-        $reffcValue = 'RA'; 
-
-        $availableTranos = DB::table('toutg as t')
-            ->whereNotExists(function ($query) use ($reffcValue, $refno) {
-                $query->select(DB::raw(1))
-                    ->from('tstord as td')
-                    
-                    ->whereRaw('td.opron = t.opron') 
-                    ->whereRaw('td.lotno = t.lotno')
-                    ->where('td.reffc', $reffcValue) 
-                    ->where('td.refno', $refno);
-            })
-            ->pluck('t.trano')
-            ->unique();
-
-        // Filter TSISNH
         $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->leftJoin('tstord as td', function ($join) use ($reffcValue, $refno) {
+                $join->on('td.opron', '=', 't.opron')
+                    ->on('td.lotno', '=', 't.lotno')
+                    ->where('td.reffc', '=', $reffcValue)
+                    ->where('td.refno', '=', $refno);
+            })
             ->where('tn.rfc01', $reffcValue)
             ->where('tn.ref01', $refno)
             ->where('tn.rqbrc', $userBranch)
-            ->whereIn('tn.trano', $availableTranos)
-            ->select(
-                'tn.formc',
-                'tn.trano',
-            )
+            ->whereNull('td.opron')
+            ->select('tn.formc', 'tn.trano')
             ->distinct()
             ->get();
 
-        return count($data) > 0 ? response()->json($data) : response()->json([]);
+        return $data->isNotEmpty() ? response()->json($data) : response()->json([]);
     }
 
     public function getOpronByTa(Request $request)
