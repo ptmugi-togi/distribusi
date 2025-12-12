@@ -206,31 +206,22 @@ class BbmController extends Controller
 
     public function getOpronByTa(Request $request)
     {
-        $trano = $request->trano;
+        $trano   = $request->trano;
+        $raRefno = $request->refno;
+        $raReffc = 'RA';
 
         $data = DB::table('toutg as t')
             ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
-            
-            ->where('t.trano', $trano)
-            
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('tstord as td')
-                    
-                    ->whereRaw('td.opron = t.opron') 
-                    ->whereRaw('td.lotno = t.lotno')
-                    ->whereRaw('td.reffc = t.reffc') 
-                    ->whereRaw('td.refno = t.refno');
+            ->leftJoin('tstord as td', function ($join) use ($raReffc, $raRefno) {
+                $join->on('td.opron', '=', 't.opron')
+                    ->on('td.lotno', '=', 't.lotno')
+                    ->where('td.reffc', '=', $raReffc)
+                    ->where('td.refno', '=', $raRefno);
             })
-            
-            ->select(
-                't.opron', 
-                't.trqty', 
-                't.qunit', 
-                't.lotno',
-                't.locco',
-                'm.prona'
-            )
+            ->where('t.trano', $trano)
+            ->where('t.formc', 'TA')
+            ->whereNull('td.opron')
+            ->select('t.opron', 't.trqty', 't.qunit', 't.lotno', 't.locco', 'm.prona')
             ->get();
 
         return response()->json($data);
