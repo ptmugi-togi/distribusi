@@ -48,6 +48,7 @@ class StockStatusController extends Controller
                     ->where('braco', $userBraco)
                     ->where('warco', $warco)
                     ->select('lotno', 'toqoh')
+                    ->orderBy('lotno', 'ASC')
                     ->get();
 
         return response()->json($lot);

@@ -4,11 +4,11 @@
         <label class="form-label">Stock Requisition No.</label><span class="text-danger"> *</span>
         <select class="form-control select2" name="refcno" id="refcno">
             <option value="" disabled selected>Pilih Stock Requisition No.</option>
-            @foreach ($tsreqh as $treq)
-                <option value="{{ $treq->formc }}" {{ old('formc') == $treq->formc ? 'selected' : '' }}
-                    data-reffc="{{ $treq->formc }}" data-refno="{{ $treq->reqno }}">
-                    {{ $treq->formc }} - {{ $treq->reqno }}
-              </option>
+            @foreach ($tsreqh->sortByDesc('reqno') as $treq)
+                    <option value="{{ $treq->formc }}" {{ old('formc') == $treq->formc ? 'selected' : '' }}
+                        data-reffc="{{ $treq->formc }}" data-refno="{{ $treq->reqno }}">
+                        {{ $treq->formc }} - {{ $treq->reqno }}
+                    </option>
             @endforeach
         </select>
         <input type="text" name="reffc" id="reffc-store" hidden>
