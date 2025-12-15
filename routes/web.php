@@ -32,6 +32,7 @@ use App\Http\Controllers\SmsController;
 use App\Http\Controllers\BpbController;
 use App\Http\Controllers\TaController;
 use App\Http\Controllers\StockStatusController;
+use App\Http\Controllers\OsrController;
 
 /*
 |--------------------------------------------------------------------------
@@ -211,3 +212,5 @@ Route::get('/ta/printTa/{id}', [PdfController::class, 'printTa'])->name('ta.prin
 Route::get('/stock-status', [StockStatusController::class,'index'])->middleware('auth')->name('ss.index');
 Route::get('/stock-status/lot/{opron}', [StockStatusController::class, 'getLot'])->where('opron', '.*');
 
+Route::get('/outstanding-stock-requisition', [OsrController::class,'index'])->middleware('auth')->name('osr.create');
+Route::get('/osr/print', [OsrController::class, 'print'])->name('osr.print');

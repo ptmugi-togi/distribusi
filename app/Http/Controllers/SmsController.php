@@ -44,7 +44,7 @@ class SmsController extends Controller
             $minDate = "$year-$month-01";
         }
 
-        return view('reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
+        return view('logistic.reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
     }
 
     /**
@@ -179,7 +179,7 @@ class SmsController extends Controller
             return "<h3>{$data['error']}</h3>";
         }
 
-        $html = view('reports.sms.sms_preview', [
+        $html = view('logistic.reports.sms.sms_preview', [
             'items' => $data,
             'asof' => $req->asof,
             'warco' => $req->warco,
@@ -195,7 +195,7 @@ class SmsController extends Controller
         ]);
 
         
-        $html = view('reports.sms.sms_preview', [
+        $html = view('logistic.reports.sms.sms_preview', [
             'items' => $data,
             'asof' => $req->asof,
             'warco' => $req->warco
