@@ -104,11 +104,9 @@
                         <td rowspan="{{ $rows->count() }}">
                             {{ \Carbon\Carbon::parse($i->reqdt)->format('d-m-Y') }}
                         </td>
-                        <td rowspan="{{ $rows->count() }}">
-                            {{ $i->aloka ?? '-' }}
-                        </td>
                     @endif
 
+                    <td>{{ $i->aloka }}</td>
                     <td>{{ $i->opron }}</td>
                     <td class="td-top">{{ $i->prona }}</td>
                     <td class="right">{{ number_format($i->outstanding,0) }} {{ $i->stdqu }}</td>

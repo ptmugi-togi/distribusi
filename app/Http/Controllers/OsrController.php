@@ -44,7 +44,9 @@ class OsrController extends Controller
         $data = DB::table('tsreqd as d')
             ->leftJoin('mpromas as m', 'd.opron', '=', 'm.opron')
             ->leftJoin('tsreqh as h', 'd.bpbid', '=', 'h.bpbid')
-            ->where('m.itype_id', $req->invtype)
+            ->when($req->filled('invtype'), function ($q) use ($req) {
+                $q->where('m.itype_id', $req->invtype);
+            })
             ->select(
                 'd.reqno',
                 'd.braco',
