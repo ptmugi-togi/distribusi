@@ -57,6 +57,7 @@ class OsrController extends Controller
                 'd.eariv',
                 'h.reqdt'
             )
+            ->whereRaw('(d.rqqty - d.rcqty) > 0')
             ->orderBy('d.reqno')
             ->get();
 
