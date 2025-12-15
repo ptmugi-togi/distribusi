@@ -73,8 +73,8 @@
         <div class="col-md-6 mt-3">
             <label for="reqto" class="form-label">Request To Branch</label><span class="text-danger"> *</span>
             <select class="form-select select2" name="reqto" id="reqto">
-                <option value="{{ auth()->user()->cabang }}" {{ old('reqto') == auth()->user()->cabang ? 'selected' : '' }}>
-                    {{ auth()->user()->cabang }}
+                <option value="PST" {{ old('reqto') == auth()->user()->cabang ? 'selected' : '' }}>
+                    PST
                 </option>
                 @foreach ($mbranch as $m)
                     <option value="{{ $m->braco }}" {{ old('reqto') == $m->braco ? 'selected' : '' }}>
