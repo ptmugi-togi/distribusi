@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\TpoHdr;
 use App\Models\BbmHdr;
+use App\Models\BbkHdr;
 use App\Models\BpbHdr;
 use App\Models\TaHdr;
 use Mpdf\Mpdf;
@@ -232,6 +233,105 @@ class PdfController extends Controller
 
         // save PDF jadi string
         $filename = $bbmhdr->braco.'-'.$bbmhdr->formc.$bbmhdr->trano.'.pdf';
+        $pdfContent = $mpdf->Output($filename, 'S');
+
+        return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+
+    public function previewBbk($id)
+    {
+        $bbkhdr = BbkHdr::with([
+            'mbranch',
+            'mwarco',
+            'mformcode',
+            'bbkdtls.mpromas',
+        ])->findOrFail($id);
+
+        $bbkdtls = collect($bbkhdr->bbkdtls)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name,
+                $i->mpromas->prona,
+                $i->pono,
+                $i->invno,
+                $i->locco,
+                trim($i->noted)
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+            $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            $first->trqty = $group->sum('trqty'); //sum jika sama hanya beda sn
+            return $first;
+        });
+
+        $html = view('logistic.bbk.bbk_print', [
+            'bbkhdr' => $bbkhdr,
+            'bbkdtls' => $bbkdtls,
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output();
+    }
+
+    public function printBbk($id)
+    {
+        $bbkhdr = BbkHdr::with([
+            'mbranch',
+            'mwarco',
+            'mformcode',
+            'bbkdtls.mpromas',
+        ])->findOrFail($id);
+
+        $bbkdtls = collect($bbkhdr->bbkdtls)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name,
+                $i->mpromas->prona,
+                $i->pono,
+                $i->invno,
+                $i->locco,
+                trim($i->noted)
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+            $first->lotno_merged = implode(', ', $group->pluck('lotno')->toArray());
+            $first->trqty = $group->sum('trqty'); //sum jika sama hanya beda sn
+            return $first;
+        });
+
+        $html = view('logistic.bbk.bbk_print', [
+            'bbkhdr' => $bbkhdr,
+            'bbkdtls' => $bbkdtls,
+        ])->render();
+
+        // increment counter total print
+        DB::table('tsisnh')
+        ->where('bbkid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        // save PDF jadi string
+        $filename = $bbkhdr->braco.'-'.$bbkhdr->formc.$bbkhdr->trano.'.pdf';
         $pdfContent = $mpdf->Output($filename, 'S');
 
         return response($pdfContent)

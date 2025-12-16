@@ -178,6 +178,8 @@ Route::get('/bbk/{id}/detail', [BbkController::class,'show'])->middleware('auth'
 Route::get('/bbk/{id}/edit', [BbkController::class,'edit'])->middleware('auth')->name('bbk.edit');
 Route::put('/bbk/{bbkid}', [BbkController::class,'update'])->middleware('auth')->name('bbk.update');
 Route::delete('/bbk/{id}/delete', [BbkController::class,'destroy'])->middleware('auth')->name('bbk.delete');
+Route::get('/bbk/previewBbk/{id}', [PdfController::class, 'previewBbk'])->name('bbk.previewBbk');
+Route::get('/bbk/printBbk/{id}', [PdfController::class, 'printBbk'])->name('bbk.printBbk');
 
 Route::get('/sms/create', [SmsController::class,'create'])->middleware('auth')->name('sms.create');
 Route::get('/stock/preview', [SmsController::class, 'preview'])->name('sms.preview');

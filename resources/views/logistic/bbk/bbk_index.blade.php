@@ -52,11 +52,11 @@
                         <td class="">{{ $b->rfc01 }} {{ $b->ref01 ?? '-' }}</td>
                         <td class="text-center">
                             {{-- preview --}}
-                            {{-- <a href="{{ route('bbk.previewbbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                            <a href="{{ route('bbk.previewBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
 
                             {{-- print --}}
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)
-                            {{-- <a href="{{ route('bbk.printbbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                            <a href="{{ route('bbk.printBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                             
                             <a href="/bbk/{{ $b->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                               <a href="/bbk/{{ $b->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

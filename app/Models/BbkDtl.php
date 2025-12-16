@@ -51,14 +51,8 @@ class BbkDtl extends Model
         return $this->belongsTo(TpoDtl::class, 'pono', 'pono');
     }
 
-    public function getLoccoDescrAttribute()
+    public function mlocco()
     {
-        if (! $this->locco || ! $this->bbmhdr?->warco) {
-            return null;
-        }
-
-        return \App\Models\Mlocco::where('warco', $this->bbmhdr->warco)
-            ->where('locco', $this->locco)
-            ->value('descr');
+        return $this->belongsTo(Mlocco::class, 'locco', 'locco');
     }
 }

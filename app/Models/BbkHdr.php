@@ -53,6 +53,16 @@ class BbkHdr extends Model
         return $this->hasMany(BbkDtl::class, 'bbkid', 'bbkid');
     }
 
+    public function mbranch()
+    {
+        return $this->belongsTo(Mbranch::class, 'braco', 'braco');
+    }
+
+    public function mwarco()
+    {
+        return $this->belongsTo(Mwarco::class, 'warco', 'warco');
+    }
+
     public function mformcode()
     {
         return $this->belongsTo(Mformcode::class, 'formc', 'formc');
