@@ -34,43 +34,32 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Stock Receipt No.</label>
+                    @if ($bbk->formc != 'OC')
+                        <label class="form-label">Stock Receipt No.</label>
+                    @elseif ($bbk->formc == 'OC')
+                        <label class="form-label">Stock Issue Note No.</label>
+                    @endif
                     <input type="text" class="form-control" value="{{ $bbk->trano }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Stock Receipt Date</label>
-                    <input type="date" class="form-control" value="{{ $bbk->tradt }}" disabled>
+                    @if ($bbk->formc != 'OC')
+                        <label class="form-label">Stock Receipt Date</label>
+                    @elseif ($bbk->formc == 'OC')
+                        <label class="form-label">Stock Issue Date</label>
+                    @endif
+                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
-                @if($bbk->formc == 'IB')
+                @if ($bbk->formc == 'OC')
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Receiving Instruction</label>
-                        <input type="text" class="form-control" value="{{ $bbk->reffc }} {{ $bbk->refno }}" disabled>
-                    </div>
-                @elseif ($bbk->formc == 'PO')
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">PO No</label>
-                        <input type="text" class="form-control" value="{{ $bbk->refno }}" disabled>
-                    </div>
-                @endif
-
-                @if ($bbk->formc != 'IF' && $bbk->formc != 'OF')
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Supplier</label>
-                        <input type="text" class="form-control" value="{{ $bbk->supno }} - {{ $bbk->vendor->supna }}" disabled>
-                    </div>
-                @endif
-
-                @if ($bbk->formc == 'IB')
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">BL No.</label>
-                        <input type="text" class="form-control" value="{{ $bbk->blnum }}" disabled>
+                        <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbk->rfc01 }} {{ $bbk->ref01 }}" disabled>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Vessel</label>
-                        <input type="text" class="form-control" value="{{ $bbk->vesel }}" disabled>
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isutn }}" disabled>
                     </div>
                 @endif
 

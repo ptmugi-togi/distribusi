@@ -45,17 +45,34 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Stock Receipt No.</label>
+                    @if ($bbk->formc != 'OC')
+                        <label class="form-label">Stock Receipt No.</label>
+                    @elseif ($bbk->formc == 'OC')
+                        <label class="form-label">Stock Issue Note No.</label>
+                    @endif
                     <input type="text" class="form-control" name="trano" value="{{ $bbk->trano }}" readonly style="background-color:#e9ecef">
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Stock Receipt Date</label>
-                    <input type="date" class="form-control" name="tradt" id="tradt"
-                        value="{{ old('tradt', \Carbon\Carbon::parse($bbk->tradt ?? now())->format('Y-m-d')) }}"
-                        required min="{{ date('Y-m-01') }}" readonly style="background-color:#e9ecef">
+                    @if ($bbk->formc != 'OC')
+                        <label class="form-label">Stock Receipt Date</label>
+                    @elseif ($bbk->formc == 'OC')
+                        <label class="form-label">Stock Issue Date</label>
+                    @endif
+                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
+                @if ($bbk->formc == 'OC')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbk->rfc01 }} {{ $bbk->ref01 }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isutn }}" disabled>
+                    </div>
+                @endif
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
@@ -91,9 +108,8 @@
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="opron" class="form-label">Barang</label><span class="text-danger"> *</span>
-                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" required>
-                                                    <option value="{{ $d->opron }}" selected>{{ $d->opron }} - {{ $d->prona }}</option>
-                                                </select>
+                                                <input type="text" class="form-control" value="{{ $d->opron }} - {{ $d->prona }}" readonly style="background-color:#e9ecef">
+                                                <input type="text" class="form-control" name="opron[]" value="{{ $d->opron }}" hidden>
                                             </div>
                                             
                                             <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->qunit ?? '') }}" hidden>
@@ -152,6 +168,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail BBM</button>
                 </div>
+            @elseif ($bbk->formc == 'OC')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOC()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -165,6 +185,7 @@
     @push('scripts')
 
         @include('logistic.bbk.partial_edit.add_detail_of')
+        @include('logistic.bbk.partial_edit.add_detail_oc')
         
         {{-- simpan warehouse --}}
         <script>
