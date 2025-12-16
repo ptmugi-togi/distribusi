@@ -52,7 +52,7 @@
                         <td class="">{{ $b->rfc01 }} {{ $b->ref01 ?? '-' }}</td>
                         <td class="text-center">
                             {{-- preview --}}
-                            <a href="{{ route('bbk.previewBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
+                            {{-- <a href="{{ route('bbk.previewBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                             {{-- print --}}
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)
