@@ -35,6 +35,7 @@
           <select class="form-control select2" id="formc" name="formc" required>
             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih BBK</option>
             <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ISSUE ADJUSTMENT)</option>
+            <option value="OC" {{ old('formc') == 'OC' ? 'selected' : '' }}>OC (ISSUE TO WORKSHOP)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -51,21 +52,15 @@
           </select>
         </div>
 
-        <div class="col-md-6 mt-3">
-          <label for="trano" class="form-label">Stock Receipt No.</label><span class="text-danger"> *</span>
-          <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color:#e9ecef">
-        </div>
-
         <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
-
-        <div class="col-md-6 mt-3">
-          <label for="tradt" class="form-label">Stock Receipt Date</label><span class="text-danger"> *</span>
-          <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ $minDate }}">
-        </div>
       </div>
 
       <div id="section-of" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_of')
+      </div>
+
+      <div id="section-oc" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_oc')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -79,39 +74,18 @@
     @push('scripts')
         {{-- ambil priod dari yyyymm tradt --}}
         <script>
-          document.getElementById('tradt').addEventListener('change', function () {
-              let tanggal = this.value;
+          $(document).on('change', '#tradt', function () {
+              const tanggal = this.value;
+              if (!tanggal) return;
 
-              if (tanggal) {
-                  let year = tanggal.substring(0, 4);
-                  let month = tanggal.substring(5, 7);
+              const year  = tanggal.substring(0, 4);
+              const month = tanggal.substring(5, 7);
 
-                  let priod = year + month;
-                  document.getElementById('priod').value = priod;
-              }
+              $('#priod').val(year + month);
           });
         </script>
         
         <script>
-          let isNoPoInv = false;
-
-          function applyNoPoInvMode() {
-            if(isNoPoInv) {
-
-                  $('input[name="refcno"]').val('-');
-                  $('input[name="refno"]').val('-');
-
-                  $('#supplier_ia').prop('disabled', false);
-              } else {
-
-                  $('input[name="refcno"]').val('');
-                  $('input[name="refno"]').val('');
-
-                  // supplier disabled lagi
-                  $('#supplier_ia').prop('disabled', true).val('');
-              }
-          }
-
           $(document).ready(function(){
               $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
 
@@ -120,61 +94,18 @@
               if(oldFormc){ $('#formc').val(oldFormc).trigger('change'); }
           });
 
-            // generate trano
-            $('#formc, #warco').on('change', function(){
-                let braco = $('#braco').val();
-                let warco = $('#warco').val();
-                let formc = $('#formc').val();
+          // generate trano
+          $('#formc, #warco').on('change', function(){
+              let braco = $('#braco').val();
+              let warco = $('#warco').val();
+              let formc = $('#formc').val();
 
-                if(warco && formc){
-                    $.get("{{ route('generate-trano-bbk') }}", {formc, warco}, function(res){
-                        $('#trano').val(res);
-                    });
-                }
-            });
-
-          // ambil master product
-          function loadMasterProductAll(){
-            $('select.opron-ia, select.opron-ib, select.opron-if').each(function(){
-                $(this).select2({
-                    placeholder: 'Pilih Barang',
-                    theme: 'bootstrap-5',
-                    width: '100%',
-                    allowClear: true,
-                    ajax: {
-                        url: '{{ route("api.products") }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params){
-                            return { q: params.term || '', page: params.page || 1 };
-                        },
-                        processResults: function(data){
-                            return {
-                                results: (data.results || []).map(item => ({
-                                    id: item.id,
-                                    text: item.text,
-                                    stdqt: item.data_stdqu
-                                })),
-                                pagination: { more: data.pagination.more }
-                            };
-                        }
-                    },
-                    minimumInputLength: 0,
-                    templateResult: function (data) {
-                        if (!data.id) return data.text;
-                        const el = data.element;
-                        if (el) $(el).attr('data-stdqt', data.stdqt || '');
-                        return data.text;
-                    },
-                    templateSelection: function (data) {
-                        if (!data.id) return data.text;
-                        const el = data.element;
-                        if (el) $(el).attr('data-stdqt', data.stdqt || '');
-                        return data.text;
-                    }
-                });
-            });
-          }
+              if(warco && formc){
+                  $.get("{{ route('generate-trano-bbk') }}", {formc, warco}, function(res){
+                      $('#trano').val(res);
+                  });
+              }
+          });
 
           // switch section by FormC
           $('#formc').on('change', function(){
@@ -182,9 +113,19 @@
 
               if(formc === 'OF'){
                 $('#section-of').fadeIn();
+                $('#section-oc').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
-                $('#noPoInv').prop('checked', true).prop('disabled', true);
-                loadMasterProductAll();
+              }
+              else if(formc === 'OC'){
+                $('#section-oc').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').find('[data-req="oc"]').prop('required', true);
+              }
+              else{
+                $('#section-of').fadeOut();
+                $('#section-oc').fadeOut();
+                $('#section-of').find('[data-req="of"]').prop('required', false);
+                $('#section-oc').find('[data-req="oc"]').prop('required', false);
               }
           });
 

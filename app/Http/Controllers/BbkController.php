@@ -218,9 +218,10 @@ class BbkController extends Controller
                 'tradt' => $request->tradt,
                 'reffc' => $request->reffc,
                 'refno' => $request->refno,
+                'rfc01' => $request->rfc01,
+                'ref01' => $request->ref01,
                 'supno' => $request->supno ?? '',
-                'blnum' => $request->blnum,
-                'vesel' => $request->vesel,
+                'isutn' => $request->isutn,
                 'noteh' => $request->noteh,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
@@ -454,7 +455,7 @@ class BbkController extends Controller
                     ]);
                 }
 
-                // --- STOBW (global qty) ---
+                // STOBW (global qty)
                 $stobw = DB::table('stobw_tbl')
                     ->where('braco', $bbk->braco)
                     ->where('warco', $bbk->warco)
@@ -477,7 +478,7 @@ class BbkController extends Controller
                     ->decrement('toqoh', $trqty);
 
 
-                // --- STOBL (lot qty) ---
+                // STOBL (lot qty)
                 foreach ($lotList as $lotno) {
 
                     $qtyToDecrease = ($lotno === '-' ? $trqty : 1);
