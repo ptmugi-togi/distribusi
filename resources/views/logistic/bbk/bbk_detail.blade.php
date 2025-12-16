@@ -91,7 +91,11 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Receipt Quantity</label>
+                                        @if ($bbk->formc != 'OC')
+                                            <label class="form-label">Receipt Quantity</label>
+                                        @elseif ($bbk->formc == 'OC')
+                                            <label class="form-label">Issue Quantity</label>
+                                        @endif
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{ $detail->trqty }}" disabled>
                                             <span class="input-group-text">{{ $detail->qunit }}</span>

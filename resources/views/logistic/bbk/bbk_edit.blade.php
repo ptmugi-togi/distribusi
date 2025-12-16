@@ -115,7 +115,11 @@
                                             <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->qunit ?? '') }}" hidden>
 
                                             <div class="col-md-6 mt-3">
-                                                <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                                                 @if ($bbk->formc != 'OC')
+                                                    <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                                                    @elseif ($bbk->formc == 'OC')
+                                                    <label for="trqty-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
+                                                @endif
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]"
                                                         value="{{ old('trqty.'. $i, $d->trqty ?? '') }}"

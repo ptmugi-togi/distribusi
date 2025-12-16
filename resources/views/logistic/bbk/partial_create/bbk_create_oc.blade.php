@@ -11,10 +11,10 @@
     </div>
 
     <div class="col-md-6 mt-3">
-        <label for="refcno" class="form-label">Reference</label><span class="text-danger"> *</span>
+        <label for="refcno" class="form-label">Reference</label>
         <div class="d-flex">
-            <input type="text" class="form-control" name="rfc01" id="rfc01" placeholder="IL" value="{{ old('rfc01') }}" maxlength="2" required>
-            <input type="text" class="form-control" name="ref01" id="ref01" placeholder="25XXXX" value="{{ old('ref01') }}" maxlength="6" required>
+            <input type="text" class="form-control" name="rfc01" id="rfc01" placeholder="IL" value="{{ old('rfc01') }}" maxlength="2">
+            <input type="text" class="form-control" name="ref01" id="ref01" placeholder="25XXXX" value="{{ old('ref01') }}" maxlength="6">
         </div>
     </div>
 
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="trqty-oc-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                    <label for="trqty-oc-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
                         <input type="number" class="form-control trqty-oc" id="trqty-oc-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
@@ -347,7 +347,7 @@
                 <input type="text" class="stdqt-oc" name="stdqt[]" id="stdqt-oc-${i}" hidden>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                    <label class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
                     <input type="number" class="form-control trqty-oc" id="trqty-oc-${i}" name="trqty[]" value="1" min="1" required
                     oninput="this.value = this.value.replace(/[^0-9]/g, '');">
