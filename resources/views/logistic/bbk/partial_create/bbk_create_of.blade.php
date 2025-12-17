@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="trqty-of-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                    <label for="trqty-of-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
                         <input type="number" class="form-control trqty-of" id="trqty-of-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
@@ -315,7 +315,7 @@
                 <input type="text" class="stdqt-of" name="stdqt[]" id="stdqt-of-${i}" hidden>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                    <label class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
                     <input type="number" class="form-control trqty-of" id="trqty-of-${i}" name="trqty[]" value="1" min="1" required
                     oninput="this.value = this.value.replace(/[^0-9]/g, '');">
