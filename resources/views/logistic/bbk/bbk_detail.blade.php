@@ -34,20 +34,12 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    @if ($bbk->formc != 'OC')
-                        <label class="form-label">Stock Receipt No.</label>
-                    @elseif ($bbk->formc == 'OC')
-                        <label class="form-label">Stock Issue Note No.</label>
-                    @endif
+                    <label class="form-label">Stock Issue Note No.</label>
                     <input type="text" class="form-control" value="{{ $bbk->trano }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    @if ($bbk->formc != 'OC')
-                        <label class="form-label">Stock Receipt Date</label>
-                    @elseif ($bbk->formc == 'OC')
-                        <label class="form-label">Stock Issue Date</label>
-                    @endif
+                    <label class="form-label">Stock Issue Date</label>
                     <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
@@ -91,11 +83,7 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        @if ($bbk->formc != 'OC')
-                                            <label class="form-label">Receipt Quantity</label>
-                                        @elseif ($bbk->formc == 'OC')
-                                            <label class="form-label">Issue Quantity</label>
-                                        @endif
+                                        <label class="form-label">Issue Quantity</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{ $detail->trqty }}" disabled>
                                             <span class="input-group-text">{{ $detail->qunit }}</span>

@@ -50,7 +50,7 @@ window.addOF = function(){
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                        <label class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                         <div class="input-group">
                             <input type="number" class="form-control trqty-editOF" id="trqty-${i}" name="trqty[]" min="1" required
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');">

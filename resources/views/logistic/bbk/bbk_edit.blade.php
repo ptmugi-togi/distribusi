@@ -45,20 +45,12 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    @if ($bbk->formc != 'OC')
-                        <label class="form-label">Stock Receipt No.</label>
-                    @elseif ($bbk->formc == 'OC')
-                        <label class="form-label">Stock Issue Note No.</label>
-                    @endif
+                    <label class="form-label">Stock Issue Note No.</label>
                     <input type="text" class="form-control" name="trano" value="{{ $bbk->trano }}" readonly style="background-color:#e9ecef">
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    @if ($bbk->formc != 'OC')
-                        <label class="form-label">Stock Receipt Date</label>
-                    @elseif ($bbk->formc == 'OC')
-                        <label class="form-label">Stock Issue Date</label>
-                    @endif
+                    <label class="form-label">Stock Issue Date</label>
                     <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
@@ -115,11 +107,7 @@
                                             <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->qunit ?? '') }}" hidden>
 
                                             <div class="col-md-6 mt-3">
-                                                 @if ($bbk->formc != 'OC')
-                                                    <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
-                                                    @elseif ($bbk->formc == 'OC')
-                                                    <label for="trqty-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
-                                                @endif
+                                                <label for="trqty-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]"
                                                         value="{{ old('trqty.'. $i, $d->trqty ?? '') }}"
