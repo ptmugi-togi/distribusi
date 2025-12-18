@@ -84,7 +84,7 @@
     <table class="no-border" style="margin-top:10px;">
         <tr>
             <td class="left td-top" style="width:33%">
-                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL')
+                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
                     RECEIVED FROM :<br>
                     {{ $bbmhdr->vendor->supna }}<br>
                     {{ $bbmhdr->vendor->address }}<br>
@@ -126,7 +126,7 @@
             <td class="left td-top" style="width:10%">
                 BRANCH <br>
                 WAREHOUSE <br>
-                @if ($bbmhdr->formc != 'IL')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
                     SRN NO. <br>
                     SRN DATE <br>
                     PO NO. <br>
@@ -139,6 +139,11 @@
                 @if ($bbmhdr->formc == 'IB')
                     REFERENCE <br>
                     CALCULATION 
+                @endif
+                @if ($bbmhdr->formc == 'IK')
+                    NO. <br>
+                    DATE <br>
+                    Reference <br>
                 @endif
             </td>
             <td class="center td-top" style="width:1%">
@@ -159,7 +164,7 @@
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
-                @if ($bbmhdr->formc != 'IL')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
                     {{ $bbmhdr->refno }}<br>
                 @endif
                 @if ($bbmhdr->formc == 'IL')
@@ -168,6 +173,9 @@
                 @elseif ($bbmhdr->formc == 'IB')
                     {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
                     {{ $bbmhdr->tbolh->nocal ?? '-' }}
+                @endif
+                @if ($bbmhdr->formc == 'IK')
+                    {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}
                 @endif
             </td>
         </tr>
@@ -197,9 +205,9 @@
                     <td class="left">{{ $i->mpromas->brand_name ?? '-' }}</td>
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
-                        <br>
-                        <br>
-                        @if ($bbmhdr->formc != 'IL')
+                        @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
+                            <br>
+                            <br>
                             PO# : {{ $i->pono }} , INVOICE# : {{ $i->invno }}
                         @elseif ($bbmhdr->formc == 'IL')
                             C/W : {{ $i->noted }} <br>

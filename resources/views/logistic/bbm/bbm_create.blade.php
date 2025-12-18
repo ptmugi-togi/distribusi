@@ -38,6 +38,7 @@
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
+            <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -95,6 +96,10 @@
 
       <div id="section-il" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_il')
+      </div>
+
+      <div id="section-ik" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_ik')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -187,7 +192,7 @@
               if(isNoPoInv){
                   loadMasterProductAll();
               }else{
-                $('select.opron-ia, select.opron-ib, select.opron-if').each(function(){
+                $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik').each(function(){
                     $(this).select2('destroy');
                     $(this).select2({ width:'100%', theme:'bootstrap-5' });
                     
@@ -217,7 +222,7 @@
 
           // ambil master product jika nopoinv checked
           function loadMasterProductAll(){
-            $('select.opron-ia, select.opron-ib, select.opron-if').each(function(){
+            $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik').each(function(){
                 $(this).select2({
                     placeholder: 'Pilih Barang',
                     theme: 'bootstrap-5',
@@ -270,18 +275,21 @@
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
+                $('#section-ik').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
               }else if(formc === 'IB'){
                 $('#section-local').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
+                $('#section-ik').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } else if(formc === 'IF'){
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-il').remove();
+                $('#section-ik').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -292,10 +300,22 @@
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-if').remove();
+                $('#section-ik').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
+              } else if(formc === 'IK'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').fadeIn();
+                $('#section-ik').find('[data-req="ik"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+                applyNoPoInvMode();
+                loadMasterProductAll();
               }
               applyNoPoInvMode();
           });

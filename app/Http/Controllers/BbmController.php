@@ -227,6 +227,23 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
+
+    public function getOc(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->where('tn.formc', 'OC')
+            ->where('tn.braco', $userBranch)
+            ->select('tn.formc', 'tn.trano')
+            ->orderBy('tn.trano', 'desc')
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -318,13 +335,7 @@ class BbmController extends Controller
 
                 // Jika tidak ada lot → ambil dari stobl_tbl
                 if ($isNoLot) {
-                    $existingLot = DB::table('stobl_tbl')
-                        ->where('warco', $request->warco)
-                        ->where('braco', $request->braco)
-                        ->where('opron', $useOpron)
-                        ->value('lotno');
-
-                    $lotList = [$existingLot ?: $lotStart];
+                    $lotList = ['-'];
                 } else {
                     $lotList = $this->generateLotList($lotStart, $trqty);
                 }

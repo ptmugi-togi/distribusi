@@ -166,7 +166,7 @@
                 .html('<option value="" disabled selected>Gagal mengambil data</option>')
                 .prop('disabled', false);
         }
-    });
+      });
   });
 
   // fucntion pilih barang (IL)

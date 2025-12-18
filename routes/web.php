@@ -158,7 +158,8 @@ Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.
 Route::get('/get-po-list', [BbmController::class, 'getPoList'])->name('bbm.getPoList');
 Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->name('bbm.getPoSupplier');
 Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
-Route::get('/get-opron', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
+Route::get('/get-opron-ta', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
+Route::get('/get-oc', [BbmController::class, 'getOc'])->name('get.oc');
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
@@ -169,6 +170,7 @@ Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.
 
 Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
+Route::get('/get-warco', [BbkController::class, 'getWarco'])->name('bbk.get-warco');
 Route::get('/generate-trano-bbk', [BbkController::class,'generateTrano'])->name('generate-trano-bbk');
 Route::get('/get-barang/{braco}/{warco}/{locco}', [BbkController::class, 'getBarangOF']); //get barang untuk OF
 Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl'])->where('opron', '.*');

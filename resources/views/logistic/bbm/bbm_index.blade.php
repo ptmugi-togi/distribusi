@@ -49,7 +49,7 @@
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                         </td>
-                        @if ($b->formc == 'IB' || $b->formc == 'IL')
+                        @if ($b->formc == 'IB' || $b->formc == 'IL' || $b->formc == 'IK')
                           <td class="">{{ $b->reffc }} {{ $b->refno }}</td>
                         @else
                           <td class="">{{ $b->refno ?? '-' }}</td>
