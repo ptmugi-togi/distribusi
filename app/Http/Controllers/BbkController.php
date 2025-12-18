@@ -24,7 +24,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB'])
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -102,10 +102,27 @@ class BbkController extends Controller
         return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
+    public function getWarco(Request $request)
+    {
+        $query = DB::table('mwarco_tbl');
+
+        if ($request->formc === 'OB') {
+            $query->where('warco', 'like', 'CKG%');
+        }
+
+        if ($request->formc !== 'OB') {
+            $query->where('braco', auth()->user()->cabang);
+        }
+
+        return response()->json(
+            $query->orderBy('warco')->get()
+        );
+    }
+
     public function create()
     {
         $bbkhdr = BbkHdr::all();
-        $mwarco = DB::table('mwarco_tbl')->get();
+
         $vendors = DB::table('mvendor_tbl')->get();
 
         $priod = null;
@@ -130,7 +147,7 @@ class BbkController extends Controller
             ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
             ->get();
 
-        return view('logistic.bbk.bbk_create', compact('bbkhdr','mwarco','vendors','priod','minDate','periodeAktif','tsupih'));
+        return view('logistic.bbk.bbk_create', compact('bbkhdr','vendors','priod','minDate','periodeAktif','tsupih'));
     }
 
     // get barang untuk OF
@@ -172,6 +189,23 @@ class BbkController extends Controller
             ->get();
         return response()->json($stok);
     }
+
+    public function getStoblOb($braco, $warco, $opron)
+    {
+        $stok = DB::table('stobl_tbl')
+            ->where('braco', $braco)
+            ->where('warco', $warco)
+            ->where('opron', $opron)
+            ->where('toqoh', '>', 0)
+            ->selectRaw('SUM(toqoh) as toqoh, MAX(qunit) as qunit')
+            ->first();
+
+        return response()->json([
+            'toqoh' => $stok->toqoh ?? 0,
+            'qunit' => $stok->qunit ?? '-',
+        ]);
+    }
+
 
     // untuk OF mengurangi barang di stobw dan stobl
     public function reduceStock(Request $request)
@@ -221,6 +255,7 @@ class BbkController extends Controller
                 'refno' => $request->refno,
                 'rfc01' => $request->rfc01,
                 'ref01' => $request->ref01,
+                'kdprod' => $request->kdprod,
                 'supno' => $request->supno ?? '',
                 'isutn' => $request->isutn,
                 'noteh' => $request->noteh,
@@ -257,7 +292,9 @@ class BbkController extends Controller
                         'formc' => $request->formc,
                         'trano' => $request->trano,
                         'opron' => $useOpron,
-                        'lotno' => $lotno,
+                        'lotno' => $lotno ?? '-',
+                        'reffc' => $request->rfc01,
+                        'refno' => $request->ref01,
                         'trqty' => $isNoLot ? $trqty : 1,
                         'qunit' => $request->stdqt[$i],
                         'locco' => $request->locco[$i],
@@ -310,7 +347,7 @@ class BbkController extends Controller
                             'opron' => $useOpron,
                             'qunit' => $request->stdqt[$i],
                             'locco' => $request->locco[$i],
-                            'lotno' => $lotno,
+                            'lotno' => $lotno ?? '-',
                             'toqoh' => 0 - ($isNoLot ? $trqty : 1),
                         ]);
                     }
@@ -431,7 +468,7 @@ class BbkController extends Controller
                 $lotStart = $request->lotno[$i] ?? '-';
                 $trqty    = (int)$request->trqty[$i];
                 $qunit    = $request->stdqt[$i];
-                $locco    = $request->locco[$i];
+                $locco    = $request->locco[$i] ?? '000001';
                 $noted    = $request->noted[$i] ?? null;
 
                 // Tentukan LOT LIST hanya sekali
@@ -448,10 +485,10 @@ class BbkController extends Controller
                         'formc' => $bbk->formc,
                         'trano' => $bbk->trano,
                         'opron' => $opron,
-                        'lotno' => $lotno,
+                        'lotno' => $lotno ?? '-',
                         'trqty' => ($lotno === '-' ? $trqty : 1),
                         'qunit' => $qunit,
-                        'locco' => $locco,
+                        'locco' => $locco ?? '000001',
                         'noted' => $noted,
                     ]);
                 }

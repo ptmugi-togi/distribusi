@@ -54,7 +54,7 @@
                     <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
-                @if ($bbk->formc == 'OC')
+                @if ($bbk->formc == 'OC' || $bbk->formc == 'OB')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
                         <input type="text" class="form-control" value="{{ $bbk->rfc01 }} {{ $bbk->ref01 }}" disabled>
@@ -134,12 +134,14 @@
                                                     value="{{ old('lotno.'. $i, $d->lotno ?? '') }}" required>
                                             </div>
 
-                                            <div class="col-md-6 mt-3">
-                                                <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
-                                                <select class="form-control select2 locco-select" name="locco[]" id="locco-{{ $i }}" data-selected="{{ $d->locco }}" required>
-                                                    <option value="{{ $d->locco }}" selected>{{ $d->locco }}</option>
-                                                </select>
-                                            </div>
+                                            @if ($bbk->formc != 'OB')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
+                                                    <select class="form-control select2 locco-select" name="locco[]" id="locco-{{ $i }}" data-selected="{{ $d->locco }}" required>
+                                                        <option value="{{ $d->locco ?? '000001' }}" selected>{{ $d->locco }}</option>
+                                                    </select>
+                                                </div>
+                                            @endif
 
                                             <div class="col-md-12 mt-3">
                                                 <label for="noted" class="form-label">Notes</label>
@@ -164,6 +166,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOC()">Tambah Detail BBM</button>
                 </div>
+            @elseif ($bbk->formc == 'OB')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOB()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -178,6 +184,7 @@
 
         @include('logistic.bbk.partial_edit.add_detail_of')
         @include('logistic.bbk.partial_edit.add_detail_oc')
+        @include('logistic.bbk.partial_edit.add_detail_ob')
         
         {{-- simpan warehouse --}}
         <script>
@@ -270,7 +277,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editIA, select.opron-editIB, select.opron-editIF').each(function(){
+                $('select.opron-editOB').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',

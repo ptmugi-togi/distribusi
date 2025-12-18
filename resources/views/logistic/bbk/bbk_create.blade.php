@@ -36,6 +36,7 @@
             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih BBK</option>
             <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ISSUE ADJUSTMENT)</option>
             <option value="OC" {{ old('formc') == 'OC' ? 'selected' : '' }}>OC (ISSUE TO WORKSHOP)</option>
+            <option value="OB" {{ old('formc') == 'OB' ? 'selected' : '' }}>OB (ISSUE TO PRODUCTION)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -44,13 +45,6 @@
           <label for="warco" class="form-label">Warehouse</label><span class="text-danger"> *</span>
           <select class="form-control select2" name="warco" id="warco" required>
             <option value="" disabled selected>Pilih Warehouse</option>
-            @foreach ($mwarco as $m)
-              @if ($m->braco == auth()->user()->cabang)
-                <option value="{{ $m->warco }}" {{ old('warco') == $m->warco ? 'selected' : '' }}>
-                    {{ $m->warco }}
-                </option>
-              @endif
-            @endforeach
           </select>
         </div>
 
@@ -63,6 +57,10 @@
 
       <div id="section-oc" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_oc')
+      </div>
+
+      <div id="section-ob" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_ob')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -109,19 +107,71 @@
               }
           });
 
+          function loadMasterProductAll(){
+            $('select.opron-ob').each(function(){
+                $(this).select2({
+                    placeholder: 'Pilih Barang',
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    allowClear: true,
+                    ajax: {
+                        url: '{{ route("api.products") }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params){
+                            return { q: params.term || '', page: params.page || 1 };
+                        },
+                        processResults: function(data){
+                            return {
+                                results: (data.results || []).map(item => ({
+                                    id: item.id,
+                                    text: item.text,
+                                    stdqt: item.data_stdqu
+                                })),
+                                pagination: { more: data.pagination.more }
+                            };
+                        }
+                    },
+                    minimumInputLength: 0,
+                    templateResult: function (data) {
+                        if (!data.id) return data.text;
+                        const el = data.element;
+                        if (el) $(el).attr('data-stdqt', data.stdqt || '');
+                        return data.text;
+                    },
+                    templateSelection: function (data) {
+                        if (!data.id) return data.text;
+                        const el = data.element;
+                        if (el) $(el).attr('data-stdqt', data.stdqt || '');
+                        return data.text;
+                    }
+                });
+            });
+          }
+
           // switch section by FormC
           $('#formc').on('change', function(){
               const formc = $(this).val();
+              const $warco = $('#warco');
 
               if(formc === 'OF'){
                 $('#section-of').fadeIn();
                 $('#section-oc').remove();
+                $('#section-ob').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
               }
               else if(formc === 'OC'){
                 $('#section-oc').fadeIn();
                 $('#section-of').remove();
+                $('#section-ob').remove();
                 $('#section-oc').find('[data-req="oc"]').prop('required', true);
+              }
+              else if(formc === 'OB'){
+                $('#section-ob').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').find('[data-req="ob"]').prop('required', true);
+                loadMasterProductAll();
               }
               else{
                 $('#section-of').fadeOut();
@@ -129,6 +179,20 @@
                 $('#section-of').find('[data-req="of"]').prop('required', false);
                 $('#section-oc').find('[data-req="oc"]').prop('required', false);
               }
+
+              $warco.empty().append('<option disabled selected>Loading...</option>');
+
+              $.get("{{ route('bbk.get-warco') }}", { formc }, function (data) {
+                  $warco.empty().append('<option disabled selected>Pilih Warehouse</option>');
+
+                  data.forEach(w => {
+                      $warco.append(
+                          `<option value="${w.warco}">${w.warco}</option>`
+                      );
+                  });
+
+                  $warco.trigger('change');
+              });
           });
 
           // ubah nama accordion 

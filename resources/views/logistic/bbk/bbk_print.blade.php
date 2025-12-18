@@ -89,10 +89,23 @@
         <tr>
             <td style="width:10%; vertical-align:top;">
                 ISSUE TO  <br>
+                @if ($bbkhdr->formc == 'OB')
+                    REFERENCE <br>
+                    KODE PROD
+                @endif
             </td>
-            <td style="width:1%; vertical-align:top;">:</td>
+            <td style="width:1%; vertical-align:top;">
+                :<br>
+                @if ($bbkhdr->formc == 'OB')
+                    :<br>
+                    :</td>
+                @endif
             <td style="width:23%; vertical-align:top;">
-                {{ $bbkhdr->isutn }}
+                {{ $bbkhdr->isutn }} <br>
+                @if ($bbkhdr->formc == 'OB')
+                    {{ $bbkhdr->rfc01 }} {{ $bbkhdr->ref01 }} <br>
+                    {{ $bbkhdr->kdprod }}
+                @endif
             </td>
             <td style="width:40%; vertical-align:top;">
                 SIN TYPE : {{ $bbkhdr->mformcode->desc_c }}
@@ -101,7 +114,11 @@
                 BRANCH <br>
                 WAREHOUSE <br>
                 No. <br>
-                TN DATE <br>
+                @if ($bbkhdr->formc == 'OB')
+                    DATE
+                @else
+                    TN DATE <br>
+                @endif
             </td>
             <td style="width:1%; vertical-align:top;">
                 :<br>:<br>:<br><br>
@@ -120,9 +137,17 @@
             <tr>
                 <th style="width: 6%">NO.</th>
                 <th style="width: 15%">PRODUCT NO.</th>
-                <th style="width: 47%">PRODUCT DESCRIPTION</th>
+                @if ($bbkhdr->formc == 'OB')
+                    <th style="width: 47%">PRODUCT NAME</th>
+                @else
+                    <th style="width: 47%">PRODUCT DESCRIPTION</th>
+                @endif
                 <th style="width: 14%">QUANTITY</th>
-                <th style="width: 17%">LOCATION</th>
+                @if ($bbkhdr->formc == 'OB')
+                    <th style="width: 17%">NOTES</th>
+                @else
+                    <th style="width: 17%">LOCATION</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -133,18 +158,24 @@
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
                         <br>
-                        @if(!empty($i->lotno))
-                            S/N : {{ $i->lotno_merged }}
-                        @endif
-                        <br>
-                        @if(!empty($i->noted))
-                        <table class="no-border" style="margin-left: 5px; overflow: wrap;">
-                            <tr><td>{{ $i->noted }}</td></tr>
-                        </table>
+                        @if ($bbkhdr->formc != 'OB')
+                            @if(!empty($i->lotno))
+                                S/N : {{ $i->lotno_merged }}
+                            @endif
+                            <br>
+                            @if(!empty($i->noted))
+                            <table class="no-border" style="margin-left: 5px; overflow: wrap;">
+                                <tr><td>{{ $i->noted }}</td></tr>
+                            </table>
+                            @endif
                         @endif
                     </td>
                     <td class="center">{{ $i->trqty }} {{ $i->mpromas->stdqu }}</td>
-                    <td class="center">{{ $i->locco }}/{{ $i->mlocco->descr }}</td>
+                    @if ($bbkhdr->formc == 'OB')
+                        <td class="center">{{ $i->noted }}</td>
+                    @else
+                        <td class="center">{{ $i->locco }}/{{ $i->mlocco->descr }}</td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

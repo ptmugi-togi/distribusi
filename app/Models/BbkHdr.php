@@ -33,6 +33,7 @@ class BbkHdr extends Model
         'rfc04',
         'ref04',
         'isutn',
+        'kdprod',
         'costc',
         'exped',
         'prctr',
