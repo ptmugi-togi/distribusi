@@ -38,6 +38,23 @@ class BbmController extends Controller
         return view('logistic.bbm.bbm_index', compact('bbmhdr', 'userBraco', 'periodClosed'));
     }
 
+    public function getWarco(Request $request)
+    {
+        $query = DB::table('mwarco_tbl');
+
+        if ($request->formc === 'IM') {
+            $query->where('warco', 'like', 'CKG%');
+        }
+
+        if ($request->formc !== 'IM') {
+            $query->where('braco', auth()->user()->cabang);
+        }
+
+        return response()->json(
+            $query->orderBy('warco')->get()
+        );
+    }
+
     public function getInvoice($rinum)
     {
         $invoices = DB::table('tsupih_tbl')
@@ -227,7 +244,6 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
-
     public function getOc(Request $request)
     {
         $userBranch = auth()->user()->cabang;
@@ -239,6 +255,39 @@ class BbmController extends Controller
             ->select('tn.formc', 'tn.trano')
             ->orderBy('tn.trano', 'desc')
             ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOb(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->where('tn.formc', 'OB')
+            ->where('tn.braco', $userBranch)
+            ->where('tn.warco', $request->warco)
+            ->select('tn.formc', 'tn.trano')
+            ->orderBy('tn.trano', 'desc')
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByOb(Request $request)
+    {
+        $trano = $request->trano;
+        $warco = $request->warco;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('t.trano', $trano)
+            ->where('t.bbkid', 'LIKE', '%'.$warco.'%')
+            ->where('t.formc', 'OB')
+            ->select('t.opron', 't.trqty', 't.qunit', 't.lotno', 't.locco', 'm.prona')
             ->get();
 
         return response()->json($data);

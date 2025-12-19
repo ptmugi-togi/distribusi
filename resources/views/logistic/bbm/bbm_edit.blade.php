@@ -68,7 +68,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
@@ -90,7 +90,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc == 'IK')
+                @if ($bbm->formc == 'IK' || $bbm->formc == 'IM')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
                         <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
@@ -158,7 +158,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK')
+                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -194,7 +194,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK')
+                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -203,18 +203,26 @@
                                                 </div>
                                             @endif
 
-                                            <div class="col-md-6 mt-3">
-                                                <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
-                                                <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
-                                                    value="{{ old('lotno.'. $i, $d->lotno ?? '') }}">
-                                            </div>
+                                            @if ($bbm->formc != 'IM')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                                                    <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
+                                                        value="{{ old('lotno.'. $i, $d->lotno ?? '') }}">
+                                                </div>
 
-                                            <div class="col-md-6 mt-3">
-                                                <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label>
-                                                <select class="form-control select2 locco-select" name="locco[]" id="locco-{{ $i }}" data-selected="{{ $d->locco }}" required>
-                                                    <option value="{{ $d->locco }}" selected>{{ $d->locco }}</option>
-                                                </select>
-                                            </div>
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label>
+                                                    <select class="form-control select2 locco-select" name="locco[]" id="locco-{{ $i }}" data-selected="{{ $d->locco }}" required>
+                                                        <option value="{{ $d->locco }}" selected>{{ $d->locco }}</option>
+                                                    </select>
+                                                </div>
+                                            @elseif ($bbm->formc == 'IM')
+                                                <input type="text" class="nolot-im" name="nolot[]" id="nolot-im-{{ $i }}" value="1" hidden>
+
+                                                <input type="text" class="lotno-im" name="lotno[]" id="lotno-im-{{ $i }}" value="-" hidden>
+                                                
+                                                <input type="text" class="locco-im" name="locco[]" id="locco-im-{{ $i }}" value="000001" hidden>
+                                            @endif
 
                                             <div class="col-md-12 mt-3">
                                                 <label for="noted" class="form-label">Notes</label>
@@ -247,6 +255,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIK()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'IM')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIM()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -266,6 +278,8 @@
             @include('logistic.bbm.partial_edit.add_detail_if')
         @elseif($bbm->formc == 'IK')
             @include('logistic.bbm.partial_edit.add_detail_ik')
+        @elseif($bbm->formc == 'IM')
+            @include('logistic.bbm.partial_edit.add_detail_im')
         @endif
         {{-- simpan warehouse & refno --}}
         <script>

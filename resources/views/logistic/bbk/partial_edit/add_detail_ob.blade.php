@@ -42,6 +42,7 @@ window.addOB = function(){
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                             <span class="input-group-text unit-label-ob"></span>
                             <input type="text" class="stdqt-editOB" name="stdqt[]" id="stdqt-${i}" hidden>
+                            <input type="text" class="nolot-editOB" name="nolot[]" id="nolot-${i}" value="1" hidden>
                             <input type="text" class="lotno-editOB" name="lotno[]" id="lotno-${i}" value="-" hidden>
                             <input type="text" class="locco-editOB" name="locco[]" id="locco-${i}" value="000001" hidden>
                         </div>

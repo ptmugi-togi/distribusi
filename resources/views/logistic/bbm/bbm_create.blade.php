@@ -39,6 +39,7 @@
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
+            <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - RETURN)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -47,14 +48,6 @@
           <label for="warco" class="form-label">Warehouse</label><span class="text-danger"> *</span>
           <select class="form-control select2" name="warco" id="warco" required>
             <option value="" disabled selected>Pilih Warehouse</option>
-            @foreach ($mwarco as $m)
-              @if ($m->braco != $userBraco)
-                @continue
-              @endif
-              <option value="{{ $m->warco }}" {{ old('warco') == $m->warco ? 'selected' : '' }}>
-                {{ $m->warco }}
-              </option>
-            @endforeach
           </select>
         </div>
 
@@ -100,6 +93,10 @@
 
       <div id="section-ik" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_ik')
+      </div>
+
+      <div id="section-im" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_im')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -266,6 +263,7 @@
           // switch section by FormC
           $('#formc').on('change', function(){
               const formc = $(this).val();
+              const $warco = $('#warco');
               $('#section-local, #section-import').hide();
 
               $('#section-local').find('[required]').prop('required', false);
@@ -276,6 +274,7 @@
                 $('#section-if').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
+                $('#section-im').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
               }else if(formc === 'IB'){
@@ -283,6 +282,7 @@
                 $('#section-if').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
+                $('#section-im').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } else if(formc === 'IF'){
@@ -290,6 +290,7 @@
                 $('#section-import').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
+                $('#section-im').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -301,6 +302,7 @@
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-ik').remove();
+                $('#section-im').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -310,14 +312,39 @@
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
+                $('#section-im').remove();
                 $('#section-ik').fadeIn();
                 $('#section-ik').find('[data-req="ik"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
                 applyNoPoInvMode();
                 loadMasterProductAll();
+              } else if(formc === 'IM'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').remove();
+                $('#section-im').fadeIn();
+                $('#section-im').find('[data-req="im"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
               }
               applyNoPoInvMode();
+
+              $warco.empty().append('<option disabled selected>Loading...</option>');
+
+              $.get("{{ route('bbm.get-warco') }}", { formc }, function (data) {
+                  $warco.empty().append('<option disabled selected>Pilih Warehouse</option>');
+
+                  data.forEach(w => {
+                      $warco.append(
+                          `<option value="${w.warco}">${w.warco}</option>`
+                      );
+                  });
+
+                  $warco.trigger('change');
+              });
           });
 
           // ubah nama accordion 

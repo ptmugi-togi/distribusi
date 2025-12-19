@@ -150,6 +150,7 @@ Route::delete('/invoice/{id}/delete', [InvoiceController::class,'destroy'])->mid
 
 Route::get('/bbm', [BbmController::class,'index'])->middleware('auth')->name('bbm.index');
 Route::get('/bbm/create', [BbmController::class,'create'])->middleware('auth')->name('bbm.create');
+Route::get('/get-warco-bbm', [BbmController::class, 'getWarco'])->name('bbm.get-warco');
 Route::get('/generate-trano-bbm', [BbmController::class,'generateTrano'])->name('generate-trano-bbm');
 Route::get('/get-invoice/{rinum}', [BbmController::class, 'getInvoice'])->name('bbm.getInvoice');
 Route::get('/get-barang/{invno}', [BbmController::class, 'getBarang'])->name('bbm.getBarang');
@@ -160,6 +161,8 @@ Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->
 Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
 Route::get('/get-opron-ta', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
 Route::get('/get-oc', [BbmController::class, 'getOc'])->name('get.oc');
+Route::get('/get-ob', [BbmController::class, 'getOb'])->name('get.ob');
+Route::get('/get-opron-by-ob', [BbmController::class, 'getOpronByOb'])->name('get.opron.by.ob');
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
@@ -170,7 +173,7 @@ Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.
 
 Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
-Route::get('/get-warco', [BbkController::class, 'getWarco'])->name('bbk.get-warco');
+Route::get('/get-warco-bbk', [BbkController::class, 'getWarco'])->name('bbk.get-warco');
 Route::get('/generate-trano-bbk', [BbkController::class,'generateTrano'])->name('generate-trano-bbk');
 Route::get('/get-barang/{braco}/{warco}/{locco}', [BbkController::class, 'getBarangOF']); //get barang untuk OF
 Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl'])->where('opron', '.*');

@@ -84,7 +84,7 @@
     <table class="no-border" style="margin-top:10px;">
         <tr>
             <td class="left td-top" style="width:33%">
-                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
+                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM')
                     RECEIVED FROM :<br>
                     {{ $bbmhdr->vendor->supna }}<br>
                     {{ $bbmhdr->vendor->address }}<br>
@@ -126,7 +126,7 @@
             <td class="left td-top" style="width:10%">
                 BRANCH <br>
                 WAREHOUSE <br>
-                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM')
                     SRN NO. <br>
                     SRN DATE <br>
                     PO NO. <br>
@@ -143,6 +143,11 @@
                 @if ($bbmhdr->formc == 'IK')
                     NO. <br>
                     DATE <br>
+                    Reference <br>
+                @endif
+                @if ($bbmhdr->formc == 'IM')
+                    BBM NO. <br>
+                    BBM DATE <br>
                     Reference <br>
                 @endif
             </td>
@@ -164,7 +169,7 @@
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
-                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM')
                     {{ $bbmhdr->refno }}<br>
                 @endif
                 @if ($bbmhdr->formc == 'IL')
@@ -174,7 +179,7 @@
                     {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}<br>
                     {{ $bbmhdr->tbolh->nocal ?? '-' }}
                 @endif
-                @if ($bbmhdr->formc == 'IK')
+                @if ($bbmhdr->formc == 'IK' || $bbmhdr->formc == 'IM')
                     {{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}
                 @endif
             </td>
@@ -194,7 +199,11 @@
                     <th style="width: 42%">PRODUCT DESCRIPTION</th>
                 @endif
                 <th style="width: 11%">QUANTITY</th>
-                <th style="width: 10%">LOCATION</th>
+                @if ($bbmhdr->formc != 'IM')
+                    <th style="width: 10%">LOCATION</th>
+                @elseif ($bbmhdr->formc == 'IM')
+                    <th style="width: 10%">Notes</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -205,7 +214,7 @@
                     <td class="left">{{ $i->mpromas->brand_name ?? '-' }}</td>
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
-                        @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK')
+                        @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM')
                             <br>
                             <br>
                             PO# : {{ $i->pono }} , INVOICE# : {{ $i->invno }}
@@ -213,7 +222,9 @@
                             C/W : {{ $i->noted }} <br>
                         @endif
                         <br>
-                        S/N : {{ $i->lotno_merged }}
+                        @if ($bbmhdr->formc != 'IM')
+                            S/N : {{ $i->lotno_merged }}
+                        @endif
                         @if ($bbmhdr->formc != 'IL')
                             @if(!empty($i->noted))
                             <table class="no-border" style="margin-left: 5px; overflow: wrap;">
@@ -223,7 +234,11 @@
                         @endif
                     </td>
                     <td class="center">{{ $i->trqty }} {{ $i->qunit }}</td>
-                    <td class="center">{{ $i->locco_descr }}</td>
+                    @if ($bbmhdr->formc != 'IM')
+                        <td class="center">{{ $i->locco_descr }}</td>
+                    @elseif ($bbmhdr->formc == 'IM')
+                        <td class="center">{{ $i->noted }}</td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>
@@ -267,20 +282,20 @@
                 </tr>
 
                 <tr>
-                    @if(!empty($bbmhdr->mformcode?->pos1) || !empty($bbmhdr->mformcode?->name1))
-                        <td class="center">( {{ $bbmhdr->mformcode?->name1 ?? '....................' }} )</td>
+                    @if(!empty($bbmhdr->mformcode?->pos1))
+                        <td class="center">( {{ trim($bbmhdr->mformcode?->name1 ?? '') !== '' ? $bbmhdr->mformcode->name1 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bbmhdr->mformcode?->pos2) || !empty($bbmhdr->mformcode?->name2))
-                        <td class="center">( {{ $bbmhdr->mformcode->name2 }} )</td>
+                    @if(!empty($bbmhdr->mformcode?->pos2))
+                        <td class="center">( {{ trim($bbmhdr->mformcode?->name2 ?? '') !== '' ? $bbmhdr->mformcode->name2 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bbmhdr->mformcode?->pos3) || !empty($bbmhdr->mformcode?->name3))
-                        <td class="center">( {{ $bbmhdr->mformcode->name3 }} )</td>
+                    @if(!empty($bbmhdr->mformcode?->pos3))
+                        <td class="center">( {{ trim($bbmhdr->mformcode?->name3 ?? '') !== '' ? $bbmhdr->mformcode->name3 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bbmhdr->mformcode?->pos4) || !empty($bbmhdr->mformcode?->name4))
-                        <td class="center">( {{ $bbmhdr->mformcode->name4 }} )</td>
+                    @if(!empty($bbmhdr->mformcode?->pos4))
+                        <td class="center">( {{ trim($bbmhdr->mformcode?->name4 ?? '') !== '' ? $bbmhdr->mformcode->name4 : '....................' }} )</td>
                     @endif
                 </tr>
             </table>
