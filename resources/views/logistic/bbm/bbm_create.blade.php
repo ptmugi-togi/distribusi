@@ -39,7 +39,7 @@
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
-            <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - RETURN)</option>
+            <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
