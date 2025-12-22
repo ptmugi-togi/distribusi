@@ -54,7 +54,7 @@
                     <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
-                @if ($bbk->formc == 'OC' || $bbk->formc == 'OB')
+                @if ($bbk->formc == 'OC' || $bbk->formc == 'OB' || $bbk->formc == 'OD')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
                         <input type="text" class="form-control" value="{{ $bbk->rfc01 }} {{ $bbk->ref01 }}" disabled>
@@ -170,6 +170,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOB()">Tambah Detail BBM</button>
                 </div>
+            @elseif ($bbk->formc == 'OD')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOD()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -185,6 +189,7 @@
         @include('logistic.bbk.partial_edit.add_detail_of')
         @include('logistic.bbk.partial_edit.add_detail_oc')
         @include('logistic.bbk.partial_edit.add_detail_ob')
+        @include('logistic.bbk.partial_edit.add_detail_od')
         
         {{-- simpan warehouse --}}
         <script>

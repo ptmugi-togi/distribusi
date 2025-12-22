@@ -2,11 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-@if ($bbkhdr->formc != 'OC')
-    <title>Stock Issue Adjustment Note {{$bbkhdr->formc}}{{$bbkhdr->trano}}</title>
-@elseif ($bbkhdr->formc == 'OC')
-    <title>Stock Issue Note {{$bbkhdr->formc}}{{$bbkhdr->trano}}</title>
-@endif
+<title>Stock Issue Note {{$bbkhdr->formc}}{{$bbkhdr->trano}}</title>
 <style>
     body {
         font-family: sans-serif; 

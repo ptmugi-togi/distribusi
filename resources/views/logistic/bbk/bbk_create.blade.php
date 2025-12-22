@@ -37,6 +37,7 @@
             <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ISSUE ADJUSTMENT)</option>
             <option value="OC" {{ old('formc') == 'OC' ? 'selected' : '' }}>OC (ISSUE TO WORKSHOP)</option>
             <option value="OB" {{ old('formc') == 'OB' ? 'selected' : '' }}>OB (ISSUE TO PRODUCTION)</option>
+            <option value="OD" {{ old('formc') == 'OD' ? 'selected' : '' }}>OD (ISSUE WRITE OFF)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -61,6 +62,10 @@
 
       <div id="section-ob" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_ob')
+      </div>
+
+      <div id="section-od" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_od')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -158,20 +163,30 @@
                 $('#section-of').fadeIn();
                 $('#section-oc').remove();
                 $('#section-ob').remove();
+                $('#section-od').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
               }
               else if(formc === 'OC'){
                 $('#section-oc').fadeIn();
                 $('#section-of').remove();
                 $('#section-ob').remove();
+                $('#section-od').remove();
                 $('#section-oc').find('[data-req="oc"]').prop('required', true);
               }
               else if(formc === 'OB'){
                 $('#section-ob').fadeIn();
                 $('#section-of').remove();
                 $('#section-oc').remove();
+                $('#section-od').remove();
                 $('#section-ob').find('[data-req="ob"]').prop('required', true);
                 loadMasterProductAll();
+              }
+              else if(formc === 'OD'){
+                $('#section-od').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').remove();
+                $('#section-od').find('[data-req="od"]').prop('required', true);
               }
               else{
                 $('#section-of').fadeOut();
