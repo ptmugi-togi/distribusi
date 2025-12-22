@@ -65,9 +65,8 @@
         <tr>
             <td style="width:70%">
                 <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
-                MUGI GRIYA BUILDING 8th Floor, Jl. MT. Haryono Kav. 10<br>
-                JAKARTA 12810<br>
-                Phone : (62)21-8308415 Hunting Fax. : (62)21-8308422
+                {{ $bbmhdr->mbranches->address }}<br>
+                Phone : {{ $bbmhdr->mbranches->phone }} Hunting Fax. : {{ $bbmhdr->mbranches->faxno }}
             </td>
         </tr>
         <br>

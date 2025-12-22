@@ -38,6 +38,7 @@
             <option value="OC" {{ old('formc') == 'OC' ? 'selected' : '' }}>OC (ISSUE TO WORKSHOP)</option>
             <option value="OB" {{ old('formc') == 'OB' ? 'selected' : '' }}>OB (ISSUE TO PRODUCTION)</option>
             <option value="OD" {{ old('formc') == 'OD' ? 'selected' : '' }}>OD (ISSUE WRITE OFF)</option>
+            <option value="OG" {{ old('formc') == 'OG' ? 'selected' : '' }}>OG (OFFICE USED)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -66,6 +67,10 @@
 
       <div id="section-od" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_od')
+      </div>
+
+      <div id="section-og" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_og')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -164,6 +169,7 @@
                 $('#section-oc').remove();
                 $('#section-ob').remove();
                 $('#section-od').remove();
+                $('#section-og').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
               }
               else if(formc === 'OC'){
@@ -171,6 +177,7 @@
                 $('#section-of').remove();
                 $('#section-ob').remove();
                 $('#section-od').remove();
+                $('#section-og').remove();
                 $('#section-oc').find('[data-req="oc"]').prop('required', true);
               }
               else if(formc === 'OB'){
@@ -178,6 +185,7 @@
                 $('#section-of').remove();
                 $('#section-oc').remove();
                 $('#section-od').remove();
+                $('#section-og').remove();
                 $('#section-ob').find('[data-req="ob"]').prop('required', true);
                 loadMasterProductAll();
               }
@@ -186,7 +194,16 @@
                 $('#section-of').remove();
                 $('#section-oc').remove();
                 $('#section-ob').remove();
+                $('#section-og').remove();
                 $('#section-od').find('[data-req="od"]').prop('required', true);
+              }
+              else if(formc === 'OG'){
+                $('#section-og').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').remove();
+                $('#section-od').remove();
+                $('#section-og').find('[data-req="og"]').prop('required', true);
               }
               else{
                 $('#section-of').fadeOut();

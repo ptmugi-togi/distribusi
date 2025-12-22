@@ -24,7 +24,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG'])
                         ->where('braco', $userBraco)
                         ->get();
 

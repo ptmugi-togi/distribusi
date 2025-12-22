@@ -65,9 +65,8 @@
         <tr>
             <td style="width:70%">
                 <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
-                MUGI GRIYA BUILDING 8th Floor, Jl. MT. Haryono Kav. 10<br>
-                JAKARTA 12810<br>
-                Phone : (62)21-8308415 Hunting Fax. : (62)21-8308422
+                {{ $bbkhdr->mbranch->address }}<br>
+                Phone : {{ $bbkhdr->mbranch->phone }} Hunting Fax. : {{ $bbkhdr->mbranch->faxno }}
             </td>
         </tr>
         <br>
@@ -85,20 +84,20 @@
         <tr>
             <td style="width:10%; vertical-align:top;">
                 ISSUE TO  <br>
-                @if ($bbkhdr->formc == 'OB')
+                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OG')
                     REFERENCE <br>
                     KODE PROD
                 @endif
             </td>
             <td style="width:1%; vertical-align:top;">
                 :<br>
-                @if ($bbkhdr->formc == 'OB')
+                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OG')
                     :<br>
                     :</td>
                 @endif
             <td style="width:23%; vertical-align:top;">
                 {{ $bbkhdr->isutn }} <br>
-                @if ($bbkhdr->formc == 'OB')
+                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OG')
                     {{ $bbkhdr->rfc01 }} {{ $bbkhdr->ref01 }} <br>
                     {{ $bbkhdr->kdprod }}
                 @endif
