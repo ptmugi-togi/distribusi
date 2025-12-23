@@ -40,6 +40,7 @@
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
             <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
+            <option value="IG" {{ old('formc') == 'IG' ? 'selected' : '' }}>IG (BBM - OFFICE USED)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -99,6 +100,10 @@
         @include('logistic.bbm.partial_create.bbm_create_im')
       </div>
 
+      <div id="section-ig" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_ig')
+      </div>
+
       <div class="mt-3 d-flex justify-content-between">
         <a href="{{ route('bbm.index') }}" class="btn btn-secondary">Kembali</a>
         <button type="submit" class="btn btn-primary">Simpan Data</button>
@@ -106,6 +111,18 @@
     </form>
   </section>
 </main>
+
+    <script>
+      window.loadPOList = function(targetSelector){
+        $.get('{{ route('bbm.getPoList') }}', function(data){
+          const $sel = $(targetSelector);
+          $sel.empty().append('<option disabled selected>Pilih PO No</option>');
+          data.forEach(d => {
+            $sel.append(`<option value="${d.pono}">${d.pono}</option>`);
+          });
+        });
+      };
+    </script>
 
     @push('scripts')
         {{-- ambil priod dari yyyymm tradt --}}
@@ -130,6 +147,7 @@
             if(isNoPoInv) {
                   $('#refcno_ia').prop('disabled', true).val('');
                   $('#refcno_ib').prop('disabled', true).val('');
+                  $('#refcno_ig').prop('disabled', true).val('');
                   $('select.invno-ib').each(function(){
                       const idx = this.id.split('-').pop();
                       
@@ -145,10 +163,12 @@
 
                   $('#supplier_ia').prop('disabled', false);
                   $('#supplier_ib').prop('disabled', false);
+                  $('#supplier_ig').prop('disabled', false);
               } else {
                   $('#refcno_ia').prop('disabled', false);
                   $('#refcno_ib').prop('disabled', false);
                   $('.invno-ib').prop('disabled', false);
+                  $('#refcno_ig').prop('disabled', false);
 
                   $('input[name="refcno"]').val('');
                   $('input[name="refno"]').val('');
@@ -157,6 +177,7 @@
                   // supplier disabled lagi
                   $('#supplier_ia').prop('disabled', true).val('');
                   $('#supplier_ib').prop('disabled', true).val('');
+                  $('#supplier_ig').prop('disabled', true).val('');
               }
           }
 
@@ -189,17 +210,28 @@
               if(isNoPoInv){
                   loadMasterProductAll();
               }else{
-                $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik').each(function(){
+                $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik, select.opron-ig').each(function(){
                     $(this).select2('destroy');
                     $(this).select2({ width:'100%', theme:'bootstrap-5' });
                     
                     // ambil sesuai pono atau invno lagi
                     const pono = $('#refcno_ia_submit').val();
+                    const ponoIG = $('#refcno_ig_submit').val();
                     if(pono){
                         $('select.opron-ia').each(function(i){
                             const $sel = $(this);
                             $sel.empty().append('<option value="">Loading...</option>');
                             $.get(`{{ url('/get-barang') }}/${pono}?formc=IA`, function(data){
+                                $sel.empty().append('<option value="" disabled selected>Pilih Barang (PO)</option>');
+                                data.forEach(item=>{
+                                    $sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`);
+                                });
+                            });
+                        });
+                        $('select.opron-ig').each(function(i){
+                            const $sel = $(this);
+                            $sel.empty().append('<option value="">Loading...</option>');
+                            $.get(`{{ url('/get-barang') }}/${ponoIG}?formc=IG`, function(data){
                                 $sel.empty().append('<option value="" disabled selected>Pilih Barang (PO)</option>');
                                 data.forEach(item=>{
                                     $sel.append(`<option value="${item.opron}" data-qty="${item.inqty}" data-stdqt="${item.stdqt}" data-pono="${item.pono}">${item.opron} - ${item.prona}</option>`);
@@ -219,7 +251,7 @@
 
           // ambil master product jika nopoinv checked
           function loadMasterProductAll(){
-            $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik').each(function(){
+            $('select.opron-ia, select.opron-ib, select.opron-if, select.opron-ik, select.opron-ig').each(function(){
                 $(this).select2({
                     placeholder: 'Pilih Barang',
                     theme: 'bootstrap-5',
@@ -275,60 +307,83 @@
                 $('#section-il').remove();
                 $('#section-ik').remove();
                 $('#section-im').remove();
+                $('#section-ig').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
-              }else if(formc === 'IB'){
+                loadPOList('#refcno_ia');
+              }
+              else if(formc === 'IB'){
                 $('#section-local').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
                 $('#section-im').remove();
+                $('#section-ig').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
-              } else if(formc === 'IF'){
+              } 
+              else if(formc === 'IF'){
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
                 $('#section-im').remove();
+                $('#section-ig').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
                 applyNoPoInvMode();
                 loadMasterProductAll();
-              } else if(formc === 'IL'){
+              } 
+              else if(formc === 'IL'){
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-ik').remove();
                 $('#section-im').remove();
+                $('#section-ig').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
-              } else if(formc === 'IK'){
+              } 
+              else if(formc === 'IK'){
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
                 $('#section-im').remove();
+                $('#section-ig').remove();
                 $('#section-ik').fadeIn();
                 $('#section-ik').find('[data-req="ik"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
                 applyNoPoInvMode();
                 loadMasterProductAll();
-              } else if(formc === 'IM'){
+              } 
+              else if(formc === 'IM'){
                 $('#section-local').remove();
                 $('#section-import').remove();
                 $('#section-if').remove();
                 $('#section-il').remove();
                 $('#section-ik').remove();
+                $('#section-ig').remove();
                 $('#section-im').fadeIn();
                 $('#section-im').find('[data-req="im"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
+              }
+              else if(formc === 'IG'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').remove();
+                $('#section-im').remove();
+                $('#section-ig').fadeIn();
+                $('#section-ig').find('[data-req="ig"]').prop('required', true);
+                loadPOList('#refcno_ig');
               }
               applyNoPoInvMode();
 

@@ -109,6 +109,16 @@ class BbmController extends Controller
                 ->get();
         }
 
+        elseif ($formc === 'IG') {
+            // invno di IG = PONO
+            return DB::table('podtl_tbl as p')
+                ->leftJoin('mpromas as m','p.opron','=','m.opron')
+                ->where('p.pono', $invno)
+                ->whereColumn('p.rcqty','<','p.poqty') // hanya yg belum full receive
+                ->select('p.opron','m.prona','p.poqty as inqty','p.stdqu as stdqt','p.pono')
+                ->get();
+        }
+
         // IB (default): t.inqty dari invoice, hide yang sudah full: rcqty >= inqty
         return DB::table('tsupid_tbl as t')
             ->leftJoin('mpromas as m','t.opron','=','m.opron')

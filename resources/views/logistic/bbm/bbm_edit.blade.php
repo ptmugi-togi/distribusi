@@ -128,7 +128,7 @@
                                 <div id="details-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
                                     <div class="accordion-body">
                                         <div class="row">
-                                            @if($bbm->formc == 'IA')
+                                            @if($bbm->formc == 'IA' || $bbm->formc == 'IG')
                                                 <input type="text" name="invno[]" value="{{ $bbm->refno }}" hidden>
                                             @endif
 
@@ -259,6 +259,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIM()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'IG')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIG()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -280,6 +284,8 @@
             @include('logistic.bbm.partial_edit.add_detail_ik')
         @elseif($bbm->formc == 'IM')
             @include('logistic.bbm.partial_edit.add_detail_im')
+        @elseif($bbm->formc == 'IG')
+            @include('logistic.bbm.partial_edit.add_detail_ig')
         @endif
         {{-- simpan warehouse & refno --}}
         <script>
@@ -532,7 +538,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editIA, select.opron-editIB, select.opron-editIF, select.opron-editIK').each(function(){
+                $('select.opron-editIA, select.opron-editIB, select.opron-editIF, select.opron-editIK, select.opron-editIG').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',
@@ -582,7 +588,7 @@
                 const pono = "{{ $bbm->refno }}"; // ini PO atau INVNO tergantung form type
 
                 // reset select dulu
-                $('select.opron-editIA, select.opron-editIB').each(function(){
+                $('select.opron-editIA, select.opron-editIB, select.opron-editIG').each(function(){
                     $(this).select2('destroy');
                     $(this).select2({ width:'100%', theme:'bootstrap-5' });
                 });
