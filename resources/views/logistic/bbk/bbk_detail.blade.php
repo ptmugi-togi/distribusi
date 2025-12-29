@@ -43,6 +43,13 @@
                     <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbk->tradt)->format('d-m-Y') }}" disabled>
                 </div>
 
+                @if ($bbk->formc == 'OA')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Borrowed By</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isutn }}" disabled>
+                    </div>
+                @endif
+
                 @if ($bbk->formc == 'OC' || $bbk->formc == 'OB' || $bbk->formc == 'OD' || $bbk->formc == 'OG')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
@@ -81,18 +88,22 @@
                                         <label class="form-label">Barang</label>
                                         <input type="text" class="form-control" value="{{ $detail->opron }} - {{ $detail->mpromas->prona }}" disabled>
                                     </div>
+                                    
+                                    <div class="col-md-6 mt-3">
+                                        <label class="form-label">Serial / Batch No.</label>
+                                        <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
+                                    </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Issue Quantity</label>
+                                        @if ($bbk->formc == 'OA')
+                                            <label class="form-label">Borrowed Quantity</label>
+                                        @else
+                                            <label class="form-label">Issue Quantity</label>
+                                        @endif
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{ $detail->trqty }}" disabled>
                                             <span class="input-group-text">{{ $detail->qunit }}</span>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-6 mt-3">
-                                        <label class="form-label">Serial / Batch No.</label>
-                                        <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
                                     <div class="col-md-6 mt-3">

@@ -160,23 +160,27 @@
 
             @if ($bbk->formc == 'OF')
                 <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail BBM</button>
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail BBK</button>
                 </div>
             @elseif ($bbk->formc == 'OC')
                 <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOC()">Tambah Detail BBM</button>
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOC()">Tambah Detail BBK</button>
                 </div>
             @elseif ($bbk->formc == 'OB')
                 <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOB()">Tambah Detail BBM</button>
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOB()">Tambah Detail BBK</button>
                 </div>
             @elseif ($bbk->formc == 'OD')
                 <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOD()">Tambah Detail BBM</button>
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOD()">Tambah Detail BBK</button>
                 </div>
             @elseif ($bbk->formc == 'OG')
                 <div class="text-end">
-                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOG()">Tambah Detail BBM</button>
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOG()">Tambah Detail BBK</button>
+                </div>
+            @elseif ($bbk->formc == 'OA')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOA()">Tambah Detail BBK</button>
                 </div>
             @endif
 
@@ -195,6 +199,7 @@
         @include('logistic.bbk.partial_edit.add_detail_ob')
         @include('logistic.bbk.partial_edit.add_detail_od')
         @include('logistic.bbk.partial_edit.add_detail_og')
+        @include('logistic.bbk.partial_edit.add_detail_oa')
         
         {{-- simpan warehouse --}}
         <script>
@@ -287,7 +292,7 @@
         {{-- ambil data barang jika tidak ada pono atau invno --}}
         <script>
             function loadMasterProductAll(){
-                $('select.opron-editOB').each(function(){
+                $('select.opron-editOB, select.opron-editOA').each(function(){
                     $(this).select2({
                         placeholder: 'Pilih Barang',
                         theme: 'bootstrap-5',

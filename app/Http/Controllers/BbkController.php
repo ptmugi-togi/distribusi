@@ -24,7 +24,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA'])
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -185,7 +185,7 @@ class BbkController extends Controller
             ->where('warco', $warco)
             ->where('opron', $opron)
             ->where('toqoh', '>', 0)
-            ->select('lotno', 'qunit', 'toqoh')
+            ->select('lotno', 'qunit', 'toqoh', 'locco')
             ->get();
         return response()->json($stok);
     }
@@ -205,7 +205,6 @@ class BbkController extends Controller
             'qunit' => $stok->qunit ?? '-',
         ]);
     }
-
 
     // untuk OF mengurangi barang di stobw dan stobl
     public function reduceStock(Request $request)
@@ -268,7 +267,7 @@ class BbkController extends Controller
 
             // Loop tiap detail barang
             foreach ($request->opron as $i => $useOpron) {
-                $isNoLot = isset($request->nolot[$i]) && $request->nolot[$i] == 1;
+                $isNoLot = isset($request->nolot[$i]) && $request->nolot[$i] == 1 || $request->lotno[$i] == '-';
                 $lotStart = $request->lotno[$i] ?: '-';
                 $trqty = (int) $request->trqty[$i];
 

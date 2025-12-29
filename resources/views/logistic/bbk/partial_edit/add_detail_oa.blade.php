@@ -1,5 +1,5 @@
 <script>
-window.addOG = function(){
+window.addOA = function(){
 
     const i = $('#accordionBbk .accordion-item').length;
     const warco = "{{ $bbk->warco }}";
@@ -21,41 +21,39 @@ window.addOG = function(){
             <div class="accordion-body">
                 <div class="row">
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Warehouse Location</label><span class="text-danger">*</span>
-                        <select class="form-control select2 locco-editOG" name="locco[]" id="locco-${i}" required>
-                            <option value="" disabled selected>Pilih Lokasi</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6 mt-3">
                         <label class="form-label">Barang</label><span class="text-danger"> *</span>
-                        <select class="select2 form-control opron-editOG" name="opron[]" id="opron-${i}" required>
-                            <option value="" disabled selected>Pilih Warehouse Location Terlebih Dahulu</option>
+                        <select class="select2 form-control opron-editOA" name="opron[]" id="opron-${i}" required>
+                            <option value="" disabled selected>Pilih Barang</option>
                         </select>
                     </div>
 
                     <div class="col-md-6 mt-3 lot-section">
-                        <label for="lotno-og-${i}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                        <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-og-${i}" required>
+                        <label for="lotno-oa-${i}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                        <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-oa-${i}" required>
                             <option value="">Pilih Barang Terlebih Dahulu</option>
                         </select>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="toqoh-og-${i}" class="form-label">Sisa Stok</label>
+                        <label class="form-label">Warehouse Location</label><span class="text-danger">*</span>
+                        <input type="text" class="form-control" name="locco[]" id="locco-${i}" value="" required readonly style="background-color:#e9ecef">
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label for="toqoh-oa-${i}" class="form-label">Stok</label>
                         <div class="input-group">
-                            <input type="text" class="form-control text-end" id="toqoh-og-${i}" placeholder="-" disabled>
-                            <span class="input-group-text unit-label-og" id="toqoh-unit-og-${i}">-</span>
+                            <input type="text" class="form-control text-end" id="toqoh-oa-${i}" placeholder="-" disabled>
+                            <span class="input-group-text unit-label-oa" id="toqoh-unit-oa-${i}">-</span>
                         </div>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                         <div class="input-group">
-                            <input type="number" class="form-control trqty-editOG" id="trqty-${i}" name="trqty[]" min="1" required
+                            <input type="number" class="form-control trqty-editOA" id="trqty-${i}" name="trqty[]" min="1" required
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            <span class="input-group-text unit-label-og"></span>
-                            <input type="text" class="stdqt-editOG" name="stdqt[]" id="stdqt-${i}" hidden>
+                            <span class="input-group-text unit-label-oa"></span>
+                            <input type="text" class="stdqt-editOA" name="stdqt[]" id="stdqt-${i}" hidden>
                         </div>
                     </div>
 
@@ -75,68 +73,27 @@ window.addOG = function(){
     // otomatis buka accordion yang baru dibuat
     const collapse = new bootstrap.Collapse(document.getElementById(`details-${i}`), { show: true });
 
-    // load warehouse
-    $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
-        const sel = $(`#locco-${i}`);
-        data.forEach(item => sel.append(`<option value="${item.locco}">${item.locco}</option>`));
-        if (data.length > 0) {
-            sel.val(data[0].locco);
-            sel.trigger('change');
-        }
-    });
-
     // ambil data barang
-    $(document).on('change', '.locco-editOG', function() {
-        const idx = this.id.split('-').pop();
-        const braco = "{{ $bbk->braco }}";
-        const warco = "{{ $bbk->warco }}";
-        const locco = $(this).val();
-        const $barangSelect = $(`#opron-${idx}`);
-
-        if (!locco) return;
-
-        $barangSelect.html('<option>Memuat Barang...</option>').prop('disabled', true);
-
-        $.get(`/get-barang/${braco}/${warco}/${locco}`, function(data) {
-            $barangSelect.empty();
-            if (data.length > 0) {
-                $barangSelect.append('<option value="" disabled selected>Pilih Barang</option>');
-                data.forEach(item => {
-                    $barangSelect.append(`
-                        <option value="${item.opron}"
-                                data-qty="${item.qty}">
-                            ${item.opron} - ${item.prona}
-                        </option>
-                    `);
-                });
-            } else {
-                $barangSelect.append('<option value="" disabled selected>Tidak ada barang di lokasi ini</option>');
-            }
-        }).fail(() => {
-            Swal.fire({ icon: 'error', title: 'Gagal Ambil Data Barang', text: 'Terjadi kesalahan di server.' });
-        }).always(() => {
-            $barangSelect.prop('disabled', false);
-        });
-    });
+    loadMasterProductAll();
 
     // ambil detail barang
-    $(document).on('change', '.opron-editOG', function() {
+    $(document).on('change', '.opron-editOA', function() {
         const idx = this.id.split('-').pop();
         const $opt = $(this).find(':selected');
         const braco = "{{ $bbk->braco }}";
         const warco = "{{ $bbk->warco }}";
         const opron = $(this).val();
 
-        const $lotSelect = $(`#lotno-og-${idx}`);
+        const $lotSelect = $(`#lotno-oa-${idx}`);
         $lotSelect.prop('disabled', true).html('<option>Memuat Stok Barang...</option>');
 
-        $.get(`/get-stobl/${braco}/${warco}/${encodeURIComponent(opron)}`, function(data) {
+        $.get(`/get-stobl/${braco}/${warco}/${opron}`, function(data) {
             $lotSelect.empty();
             if (data.length > 0) {
                 $lotSelect.append('<option value="" disabled selected>Pilih SN / Batch No</option>');
                 data.forEach(item => {
                     $lotSelect.append(`
-                        <option value="${item.lotno}" data-toqoh="${item.toqoh}" data-stdqt="${item.qunit}">
+                        <option value="${item.lotno}" data-toqoh="${item.toqoh}" data-stdqt="${item.qunit}" data-locco="${item.locco}">
                             ${item.lotno} (Stok: ${item.toqoh})
                         </option>
                     `);
@@ -159,18 +116,20 @@ window.addOG = function(){
         const $opt = $(this).find(':selected');
         const toqoh = $opt.data('toqoh') || 0;
         const stdqt = $opt.data('stdqt') || '-';
-
-        $(`#toqoh-og-${idx}`).val(toqoh);
+        const locco = $opt.data('locco') || '';
+        
+        $(`#toqoh-oa-${idx}`).val(toqoh);
         $(`#stdqt-${idx}`).val(stdqt);
-        $(`#toqoh-unit-og-${idx}`).text(stdqt);
-        $(`#trqty-${idx}`).next('.unit-label-og').text(stdqt);
+        $(`#locco-${idx}`).val(locco);
+        $(`#toqoh-unit-oa-${idx}`).text(stdqt);
+        $(`#trqty-${idx}`).next('.unit-label-oa').text(stdqt);
     });
 
     // VALIDASI INPUT QTY
-    $(document).on('input', '.trqty-editOG', function() {
+    $(document).on('input', '.trqty-editOA', function() {
         const idx = this.id.split('-').pop();
         const qty = parseFloat($(this).val()) || 0;
-        const max = parseFloat($(`#toqoh-og-${idx}`).val()) || 0;
+        const max = parseFloat($(`#toqoh-oa-${idx}`).val()) || 0;
 
         if (qty > max) {
             Swal.fire({
@@ -190,14 +149,14 @@ window.removebbkDetail = function(i){
 </script>
 
 <script>
-    function setAccordionTitleOG(item){
+    function setAccordionTitleOA(item){
         const text = item.find('select[name*="opron"] option:selected').text() || '';
         item.find('.accordion-title').text(text ? `Product : ${text}` : `Product : -`);
     }
 
-    // listen OG
+    // listen OA
     $(document).on('change','select[name*="opron"]', function(){
         const item = $(this).closest('.accordion-item');
-        setAccordionTitleOG(item);
+        setAccordionTitleOA(item);
     });
 </script>

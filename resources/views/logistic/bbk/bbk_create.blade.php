@@ -39,6 +39,7 @@
             <option value="OB" {{ old('formc') == 'OB' ? 'selected' : '' }}>OB (ISSUE TO PRODUCTION)</option>
             <option value="OD" {{ old('formc') == 'OD' ? 'selected' : '' }}>OD (ISSUE WRITE OFF)</option>
             <option value="OG" {{ old('formc') == 'OG' ? 'selected' : '' }}>OG (OFFICE USED)</option>
+            <option value="OA" {{ old('formc') == 'OA' ? 'selected' : '' }}>OA (ISSUE DIPINJAM/DEMO)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -71,6 +72,10 @@
 
       <div id="section-og" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_og')
+      </div>
+
+      <div id="section-oa" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_oa')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -118,7 +123,7 @@
           });
 
           function loadMasterProductAll(){
-            $('select.opron-ob').each(function(){
+            $('select.opron-ob, select.opron-oa').each(function(){
                 $(this).select2({
                     placeholder: 'Pilih Barang',
                     theme: 'bootstrap-5',
@@ -136,7 +141,8 @@
                                 results: (data.results || []).map(item => ({
                                     id: item.id,
                                     text: item.text,
-                                    stdqt: item.data_stdqu
+                                    stdqt: item.data_stdqu,
+                                    locco: item.data_locco
                                 })),
                                 pagination: { more: data.pagination.more }
                             };
@@ -170,6 +176,7 @@
                 $('#section-ob').remove();
                 $('#section-od').remove();
                 $('#section-og').remove();
+                $('#section-oa').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
               }
               else if(formc === 'OC'){
@@ -178,6 +185,7 @@
                 $('#section-ob').remove();
                 $('#section-od').remove();
                 $('#section-og').remove();
+                $('#section-oa').remove();
                 $('#section-oc').find('[data-req="oc"]').prop('required', true);
               }
               else if(formc === 'OB'){
@@ -186,6 +194,7 @@
                 $('#section-oc').remove();
                 $('#section-od').remove();
                 $('#section-og').remove();
+                $('#section-oa').remove();
                 $('#section-ob').find('[data-req="ob"]').prop('required', true);
                 loadMasterProductAll();
               }
@@ -195,6 +204,7 @@
                 $('#section-oc').remove();
                 $('#section-ob').remove();
                 $('#section-og').remove();
+                $('#section-oa').remove();
                 $('#section-od').find('[data-req="od"]').prop('required', true);
               }
               else if(formc === 'OG'){
@@ -203,7 +213,18 @@
                 $('#section-oc').remove();
                 $('#section-ob').remove();
                 $('#section-od').remove();
+                $('#section-oa').remove();
                 $('#section-og').find('[data-req="og"]').prop('required', true);
+              }
+              else if(formc === 'OA'){
+                $('#section-oa').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').remove();
+                $('#section-od').remove();
+                $('#section-og').remove();
+                $('#section-oa').find('[data-req="oa"]').prop('required', true);
+                loadMasterProductAll();
               }
               else{
                 $('#section-of').fadeOut();

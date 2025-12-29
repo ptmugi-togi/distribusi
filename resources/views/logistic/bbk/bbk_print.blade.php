@@ -109,14 +109,14 @@
                 BRANCH <br>
                 WAREHOUSE <br>
                 No. <br>
-                @if ($bbkhdr->formc == 'OB')
+                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OA')
                     DATE
                 @else
                     TN DATE <br>
                 @endif
             </td>
             <td style="width:1%; vertical-align:top;">
-                :<br>:<br>:<br><br>
+                :<br>:<br>:<br>:<br>
             </td>
             <td style="width:13%; vertical-align:top;">
                 {{ $bbkhdr->braco }}<br>
