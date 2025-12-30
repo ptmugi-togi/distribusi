@@ -66,9 +66,19 @@
                         <label class="form-label">PO No</label>
                         <input type="text" class="form-control" id="reffc" value="{{ $bbm->refno }}" readonly style="background-color:#e9ecef">
                     </div>
+                @elseif ($bbm->formc == 'ID')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">SIN "pinjaman"</label>
+                        <input type="text" class="form-control" id="reffc" value="{{ $bbm->reffc }} {{ $bbm->refno }}" readonly style="background-color:#e9ecef">
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" id="isutn" value="{{ $bbm->oa_isutn ?? '-' }}" readonly style="background-color:#e9ecef">
+                    </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
@@ -143,7 +153,7 @@
 
                                             <div class="col-md-6 mt-3">
                                                 <label for="opron" class="form-label">Barang</label><span class="text-danger"> *</span>
-                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" required>
+                                                <select class="select2 form-control" name="opron[]" id="opron-{{ $i }}" data-old="{{ $d->opron }}" required>
                                                     <option value="{{ $d->opron }}" selected>{{ $d->opron }} - {{ $d->prona }}</option>
                                                 </select>
                                             </div>
@@ -158,7 +168,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
+                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -194,7 +204,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
+                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -203,7 +213,7 @@
                                                 </div>
                                             @endif
 
-                                            @if ($bbm->formc != 'IM')
+                                            @if ($bbm->formc != 'IM' && $bbm->formc != 'ID')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
                                                     <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
@@ -222,6 +232,18 @@
                                                 <input type="text" class="lotno-im" name="lotno[]" id="lotno-im-{{ $i }}" value="-" hidden>
                                                 
                                                 <input type="text" class="locco-im" name="locco[]" id="locco-im-{{ $i }}" value="000001" hidden>
+                                            @elseif ($bbm->formc == 'ID')
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="lotno-{{ $i }}" class="form-label">Serial / Batch No.</label>
+                                                    <input type="text" class="form-control" name="lotno[]" id="lotno-{{ $i }}"
+                                                        value="{{ old('lotno.'. $i, $d->lotno ?? '') }}" readonly style="background-color: #e9ecef">
+                                                </div>
+
+                                                <div class="col-md-6 mt-3">
+                                                    <label for="locco-{{ $i }}" class="form-label">Warehouse Location</label>
+                                                    <input type="text" class="form-control" name="locco[]" id="locco-{{ $i }}"
+                                                        value="{{ $d->locco ?? '' }}" readonly style="background-color: #e9ecef">
+                                                </div>
                                             @endif
 
                                             <div class="col-md-12 mt-3">
@@ -263,6 +285,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIG()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'ID')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addID()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -286,6 +312,8 @@
             @include('logistic.bbm.partial_edit.add_detail_im')
         @elseif($bbm->formc == 'IG')
             @include('logistic.bbm.partial_edit.add_detail_ig')
+        @elseif($bbm->formc == 'ID')
+            @include('logistic.bbm.partial_edit.add_detail_id')
         @endif
         {{-- simpan warehouse & refno --}}
         <script>

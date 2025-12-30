@@ -55,7 +55,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
@@ -90,6 +90,18 @@
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
                         <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+                @endif
+
+                @if ($bbm->formc == 'ID')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">SIN "pinjaman"</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" value="{{ $bbm->oaHeader?->isutn ?? '-' }}" disabled>
                     </div>
                 @endif
 
@@ -158,7 +170,7 @@
                                         <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
-                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM')
+                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO No.</label>
                                             <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>

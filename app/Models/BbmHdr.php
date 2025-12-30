@@ -73,4 +73,16 @@ class BbmHdr extends Model
     {
         return $this->belongsTo(Tbolh::class, 'blnum', 'blnum');
     }
+
+    public function oaHeader()
+    {
+        return $this->hasOne(
+            \App\Models\BbkHdr::class,
+            'trano',
+            'trano'
+        )
+        ->whereColumn('tsisnh.braco', 'braco')
+        ->whereColumn('tsisnh.warco', 'warco')
+        ->where('tsisnh.formc', 'OA');
+    }
 }

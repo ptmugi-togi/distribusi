@@ -41,6 +41,7 @@
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
             <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
             <option value="IG" {{ old('formc') == 'IG' ? 'selected' : '' }}>IG (BBM - OFFICE USED)</option>
+            <option value="ID" {{ old('formc') == 'ID' ? 'selected' : '' }}>ID (BBM - EX PINJAMAN)</option>
             {{-- FormC lain nanti --}}
           </select>
         </div>
@@ -102,6 +103,10 @@
 
       <div id="section-ig" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_ig')
+      </div>
+
+      <div id="section-id" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_id')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -308,6 +313,7 @@
                 $('#section-ik').remove();
                 $('#section-im').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
                 loadPOList('#refcno_ia');
@@ -319,6 +325,7 @@
                 $('#section-ik').remove();
                 $('#section-im').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } 
@@ -329,6 +336,7 @@
                 $('#section-ik').remove();
                 $('#section-im').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -343,6 +351,7 @@
                 $('#section-ik').remove();
                 $('#section-im').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -355,6 +364,7 @@
                 $('#section-il').remove();
                 $('#section-im').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-ik').fadeIn();
                 $('#section-ik').find('[data-req="ik"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -369,6 +379,7 @@
                 $('#section-il').remove();
                 $('#section-ik').remove();
                 $('#section-ig').remove();
+                $('#section-id').remove();
                 $('#section-im').fadeIn();
                 $('#section-im').find('[data-req="im"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -381,9 +392,23 @@
                 $('#section-il').remove();
                 $('#section-ik').remove();
                 $('#section-im').remove();
+                $('#section-id').remove();
                 $('#section-ig').fadeIn();
                 $('#section-ig').find('[data-req="ig"]').prop('required', true);
                 loadPOList('#refcno_ig');
+              }
+              else if(formc === 'ID'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').remove();
+                $('#section-im').remove();
+                $('#section-ig').remove();
+                $('#section-id').fadeIn();
+                $('#section-id').find('[data-req="id"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
               }
               applyNoPoInvMode();
 

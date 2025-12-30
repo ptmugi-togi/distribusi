@@ -120,7 +120,8 @@ class PdfController extends Controller
             'vendor',
             'tbolh',
             'mbranches',
-            'bbmdtls.bbmhdr'
+            'bbmdtls.bbmhdr',
+            'oaHeader'
 
         ])->findOrFail($id);
 

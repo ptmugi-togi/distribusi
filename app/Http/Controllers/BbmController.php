@@ -303,6 +303,47 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
+    public function getOa(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->where('tn.formc', 'OA')
+            ->where('tn.braco', $userBranch)
+            ->where('tn.warco', $request->warco)
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                ->from('toutg as t')
+                ->whereColumn('t.trano', 'tn.trano')
+                ->where('t.formc', 'OA')
+                ->whereColumn('t.trqty', '>', 't.retqty');
+            })
+            ->select('tn.formc', 'tn.trano', 'tn.isutn')
+            ->orderBy('tn.trano', 'desc')
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByOa(Request $request)
+    {
+        $prefix = $request->braco . $request->warco . 'OA';
+        $trano = $request->trano;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('t.trano', $trano)
+            ->where('t.bbkid', 'like', $prefix . '%')
+            ->where('t.formc', 'OA')
+            ->whereColumn('t.trqty', '>', 't.retqty')
+            ->select('t.opron', DB::raw('t.trqty - t.retqty AS trqty'), 't.qunit', 't.lotno', 't.locco', 'm.prona')
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -342,7 +383,9 @@ class BbmController extends Controller
                 ->get();
         $tsisnh = DB::table('tsisnh')->where('formc', 'TA')->get();
 
-        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors', 'userBraco', 'priod','minDate','periodeAktif','tsupih', 'tsreqh', 'tsisnh'));
+        $get_oa = DB::table('tsisnh')->where('formc', 'OA')->get();
+
+        return view('logistic.bbm.bbm_create', compact('bbmhdr','mwarco','vendors', 'userBraco', 'priod','minDate','periodeAktif','tsupih', 'tsreqh', 'tsisnh', 'get_oa'));
     }
 
     /**
@@ -480,6 +523,17 @@ class BbmController extends Controller
                             ->decrement('qtyit', $trqty);
                     }
                 }
+                if ($request->formc === 'ID') {
+                    $prefix = $request->braco . $request->warco;
+
+                    DB::table('toutg')
+                        ->where('bbkid', 'like', $prefix . '%')
+                        ->where('formc', $request->reffc)
+                        ->where('trano', $request->refno)
+                        ->where('lotno', $request->lotno[$i])
+                        ->where('opron', $useOpron)
+                        ->increment('retqty', $trqty);
+                }
 
                 // Update progress PO kalau ada
                 if (!$noPoInv && $usePono !== '-') {
@@ -504,7 +558,7 @@ class BbmController extends Controller
      */
     public function show(string $id)
     {
-        $bbm = BbmHdr::with('mformcode','bbmdtls.mpromas', 'bbmdtls.tsupid', 'bbmdtls.podtl', 'tsupih', 'vendor')->findOrFail($id);
+        $bbm = BbmHdr::with('mformcode','bbmdtls.mpromas', 'bbmdtls.tsupid', 'bbmdtls.podtl', 'tsupih', 'vendor', 'oaHeader')->findOrFail($id);
         return view('logistic.bbm.bbm_detail', compact('bbm'));
     }
 
@@ -517,7 +571,13 @@ class BbmController extends Controller
         $bbm = DB::table('tstorh as h')
             ->leftJoin('mvendor_tbl as v', 'h.supno', '=', 'v.supno')
             ->leftJoin('mformcode_tbl as f', 'h.formc', '=', 'f.formc')
-            ->select('h.*', 'v.supna', 'f.desc_c')
+            ->leftJoin('tsisnh as oa', function ($join) {
+                $join->on('oa.trano', '=', 'h.trano')
+                    ->on('oa.braco', '=', 'h.braco')
+                    ->on('oa.warco', '=', 'h.warco')
+                    ->where('oa.formc', '=', 'OA');
+            })
+            ->select('h.*', 'v.supna', 'f.desc_c', 'oa.isutn as oa_isutn')
             ->where('h.bbmid', $id)
             ->first();
 
