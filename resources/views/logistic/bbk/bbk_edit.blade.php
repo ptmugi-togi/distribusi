@@ -66,6 +66,28 @@
                     </div>
                 @endif
 
+                @if ($bbk->formc == 'OE')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" class="form-control" value="{{ $bbk->supno }} - {{ $bbk->supna }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Warranty Claim#</label>
+                        <input type="text" class="form-control" value="{{ $bbk->ref01 }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isutn }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Address</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isua1 }}" disabled>
+                    </div>
+                @endif
+
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
                     <textarea class="form-control" name="noteh" id="noteh" maxlength="200">{{ old('noteh', $bbk->noteh ?? '') }}</textarea>
@@ -182,6 +204,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOA()">Tambah Detail BBK</button>
                 </div>
+            @elseif ($bbk->formc == 'OE')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOE()">Tambah Detail BBK</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -200,6 +226,7 @@
         @include('logistic.bbk.partial_edit.add_detail_od')
         @include('logistic.bbk.partial_edit.add_detail_og')
         @include('logistic.bbk.partial_edit.add_detail_oa')
+        @include('logistic.bbk.partial_edit.add_detail_oe')
         
         {{-- simpan warehouse --}}
         <script>

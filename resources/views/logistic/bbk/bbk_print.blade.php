@@ -72,7 +72,7 @@
         <br>
         <br>
         <tr>
-            <td class="center" style="width:30%">
+            <td class="center" style="width:33%">
                 <h1>STOCK ISSUE NOTE</h1>
             </td>
         </tr>
@@ -88,6 +88,9 @@
                     REFERENCE <br>
                     KODE PROD
                 @endif
+                @if ($bbkhdr->formc == 'OE')
+                    ADDRESS
+                @endif
             </td>
             <td style="width:1%; vertical-align:top;">
                 :<br>
@@ -95,21 +98,31 @@
                     :<br>
                     :</td>
                 @endif
+                @if ($bbkhdr->formc == 'OE')
+                    :
+                @endif
             <td style="width:23%; vertical-align:top;">
                 {{ $bbkhdr->isutn }} <br>
                 @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OG')
                     {{ $bbkhdr->rfc01 }} {{ $bbkhdr->ref01 }} <br>
                     {{ $bbkhdr->kdprod }}
                 @endif
+                @if ($bbkhdr->formc == 'OE')
+                    {{ $bbkhdr->isua1 }}
+                @endif
             </td>
-            <td style="width:40%; vertical-align:top;">
-                SIN TYPE : {{ $bbkhdr->mformcode->desc_c }}
+            <td class="center" style="width:30%; vertical-align:top;">
+                SIN TYPE : {{ $bbkhdr->mformcode->desc_c }} <br>
+                @if ($bbkhdr->formc == 'OE')
+                    WC# : {{ $bbkhdr->ref01 }}    
+                @endif
             </td>
+            <td style="width: 10%"></td>
             <td style="width:10%; vertical-align:top;">
                 BRANCH <br>
                 WAREHOUSE <br>
                 No. <br>
-                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OA')
+                @if ($bbkhdr->formc == 'OB' || $bbkhdr->formc == 'OA' || $bbkhdr->formc == 'OE')
                     DATE
                 @else
                     TN DATE <br>

@@ -62,6 +62,28 @@
                     </div>
                 @endif
 
+                @if ($bbk->formc == 'OE')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Supplier</label>
+                        <input type="text" class="form-control" value="{{ $bbk->supno }} - {{ $bbk->vendor->supna }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Warranty Claim</label>
+                        <input type="text" class="form-control" value="{{ $bbk->ref01 }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Name</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isutn }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Issue to Address</label>
+                        <input type="text" class="form-control" value="{{ $bbk->isua1 }}" disabled>
+                    </div>
+                @endif
+
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
                     <textarea class="form-control" rows="3" disabled>{{ $bbk->noteh }}</textarea>

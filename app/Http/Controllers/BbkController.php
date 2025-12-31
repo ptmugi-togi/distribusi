@@ -24,7 +24,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA', 'OE'])
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -177,7 +177,32 @@ class BbkController extends Controller
         }
     }
 
-    // untuk OF cek barang dari stobl
+    public function getBarangOE($braco, $warco, $locco)
+    {
+        try {
+            $barang = DB::table('stobl_tbl as s')
+                ->join('mpromas as m', function($join) {
+                    $join->on('s.opron', '=', 'm.opron');
+                })
+                ->where('s.braco', $braco)
+                ->where('s.warco', $warco)
+                ->where('s.locco', $locco)
+                ->where('s.toqoh', '>', 0)
+                ->select(
+                    's.opron',
+                    'm.prona',
+                    'm.stdqu',
+                    DB::raw('SUM(s.toqoh) as qty')
+                )
+                ->groupBy('s.opron', 'm.prona', 'm.stdqu')
+                ->get();
+
+            return response()->json($barang);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function getStobl($braco, $warco, $opron)
     {
         $stok = DB::table('stobl_tbl')
@@ -257,6 +282,7 @@ class BbkController extends Controller
                 'kdprod' => $request->kdprod,
                 'supno' => $request->supno ?? '',
                 'isutn' => $request->isutn,
+                'isua1' => $request->isua1,
                 'noteh' => $request->noteh,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,

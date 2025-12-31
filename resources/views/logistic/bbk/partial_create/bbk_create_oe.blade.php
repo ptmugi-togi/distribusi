@@ -1,4 +1,4 @@
-{{-- OF (LOCAL PURCHASE) --}}
+{{-- OE (ISSUE WARRANTY CLAIM) --}}
 <div class="row mt-4">
     <div class="col-md-6 mt-3">
         <label for="trano" class="form-label">Stock Issue No.</label><span class="text-danger"> *</span>
@@ -10,78 +10,107 @@
         <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ $minDate }}">
     </div>
 
+    <div class="col-md-6 mt-3">
+        <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
+        <select class="select2 form-control" name="supno" id="supno" required>
+            <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
+            @foreach($vendors as $v)
+                <option
+                    value="{{ $v->supno }}"
+                    {{ old('supno') == $v->supno ? 'selected' : '' }}>
+                    {{ $v->supno }} - {{ $v->supna }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="ref01" class="form-label">Warranty Claim#</label><span class="text-danger"> *</span>
+        <input type="text" class="form-control" name="ref01" id="ref01" value="{{ old('ref01') }}" required>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="isutn" class="form-label">Issue to name</label><span class="text-danger"> *</span>
+        <input type="text" class="form-control" name="isutn" id="isutn" value="{{ old('isutn') }}" required>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="isua1" class="form-label">Issue to Address</label><span class="text-danger"> *</span>
+        <input type="text" class="form-control" name="isua1" id="isua1" value="{{ old('isua1') }}" required>
+    </div>
+
     <div class="col-md-12 mt-3">
-        <label for="noteh_of" class="form-label">Notes</label>
-        <textarea class="form-control" name="noteh" id="noteh_of" maxlength="200">{{ old('noteh') }}</textarea>
+        <label for="noteh_oe" class="form-label">Notes</label>
+        <textarea class="form-control" name="noteh" id="noteh_oe" maxlength="200">{{ old('noteh') }}</textarea>
         <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
     </div>
 </div>
 
 <div class="row">
-  <h4 class="my-2">BBK Detail (OF)</h4>
-  <div class="accordion" id="accordionOF">
+  <h4 class="my-2">BBK Detail (OE)</h4>
+  <div class="accordion" id="accordionOE">
     @foreach (old('opron', [null]) as $i => $oldOpron)
-      <div class="accordion-item" id="accordion-of-item-{{ $i }}">
-        <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-of-{{ $i }}">
+      <div class="accordion-item" id="accordion-oe-item-{{ $i }}">
+        <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-oe-{{ $i }}">
           <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
-            data-bs-toggle="collapse" data-bs-target="#details-of-{{ $i }}"
-            aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-of-{{ $i }}">
+            data-bs-toggle="collapse" data-bs-target="#details-oe-{{ $i }}"
+            aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-oe-{{ $i }}">
             <span class="accordion-title"></span>
           </button>
           @if($i > 0)
-            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeOF({{ $i }})">
+            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeOE({{ $i }})">
               <i class="bi bi-trash-fill"></i>
             </button>
           @endif
         </h2>
 
-        <div id="details-of-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
-          aria-labelledby="heading-of-{{ $i }}" data-bs-parent="#accordionOF">
+        <div id="details-oe-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
+          aria-labelledby="heading-oe-{{ $i }}" data-bs-parent="#accordionOE">
           <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
-                    <select class="form-control select2" name="locco[]" id="locco-of-{{ $i }}" required>
+                    <select class="form-control select2" name="locco[]" id="locco-oe-{{ $i }}" required>
                     <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Barang</label><span class="text-danger"> *</span>
-                    <select class="select2 form-control opron-of" name="opron[]" id="opron-of-{{ $i }}" required>
+                    <select class="select2 form-control opron-oe" name="opron[]" id="opron-oe-{{ $i }}" required>
                     <option value="" disabled {{ old('opron.'.$i) ? '' : 'selected' }}>Pilih Warehouse Location Terlebih Dahulu</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mt-3 lot-section">
-                    <label for="lotno-of-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                    <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-of-{{ $i }}" required>
+                    <label for="lotno-oe-{{ $i }}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                    <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-oe-{{ $i }}" required>
                         <option value="" disabled selected>Pilih Barang Terlebih Dahulu</option>
                     </select>
                 </div>
                                     
                 <div class="col-md-6 mt-3">
-                    <label for="toqoh-of-{{ $i }}" class="form-label">Sisa Stok</label>
+                    <label for="toqoh-oe-{{ $i }}" class="form-label">Sisa Stok</label>
                     <div class="input-group">
-                        <input type="text" class="form-control text-end" id="toqoh-of-{{ $i }}" placeholder="-" disabled>
-                        <span class="input-group-text unit-label-of" id="toqoh-unit-of-{{ $i }}">-</span>
+                        <input type="text" class="form-control text-end" id="toqoh-oe-{{ $i }}" placeholder="-" disabled>
+                        <span class="input-group-text unit-label-oe" id="toqoh-unit-oe-{{ $i }}">-</span>
                     </div>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="trqty-of-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
+                    <label for="trqty-oe-{{ $i }}" class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
-                        <input type="number" class="form-control trqty-of" id="trqty-of-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
+                        <input type="number" class="form-control trqty-oe" id="trqty-oe-{{ $i }}" name="trqty[]" value="{{ old('trqty.'.$i, 1) }}" min="1" required
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                        <span class="input-group-text unit-label-of"></span>
+                        <span class="input-group-text unit-label-oe"></span>
                     </div>
                 </div>
                 
-                <input type="text" class="stdqt-of" name="stdqt[]" id="stdqt-of-{{ $i }}" hidden>
+                <input type="text" class="stdqt-oe" name="stdqt[]" id="stdqt-oe-{{ $i }}" hidden>
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
-                    <textarea type="text" class="form-control" name="noted[]" id="noted-of-{{ $i }}" maxlength="200">{{ old('noted.'.$i) }}</textarea>
+                    <textarea type="text" class="form-control" name="noted[]" id="noted-oe-{{ $i }}" maxlength="200">{{ old('noted.'.$i) }}</textarea>
                     <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
                 </div>
             </div>
@@ -92,7 +121,7 @@
   </div>
 
   <div class="text-end">
-    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOF()">Tambah Detail (OF)</button>
+    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOE()">Tambah Detail (OE)</button>
   </div>
 </div>
 
@@ -101,7 +130,7 @@
     // PILIH WARCO (load lokasi)
     $('#warco').on('change', function() {
         const warco = $(this).val();
-        $('select[id^="locco-of-"]').each(function() {
+        $('select[id^="locco-oe-"]').each(function() {
             const $sel = $(this);
             $sel.prop('disabled', true).html('<option>Memuat lokasi...</option>');
 
@@ -128,7 +157,7 @@
     });
 
     // Ketika locco (Warehouse Location) berubah -> load barang
-    $(document).on('change', 'select[id^="locco-of-"]', function () {
+    $(document).on('change', 'select[id^="locco-oe-"]', function () {
         const idx = this.id.split('-').pop(); // ambil index accordion
         const braco = $('#braco').val();
         const warco = $('#warco').val();
@@ -136,10 +165,9 @@
 
         if (!braco || !warco || !locco) return;
 
-        const $barangSelect = $(`#opron-of-${idx}`);
+        const $barangSelect = $(`#opron-oe-${idx}`);
         $barangSelect.prop('disabled', true).html('<option>Memuat barang...</option>');
 
-        // GET: /get-barang/{braco}/{warco}/{locco}
         $.get(`/get-barang/${braco}/${warco}/${locco}`, function (data) {
             $barangSelect.empty();
             if (data.length === 0) {
@@ -172,12 +200,12 @@
 
 
     // PILIH BARANG
-    $(document).on('change', '.opron-of', function() {
+    $(document).on('change', '.opron-oe', function() {
         const $opt = $(this).find(':selected');
         const idx = this.id.split('-').pop();
         const braco = $('#braco').val();
         const warco = $('#warco').val();
-        const locco = $(`#locco-of-${idx}`).val();
+        const locco = $(`#locco-oe-${idx}`).val();
         const opron = $(this).val();
 
         if (!warco) {
@@ -203,13 +231,13 @@
         const qty = $opt.data('qty') || 0;
         const stdqt = $opt.data('stdqt') || '-';
 
-        $(`#inqty-of-${idx}`).val(qty);
-        $(`#trqty-of-${idx}`).next('.input-group-text').text(stdqt);
+        $(`#inqty-oe-${idx}`).val(qty);
+        $(`#trqty-oe-${idx}`).next('.input-group-text').text(stdqt);
 
         // ambil data lot
-        const $lotSelect = $(`#lotno-of-${idx}`);
-        const $toqohInput = $(`#toqoh-of-${idx}`);
-        const $toqohUnit = $(`.unit-label-of`);
+        const $lotSelect = $(`#lotno-oe-${idx}`);
+        const $toqohInput = $(`#toqoh-oe-${idx}`);
+        const $toqohUnit = $(`.unit-label-oe`);
 
         $lotSelect.prop('disabled', true).html('<option>Memuat Stok Barang...</option>');
         $.get(`/get-stobl/${braco}/${warco}/${opron}`, function(data) {
@@ -253,16 +281,16 @@
         const toqoh = $opt.data('toqoh') || 0;
         const stdqt = $opt.data('stdqt') || '-';
 
-        $(`#stdqt-of-${idx}`).val(stdqt);
-        $(`#toqoh-of-${idx}`).val(toqoh);
-        $(`.unit-label-of`).text(stdqt);
+        $(`#stdqt-oe-${idx}`).val(stdqt);
+        $(`#toqoh-oe-${idx}`).val(toqoh);
+        $(`.unit-label-oe`).text(stdqt);
     });
 
     // VALIDASI INPUT QTY
-    $(document).on('input', '.trqty-of', function() {
+    $(document).on('input', '.trqty-oe', function() {
         const idx = this.id.split('-').pop();
         const qty = parseFloat($(this).val()) || 0;
-        const max = parseFloat($(`#toqoh-of-${idx}`).val()) || 0;
+        const max = parseFloat($(`#toqoh-oe-${idx}`).val()) || 0;
 
         if (qty > max) {
             Swal.fire({
@@ -275,62 +303,62 @@
     });
 
 
-    // add/remove row OF
-    window.addOF = function(){
-        const i = $('#accordionOF .accordion-item').length;
+    // add/remove row OE
+    window.addOE = function(){
+        const i = $('#accordionOE .accordion-item').length;
         const dtl = `
-        <div class="accordion-item" id="accordion-of-item-${i}">
-            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-of-${i}">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-of-${i}" aria-expanded="false" aria-controls="details-of-${i}"><span class="accordion-title"></span></button>
-            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeOF(${i})"><i class="bi bi-trash-fill"></i></button>
+        <div class="accordion-item" id="accordion-oe-item-${i}">
+            <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-oe-${i}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-oe-${i}" aria-expanded="false" aria-controls="details-oe-${i}"><span class="accordion-title"></span></button>
+            <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeOE(${i})"><i class="bi bi-trash-fill"></i></button>
             </h2>
-            <div id="details-of-${i}" class="accordion-collapse collapse" aria-labelledby="heading-of-${i}" data-bs-parent="#accordionOF">
+            <div id="details-oe-${i}" class="accordion-collapse collapse" aria-labelledby="heading-oe-${i}" data-bs-parent="#accordionOE">
             <div class="accordion-body">
                 <div class="row">
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
-                    <select class="form-control select2" name="locco[]" id="locco-of-${i}" required>
+                    <select class="form-control select2" name="locco[]" id="locco-oe-${i}" required>
                     <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Barang</label><span class="text-danger"> *</span>
-                    <select class="select2 form-control opron-of" name="opron[]" id="opron-of-${i}" required>
+                    <select class="select2 form-control opron-oe" name="opron[]" id="opron-oe-${i}" required>
                     <option value="" disabled selected>Pilih Warehouse Location Terlebih Dahulu</option>
                     </select>
                 </div>
                 
                 <div class="col-md-6 mt-3 lot-section">
-                    <label for="lotno-of-${i}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
-                    <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-of-${i}" required>
+                    <label for="lotno-oe-${i}" class="form-label">Serial / Batch No.</label><span class="text-danger"> *</span>
+                    <select class="form-select select2 lotno-select" name="lotno[]" id="lotno-oe-${i}" required>
                         <option value="" disabled selected>Pilih SN / Batch No</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="toqoh-of-${i}" class="form-label">Sisa Stok</label>
+                    <label for="toqoh-oe-${i}" class="form-label">Sisa Stok</label>
                     <div class="input-group">
-                        <input type="text" class="form-control text-end" id="toqoh-of-${i}" placeholder="-" disabled>
-                        <span class="input-group-text unit-label-of" id="toqoh-unit-of-${i}">-</span>
+                        <input type="text" class="form-control text-end" id="toqoh-oe-${i}" placeholder="-" disabled>
+                        <span class="input-group-text unit-label-oe" id="toqoh-unit-oe-${i}">-</span>
                     </div>
                 </div>
                 
-                <input type="text" class="stdqt-of" name="stdqt[]" id="stdqt-of-${i}" hidden>
+                <input type="text" class="stdqt-oe" name="stdqt[]" id="stdqt-oe-${i}" hidden>
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Issue Quantity</label><span class="text-danger"> *</span>
                     <div class="input-group">
-                    <input type="number" class="form-control trqty-of" id="trqty-of-${i}" name="trqty[]" value="1" min="1" required
+                    <input type="number" class="form-control trqty-oe" id="trqty-oe-${i}" name="trqty[]" value="1" min="1" required
                     oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                    <span class="input-group-text unit-label-of"></span>
+                    <span class="input-group-text unit-label-oe"></span>
                     </div>
                 </div>
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
-                    <textarea class="form-control" name="noted[]" id="noted-of-${i}" maxlength="200"></textarea>
+                    <textarea class="form-control" name="noted[]" id="noted-oe-${i}" maxlength="200"></textarea>
                     <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
                 </div>
 
@@ -338,16 +366,16 @@
             </div>
             </div>
         </div>`;
-        $('#accordionOF').append(dtl);
+        $('#accordionOE').append(dtl);
         $('.select2').select2({ width:'100%', theme: 'bootstrap-5' });
         setTimeout(()=>{
-            $(`#details-of-${i}`).collapse('show');
+            $(`#details-oe-${i}`).collapse('show');
         },100);
 
         // kalau WARCO sudah dipilih -> load warehouse ke row baru IB juga
         const warco = $('#warco').val();
         if(warco){
-        const $sel = $(`#locco-of-${i}`);
+        const $sel = $(`#locco-oe-${i}`);
         $sel.empty().append('<option value="">Loading...</option>');
         $.get(`{{ url('/get-locco') }}/${warco}`, function(data){
             $sel.empty().append('<option disabled selected>Pilih Lokasi</option>');
@@ -357,8 +385,8 @@
         }
     }
 
-    window.removeOF = function(i){
-        $(`#accordion-of-item-${i}`).remove();
+    window.removeOE = function(i){
+        $(`#accordion-oe-item-${i}`).remove();
     }
 </script>
 @endpush
