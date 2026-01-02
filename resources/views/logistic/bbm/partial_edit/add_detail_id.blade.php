@@ -78,7 +78,7 @@
 
         $('#trqty-' + idx)
             .closest('.input-group')
-            .find('.unit-label-id')
+            .find('.unit-label-editID')
             .text(stdqt);
 
         $('#locco-' + idx).val(locco);

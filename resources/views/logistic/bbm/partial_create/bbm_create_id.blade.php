@@ -15,15 +15,15 @@
     </div>
 
     <div class="col-md-12 mt-3">
-        <label for="noteh_if" class="form-label">Notes</label>
-        <textarea class="form-control" name="noteh" id="noteh_if" maxlength="200">{{ old('noteh') }}</textarea>
+        <label for="noteh_id" class="form-label">Notes</label>
+        <textarea class="form-control" name="noteh" id="noteh_id" maxlength="200">{{ old('noteh') }}</textarea>
         <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
     </div>
 </div>
 
 <div class="row">
   <h4 class="my-2">BBM Detail (ID)</h4>
-  <div class="accordion" id="accordionIL">
+  <div class="accordion" id="accordionID">
     @foreach (old('opron', [null]) as $i => $oldOpron)
       <div class="accordion-item" id="accordion-id-item-{{ $i }}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-id-{{ $i }}">
@@ -40,7 +40,7 @@
         </h2>
 
         <div id="details-id-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
-          aria-labelledby="heading-id-{{ $i }}" data-bs-parent="#accordionIL">
+          aria-labelledby="heading-id-{{ $i }}" data-bs-parent="#accordionID">
           <div class="accordion-body">
             <div class="row">
               <input type="text" name="invno[]" class="invno-id" id="invno-id-{{ $i }}" value="-" hidden>
@@ -87,12 +87,13 @@
   </div>
 
   <div class="text-end">
-    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIL()">Tambah Detail (ID)</button>
+    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addID()">Tambah Detail (ID)</button>
   </div>
 </div>
 
 @push('scripts')
 <script>
+  let isLoadingOpronOA = false;
   // get OA
   $(document).on('change', '#formc, #warco', function () {
       const formc = $('#formc').val();
@@ -163,12 +164,22 @@
 
   // fucntion pilih barang (ID)
   function loadOpronByOA(braco, warco, trano, idx = null) {
+    if (isLoadingOpronOA) return;
+    isLoadingOpronOA = true;
+
     const $targets = (idx !== null)
         ? $(`#opron-id-${idx}`)
         : $('.opron-id');
 
-    $targets.prop('disabled', true)
-            .html('<option>Loading...</option>');
+    $targets.each(function () {
+        const $sel = $(this);
+
+        if ($sel.hasClass('select2-hidden-accessible')) {
+            $sel.select2('destroy');
+        }
+
+        $sel.prop('disabled', true).empty();
+    });
 
     $.ajax({
         url: "{{ route('get.opron.by.oa') }}",
@@ -191,7 +202,7 @@
                     return;
                 }
 
-                $sel.empty().append('<option value="" disabled selected>Pilih Barang</option>');
+                $sel.append('<option value="" disabled selected>Pilih Barang</option>');
 
                 response.forEach(item => {
                     $sel.append(`
@@ -212,16 +223,24 @@
                 }
 
                 $sel.prop('disabled', false);
+
+                $sel.select2({
+                    width: '100%',
+                    theme: 'bootstrap-5'
+                });
             });
+            isLoadingOpronOA = false;
         },
 
         error: function () {
-            $('.opron-id').html('<option>Gagal memuat data</option>').prop('disabled', false);
+          isLoadingOpronOA = false;
+          $('.opron-id').html('<option>Gagal memuat data</option>').prop('disabled', false);
         }
     });
   }
 
   $(document).on('change', '.opron-id', function () {
+    if (isLoadingOpronOA) return;
       const $sel = $(this);
       const selected = $sel.find(':selected');
 
@@ -246,15 +265,15 @@
   });
 
   // add/remove row ID
-  window.addIL = function(){
-    const i = $('#accordionIL .accordion-item').length;
+  window.addID = function(){
+    const i = $('#accordionID .accordion-item').length;
     const dtl = `
       <div class="accordion-item" id="accordion-id-item-${i}">
         <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-id-${i}">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-id-${i}" aria-expanded="false" aria-controls="details-id-${i}"><span class="accordion-title"></span></button>
-          <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeIL(${i})"><i class="bi bi-trash-fill"></i></button>
+          <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeID(${i})"><i class="bi bi-trash-fill"></i></button>
         </h2>
-        <div id="details-id-${i}" class="accordion-collapse collapse" aria-labelledby="heading-id-${i}" data-bs-parent="#accordionIL">
+        <div id="details-id-${i}" class="accordion-collapse collapse" aria-labelledby="heading-id-${i}" data-bs-parent="#accordionID">
           <div class="accordion-body">
             <div class="row">
               <input type="text" name="invno[]" class="invno-id" id="invno-id-${i}" value="-" hidden>
@@ -297,19 +316,21 @@
           </div>
         </div>
       </div>`;
-    $('#accordionIL').append(dtl);
-    $('.select2').select2({ width:'100%', theme: 'bootstrap-5' });
+    $('#accordionID').append(dtl);
+    $(`#opron-id-${i}`).select2({ width:'100%', theme: 'bootstrap-5' });
     setTimeout(()=>{
         $(`#details-id-${i}`).collapse('show');
     },100);
 
+    const braco = $('#braco').val();
+    const warco = $('#warco').val();
     const tranoSelected = $('#refcno_id').val();
     if (tranoSelected) {
         loadOpronByOA(braco, warco, tranoSelected, i);
     }
   }
 
-  window.removeIL = function(i){
+  window.removeID = function(i){
     $(`#accordion-id-item-${i}`).remove();
   }
 </script>
