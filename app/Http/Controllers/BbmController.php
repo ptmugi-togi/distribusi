@@ -344,6 +344,47 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
+    public function getOe(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->where('tn.formc', 'OE')
+            ->where('tn.braco', $userBranch)
+            ->where('tn.warco', $request->warco)
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                ->from('toutg as t')
+                ->whereColumn('t.trano', 'tn.trano')
+                ->where('t.formc', 'OE')
+                ->whereColumn('t.trqty', '>', 't.retqty');
+            })
+            ->select('tn.formc', 'tn.trano', 'tn.isutn')
+            ->orderBy('tn.trano', 'desc')
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByOe(Request $request)
+    {
+        $prefix = $request->braco . $request->warco . 'OE';
+        $trano = $request->trano;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('t.trano', $trano)
+            ->where('t.bbkid', 'like', $prefix . '%')
+            ->where('t.formc', 'OE')
+            ->whereColumn('t.trqty', '>', 't.retqty')
+            ->select('t.opron', DB::raw('t.trqty - t.retqty AS trqty'), 't.qunit', 't.lotno', 't.locco', 'm.prona')
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -558,7 +599,7 @@ class BbmController extends Controller
      */
     public function show(string $id)
     {
-        $bbm = BbmHdr::with('mformcode','bbmdtls.mpromas', 'bbmdtls.tsupid', 'bbmdtls.podtl', 'tsupih', 'vendor', 'oaHeader')->findOrFail($id);
+        $bbm = BbmHdr::with('mformcode','bbmdtls.mpromas', 'bbmdtls.tsupid', 'bbmdtls.podtl', 'tsupih', 'vendor', 'referenceHeader')->findOrFail($id);
         return view('logistic.bbm.bbm_detail', compact('bbm'));
     }
 
@@ -567,23 +608,13 @@ class BbmController extends Controller
      */
     public function edit($id)
     {
+        $formcRef = request('formc'); 
         // Ambil header
-        $bbm = DB::table('tstorh as h')
-            ->leftJoin('mvendor_tbl as v', 'h.supno', '=', 'v.supno')
-            ->leftJoin('mformcode_tbl as f', 'h.formc', '=', 'f.formc')
-            ->leftJoin('tsisnh as oa', function ($join) {
-                $join->on('oa.trano', '=', 'h.trano')
-                    ->on('oa.braco', '=', 'h.braco')
-                    ->on('oa.warco', '=', 'h.warco')
-                    ->where('oa.formc', '=', 'OA');
-            })
-            ->select('h.*', 'v.supna', 'f.desc_c', 'oa.isutn as oa_isutn')
-            ->where('h.bbmid', $id)
-            ->first();
-
-        if (!$bbm) {
-            return redirect()->route('bbm.index')->with('error', 'Data BBM tidak ditemukan.');
-        }
+         $bbm = BbmHdr::with([
+            'referenceHeader',
+            'vendor',
+            'mformcode',
+        ])->findOrFail($id);
 
         // Ambil detail dengan join ke mpromas untuk ambil prona
         $details = DB::table('tstord as d')

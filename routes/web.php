@@ -165,6 +165,8 @@ Route::get('/get-ob', [BbmController::class, 'getOb'])->name('get.ob');
 Route::get('/get-opron-by-ob', [BbmController::class, 'getOpronByOb'])->name('get.opron.by.ob');
 Route::get('/get-oa', [BbmController::class, 'getOa'])->name('get.oa');
 Route::get('/get-opron-by-oa', [BbmController::class, 'getOpronByOa'])->name('get.opron.by.oa');
+Route::get('/get-oe', [BbmController::class, 'getOe'])->name('get.oe');
+Route::get('/get-opron-by-oe', [BbmController::class, 'getOpronByOe'])->name('get.opron.by.oe');
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');

@@ -34,7 +34,7 @@
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Formc</label>
                     <input type="text" class="form-control" name="formc" id="formc" 
-                        value="{{ old('formc', $bbm->formc ?? '') }} ({{ $bbm->desc_c ?? '' }})"
+                        value="{{ old('formc', $bbm->formc ?? '') }} ({{ $bbm->mformcode->desc_c ?? '' }})"
                         readonly 
                         style="background-color:#e9ecef;">
                 </div>
@@ -74,15 +74,15 @@
 
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Issue to Name</label>
-                        <input type="text" class="form-control" id="isutn" value="{{ $bbm->oa_isutn ?? '-' }}" readonly style="background-color:#e9ecef">
+                        <input type="text" class="form-control" id="isutn" value="{{ $bbm->referenceHeader->firstWhere('formc', 'OA')->isutn ?? '-' }}" readonly style="background-color:#e9ecef">
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
-                            value="{{ old('supno', ($bbm->supno ?? '').(($bbm->supno??'') && ($bbm->supna??'') ? ' - ' : '').($bbm->supna ?? '')) }}"
+                            value="{{ old('supno', ($bbm->supno ?? '').(($bbm->supno??'') && ($bbm->vendor->supna??'') ? ' - ' : '').($bbm->vendor->supna ?? '')) }}"
                             readonly style="background-color:#e9ecef;">
                         <input type="text" class="form-control" name="supno" id="supno" value="{{ old('supno', $bbm->supno ?? '') }}" hidden>
                     </div>
@@ -107,6 +107,17 @@
                     </div>
                 @endif
 
+                @if ($bbm->formc == 'IE')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Warranty Claim#</label>
+                        <input type="text" class="form-control" value="{{ $bbm->referenceHeader->firstWhere('formc', 'OE')->isutn ?? '-' }}" disabled>
+                    </div>
+                @endif
+
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
                     <textarea class="form-control" name="noteh" id="noteh" maxlength="200">{{ old('noteh', $bbm->noteh ?? '') }}</textarea>
@@ -128,11 +139,9 @@
                                             aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" data-bs-parent="#accordionBbm">
                                                 {{ 'Product: ' . $d->opron . ' - ' . $d->prona ?? 'Detail ' . ($i+1) }}
                                     </button>
-                                    @if($i > 0)
-                                        <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    @endif
+                                    <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removebbmDetail({{ $i }})">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
                                 </h2>
 
                                 <div id="details-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}">
@@ -168,7 +177,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
+                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -204,7 +213,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
+                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -289,6 +298,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addID()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'IE')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIE()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -314,6 +327,8 @@
             @include('logistic.bbm.partial_edit.add_detail_ig')
         @elseif($bbm->formc == 'ID')
             @include('logistic.bbm.partial_edit.add_detail_id')
+        @elseif($bbm->formc == 'IE')
+            @include('logistic.bbm.partial_edit.add_detail_ie')
         @endif
         {{-- simpan warehouse & refno --}}
         <script>

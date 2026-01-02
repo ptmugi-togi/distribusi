@@ -55,7 +55,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
+                @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
@@ -101,7 +101,19 @@
 
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Issue to Name</label>
-                        <input type="text" class="form-control" value="{{ $bbm->oaHeader?->isutn ?? '-' }}" disabled>
+                        <input type="text" class="form-control" value="{{ $bbm->referenceHeader->firstWhere('formc', 'OA')->isutn ?? '-' }}" disabled>
+                    </div>
+                @endif
+
+                @if ($bbm->formc == 'IE')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Warranty Claim#</label>
+                        <input type="text" class="form-control" value="{{ $bbm->referenceHeader->firstWhere('formc', 'OE')->isutn ?? '-' }}" disabled>
                     </div>
                 @endif
 

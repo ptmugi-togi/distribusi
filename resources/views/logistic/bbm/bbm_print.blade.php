@@ -83,7 +83,7 @@
     <table class="no-border" style="margin-top:10px;">
         <tr>
             <td class="left td-top" style="width:33%">
-                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID')
+                @if ($bbmhdr->formc != 'IF' && $bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID' && $bbmhdr->formc != 'IE')
                     RECEIVED FROM :<br>
                     {{ $bbmhdr->vendor->supna }}<br>
                     {{ $bbmhdr->vendor->address }}<br>
@@ -103,7 +103,7 @@
                     <table class="no-border" style="margin-left: 5px; overflow: wrap;">
                         <tr>
                             <td>
-                                {{ $bbmhdr->oaHeader->isutn }}<br>
+                                {{ $bbmhdr->referenceHeader->firstWhere('formc', 'OA')->isutn }}<br>
                             </td>
                         </tr>
                     </table>
@@ -134,7 +134,7 @@
             <td class="left td-top" style="width:10%">
                 BRANCH <br>
                 WAREHOUSE <br>
-                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID' && $bbmhdr->formc != 'IE')
                     SRN NO. <br>
                     SRN DATE <br>
                     PO NO. <br>
@@ -158,6 +158,12 @@
                     BBM DATE <br>
                     REFERENCE <br>
                 @endif
+                @if ($bbmhdr->formc == 'IE')
+                    NO. <br>
+                    DATE <br>
+                    REFERENCE <br>
+                    EX OE
+                @endif
             </td>
             <td class="center td-top" style="width:1%">
                 : <br>
@@ -170,6 +176,8 @@
                     :
                 @elseif($bbmhdr->formc == 'IL')
                     :
+                @elseif($bbmhdr->formc == 'IE')
+                    :
                 @endif
             </td>
             <td class="left td-top" style="width:16%">
@@ -177,7 +185,7 @@
                 {{ $bbmhdr->warco }}<br>
                 {{ $bbmhdr->formc }} {{ $bbmhdr->trano }}<br>
                 {{ \Carbon\Carbon::parse($bbmhdr->tradt)->format('d-m-Y') }}<br>
-                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID')
+                @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID' && $bbmhdr->formc != 'IE')
                     {{ $bbmhdr->refno }}<br>
                 @endif
                 @if ($bbmhdr->formc == 'IL')
@@ -192,6 +200,10 @@
                 @endif
                 @if ($bbmhdr->formc == 'ID')
                     SIN NO.{{ $bbmhdr->reffc }} {{ $bbmhdr->refno }}
+                @endif
+                @if ($bbmhdr->formc == 'IE')
+                    {{ $bbmhdr->referenceHeader->firstWhere('formc', 'OE')->isutn ?? '-' }}<br>
+                    {{ $bbmhdr->refno }} <br>
                 @endif
             </td>
         </tr>
@@ -232,7 +244,7 @@
                     @endif
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
-                        @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID')
+                        @if ($bbmhdr->formc != 'IL' && $bbmhdr->formc != 'IK' && $bbmhdr->formc != 'IM' && $bbmhdr->formc != 'ID' && $bbmhdr->formc != 'IE')
                             <br>
                             <br>
                             PO# : {{ $i->pono }} , INVOICE# : {{ $i->invno }}

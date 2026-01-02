@@ -121,7 +121,7 @@ class PdfController extends Controller
             'tbolh',
             'mbranches',
             'bbmdtls.bbmhdr',
-            'oaHeader'
+            'referenceHeader'
 
         ])->findOrFail($id);
 
