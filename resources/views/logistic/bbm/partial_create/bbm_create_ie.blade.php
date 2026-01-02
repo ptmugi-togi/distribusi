@@ -65,7 +65,7 @@
 
               <div class="col-md-6 mt-3 lot-section">
                   <label for="lotno-ie-{{ $i }}" class="form-label">Serial / Batch No.</label>
-                  <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ie-{{ $i }}" value="{{ old('lotno.'.$i) }}" readonly style="background-color:#e9ecef;">
+                  <input type="text" class="form-control lotno-input" name="lotno[]" id="lotno-ie-{{ $i }}" value="{{ old('lotno.'.$i) }}">
               </div>
 
               <div class="col-md-6 mt-3">
@@ -298,7 +298,7 @@
 
               <div class="col-md-6 mt-3 lot-section">
                 <label class="form-label">Serial / Batch No.</label>
-                <input type="text" class="form-control" name="lotno[]" id="lotno-ie-${i}" readonly style="background-color:#e9ecef;">
+                <input type="text" class="form-control" name="lotno[]" id="lotno-ie-${i}">
               </div>
 
               <div class="col-md-6 mt-3">
