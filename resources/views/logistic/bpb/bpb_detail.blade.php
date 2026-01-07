@@ -37,7 +37,7 @@
 
                 <div class="col-md-6 mt-3">
                     <label for="reqdt" class="form-label">Requisition Date</label>
-                    <input type="date" class="form-control" id="reqdt" value="{{ $bpb->reqdt }}" disabled>
+                    <input type="text" class="form-control" id="reqdt" value="{{ \Carbon\Carbon::parse($bpb->reqdt)->format('d/m/Y') }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">

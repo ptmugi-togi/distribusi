@@ -40,7 +40,7 @@
 
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Stock Receipt Date</label>
-                    <input type="date" class="form-control" value="{{ $bbm->tradt }}" disabled>
+                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($bbm->tradt)->format('d/m/Y') }}" disabled>
                 </div>
 
                 @if($bbm->formc == 'IB')
