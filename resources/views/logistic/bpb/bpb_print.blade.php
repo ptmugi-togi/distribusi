@@ -225,20 +225,20 @@
                 </tr>
 
                 <tr>
-                    @if(!empty($bpbhdr->mformcode?->pos1) || !empty($bpbhdr->mformcode?->name1))
-                        <td class="center">( {{ $bpbhdr->mformcode?->name1 ?? '....................' }} )</td>
+                    @if(!empty($bpbhdr->mformcode?->pos1))
+                        <td class="center">( {{ trim($bpbhdr->mformcode?->name1 ?? '') !== '' ? $bpbhdr->mformcode->name1 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bpbhdr->mformcode?->pos2) || !empty($bpbhdr->mformcode?->name2))
-                        <td class="center">( {{ $bpbhdr->mformcode->name2 }} )</td>
+                    @if(!empty($bpbhdr->mformcode?->pos2))
+                        <td class="center">( {{ trim($bpbhdr->mformcode?->name2 ?? '') !== '' ? $bpbhdr->mformcode->name2 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bpbhdr->mformcode?->pos3) || !empty($bpbhdr->mformcode?->name3))
-                        <td class="center">( {{ $bpbhdr->mformcode->name3 }} )</td>
+                    @if(!empty($bpbhdr->mformcode?->pos3))
+                        <td class="center">( {{ trim($bpbhdr->mformcode?->name3 ?? '') !== '' ? $bpbhdr->mformcode->name3 : '....................' }} )</td>
                     @endif
 
-                    @if(!empty($bpbhdr->mformcode?->pos4) || !empty($bpbhdr->mformcode?->name4))
-                        <td class="center">( {{ $bpbhdr->mformcode->name4 }} )</td>
+                    @if(!empty($bpbhdr->mformcode?->pos4))
+                        <td class="center">( {{ trim($bpbhdr->mformcode?->name4 ?? '') !== '' ? $bpbhdr->mformcode->name4 : '....................' }} )</td>
                     @endif
                 </tr>
             </table>
