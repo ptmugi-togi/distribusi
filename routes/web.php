@@ -33,6 +33,7 @@ use App\Http\Controllers\BpbController;
 use App\Http\Controllers\TaController;
 use App\Http\Controllers\StockStatusController;
 use App\Http\Controllers\OsrController;
+use App\Http\Controllers\WoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -226,3 +227,16 @@ Route::get('/stock-status/lot/{opron}', [StockStatusController::class, 'getLot']
 
 Route::get('/outstanding-stock-requisition', [OsrController::class,'index'])->middleware('auth')->name('osr.create');
 Route::get('/osr/print', [OsrController::class, 'print'])->name('osr.print');
+
+Route::get('/wo', [WoController::class,'index'])->middleware('auth')->name('wo.index');
+Route::get('/wo/create', [WoController::class,'create'])->middleware('auth')->name('wo.create');
+Route::get('/generate-wonum', [WoController::class,'generateWonum'])->name('generate-wonum');
+Route::get('/get-ra-wo/{braco}', [WoController::class, 'getRa']);
+Route::get('/get-barang-ra/{bpbid}', [WoController::class, 'getBarangByRA']);
+Route::post('/wo/store', [WoController::class,'store'])->middleware('auth')->name('wo.store');
+Route::get('/wo/{id}/detail', [WoController::class,'show'])->middleware('auth')->name('wo.detail');
+Route::get('/wo/{id}/edit', [WoController::class,'edit'])->middleware('auth')->name('wo.edit');
+Route::put('/wo/{id}', [WoController::class,'update'])->middleware('auth')->name('wo.update');
+Route::delete('/wo/{id}/delete', [WoController::class,'destroy'])->middleware('auth')->name('wo.delete');
+Route::get('/wo/previewWo/{id}', [PdfController::class, 'previewWo'])->name('wo.previewWo');
+Route::get('/wo/printWo/{id}', [PdfController::class, 'printWo'])->name('wo.printWo');

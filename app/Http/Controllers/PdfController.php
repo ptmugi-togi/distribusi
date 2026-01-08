@@ -9,6 +9,7 @@ use App\Models\BbmHdr;
 use App\Models\BbkHdr;
 use App\Models\BpbHdr;
 use App\Models\TaHdr;
+use App\Models\WoHdr;
 use Mpdf\Mpdf;
 
 class PdfController extends Controller
@@ -471,6 +472,69 @@ class PdfController extends Controller
 
         // save PDF jadi string
         $filename = $tahdr->braco.'-'.$tahdr->formc.$tahdr->trano.'.pdf';
+        $pdfContent = $mpdf->Output($filename, 'S');
+
+        return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+
+    public function previewWo($id)
+    {
+        $wohdr = WoHdr::with([
+            'wodtls.mpromas',
+        ])->findOrFail($id);
+
+        $wodtls = $wohdr->wodtls;
+
+        $html = view('production.work_order.wo_print', [
+            'wohdr' => $wohdr,
+            'wodtls' => $wodtls,
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output();
+    }
+
+    public function printWo($id)
+    {
+        $wohdr = WoHdr::with([
+            'wodtls.mpromas',
+        ])->findOrFail($id);
+
+        $wodtls = $wohdr->wodtls;
+
+        $html = view('production.work_order.wo_print', [
+            'wohdr' => $wohdr,
+            'wodtls' => $wodtls,
+        ])->render();
+
+        // increment counter total print
+        DB::table('tworkh')
+        ->where('woid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        // save PDF jadi string
+        $filename = $wohdr->braco.'-'.$wohdr->formc.$wohdr->wonum.'.pdf';
         $pdfContent = $mpdf->Output($filename, 'S');
 
         return response($pdfContent)

@@ -177,6 +177,19 @@
 
 
       <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#production-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-building-gear"></i><span>Production</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="production-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('wo.index') }}">
+            <i class="bi bi-circle"></i><span>Work Order</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#purchasing-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-cart"></i><span>Purchasing</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
