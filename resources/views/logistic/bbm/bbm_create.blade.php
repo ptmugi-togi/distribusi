@@ -40,6 +40,7 @@
             <option value="IE" {{ old('formc') == 'IE' ? 'selected' : '' }}>IE (BBM - WARRANTY CLAIM)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
             <option value="IG" {{ old('formc') == 'IG' ? 'selected' : '' }}>IG (BBM - OFFICE USED)</option>
+            <option value="IJ" {{ old('formc') == 'IJ' ? 'selected' : '' }}>IJ (BBM - EX WORK ORDER)</option>
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
@@ -112,6 +113,10 @@
 
       <div id="section-ie" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_ie')
+      </div>
+
+      <div id="section-ij" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_ij')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -320,6 +325,7 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
                 loadPOList('#refcno_ia');
@@ -333,6 +339,8 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
+                $('#section-import').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } 
@@ -345,6 +353,8 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
+                $('#section-if').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -361,6 +371,7 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -375,6 +386,7 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-ik').fadeIn();
                 $('#section-ik').find('[data-req="ik"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -391,6 +403,7 @@
                 $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-im').fadeIn();
                 $('#section-im').find('[data-req="im"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -405,6 +418,7 @@
                 $('#section-im').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-ig').fadeIn();
                 $('#section-ig').find('[data-req="ig"]').prop('required', true);
                 loadPOList('#refcno_ig');
@@ -418,6 +432,7 @@
                 $('#section-im').remove();
                 $('#section-ig').remove();
                 $('#section-ie').remove();
+                $('#section-ij').remove();
                 $('#section-id').fadeIn();
                 $('#section-id').find('[data-req="id"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -432,8 +447,24 @@
                 $('#section-im').remove();
                 $('#section-ig').remove();
                 $('#section-id').remove();
+                $('#section-ij').remove();
                 $('#section-ie').fadeIn();
                 $('#section-ie').find('[data-req="ie"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+              }
+              else if(formc === 'IJ'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').remove();
+                $('#section-im').remove();
+                $('#section-ig').remove();
+                $('#section-id').remove();
+                $('#section-ie').remove();
+                $('#section-ij').fadeIn();
+                $('#section-ij').find('[data-req="ij"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
               }

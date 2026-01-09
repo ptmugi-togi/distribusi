@@ -84,4 +84,14 @@ class BbmHdr extends Model
         ->whereColumn('tsisnh.braco', 'braco')
         ->whereColumn('tsisnh.warco', 'warco');
     }
+
+    public function wo()
+    {
+        return $this->belongsTo(WoHdr::class, 'refno', 'wonum');
+    }
+
+    public function wodtl()
+    {
+        return $this->belongsTo(WoDtl::class, 'refno', 'wonum');
+    }
 }

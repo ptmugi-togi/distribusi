@@ -55,7 +55,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
+                @if ($bbm->formc == 'IA' && $bbm->formc == 'IB' && $bbm->formc == 'IG')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" value="{{ $bbm->supno }} - {{ $bbm->vendor->supna }}" disabled>
@@ -89,6 +89,13 @@
                 @if ($bbm->formc == 'IK' || $bbm->formc == 'IM')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+                @endif
+
+                @if ($bbm->formc == 'IJ')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Production Order</label>
                         <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
                     </div>
                 @endif
@@ -132,7 +139,7 @@
                         <h2 class="accordion-header" id="heading-{{ $i }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapse-{{ $i }}" aria-expanded="false">
-                                    Product: {{ $detail->opron }} - {{ $detail->mpromas->prona }}
+                                    Product: {{ $detail->opron }} - {{ $detail->mpromas->prona }} ({{ $detail->lotno }})
                             </button>
                         </h2>
                         <div id="collapse-{{ $i }}" class="accordion-collapse collapse"
@@ -182,7 +189,7 @@
                                         <input type="text" class="form-control" value="{{ $detail->lotno }}" disabled>
                                     </div>
 
-                                    @if ($bbm->formc != 'IF' && $bbm->formc != 'IL' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID')
+                                    @if ($bbm->formc == 'IA' && $bbm->formc == 'IB' && $bbm->formc == 'IG')
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">PO No.</label>
                                             <input type="text" class="form-control" value="{{ $detail->pono }}" disabled>

@@ -78,7 +78,7 @@
                     </div>
                 @endif
 
-                @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
+                @if ($bbm->formc == 'IA' && $bbm->formc == 'IB' && $bbm->formc == 'IG')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Supplier</label>
                         <input type="text" class="form-control" id="supplier"
@@ -103,6 +103,13 @@
                 @if ($bbm->formc == 'IK' || $bbm->formc == 'IM')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
+                        <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
+                    </div>
+                @endif
+
+                @if ($bbm->formc == 'IJ')
+                    <div class="col-md-6 mt-3">
+                        <label class="form-label">Production Order</label>
                         <input type="text" class="form-control" value="{{ $bbm->reffc }} {{ $bbm->refno }}" disabled>
                     </div>
                 @endif
@@ -177,7 +184,7 @@
                                                         <span class="input-group-text unit-label">{{ $d->qunit }}</span>
                                                     </div>
                                                 </div>
-                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
+                                            @elseif ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE' && $bbm->formc != 'IJ')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="inqty-{{ $i }}" class="form-label">PO Quantity</label>
                                                     <div class="input-group">
@@ -192,7 +199,11 @@
                                             <input type="text" id="stdqt-{{ $i }}" class="stdqu-input" name="stdqt[]" value="{{ old('stdqt.'. $i, $d->qunit ?? '') }}" hidden>
 
                                             <div class="col-md-6 mt-3">
-                                                <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                                                @if ($bbm->formc == 'IJ')
+                                                    <label for="trqty-{{ $i }}" class="form-label">Transfer Quantity</label><span class="text-danger"> *</span>
+                                                @else
+                                                    <label for="trqty-{{ $i }}" class="form-label">Receipt Quantity</label><span class="text-danger"> *</span>
+                                                @endif
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" id="trqty-{{ $i }}" name="trqty[]"
                                                         value="{{ old('trqty.'. $i, $d->trqty ?? '') }}"
@@ -213,7 +224,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE')
+                                            @if ($bbm->formc != 'IF' && $bbm->formc != 'IK' && $bbm->formc != 'IM' && $bbm->formc != 'ID' && $bbm->formc != 'IE' && $bbm->formc != 'IJ')
                                                 <div class="col-md-6 mt-3">
                                                     <label for="pono-{{ $i }}" class="form-label">PO No.</label>
                                                     <input type="text" class="form-control" name="pono[]" id="pono-{{ $i }}"
@@ -302,6 +313,10 @@
                 <div class="text-end">
                     <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIE()">Tambah Detail BBM</button>
                 </div>
+            @elseif($bbm->formc == 'IJ')
+                <div class="text-end">
+                    <button type="button" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addIJ()">Tambah Detail BBM</button>
+                </div>
             @endif
 
             <div class="mt-3 d-flex justify-content-between">
@@ -329,6 +344,8 @@
             @include('logistic.bbm.partial_edit.add_detail_id')
         @elseif($bbm->formc == 'IE')
             @include('logistic.bbm.partial_edit.add_detail_ie')
+        @elseif($bbm->formc == 'IJ')
+            @include('logistic.bbm.partial_edit.add_detail_ij')
         @endif
         {{-- simpan warehouse & refno --}}
         <script>

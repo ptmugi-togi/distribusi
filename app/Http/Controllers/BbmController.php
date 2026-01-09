@@ -385,6 +385,43 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
+    public function getWo(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tworkh as th')
+            ->join('tworkd as t', 'th.wonum', '=', 't.wonum')
+            ->where('th.formc', 'WO')
+            ->where('th.braco', $userBranch)
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                ->from('tworkd as t')
+                ->whereColumn('t.wonum', 'th.wonum')
+                ->whereColumn('t.outqt', '>', 't.acqty');
+            })
+            ->select('th.formc', 'th.wonum')
+            ->orderBy('th.wonum', 'desc')
+            ->distinct()
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByWo(Request $request)
+    {
+        $wonum = $request->wonum;
+
+        $data = DB::table('tworkd as t')
+            ->leftJoin('mpromas as m', 't.outpr', '=', 'm.opron')
+            ->where('t.wonum', $wonum)
+            ->where('t.formc', 'WO')
+            ->whereColumn('t.outqt', '>', 't.acqty')
+            ->select('t.outpr', DB::raw('t.outqt - t.acqty AS outqt'), 't.stdqu', 'm.prona')
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
