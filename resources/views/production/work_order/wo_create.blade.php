@@ -62,7 +62,7 @@
         <div class="col-md-6 mt-3">
             <label for="refcno" class="form-label">Request By</label><span class="text-danger"> *</span>
             <select name="refcno" id="refcno" class="form-control select2" disabled>
-                <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih Order Confirmation Number</option>
+                <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih Requisiton Number</option>
             </select>
             <div class="form-check">
                 <label for="noBpb"></label>
@@ -164,7 +164,7 @@
             if (reqbr) {
                 $.get('/get-ra-wo/' + reqbr, function (data) {
                     raSelect.empty();
-                    raSelect.append('<option value="" disabled selected>Pilih Order Confirmation Number</option>');
+                    raSelect.append('<option value="" disabled selected>Pilih Requisiton Number</option>');
 
                     data.forEach(function (item) {
                         raSelect.append(`
@@ -175,7 +175,7 @@
                     });
                 });
             } else {
-                raSelect.html('<option value="" disabled selected>Pilih Order Confirmation Number</option>');
+                raSelect.html('<option value="" disabled selected>Pilih Requisiton Number</option>');
             }
         });
 
@@ -253,7 +253,7 @@
                 }
 
                 if (!bpbid) {
-                    $select.append('<option value="" disabled selected>Pilih Order Confirmation Number terlebih dulu</option>');
+                    $select.append('<option value="" disabled selected>Pilih Requisiton Number terlebih dulu</option>');
                     return;
                 }
 
