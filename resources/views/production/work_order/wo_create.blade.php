@@ -62,7 +62,7 @@
         <div class="col-md-6 mt-3">
             <label for="refcno" class="form-label">Request By</label><span class="text-danger"> *</span>
             <select name="refcno" id="refcno" class="form-control select2" disabled>
-                <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih Requisiton Number</option>
+                <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih BPB/Requisition</option>
             </select>
             <input type="text" id="reffc" name="reffc" value="{{ old('reffc') }}" hidden>
             <input type="text" id="refno" name="refno" value="{{ old('refno') }}" hidden>
@@ -77,7 +77,7 @@
 
         <div class="col-md-6 mt-3">
             <label for="reqdt" class="form-label">Request Date</label><span class="text-danger"> *</span>
-            <input type="date" class="form-control" name="reqdt" id="reqdt" value="{{ old('reqdt') }}" required min="{{ $minDate }}">
+            <input type="date" class="form-control" name="reqdt" id="reqdt" value="{{ old('reqdt') }}" required>
         </div>
         
         <div class="col-md-6 mt-3">
@@ -131,6 +131,17 @@
 
 @push('scripts')
     <script>
+        $(document).ready(function(){
+            $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
+            generateWoNum();
+            $('#refcno').prop('disabled', true);
+            $('#noBpb').prop('checked', true).prop('disabled', true);
+            $('#reqdt')
+                .prop('readonly', true)
+                .prop('disabled', true)
+                .css('background-color', '#e9ecef');
+        });
+
         function generateWoNum() {
             $.get("{{ route('generate-wonum') }}", function (res) {
                 $('#wonum').val(res);
@@ -149,13 +160,6 @@
 
         let isnoBpb = true;
 
-        $(document).ready(function(){
-            $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
-            generateWoNum();
-            $('#refcno').prop('disabled', true);
-            $('#noBpb').prop('checked', true).prop('disabled', true);
-        });
-
         function fillRefData() {
             const selected = $('#refcno').find(':selected');
 
@@ -164,12 +168,14 @@
             const sorno = selected.data('sorno') || '';
             const reffc = selected.data('formc') || '';
             const refno = selected.data('reqno') || '';
+            const reqdt = selected.data('reqdt') || '';
 
             $('#cusna').val(cust);
             $('#sorfc').val(sorfc);
             $('#sorno').val(sorno);
             $('#reffc').val(reffc);
             $('#refno').val(refno);
+            $('#reqdt').val(reqdt);
 
             $('#sorfcno').val((sorfc && sorno) ? `${sorfc} ${sorno}` : '-');
         }
@@ -191,7 +197,7 @@
             if (reqbr) {
                 $.get('/get-ra-wo/' + reqbr, function (data) {
                     raSelect.empty();
-                    raSelect.append('<option value="" disabled selected>Pilih Requisiton Number</option>');
+                    raSelect.append('<option value="" disabled selected>Pilih BPB/Requisition</option>');
 
                     data.forEach(function (item) {
                         raSelect.append(`
@@ -201,7 +207,8 @@
                                 data-cust="${item.rqfor}"
                                 data-sorfc="${item.sorfc}"
                                 data-sorno="${item.sorno}"
-                                data-reqno="${item.reqno}">
+                                data-reqno="${item.reqno}"
+                                data-reqdt="${item.reqdt}">
                                 ${item.formc} ${item.reqno}
                             </option>
                         `);
@@ -209,13 +216,41 @@
 
                 });
             } else {
-                raSelect.html('<option value="" disabled selected>Pilih Requisiton Number</option>');
+                raSelect.html('<option value="" disabled selected>Pilih BPB/Requisition</option>');
             }
         });
 
         $(document).on('change', '#refcno', function () {
             fillRefData();
+            syncReqdtMode();
         });
+
+        function syncReqdtMode() {
+            const ppose = $('#ppose').val();
+            const useBpb = (ppose == '2' && !isnoBpb);
+
+            if (useBpb) {
+                // reqdt ambil dari BPB/RA readonly
+                const selected = $('#refcno').find(':selected');
+                const reqdt = selected.data('reqdt') || '';
+
+                $('#reqdt')
+                    .val(reqdt)
+                    .prop('readonly', true)
+                    .css('background-color', '#e9ecef');
+            } else {
+                // reqdt ambil dari wodat tapi bisa diedit
+                const wodat = $('#wodat').val() || '';
+
+                if (!$('#reqdt').val() || $('#reqdt').prop('readonly')) {
+                    $('#reqdt').val(wodat);
+                }
+
+                $('#reqdt')
+                    .prop('readonly', false)
+                    .css('background-color', '');
+            }
+        }
 
         $('#ppose').on('change', function () {
             const ppose = $(this).val();
@@ -245,6 +280,10 @@
                     .trigger('change');
             }
 
+            // ✅ update mode reqdt
+            syncReqdtMode();
+
+            // ✅ refresh barang
             refreshAllOpron();
         });
 
@@ -266,6 +305,7 @@
                 }
             }
 
+            syncReqdtMode();
             refreshAllOpron();
         });
 
@@ -291,7 +331,7 @@
                 }
 
                 if (!bpbid) {
-                    $select.append('<option value="" disabled selected>Pilih Requisiton Number terlebih dulu</option>');
+                    $select.append('<option value="" disabled selected>Pilih BPB/Requisition terlebih dulu</option>');
                     return;
                 }
 

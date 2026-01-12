@@ -81,6 +81,7 @@ class WoController extends Controller
     {
         $ra = DB::table('tsreqh')
             ->where('braco', $braco)
+            ->orderBy('reqno', 'desc')
             ->get();
 
         return response()->json($ra);
