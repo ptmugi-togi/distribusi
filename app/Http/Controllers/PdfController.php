@@ -122,7 +122,9 @@ class PdfController extends Controller
             'tbolh',
             'mbranches',
             'bbmdtls.bbmhdr',
-            'referenceHeader'
+            'referenceHeader',
+            'wo',
+            'wodtl'
 
         ])->findOrFail($id);
 
@@ -181,7 +183,10 @@ class PdfController extends Controller
             'vendor',
             'tbolh',
             'mbranches',
-            'bbmdtls.bbmhdr'
+            'bbmdtls.bbmhdr',
+            'referenceHeader',
+            'wo',
+            'wodtl'
         ])->findOrFail($id);
 
         $tahdr = \DB::table('tsisnh AS t')
