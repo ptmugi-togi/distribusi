@@ -112,10 +112,6 @@ class WoController extends Controller
 
         try {
             $woid = $request->braco . $request->formc . $request->wonum;
-            $reqby = 'RA' . $request->refcno . '/' . $request->reqbr;
-            if (is_null($request->refcno)) {
-                $reqby = '-';
-            }
 
             // Simpan header
             WoHdr::create([
@@ -127,7 +123,8 @@ class WoController extends Controller
                 'priod' => $request->priod,
                 'reqbr' => $request->reqbr,
                 'ppose' => $request->ppose,
-                'reqby' => $reqby ?? null,
+                'reffc' => $request->reffc,
+                'refno' => $request->refno,
                 'reqdt' => $request->reqdt,
                 'cusna' => $request->cusna,
                 'sorno' => $request->sorno,

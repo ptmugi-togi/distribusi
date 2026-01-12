@@ -64,6 +64,8 @@
             <select name="refcno" id="refcno" class="form-control select2" disabled>
                 <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih Requisiton Number</option>
             </select>
+            <input type="text" id="reffc" name="reffc" value="{{ old('reffc') }}" hidden>
+            <input type="text" id="refno" name="refno" value="{{ old('refno') }}" hidden>
             <div class="form-check">
                 <label for="noBpb"></label>
                 <input class="form-check-input noBpb-checkbox" type="checkbox" value="1" name="noBpb" id="noBpb">
@@ -84,8 +86,10 @@
         </div>
 
         <div class="col-md-6 mt-3">
-            <label for="sorno" class="form-label">Order Confirmation Number</label><span class="text-danger"> *</span>
-            <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required>
+            <label for="sorfcno" class="form-label">Order Confirmation Number</label><span class="text-danger"> *</span>
+            <input type="text" class="form-control" name="sorfcno" id="sorfcno" value="{{ old('sorno') }}" required readonly style="background-color:#e9ecef">
+            <input type="text" class="form-control" name="sorfc" id="sorfc" value="{{ old('sorno') }}" required hidden>
+            <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required hidden>
         </div>
 
         <div class="col-md-6 mt-3">
@@ -152,12 +156,35 @@
             $('#noBpb').prop('checked', true).prop('disabled', true);
         });
 
+        function fillRefData() {
+            const selected = $('#refcno').find(':selected');
+
+            const cust  = selected.data('cust')  || '-';
+            const sorfc = selected.data('sorfc') || '';
+            const sorno = selected.data('sorno') || '';
+            const reffc = selected.data('formc') || '';
+            const refno = selected.data('reqno') || '';
+
+            $('#cusna').val(cust);
+            $('#sorfc').val(sorfc);
+            $('#sorno').val(sorno);
+            $('#reffc').val(reffc);
+            $('#refno').val(refno);
+
+            $('#sorfcno').val((sorfc && sorno) ? `${sorfc} ${sorno}` : '-');
+        }
+
         $('#reqbr').on('change', function () {
             let reqbr = $(this).val();
             let raSelect = $('#refcno');
 
             resetAllAccordionTitle();
             refreshAllOpron();
+
+            $('#cusna').val('-');
+            $('#sorfc').val('');
+            $('#sorno').val('');
+            $('#sorfcno').val('-');
 
             raSelect.html('<option>Loading...</option>');
 
@@ -168,15 +195,26 @@
 
                     data.forEach(function (item) {
                         raSelect.append(`
-                            <option value="${item.reqno}" data-formc="${item.formc}" data-bpbid="${item.bpbid}">
+                            <option value="${item.reqno}"
+                                data-formc="${item.formc}"
+                                data-bpbid="${item.bpbid}"
+                                data-cust="${item.rqfor}"
+                                data-sorfc="${item.sorfc}"
+                                data-sorno="${item.sorno}"
+                                data-reqno="${item.reqno}">
                                 ${item.formc} ${item.reqno}
                             </option>
                         `);
                     });
+
                 });
             } else {
                 raSelect.html('<option value="" disabled selected>Pilih Requisiton Number</option>');
             }
+        });
+
+        $(document).on('change', '#refcno', function () {
+            fillRefData();
         });
 
         $('#ppose').on('change', function () {
