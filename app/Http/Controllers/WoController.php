@@ -128,6 +128,7 @@ class WoController extends Controller
                 'refno' => $request->refno,
                 'reqdt' => $request->reqdt,
                 'cusna' => $request->cusna,
+                'sorfc' => $request->sorfc,
                 'sorno' => $request->sorno,
                 'costc' => $request->costc,
                 'fdate' => $request->fdate,

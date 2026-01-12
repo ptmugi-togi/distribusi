@@ -50,7 +50,7 @@
                           </td>
                           <td class="">{{ $w->reffc }} {{ $w->refno}}</td>
                           <td class="text-center">{{ $w->reqby ?? '-' }}</td>
-                          <td class="text-center">{{ $w->sorno ?? '-' }}</td>
+                          <td class="text-center">{{ $w->sorfc }}/{{ $w->sorno ?? '-' }}</td>
                           <td class="text-center">{{ $w->cusna ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}

@@ -26,6 +26,7 @@ class WoHdr extends Model
         'reqbr',
         'reffc',
         'refno',
+        'sorfc',
         'sorno',
         'reqby',
         'reqdt',
