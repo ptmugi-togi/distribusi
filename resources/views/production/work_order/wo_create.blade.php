@@ -106,7 +106,7 @@
 
         <div class="col-md-6 mt-3">
             <label for="fdate" class="form-label">Finish Schedule</label><span class="text-danger"> *</span>
-            <input type="date" class="form-control" id="fdate" name="fdate" value="{{ old('fdate') }}">
+            <input type="date" class="form-control" id="fdate" name="fdate" value="{{ old('fdate') }}" required>
         </div>
 
         <div class="col-md-12 mt-3">
@@ -140,6 +140,7 @@
                 .prop('readonly', true)
                 .prop('disabled', true)
                 .css('background-color', '#e9ecef');
+            syncReqdtMode();
         });
 
         function generateWoNum() {
@@ -229,8 +230,20 @@
             const ppose = $('#ppose').val();
             const useBpb = (ppose == '2' && !isnoBpb);
 
+            // kalau belum pilih ppose, tetep lock
+            if (!ppose) {
+                $('#reqdt')
+                    .val('')
+                    .prop('disabled', true)
+                    .prop('readonly', true)
+                    .css('background-color', '#e9ecef');
+                return;
+            }
+
+            $('#reqdt').prop('disabled', false);
+
             if (useBpb) {
-                // reqdt ambil dari BPB/RA readonly
+                // reqdt dari BPB/RA readonly
                 const selected = $('#refcno').find(':selected');
                 const reqdt = selected.data('reqdt') || '';
 
@@ -239,7 +252,7 @@
                     .prop('readonly', true)
                     .css('background-color', '#e9ecef');
             } else {
-                // reqdt ambil dari wodat tapi bisa diedit
+                // reqdt ikut wodat, bisa diedit
                 const wodat = $('#wodat').val() || '';
 
                 if (!$('#reqdt').val() || $('#reqdt').prop('readonly')) {
@@ -280,10 +293,8 @@
                     .trigger('change');
             }
 
-            // ✅ update mode reqdt
             syncReqdtMode();
 
-            // ✅ refresh barang
             refreshAllOpron();
         });
 
