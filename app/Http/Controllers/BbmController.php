@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 use App\Models\BbmHdr;
 use App\Models\BbmDtl;
@@ -187,7 +188,7 @@ class BbmController extends Controller
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
         $formc = $request->formc;
-        $year = date('y');
+        $year = Carbon::parse($tradt)->format('y');
 
         $last = DB::table('tstorh')
             ->where('braco', $braco)

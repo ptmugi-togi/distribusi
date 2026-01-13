@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 use App\Models\BpbHdr;
 use App\Models\BpbDtl;
@@ -38,7 +39,8 @@ class BpbController extends Controller
     {
         $braco = auth()->user()->cabang;
         $formc = $request->formc;
-        $year = date('y');
+        $reqdt = $request->reqdt;
+        $year = Carbon::parse($reqdt)->format('y');
 
         $last = DB::table('tsreqh')
             ->where('braco', $braco)

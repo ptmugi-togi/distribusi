@@ -162,12 +162,13 @@
           });
 
             // generate reqno
-            $('#formc-store').on('change', function(){
+            $('#formc-store, #reqdt').on('change', function(){
                 let braco = $('#braco').val();
                 let formc = $('#formc-store').val();
+                let reqdt = $('#reqdt').val();
 
-                if(formc){
-                    $.get("{{ route('generate-reqno-bpb') }}", {formc}, function(res){
+                if(formc && braco && reqdt){
+                    $.get("{{ route('generate-reqno-bpb') }}", {formc, braco, reqdt}, function(res){
                         $('#reqno').val(res);
                     });
                 }

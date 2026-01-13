@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 use App\Models\WoHdr;
 use App\Models\WoDtl;
 
@@ -59,7 +61,9 @@ class WoController extends Controller
     {
         $braco = auth()->user()->cabang;
         $formc = 'WO';
-        $year = date('y');
+        $wodat = $request->wodat;
+
+        $year = Carbon::parse($wodat)->format('y');
 
         $last = DB::table('tworkh')
             ->where('braco', $braco)

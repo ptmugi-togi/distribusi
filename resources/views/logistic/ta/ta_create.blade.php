@@ -155,13 +155,14 @@
           });
 
           // generate trano
-          $('#warco').on('change', function(){
+          $('#warco, #tradt').on('change', function(){
               let braco = $('#braco').val();
               let warco = $('#warco').val();
               let formc = $('#formc').val();
+              let tradt = $('#tradt').val();
 
-              if(warco && formc){
-                  $.get("{{ route('generate-trano-ta') }}", {formc, warco}, function(res){
+              if(warco && formc && tradt){
+                  $.get("{{ route('generate-trano-ta') }}", {formc, warco, tradt}, function(res){
                       $('#trano').val(res);
                   });
               }

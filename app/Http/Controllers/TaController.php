@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 use App\Models\TaHdr;
 use App\Models\TaDtl;
@@ -38,7 +39,9 @@ class TaController extends Controller
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
         $formc = $request->formc;
-        $year = date('y');
+        $tradt = $request->tradt;
+        
+        $year = Carbon::parse($tradt)->format('y');
 
         $last = DB::table('tsisnh')
             ->where('braco', $braco)

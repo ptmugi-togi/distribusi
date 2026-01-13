@@ -133,7 +133,6 @@
     <script>
         $(document).ready(function(){
             $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
-            generateWoNum();
             $('#refcno').prop('disabled', true);
             $('#noBpb').prop('checked', true).prop('disabled', true);
             $('#reqdt')
@@ -143,11 +142,15 @@
             syncReqdtMode();
         });
 
-        function generateWoNum() {
-            $.get("{{ route('generate-wonum') }}", function (res) {
-                $('#wonum').val(res);
-            });
-        }
+        $('#wodat').on('change', function(){
+            let wodat = $('#wodat').val();
+
+            if(wodat){
+                $.get("{{ route('generate-wonum') }}", {wodat}, function(res){
+                    $('#wonum').val(res);
+                });
+            }
+        });
 
         $(document).on('change', '#wodat', function () {
               const tanggal = this.value;
