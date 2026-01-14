@@ -83,7 +83,7 @@ class BbkController extends Controller
     {
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
-        $formc = $request->formc;
+        $formc = $request->formc_store;
         $tradt = $request->tradt;
         $year = Carbon::parse($tradt)->format('y');
 
@@ -108,11 +108,11 @@ class BbkController extends Controller
     {
         $query = DB::table('mwarco_tbl');
 
-        if ($request->formc === 'OB') {
+        if ($request->formc_store === 'OB') {
             $query->where('warco', 'like', 'CKG%');
         }
 
-        if ($request->formc !== 'OB') {
+        if ($request->formc_store !== 'OB') {
             $query->where('braco', auth()->user()->cabang);
         }
 
@@ -266,14 +266,14 @@ class BbkController extends Controller
         DB::beginTransaction();
 
         try {
-            $bbkid = $request->braco . $request->warco . $request->formc . $request->trano;
+            $bbkid = $request->braco . $request->warco . $request->formc_store . $request->trano;
 
             // Simpan header
             BbkHdr::create([
                 'bbkid' => $bbkid,
                 'braco' => $request->braco,
                 'warco' => $request->warco,
-                'formc' => $request->formc,
+                'formc' => $request->formc_store,
                 'trano' => $request->trano,
                 'priod' => $request->priod,
                 'tradt' => $request->tradt,
@@ -316,7 +316,7 @@ class BbkController extends Controller
                 foreach ($lotList as $lotno) {
                     DB::table('toutg')->insert([
                         'bbkid' => $bbkid,
-                        'formc' => $request->formc,
+                        'formc' => $request->formc_store,
                         'trano' => $request->trano,
                         'opron' => $useOpron,
                         'lotno' => $lotno ?? '-',

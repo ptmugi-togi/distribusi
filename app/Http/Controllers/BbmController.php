@@ -43,11 +43,11 @@ class BbmController extends Controller
     {
         $query = DB::table('mwarco_tbl');
 
-        if ($request->formc === 'IM') {
+        if ($request->formc_store === 'IM') {
             $query->where('warco', 'like', 'CKG%');
         }
 
-        if ($request->formc !== 'IM') {
+        if ($request->formc_store !== 'IM') {
             $query->where('braco', auth()->user()->cabang);
         }
 
@@ -187,7 +187,7 @@ class BbmController extends Controller
     {
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
-        $formc = $request->formc;
+        $formc = $request->formc_store;
         $year = Carbon::parse($tradt)->format('y');
 
         $last = DB::table('tstorh')
@@ -475,14 +475,14 @@ class BbmController extends Controller
         DB::beginTransaction();
 
         try {
-            $bbmid = $request->braco . $request->warco . $request->formc . $request->trano;
+            $bbmid = $request->braco . $request->warco . $request->formc_store . $request->trano;
 
             // Simpan header
             BbmHdr::create([
                 'bbmid' => $bbmid,
                 'braco' => $request->braco,
                 'warco' => $request->warco,
-                'formc' => $request->formc,
+                'formc' => $request->formc_store,
                 'trano' => $request->trano,
                 'priod' => $request->priod,
                 'tradt' => $request->tradt,
@@ -568,7 +568,7 @@ class BbmController extends Controller
                     );
                 }
                 // Update progress Stock Requisition (tsreqd)
-                if ($request->formc === 'IL') {
+                if ($request->formc_store === 'IL') {
                     DB::table('tsreqd')
                         ->where('braco', $request->braco)
                         ->where('formc', $request->reffc)
@@ -602,7 +602,7 @@ class BbmController extends Controller
                             ->decrement('qtyit', $trqty);
                     }
                 }
-                if ($request->formc === 'ID') {
+                if ($request->formc_store === 'ID') {
                     $prefix = $request->braco . $request->warco;
 
                     DB::table('toutg')

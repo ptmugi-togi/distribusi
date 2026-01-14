@@ -43,6 +43,7 @@
             <option value="OG" {{ old('formc') == 'OG' ? 'selected' : '' }}>OG (OFFICE USED)</option>
             {{-- FormC lain nanti --}}
           </select>
+          <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
         </div>
 
         <div class="col-md-6 mt-3">
@@ -111,7 +112,10 @@
 
               // restore old
               const oldFormc = @json(old('formc'));
-              if(oldFormc){ $('#formc').val(oldFormc).trigger('change'); }
+              if(oldFormc){ 
+                $('#formc').val(oldFormc).trigger('change'); 
+                lockFormc();
+              }
           });
 
           // generate trano
@@ -171,10 +175,21 @@
             });
           }
 
+          function lockFormc() {
+            const val = $('#formc').val();
+            if (!val) return;
+
+            $('#formc_store').val(val);
+
+            $('#formc').prop('disabled', true).trigger('change.select2');
+          }
+
           // switch section by FormC
           $('#formc').on('change', function(){
               const formc = $(this).val();
               const $warco = $('#warco');
+
+              lockFormc();
 
               if(formc === 'OF'){
                 $('#section-of').fadeIn();
