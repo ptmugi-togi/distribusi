@@ -89,7 +89,7 @@
         </ul>
       </li>
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -99,7 +99,7 @@
               <i class="bi bi-circle"></i><span>RETAIL ORDER CONFIRMATION ENTRY</span>
             </a>
           </li>
-          {{-- <li>
+          <li>
             <a href="forms-layouts.html">
               <i class="bi bi-circle"></i><span>Form Layouts</span>
             </a>
@@ -113,9 +113,9 @@
             <a href="forms-validation.html">
               <i class="bi bi-circle"></i><span>Form Validation</span>
             </a>
-          </li> --}}
+          </li>
         </ul>
-      </li>
+      </li> --}}
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#logistic-nav" data-bs-toggle="collapse" href="#">
@@ -175,6 +175,18 @@
         </ul>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#marketing-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-shop"></i><span>marketing</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('oc.index') }}">
+            <i class="bi bi-circle"></i><span>OC Retail (SA)</span>
+            </a>
+          </li>
+        </ul>
+      </li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#production-nav" data-bs-toggle="collapse" href="#">

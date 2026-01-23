@@ -17,7 +17,10 @@ class WoController extends Controller
      */
     public function index()
     {
+        $userBraco = Auth::user()->cabang;
+
         $wohdr = WoHdr::with(['mbranch', 'mformcode', 'wodtls'])
+                    ->where('braco', $userBraco)
                     ->get();
 
         $latestPeriod = DB::table('tperiode')
@@ -193,7 +196,6 @@ class WoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // dd($request->all());
         DB::beginTransaction();
 
         try {

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Msreno extends Model
+class Mtaxes extends Model
 {
     use HasFactory;
 
-    protected $table = 'msreno';
-    protected $primaryKey = 'sreno';
+    protected $table = 'mtaxes';
+    protected $primaryKey = 'braco';
     protected $keyType = 'string';
     public $increment = false;
     public $timestamps = false;
 
-    protected $fillable = ['braco','sreno','srena','steam','address','phone','grade','aktif'];
+    protected $fillable = ['braco','taxes','nama','jabatan'];
 }

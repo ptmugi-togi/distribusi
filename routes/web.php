@@ -34,6 +34,7 @@ use App\Http\Controllers\TaController;
 use App\Http\Controllers\StockStatusController;
 use App\Http\Controllers\OsrController;
 use App\Http\Controllers\WoController;
+use App\Http\Controllers\MstmasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -242,3 +243,19 @@ Route::put('/wo/{id}', [WoController::class,'update'])->middleware('auth')->name
 Route::delete('/wo/{id}/delete', [WoController::class,'destroy'])->middleware('auth')->name('wo.delete');
 Route::get('/wo/previewWo/{id}', [PdfController::class, 'previewWo'])->name('wo.previewWo');
 Route::get('/wo/printWo/{id}', [PdfController::class, 'printWo'])->name('wo.printWo');
+
+Route::get('/api/mstmas', [MstmasController::class, 'getMstmas'])->name('api.mstmas');
+
+Route::get('/oc', [OcController::class,'index'])->middleware('auth')->name('oc.index');
+Route::get('/oc/create', [OcController::class,'create'])->middleware('auth')->name('oc.create');
+Route::get('/generate-ocnum', [OcController::class,'generateOcnum'])->name('generate-ocnum');
+Route::get('/get-currency-rate/{curco}', [OcController::class, 'getCurrencyRate'])->name('get-currency-rate');
+Route::get('/get-mstmas-delto', [OcController::class, 'getMstmasDelto'])->name('get-mstmas-delto');
+Route::get('/get-mstmas-detail', [OcController::class, 'getMstmasDetail'])->name('get-mstmas-detail');
+route::post('/oc/store', [OcController::class,'store'])->middleware('auth')->name('oc.store');
+Route::get('/oc/{id}/detail', [OcController::class,'show'])->middleware('auth')->name('oc.detail');
+Route::get('/oc/{id}/edit', [OcController::class,'edit'])->middleware('auth')->name('oc.edit');
+Route::put('/oc/{id}', [OcController::class,'update'])->middleware('auth')->name('oc.update');
+Route::delete('/oc/{id}/delete', [OcController::class,'destroy'])->middleware('auth')->name('oc.delete');
+Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');
+Route::get('/oc/printOc/{id}', [PdfController::class, 'printOc'])->name('oc.printOc');

@@ -10,6 +10,8 @@ use App\Models\BbkHdr;
 use App\Models\BpbHdr;
 use App\Models\TaHdr;
 use App\Models\WoHdr;
+use App\Models\Mstmas;
+use App\Models\Mcindu;
 use Mpdf\Mpdf;
 
 class PdfController extends Controller
@@ -545,5 +547,78 @@ class PdfController extends Controller
         return response($pdfContent)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
+    }
+
+    public function previewOc($id)
+    {
+        $ochdr = \App\Models\OcHdr::with([
+            'ocdtls.mpromas',
+            'msreno',
+            'mcusmas',
+            'mtaxes'
+        ])->findOrFail($id);
+
+        $delto = Mstmas::where('braco', $ochdr->braco)
+        ->where('cusno', $ochdr->cusno)
+        ->where('shpto', $ochdr->delto)
+        ->first();
+
+        $mcindu = Mcindu::where('cindu', $ochdr->mcusmas->cindu)->first();
+
+        $html = view('marketing.oc_sa.oc_print', compact('ochdr', 'delto', 'mcindu'))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+        
+        $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output(); 
+    }
+
+    public function printOc($id) {
+        $ochdr = OcHdr::with([
+            'ocdtls.mpromas',
+            'msreno',
+            'mcusmas',
+            'mtaxes'
+        ])->findOrFail($id);
+
+        $delto = Mstmas::where('braco', $ochdr->braco)
+        ->where('cusno', $ochdr->cusno)
+        ->where('shpto', $ochdr->delto)
+        ->first();
+
+        $mcindu = Mcindu::where('cindu', $ochdr->cindu)->first();
+
+        $ocdtls = $ochdr->ocdtls;
+
+        $html = view('marketing.oc_sa.oc_print', [
+            'ochdr' => $ochdr,
+            'delto' => $delto,
+            'mcindu' => $mcindu,
+            'ocdtls' => $ocdtls,
+        ])->render();
+
+        // increment counter total print
+        DB::table('tcoreh')
+        ->where('ocid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new Mpdf();
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $pdfContent = $mpdf->Output("{$ochdr->ocid}.pdf", "S");
+
+        return response($pdfContent)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'attachment; filename="'.$tpohdr->ocid.'.pdf"');
     }
 }   
