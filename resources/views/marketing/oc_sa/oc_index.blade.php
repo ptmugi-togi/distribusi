@@ -52,11 +52,11 @@
                           <td class="text-center">{{ $o->msreno->srena ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
-                              <a href="{{ route('oc.previewOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
+                              {{-- <a href="{{ route('oc.previewOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                               {{-- print --}}
                               {{-- @if (!$periodClosed && $o->braco == auth()->user()->cabang) --}}
-                                {{-- <a href="{{ route('oc.printOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                                <a href="{{ route('oc.printOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                 
                                 <a href="/oc/{{ $o->ocid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 <a href="/oc/{{ $o->ocid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
