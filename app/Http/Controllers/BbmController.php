@@ -188,6 +188,7 @@ class BbmController extends Controller
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
         $formc = $request->formc_store;
+        $tradt = $request->tradt;
         $year = Carbon::parse($tradt)->format('y');
 
         $last = DB::table('tstorh')
