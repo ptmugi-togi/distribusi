@@ -55,6 +55,7 @@ class OcController extends Controller
                     ->get();
         
         $sales = DB::table('msreno')
+                    ->where('braco', auth()->user()->cabang)
                     ->get();
 
         $branches = DB::table('mbranches')->get();

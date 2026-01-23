@@ -25,7 +25,7 @@
 
             <div class="row">
             <input type="text" class="form-control" id="formc" name="formc" value="SA" hidden>
-            <input type="text" class="form-control" id="braco" name="braco" value="PST" hidden>
+            <input type="text" class="form-control" id="braco" name="braco" value="{{ auth()->user()->cabang }}" hidden>
                 
             <div class="col-md-6 mt-3">
                 <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> *</span>
