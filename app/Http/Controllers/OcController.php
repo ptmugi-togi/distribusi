@@ -233,7 +233,7 @@ class OcController extends Controller
     public function generateOcnum(Request $request)
     {
         $braco = auth()->user()->cabang;
-        $formc = 'OC';
+        $formc = 'SA';
         $sordt = $request->sordt;
 
         $year = Carbon::parse($sordt)->format('y');
