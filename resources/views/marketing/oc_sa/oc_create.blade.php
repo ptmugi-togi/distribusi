@@ -78,7 +78,8 @@
                     <option value="" disabled {{ old('curco') ? '' : 'selected' }}>Silahkan Pilih Currency</option>
                     @foreach ($currency as $curr)
                         @if (in_array($curr->curco, ['IDR', 'USD']))
-                            <option value="{{ $curr->curco }}" {{ old('curco') == $curr->curco ? 'selected' : '' }}>
+                            <option value="{{ $curr->curco }}"
+                                {{ old('curco', 'IDR') == $curr->curco ? 'selected' : '' }}>
                                 {{ $curr->curco }} - {{ $curr->desc_curco }}
                             </option>
                         @endif
@@ -93,7 +94,7 @@
             </div>
 
             <div class="col-md-4 mt-3">
-                <label for="ebtyp" class="form-label">EB Type</label><span class="text-danger"> *</span>
+                <label for="ebtyp" class="form-label">EB Type</label>
                 <select name="ebtyp" id="ebtype" class="form-control select2">
                     <option value="" disabled {{ old('ebtyp') ? '' : 'selected' }}>Silahkan Pilih EB Type</option>
                     <option value="P" {{ old('ebtyp') == 'P' ? 'selected' : '' }}>P - Percent (%)</option>
@@ -232,6 +233,12 @@
             $('#edisp').attr('disabled', true).val('');
             $('#edisa_display').attr('disabled', true).val('');
             $('#edisa_raw').attr('disabled', true).val('');
+
+            if (!$('#curco').val()) {
+                $('#curco').val('IDR').trigger('change.select2');
+            } else {
+                $('#curco').trigger('change');
+            }
         })
 
         $('#sordt').on('change', function(){
