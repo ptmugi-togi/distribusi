@@ -250,6 +250,7 @@ Route::get('/oc', [OcController::class,'index'])->middleware('auth')->name('oc.i
 Route::get('/oc/create', [OcController::class,'create'])->middleware('auth')->name('oc.create');
 Route::get('/generate-ocnum', [OcController::class,'generateOcnum'])->name('generate-ocnum');
 Route::get('/get-currency-rate/{curco}', [OcController::class, 'getCurrencyRate'])->name('get-currency-rate');
+Route::get('/get-sales-split/{sqtbr}', [OcController::class, 'getSalesSplit'])->name('get-sales-split');
 Route::get('/get-mstmas-delto', [OcController::class, 'getMstmasDelto'])->name('get-mstmas-delto');
 Route::get('/get-mstmas-detail', [OcController::class, 'getMstmasDetail'])->name('get-mstmas-detail');
 route::post('/oc/store', [OcController::class,'store'])->middleware('auth')->name('oc.store');

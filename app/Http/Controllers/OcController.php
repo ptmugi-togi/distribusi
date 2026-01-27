@@ -268,6 +268,19 @@ class OcController extends Controller
         return response()->json(['success' => false], 404);
     }
 
+    public function getSalesSplit($sqtbr)
+    {
+        $data = DB::table('msreno')
+            ->where('braco', $sqtbr)
+            ->orderBy('sreno')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
     public function getMstmasDelto(Request $request)
     {
         $data = DB::table('mstmas')

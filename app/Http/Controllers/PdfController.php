@@ -581,7 +581,7 @@ class PdfController extends Controller
     }
 
     public function printOc($id) {
-        $ochdr = OcHdr::with([
+        $ochdr = \App\Models\OcHdr::with([
             'ocdtls.mpromas',
             'msreno',
             'mcusmas',
@@ -619,6 +619,6 @@ class PdfController extends Controller
 
         return response($pdfContent)
         ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'attachment; filename="'.$tpohdr->ocid.'.pdf"');
+        ->header('Content-Disposition', 'attachment; filename="'.$ochdr->ocid.'.pdf"');
     }
 }   

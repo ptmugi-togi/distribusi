@@ -147,11 +147,11 @@
                 <label for="sqtsr" class="form-label">Sales Rep.</label>
                 <select name="sqtsr" id="sqtsr" class="form-control select2">
                     <option value="" disabled {{ old('sqtsr') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    @foreach ($sales as $s)
+                    {{-- @foreach ($sales->where('branch', '=', request('sqtbr')) as $s )
                         <option value="{{ $s->sreno }}" {{ old('sreno') == $s->sreno ? 'selected' : '' }}>
                             {{ $s->sreno }} - {{ $s->srena }}
                         </option>
-                    @endforeach
+                    @endforeach --}}
                 </select>
             </div>
 
@@ -374,6 +374,35 @@
                 $('#edisa_display').attr('disabled', true).val('');
                 $('#edisa_raw').attr('disabled', true).val('');
             }
+        });
+
+        $('#sqtbr').on('change', function () {
+
+            const sqtbr = $(this).val();
+            if (!sqtbr) return;
+
+            $.ajax({
+                url: `/get-sales-split/${sqtbr}`,
+                method: 'GET',
+                success: function (response) {
+
+                    if (response.success) {
+
+                        const list = response.data || [];
+                        let options = '<option value="" disabled selected>Silahkan pilih Sales</option>';
+
+                        list.forEach(item => {
+                            options += `<option value="${item.sreno}">
+                                ${item.sreno} - ${item.srena}
+                            </option>`;
+                        });
+
+                        $('#sqtsr').html(options).trigger('change.select2');
+                    }
+
+                }
+            });
+
         });
 
         function loadMasterProductAll(){
