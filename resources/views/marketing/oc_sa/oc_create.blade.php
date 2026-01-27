@@ -220,6 +220,7 @@
             $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
 
             setTimeout(function(){
+                refreshAccordionTitles();
                 loadMasterProductAll();
             }, 500);
 
@@ -239,7 +240,58 @@
             } else {
                 $('#curco').trigger('change');
             }
-        })
+
+            // buat cusno dan delto
+            const oldCusno = "{{ old('cusno') }}";
+            const oldDelto = "{{ old('delto') }}";
+
+            if (oldCusno) {
+                // trigger load delivery list
+                $.ajax({
+                    url: `/get-mstmas-delto`,
+                    method: 'GET',
+                    data: { cusno: oldCusno },
+                    success: function (res) {
+
+                        if (!res.success) return;
+
+                        const list = res.data || [];
+
+                        let options = '<option value="" disabled>Silahkan pilih Delivery To</option>';
+
+                        list.forEach(item => {
+                            const selected = (item.shpto == oldDelto) ? 'selected' : '';
+                            options += `<option value="${item.shpto}" ${selected}>${item.shpto}</option>`;
+                        });
+
+                        $('#delto').html(options).trigger('change.select2');
+
+                        // kalau ada old delto, ambil detailnya
+                        if (oldDelto) {
+                            loadDeltoDetail(oldCusno, oldDelto);
+                        }
+                    }
+                });
+            }
+
+            // old opron + prona for accordion
+            const oldProducts = @json(old('opron', []));
+            const oldPronas   = @json(old('prona', []));
+
+            $('.opron-oc').each(function(index){
+
+                if(oldProducts[index]){
+                    const option = new Option(
+                        oldProducts[index] + ' - ' + (oldPronas[index] ?? ''),
+                        oldProducts[index],
+                        true,
+                        true
+                    );
+                    $(this).append(option);
+                }
+
+            });
+        });
 
         $('#sordt').on('change', function(){
             let sordt = $('#sordt').val();
@@ -365,6 +417,24 @@
                         return data.text;
                     }
                 });
+            });
+        }
+
+        function refreshAccordionTitles() {
+
+            $('.opron-oc').each(function(){
+
+                const select = $(this);
+                const row = select.closest('.accordion-item');
+                const headerText = row.find('.accordion-title');
+
+                const selectedText = select.find('option:selected').text();
+
+                if (selectedText) {
+                    headerText.text(selectedText);
+                } else {
+                    headerText.text('Detail Item');
+                }
             });
         }
     </script>

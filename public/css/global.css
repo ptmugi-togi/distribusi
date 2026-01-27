@@ -5,14 +5,14 @@ input::-webkit-inner-spin-button {
 }
 
 /* Select2 default list */
-.select2-results__options li {
+/* .select2-results__options li {
   display: none;
-}
+} */
 
 /* hanya tampilkan 10 pertama */
-.select2-results__options li:nth-child(-n+10) {
+/* .select2-results__options li:nth-child(-n+10) {
   display: list-item;
-}
+} */
 
 /* StyleAccordion PO Barang */
 

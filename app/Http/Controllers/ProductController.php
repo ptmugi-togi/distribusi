@@ -20,6 +20,8 @@ class ProductController extends Controller
                 ->orWhere('prona', 'like', "%{$search}%");
         }
 
+        $query->orderBy('prona');
+
         $total = $query->count();
         $products = $query->skip(($page - 1) * $perPage)
                         ->take($perPage)
