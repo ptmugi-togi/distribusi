@@ -246,7 +246,6 @@
             const oldDelto = "{{ old('delto') }}";
 
             if (oldCusno) {
-                // trigger load delivery list
                 $.ajax({
                     url: `/get-mstmas-delto`,
                     method: 'GET',
@@ -291,6 +290,43 @@
                 }
 
             });
+
+            // old sqtbr dan sqtsr
+            const oldSqtbr = "{{ old('sqtbr') }}";
+            const oldSqtsr = "{{ old('sqtsr') }}";
+
+            if(oldSqtbr){
+
+                $('#sqtbr').val(oldSqtbr).trigger('change.select2');
+
+                // ambil sales sesuai sqtbr
+                $.ajax({
+                    url: `/get-sales-split/${oldSqtbr}`,
+                    method: 'GET',
+                    success: function(res){
+
+                        if(!res.success) return;
+
+                        const list = res.data || [];
+
+                        let options = '<option value="">Silahkan pilih Sales</option>';
+
+                        list.forEach(item => {
+                            const selected = (item.sreno == oldSqtsr) ? 'selected' : '';
+                            options += `
+                                <option value="${item.sreno}" ${selected}>
+                                    ${item.sreno} - ${item.srena}
+                                </option>
+                            `;
+                        });
+
+                        $('#sqtsr')
+                            .html(options)
+                            .trigger('change.select2');
+
+                    }
+                });
+            }
         });
 
         $('#sordt').on('change', function(){
@@ -381,6 +417,9 @@
             const sqtbr = $(this).val();
             if (!sqtbr) return;
 
+            // buat value lama
+            const selectedSqtsr = $('#sqtsr').val();
+
             $.ajax({
                 url: `/get-sales-split/${sqtbr}`,
                 method: 'GET',
@@ -389,7 +428,7 @@
                     if (response.success) {
 
                         const list = response.data || [];
-                        let options = '<option value="" disabled selected>Silahkan pilih Sales</option>';
+                        let options = '<option value="" disabled>Silahkan pilih Sales</option>';
 
                         list.forEach(item => {
                             options += `<option value="${item.sreno}">
@@ -397,12 +436,21 @@
                             </option>`;
                         });
 
-                        $('#sqtsr').html(options).trigger('change.select2');
+                        $('#sqtsr').html(options);
+
+                        // kembalikan pilihan lama jika ada
+                        if (selectedSqtsr) {
+                            $('#sqtsr').val(selectedSqtsr);
+                        }
+
+                        $('#sqtsr').trigger('change.select2');
                     }
 
+                },
+                error: function () {
+                    console.log('Gagal load sales split');
                 }
             });
-
         });
 
         function loadMasterProductAll(){
