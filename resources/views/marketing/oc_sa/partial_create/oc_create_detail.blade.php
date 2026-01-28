@@ -84,10 +84,16 @@
                     <label for="total-oc-{{ $i }}" class="form-label">Source of Goods</label><span class="text-danger"> *</span>
                     <select name="srcog[]" class="form-control select2" id="srcog-oc-{{ $i }}" required>
                         <option value="" disabled {{ old('srcog.'.$i, '') === '' ? 'selected' : '' }}>Silahkan Pilih Source of Goods</option>
-
                         <option value="1" {{ old('srcog.'.$i) == 1 ? 'selected' : '' }}>1. Branch's Stock</option>
-
                         <option value="2" {{ old('srcog.'.$i) == 2 ? 'selected' : '' }}>2. Request to Head Office</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mt-3">
+                    <label for="putama-oc-{{ $i }}" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
+                    <select name="putama[]" class="form-control select2" id="putama-oc-{{ $i }}" required>
+                        <option value="U" {{ old('putama.'.$i) == 1 ? 'selected' : '' }}>Utama</option>
+                        <option value="N" {{ old('putama.'.$i) == 2 ? 'selected' : '' }}>Non Utama</option>
                     </select>
                 </div>
 
@@ -224,6 +230,14 @@
                                 <option value="" disabled {{ old('srcog.'.$i) ? '' : 'selected' }}>Silahkan Pilih Source of Goods</option>
                                 <option value="1" {{ old('srcog.'.$i) == '1' ? 'selected' : '' }}>1. Branch's Stock</option>
                                 <option value="2" {{ old('srcog.'.$i) == '2' ? 'selected' : '' }}>2. Request to Head Office</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label for="putama-oc-${i}" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
+                            <select name="putama[]" class="form-control select2" id="putama-oc-${i}" required>
+                                <option value="U" {{ old('putama.'.$i) == '1' ? 'selected' : '' }}>Utama</option>
+                                <option value="N" {{ old('putama.'.$i) == '2' ? 'selected' : '' }}>Non Utama</option>
                             </select>
                         </div>
 

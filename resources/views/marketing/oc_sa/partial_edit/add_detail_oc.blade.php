@@ -68,6 +68,15 @@
                             </select>
                         </div>
 
+                        <div class="col-md-6 mt-3">
+                            <label for="putama-oc-${i}" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
+                            <select name="putama[]" class="form-control select2" id="putama-oc-${i}" required>
+                                <option value="" disabled {{ old('putama.'.$i) ? '' : 'selected' }}>Silahkan Pilih Klasifikasi Produk</option>
+                                <option value="U" {{ old('putama.'.$i) == 'U' ? 'selected' : '' }}>Utama</option>
+                                <option value="N" {{ old('putama.'.$i) == 'N' ? 'selected' : '' }}>Non Utama</option>
+                            </select>
+                        </div>
+
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
                             <textarea type="text" class="form-control" name="noted[]" id="noted-oc-${i}" maxlength="200">{{ old('noted.'.$i) }}</textarea>

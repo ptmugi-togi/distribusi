@@ -122,6 +122,7 @@ class OcController extends Controller
                     'odisp' => $request->odisp[$i],
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
+                    'putama' => $request->putama[$i],
                     'noted' => $request->noted[$i],
                 ]);
             }
@@ -200,6 +201,7 @@ class OcController extends Controller
                     'odisp' => $request->odisp[$i],
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
+                    'putama' => $request->putama[$i],
                     'noted' => $request->noted[$i],
                 ]);
             }
