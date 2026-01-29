@@ -121,9 +121,12 @@ class WoController extends Controller
         try {
             $woid = $request->braco . $request->formc . $request->wonum;
 
+            $bracoformc = $request->braco . $request->formc;
+
             // Simpan header
             WoHdr::create([
                 'woid' => $woid,
+                'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
                 'wonum' => $request->wonum,

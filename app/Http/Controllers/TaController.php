@@ -153,8 +153,11 @@ class TaController extends Controller
         try {
             $bbkid = $request->braco . $request->warco . $request->formc . $request->trano;
 
+            $bracoformc = $request->braco . $request->formc;
+
             TaHdr::create([
                 'bbkid'      => $bbkid,
+                'bracoformc' => $bracoformc,
                 'braco'      => $request->braco,
                 'warco'      => $request->warco,
                 'formc'      => $request->formc,

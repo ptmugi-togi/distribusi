@@ -478,9 +478,12 @@ class BbmController extends Controller
         try {
             $bbmid = $request->braco . $request->warco . $request->formc_store . $request->trano;
 
+            $bracoformc = $request->braco . $request->formc_store;
+
             // Simpan header
             BbmHdr::create([
                 'bbmid' => $bbmid,
+                'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'warco' => $request->warco,
                 'formc' => $request->formc_store,

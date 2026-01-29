@@ -111,9 +111,12 @@ class BpbController extends Controller
         try {
             $bpbid = $request->braco . $request->formc . $request->reqno;
 
+            $bracoformc = $request->braco . $request->formc;
+
             // Simpan header
             BpbHdr::create([
                 'bpbid' => $bpbid,
+                'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'warco' => $request->warco,
                 'formc' => $request->formc,

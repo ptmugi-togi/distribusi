@@ -72,9 +72,12 @@ class OcController extends Controller
         try {
             $ocid = $request->braco . $request->formc . $request->sorno;
 
+            $bracoformc = $request->braco . $request->formc;
+
             // Simpan header
             OcHdr::create([
                 'ocid' => $ocid,
+                'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
                 'sorno' => $request->sorno,
