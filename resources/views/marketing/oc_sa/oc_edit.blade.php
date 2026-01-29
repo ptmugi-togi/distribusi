@@ -59,12 +59,12 @@
 
                     <div class="col-md-4 mt-3">
                         <label for="topay" class="form-label">Payment Term (days)</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="topay" value="{{ $oc->topay }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <input type="text" class="form-control" id="topay" name="topay" value="{{ $oc->topay }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
 
                     <div class="col-md-8 mt-3">
                         <label for="cuspo" class="form-label">Customer PO</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="cuspo" value="{{ $oc->cuspo }}">
+                        <input type="text" class="form-control" id="cuspo" name="cuspo" value="{{ $oc->cuspo }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -98,29 +98,29 @@
 
                     <div class="col-md-4 mt-3">
                         <label for="edisp" class="form-label">EB (%)</label>
-                        <input type="text" class="form-control" id="edisp" name="edisp" value="{{ $oc->edisp ?? '-' }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
+                        <input type="text" class="form-control" id="edisp" name="edisp" value="{{ $oc->edisp ?? '0' }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="edisa" class="form-label">EB (Amount)</label>
-                        <input type="text" class="form-control price-input" id="edisa" name="edisa" value="{{ $oc->edisa ?? '-' }}">
+                        <input type="text" class="form-control price-input" id="edisa" name="edisa" value="{{ $oc->edisa ?? '0' }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="nodeb" class="form-label">Disposisi EB#</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="nodeb" value="{{ $oc->nodeb }}">
+                        <input type="text" class="form-control" id="nodeb" name="nodeb" value="{{ $oc->nodeb }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="dpper" class="form-label">Down Payment (%)</label>
-                        <input type="text" class="form-control" id="dpper" value="{{ $oc->dpper ?? '-' }}">
+                        <input type="text" class="form-control" id="dpper" name="dpper" value="{{ $oc->dpper ?? '0' }}">
                     </div>
 
                     <hr class="my-4">
 
                     <div class="col-md-4 mt-3">
                         <label for="sqper" class="form-label">Split Quota (%)</label>
-                        <input type="text" class="form-control" id="sqper" value="{{ $oc->sqper ?? '-' }}">
+                        <input type="text" class="form-control" id="sqper" name="sqper" value="{{ $oc->sqper ?? '0' }}">
                     </div>
 
                     <div class="col-md-4 mt-3">

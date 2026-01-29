@@ -183,6 +183,20 @@ class OcController extends Controller
 
             // update header
             OcHdr::where('ocid', $ocid)->update([
+                'sreno' => $request->sreno,
+                'topay' => $request->topay,
+                'cuspo' => $request->cuspo,
+                'curco' => $request->curco,
+                'crate' => $request->crate,
+                'ebtyp' => $request->ebtyp,
+                'edisp' => $request->edisp,
+                'edisa' => $request->edisa,
+                'nodeb' => $request->nodeb,
+                'dpper' => $request->dpper,
+                'sqper' => $request->sqper,
+                'sqtbr' => $request->sqtbr,
+                'sqtsr' => $request->sqtsr,
+                'delto' => $request->delto,
                 'noteh' => $request->noteh,
                 'updated_at' => now(),
                 'updated_by' => Auth::user()->name,
