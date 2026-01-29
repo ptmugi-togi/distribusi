@@ -45,73 +45,103 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="sreno" class="form-label">Sales Rep</label>
-                        <input type="text" class="form-control" id="sreno" value="{{ $oc->msreno->srena }}" disabled>
+                        <label for="sreno" class="form-label">Sales Rep</label><span class="text-danger"> *</span>
+                        <select name="sreno" id="sreno" class="form-control select2">
+                            <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                            @foreach ($sales as $s)
+                                <option value="{{ $s->sreno }}"
+                                    {{ old('sreno', $oc->sreno) == $s->sreno ? 'selected' : '' }}>
+                                    {{ $s->sreno }} - {{ $s->srena }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-md-4 mt-3">
-                        <label for="topay" class="form-label">Payment Term (days)</label>
-                        <input type="text" class="form-control" id="topay" value="{{ $oc->topay }}" disabled>
+                        <label for="topay" class="form-label">Payment Term (days)</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control" id="topay" value="{{ $oc->topay }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
 
                     <div class="col-md-8 mt-3">
-                        <label for="cuspo" class="form-label">Customer PO</label>
-                        <input type="text" class="form-control" id="cuspo" value="{{ $oc->cuspo }}" disabled>
+                        <label for="cuspo" class="form-label">Customer PO</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control" id="cuspo" value="{{ $oc->cuspo }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="curco" class="form-label">Currency Code</label>
-                        <input type="text" class="form-control" id="curco" value="{{ $oc->curco }}" disabled>
+                        <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
+                        <select name="curco" id="curco" class="form-control select2">
+                            <option value="" disabled {{ old('curco') ? '' : 'selected' }}>Silahkan Pilih Currency</option>
+                            @foreach ($currency as $curr)
+                                @if (in_array($curr->curco, ['IDR', 'USD']))
+                                    <option value="{{ $curr->curco }}"
+                                        {{ old('curco', $oc->curco) == $curr->curco ? 'selected' : '' }}>
+                                        {{ $curr->curco }} - {{ $curr->desc_curco }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="crate" class="form-label">Currency Rate</label>
-                        <input type="text" class="form-control price-input" id="crate" value="{{ $oc->crate }}" disabled>
+                        <input type="text" class="form-control price-input" name="crate_d" id="currency_rate_display" value="{{ $oc->crate }}" required readonly style="background-color:#e9ecef">
+                        <input type="text" class="form-control" name="crate" id="currency_rate" value="{{ $oc->crate }}" required hidden>
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="ebtyp" class="form-label">EB Type</label>
-                        <input type="text" class="form-control" id="ebtyp" value="{{ $oc->ebtyp }}" disabled>
+                        <select name="ebtyp" id="ebtype" class="form-control select2">
+                            <option value="P" {{ $oc->ebtyp == 'P' ? 'selected' : '' }}>P - Percent (%)</option>
+                            <option value="V" {{ $oc->ebtyp == 'V' ? 'selected' : '' }}>V - Value</option>
+                        </select>
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="edisp" class="form-label">EB (%)</label>
-                        <input type="text" class="form-control" id="edisp" value="{{ $oc->edisp ?? '-' }}" disabled>
+                        <input type="text" class="form-control" id="edisp" name="edisp" value="{{ $oc->edisp ?? '-' }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '');">
                     </div>
 
                     <div class="col-md-4 mt-3">
                         <label for="edisa" class="form-label">EB (Amount)</label>
-                        <input type="text" class="form-control price-input" id="edisa" value="{{ $oc->edisa ?? '-' }}" disabled>
+                        <input type="text" class="form-control price-input" id="edisa" name="edisa" value="{{ $oc->edisa ?? '-' }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="nodeb" class="form-label">Disposisi EB#</label>
-                        <input type="text" class="form-control" id="nodeb" value="{{ $oc->nodeb }}" disabled>
+                        <label for="nodeb" class="form-label">Disposisi EB#</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control" id="nodeb" value="{{ $oc->nodeb }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
                         <label for="dpper" class="form-label">Down Payment (%)</label>
-                        <input type="text" class="form-control" id="dpper" value="{{ $oc->dpper ?? '-' }}" disabled>
+                        <input type="text" class="form-control" id="dpper" value="{{ $oc->dpper ?? '-' }}">
                     </div>
 
-                    @if ($oc->sqper != null)
-                        <hr class="my-4">
+                    <hr class="my-4">
 
-                        <div class="col-md-4 mt-3">
-                            <label for="sqper" class="form-label">Split Quota (%)</label>
-                            <input type="text" class="form-control" id="sqper" value="{{ $oc->sqper ?? '-' }}" disabled>
-                        </div>
+                    <div class="col-md-4 mt-3">
+                        <label for="sqper" class="form-label">Split Quota (%)</label>
+                        <input type="text" class="form-control" id="sqper" value="{{ $oc->sqper ?? '-' }}">
+                    </div>
 
-                        <div class="col-md-4 mt-3">
-                            <label for="sqtbr" class="form-label">To Branch</label>
-                            <input type="text" class="form-control" id="sqtbr" value="{{ $oc->sqtbr ?? '-' }}" disabled>
-                        </div>
+                    <div class="col-md-4 mt-3">
+                        <label for="sqtbr" class="form-label">To Branch</label>
+                        <select name="sqtbr" id="sqtbr" class="form-control select2">
+                            <option value="" disabled {{ old('sqtbr') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                            @foreach ($branches as $b)
+                                <option value="{{ $b->braco }}"
+                                    {{ old('sqtbr', $oc->sqtbr) == $b->braco ? 'selected' : '' }}>
+                                    {{ $b->braco }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                        <div class="col-md-4 mt-3">
-                            <label for="sqtsr" class="form-label">Sales Rep.</label>
-                            <input type="text" class="form-control" id="sqtsr" value="{{ $oc->sqtsr ?? '-' }}" disabled>
-                        </div>
-                    @endif
+                    <div class="col-md-4 mt-3">
+                        <label for="sqtsr" class="form-label">Sales Rep.</label>
+                        <select name="sqtsr" id="sqtsr" class="form-control select2">
+                            <option value="{{ $oc->sqtsr }}" selected>{{ $oc->sqtsr }} - {{ $oc->msreno->srena }}</option>
+                        </select>
+                    </div>
 
                     <hr class="my-4">
 
@@ -119,7 +149,9 @@
 
                     <div class="col-md-4 mt-3">
                         <label for="delto" class="form-label">Delivery To</label>
-                        <input type="text" class="form-control" name="delto" id="delto" value="{{ $oc->delto }}" disabled>
+                        <select name="delto" id="delto" class="form-control select2" data-old="{{ old('delto', $oc->delto) }}"> 
+
+                        </select>
                     </div>
                     
                     <div class="col-md-4 mt-3">
@@ -184,7 +216,7 @@
                                                 {{ $detail->opron }} - {{ $detail->prona ?? '' }}
                                             </option>
                                         </select>
-                                        <input type="text" class="prona-oc" name="prona[]" id="prona-oc-{{ $i }}" value="{{ $detail->prona }}">
+                                        <input type="text" class="prona-oc" name="prona[]" id="prona-oc-{{ $i }}" value="{{ $detail->prona }}" hidden>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -234,6 +266,14 @@
                                         </select>
                                     </div>
 
+                                    <div class="col-md-6 mt-3">
+                                        <label for="putama" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
+                                        <select class="form-select select2" name="putama[]" id="putama-oc-{{ $i }}" required>
+                                            <option value="U" {{ $detail->putama == "U" ? 'selected' : '' }}>Utama</option>
+                                            <option value="N" {{ $detail->putama == "N" ? 'selected' : '' }}>Non Utama</option>
+                                        </select>
+                                    </div>
+
                                     <div class="col-md-12 mt-3">
                                         <label class="form-label">Notes</label>
                                         <textarea class="form-control" name="noted[]" id="noted-oc-{{ $i }}">{{ $detail->noted }}</textarea>
@@ -259,6 +299,107 @@
 
 @push('scripts')
     @include('marketing.oc_sa.partial_edit.add_detail_oc')
+
+    {{-- sqtsr --}}
+    <script>
+        $('#sqtbr').on('change', function () {
+    
+            const sqtbr = $(this).val();
+            if (!sqtbr) return;
+    
+            // buat value lama
+            const selectedSqtsr = $('#sqtsr').val();
+    
+            $.ajax({
+                url: `/get-sales-split/${sqtbr}`,
+                method: 'GET',
+                success: function (response) {
+    
+                    if (response.success) {
+    
+                        const list = response.data || [];
+                        let options = '<option value="" disabled>Silahkan pilih Sales</option>';
+    
+                        list.forEach(item => {
+                            options += `<option value="${item.sreno}">
+                                ${item.sreno} - ${item.srena}
+                            </option>`;
+                        });
+    
+                        $('#sqtsr').html(options);
+    
+                        // kembalikan pilihan lama jika ada
+                        if (selectedSqtsr) {
+                            $('#sqtsr').val(selectedSqtsr);
+                        }
+    
+                        $('#sqtsr').trigger('change.select2');
+                    }
+    
+                },
+                error: function () {
+                    console.log('Gagal load sales split');
+                }
+            });
+        });
+    </script>
+
+    {{-- currency --}}
+    <script>
+        $('#curco').on('change', function(){
+            const curco = $(this).val();
+
+            if (!curco) return;
+
+            CURRENT_CURRENCY = curco;
+
+            document.querySelectorAll(".price-input").forEach(el=>{
+                el.dataset.currencyBind = "0";
+            });
+
+            applyCurrencyFormatter(document);
+
+            $.ajax({
+                url: `/get-currency-rate/${curco}`,
+                method: 'GET',
+                success: function (response) {
+
+                    if (response.success) {
+                        const rate = parseFloat(response.crate);
+
+                        if (!isNaN(rate)) {
+                            // isi ke hidden
+                            $('#currency_rate').val(rate);
+
+                            // tampilkan ke display
+                            $('#currency_rate_display').val(
+                                new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR',
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }).format(rate)
+                            );
+                        } else {
+                            $('#currency_rate').val('');
+                            $('#currency_rate_display').val('');
+                        }
+                    } else {
+                        alert('Currency tidak ditemukan.');
+                        $('#currency_rate').val('');
+                        $('#currency_rate_display').val('');
+                    }
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert('Gagal mengambil data kurs dari server.');
+                    $('#currency_rate').val('');
+                    $('#currency_rate_display').val('');
+                }
+            });
+        });
+    </script>
+
     {{-- product --}}
     <script>
         function loadMasterProductAll() {
@@ -312,10 +453,113 @@
             });
         }
 
+    </script>
+
+    <script>
         $(document).ready(function(){
             setTimeout(function(){
                 loadMasterProductAll();
             }, 500);
+
+            $('#sqtbr').trigger('change');
+
+            // delto
+            const editCusno = "{{ $oc->cusno }}";
+            const editDelto = "{{ $oc->delto }}";
+
+            if(editCusno && editDelto){
+
+                // ambil list delto
+                $.ajax({
+                    url: `/get-mstmas-delto`,
+                    method: 'GET',
+                    data: { cusno: editCusno },
+                    success: function (res) {
+
+                        if (!res.success) return;
+
+                        let options = '<option value="" disabled>Silahkan pilih Delivery To</option>';
+
+                        (res.data || []).forEach(item => {
+                            options += `<option value="${item.shpto}">${item.shpto}</option>`;
+                        });
+
+                        $('#delto').html(options);
+
+                        $('#delto').val(editDelto);
+
+                        $('#delto').trigger('change');
+                        $('#delto').trigger('change.select2');
+                    }
+                });
+            }
+
+            // ebtype
+            function applyEbType() {
+                const ebtype = $('#ebtype').val();
+
+                if (ebtype === 'P') {
+                    $('#edisp').prop('disabled', false);
+                    $('#edisa').prop('disabled', true).val('');
+                } 
+                else if (ebtype === 'V') {
+                    $('#edisa').prop('disabled', false);
+                    $('#edisp').prop('disabled', true).val('');
+                }
+                else {
+                    $('#edisp').prop('disabled', true).val('');
+                    $('#edisa').prop('disabled', true).val('');
+                }
+            }
+
+            applyEbType();
+
+            $('#ebtype').on('change', function(){
+                applyEbType();
+            });
+        });
+
+        function resetAddressFields() {
+            $('#delto_name').val('');
+            $('#delto_attn').val('');
+            $('#delto_prov').val('');
+            $('#delto_kab').val('');
+            $('#delto_addrress').val('');
+            $('#delto_phone').val('');
+        }
+
+        $('#delto').on('change', function () {
+            const cusno = "{{ $oc->cusno }}";
+            const delto = $(this).val();
+
+            if (!cusno || !delto) return;
+
+            resetAddressFields();
+
+            $.ajax({
+                url: `/get-mstmas-detail`,
+                method: 'GET',
+                data: { cusno, delto },
+                success: function (res) {
+                    if (!res.success) {
+                        alert(res.message || 'Gagal ambil detail.');
+                        return;
+                    }
+
+                    const d = res.data;
+
+                    $('#delto_name').val(d.shpnm ?? '-');
+                    $('#delto_attn').val(d.contp ?? '-');
+                    $('#delto_prov').val(d.province ?? '-');
+                    $('#delto_kab').val(d.kabupaten ?? '-');
+                    $('#delto_addrress').val(d.deliveryaddress ?? '-');
+                    $('#delto_phone').val(d.phone ?? '-');
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert('Error saat ambil detail');
+                }
+            });
         });
 
         function setAccordionTitle($item){
@@ -349,6 +593,8 @@
 
     {{-- format currency --}}
     <script>
+        let CURRENT_CURRENCY = "{{ $oc->curco }}";
+
         function getLocale(currency) {
             switch(currency) {
                 case "IDR": return "id-ID";
@@ -373,7 +619,7 @@
         }
 
         function applyCurrencyFormatter(container = document) {
-            const currency = "{{ $oc->curco }}";
+            const currency = CURRENT_CURRENCY;
 
             container.querySelectorAll(".price-input").forEach((input) => {
 
@@ -393,43 +639,30 @@
                 }
 
                 input.addEventListener("input", () => {
-                    if (currency === "IDR") {
-                        // hanya angka
-                        input.value = input.value.replace(/[^\d]/g, "");
-                    } else {
-                        // USD: angka + decimal (max 2 digit)
-                        let v = input.value.replace(/[^\d.,]/g, "");
+                    let v = input.value.replace(/[^\d.,]/g, "");
 
-                        // koma jadi titik
-                        v = v.replace(/,/g, ".");
-
-                        // hanya boleh 1 titik
-                        v = v.replace(/(\..*)\./g, "$1");
-
-                        // max 2 decimal
-                        if (v.includes(".")) {
-                            const parts = v.split(".");
-                            v = parts[0] + "." + (parts[1] || "").slice(0, 2);
-                        }
-                        input.value = v;
+                    if (v.includes(".") && v.includes(",")) {
+                        v = v.replace(/,/g, "");
                     }
+
+                    input.value = v;
                 });
 
                 input.addEventListener("focus", () => {
-                    input.value = (input.value || "").toString().replace(/[^\d.,-]/g, "");
                 });
 
                 input.addEventListener("blur", () => {
-                    let v = (input.value || "").toString().replace(/[^\d.,-]/g, "");
-                    if (v === "") return;
+                    let v = (input.value || "").toString();
 
-                    if (currency === "IDR") {
-                        v = v.replace(/[.,]/g, "");
-                        input.value = formatCurrency(Math.floor(parseFloat(v)), currency);
-                    } else {
-                        v = v.replace(/,/g, "");
-                        input.value = formatCurrency(parseFloat(v), currency);
-                    }
+                    if(v === "") return;
+
+                    v = v.replace(/[^\d.,]/g,"");
+                    v = v.replace(/,/g,".");
+
+                    let num = parseFloat(v);
+                    if(isNaN(num)) return;
+
+                    input.value = formatCurrency(num, currency);
                 });
             });
         }
@@ -441,7 +674,7 @@
             if (!form) return;
 
             form.addEventListener("submit", function () {
-                const currency = "{{ $oc->curco }}";
+                const currency = CURRENT_CURRENCY;
 
                 document.querySelectorAll(".price-input").forEach((input) => {
                     let v = (input.value || "").toString();

@@ -93,6 +93,7 @@
         loadMasterProductAll();
 
         $(`#srcog-oc-${i}`).select2({ width: '100%', theme: 'bootstrap-5' });
+        $(`#putama-oc-${i}`).select2({ width: '100%', theme: 'bootstrap-5' });
 
         applyCurrencyFormatter(rowEl);
 

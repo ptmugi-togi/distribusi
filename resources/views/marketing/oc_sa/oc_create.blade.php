@@ -147,11 +147,6 @@
                 <label for="sqtsr" class="form-label">Sales Rep.</label>
                 <select name="sqtsr" id="sqtsr" class="form-control select2">
                     <option value="" disabled {{ old('sqtsr') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    {{-- @foreach ($sales->where('branch', '=', request('sqtbr')) as $s )
-                        <option value="{{ $s->sreno }}" {{ old('sreno') == $s->sreno ? 'selected' : '' }}>
-                            {{ $s->sreno }} - {{ $s->srena }}
-                        </option>
-                    @endforeach --}}
                 </select>
             </div>
 

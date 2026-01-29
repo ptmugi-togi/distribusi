@@ -162,7 +162,15 @@ class OcController extends Controller
             ->where('shpto', $oc->delto)
             ->first();
 
-        return view('marketing.oc_sa.oc_edit', compact('oc', 'delto'));
+        $sales = DB::table('msreno')
+            ->where('braco', $oc->braco)
+            ->get();
+
+        $branches = DB::table('mbranches')->get();
+        
+        $currency = DB::table('mcurco_tbl')->get();
+
+        return view('marketing.oc_sa.oc_edit', compact('oc', 'delto', 'sales', 'currency', 'branches'));
     }
 
     public function update(Request $request, string $id)

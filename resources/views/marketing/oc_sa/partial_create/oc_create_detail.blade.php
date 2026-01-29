@@ -63,7 +63,6 @@
                 <div class="col-md-6 mt-3">
                     <label for="plist-oc-{{ $i }}" class="form-label">Price List/Unit</label><span class="text-danger"> *</span>
                     <input type="text" class="form-control price-input" id="plist_display_oc_{{ $i }}" value="{{ old('plist.'.$i) ? number_format(old('plist.'.$i), 2, '.', '') : '' }}" data-raw-target="plist_raw_oc_{{ $i }}" required>
-
                     <input type="text" name="plist[]" id="plist_raw_oc_{{ $i }}" value="{{ old('plist.'.$i) }}" hidden>
                 </div>
 
@@ -76,7 +75,6 @@
                 <div class="col-md-6 mt-3">
                     <label for="teknik-oc-{{ $i }}" class="form-label">Jasa Teknik (Unit)</label>
                     <input type="text" class="form-control price-input" id="teknik_display_oc_{{ $i }}" value="{{ old('teknik.'.$i) ? number_format(old('teknik.'.$i), 2, '.', '') : '' }}" data-raw-target="teknik_raw_oc_{{ $i }}">
-
                     <input type="text" name="teknik[]" id="teknik_raw_oc_{{ $i }}" value="{{ old('teknik.'.$i) }}" hidden>
                 </div>
 
