@@ -17,6 +17,7 @@ class BbmHdr extends Model
 
     protected $fillable = [
         'bbmid',
+        'bracoformc',
         'braco',
         'warco',
         'formc',

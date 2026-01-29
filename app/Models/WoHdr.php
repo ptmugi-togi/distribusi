@@ -17,6 +17,7 @@ class WoHdr extends Model
 
     protected $fillable = [
         'woid',
+        'bracoformc',
         'braco',
         'formc',
         'wonum',

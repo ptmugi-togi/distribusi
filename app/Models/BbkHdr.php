@@ -17,6 +17,7 @@ class BbkHdr extends Model
 
     protected $fillable = [
         'bbkid',
+        'bracoformc',
         'braco',
         'warco',
         'formc',

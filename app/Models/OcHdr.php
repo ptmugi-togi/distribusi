@@ -19,6 +19,7 @@ class OcHdr extends Model
         'ocid',
         'sordt',
         'priod',
+        'bracoformc',
         'braco',
         'formc',
         'sorno',
