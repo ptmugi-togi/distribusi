@@ -143,9 +143,9 @@
         </td>
 
         <td class="left" style="width:20%; vertical-align:top">
-            {{ $ochdr->sorno }}<br>
+            {{ $ochdr->braco }}-{{ $ochdr->formc }} {{ $ochdr->sorno }}<br>
             <br>
-            {{ $ochdr->sordt }}<br>
+            {{ \Carbon\Carbon::parse($ochdr->sordt)->format('d-m-Y') }}<br>
             {{ $ochdr->msreno->srena }}<br>
             {{ $mcindu?->descr_cindu ?? '-' }}<br>
             {{ $ochdr->topay }} days<br>
