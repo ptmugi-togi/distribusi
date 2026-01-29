@@ -73,7 +73,7 @@ public function creator()
 
 public function formcode()
 {
-    return $this->belongsTo(Mformcode::class, 'formc', 'formc');
+    return $this->belongsTo(Mformcode::class, 'bracoformc', 'bracoformc');
 }
 
 public function branches()

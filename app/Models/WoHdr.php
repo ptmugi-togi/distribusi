@@ -57,6 +57,6 @@ class WoHdr extends Model
 
     public function mformcode()
     {
-        return $this->belongsTo(Mformcode::class, 'formc', 'formc');
+        return $this->belongsTo(Mformcode::class, 'bracoformc', 'bracoformc');
     }
 }

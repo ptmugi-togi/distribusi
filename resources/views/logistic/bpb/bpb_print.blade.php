@@ -245,7 +245,8 @@
 
             <br>
 
-            <div style="font-size: 10px">{{ $bpbhdr->mformcode->docd }}</div>
+            <div style="font-size: 10px">{{ $bpbhdr->mformcode->docd1 }}</div>
+            <div style="font-size: 10px">{{ $bpbhdr->mformcode->docd2 }}</div>
             <div style="font-size: 10px">{{ $bpbhdr->created_by }} / {{ date('d-m-Y') }} / {{ date('H:i:s') }} / {{ $bpbhdr->prctr }}</div>
             <div style="text-align: right; font-size: 9pt;">
                 {PAGENO}/{nbpg}

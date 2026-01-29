@@ -261,7 +261,8 @@
         <hr>
 
         <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
-        <div style="font-size: 10px">{{ $tpohdr->formcode?->docd ?? '' }}</div>
+        <div style="font-size: 10px">{{ $tpohdr->formcode?->docd1 ?? '' }}</div>
+        <div style="font-size: 10px">{{ $tpohdr->formcode?->docd2 ?? '' }}</div>
         <div style="text-align: right; font-size: 9pt;">
             {PAGENO}/{nbpg}
         </div>

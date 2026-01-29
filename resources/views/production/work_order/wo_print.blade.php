@@ -223,7 +223,8 @@
 
             <br>
 
-            <div style="font-size: 10px">{{ $wohdr->mformcode->docd }}</div>
+            <div style="font-size: 10px">{{ $wohdr->mformcode->docd1 }}</div>
+            <div style="font-size: 10px">{{ $wohdr->mformcode->docd2 }}</div>
             <div style="font-size: 10px">{{ $wohdr->created_by }} / {{ date('d-m-Y') }} / {{ date('H:i:s') }} / {{ $wohdr->prctr }}</div>
             <div style="text-align: right; font-size: 9pt;">
                 {PAGENO}/{nbpg}

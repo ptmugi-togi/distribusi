@@ -210,7 +210,8 @@
 
             <br>
 
-            <div style="font-size: 10px">{{ $tahdr->mformcode->docd }}</div>
+            <div style="font-size: 10px">{{ $tahdr->mformcode->docd1 }}</div>
+            <div style="font-size: 10px">{{ $tahdr->mformcode->docd2 }}</div>
             <div style="font-size: 10px">{{ $tahdr->created_by }} / {{ date('d-m-Y') }} / {{ date('H:i:s') }} / {{ $tahdr->prctr }}</div>
             <div style="text-align: right; font-size: 9pt;">
                 {PAGENO}/{nbpg}
