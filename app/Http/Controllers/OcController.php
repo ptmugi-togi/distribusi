@@ -257,6 +257,28 @@ class OcController extends Controller
         }
     }
 
+    public function cancel(Request $request, string $id)
+    {
+        try {
+            $oc = OcHdr::where('ocid', $id)->firstOrFail();
+            $oc->update(
+                [
+                    'resta' => 'C',
+                    'cancd' => $request->cancd,
+                    'reason' => $request->reason,
+                    'cancp' => $request->cancp,
+                    'updated_at' => now(),
+                    'updated_by' => Auth::user()->name
+                ]
+            );
+            return redirect()->route('oc.index')
+                ->with('success', 'Data OC "'.$id.'" berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            return redirect()->route('oc.index')
+                ->with('error', 'Gagal membatalkan data: ' . $e->getMessage());
+        }
+    }
+
     public function generateOcnum(Request $request)
     {
         $braco = auth()->user()->cabang;

@@ -193,8 +193,9 @@
             </div>
 
             <div class="col-md-12 mt-3"> 
-                <label for="noteh" class="form-label">Notes</label>
-                <textarea type="text" class="form-control" name="noteh" id="noteh" cols="30" rows="3"></textarea>
+                <label class="form-label">Notes</label>
+                <textarea type="text" class="form-control" name="noteh" id="noteh" maxlength="200">{{ old('noteh') }}</textarea>
+                <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
             </div>
 
             <div class="detail my-3">

@@ -257,6 +257,7 @@ route::post('/oc/store', [OcController::class,'store'])->middleware('auth')->nam
 Route::get('/oc/{id}/detail', [OcController::class,'show'])->middleware('auth')->name('oc.detail');
 Route::get('/oc/{id}/edit', [OcController::class,'edit'])->middleware('auth')->name('oc.edit');
 Route::put('/oc/{id}', [OcController::class,'update'])->middleware('auth')->name('oc.update');
+Route::put('/oc/{id}/cancel', [OcController::class,'cancel'])->middleware('auth')->name('oc.cancel');
 Route::delete('/oc/{id}/delete', [OcController::class,'destroy'])->middleware('auth')->name('oc.delete');
 Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');
 Route::get('/oc/printOc/{id}', [PdfController::class, 'printOc'])->name('oc.printOc');

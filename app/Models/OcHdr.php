@@ -16,6 +16,7 @@ class OcHdr extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'resta',
         'ocid',
         'sordt',
         'priod',
