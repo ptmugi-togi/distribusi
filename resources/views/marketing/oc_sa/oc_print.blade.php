@@ -219,14 +219,16 @@
                                 <tr><td>Source of goods : Request to Head Office</td></tr>
                             @endif
     
-                            <tr>
-                                <td>
-                                    PL : {{ $ochdr->curco }}
-                                    {{ formatNumberOnly($d->plist, $ochdr->curco) }}
-                                    X {{ $d->qtyor }}
-                                    = {{ formatNumberOnly($d->plist * $d->qtyor, $ochdr->curco) }}
-                                </td>
-                            </tr>
+                            @if ($d->qtyor > 1)
+                                <tr>
+                                    <td>
+                                        PL : {{ $ochdr->curco }}
+                                        {{ formatNumberOnly($d->plist, $ochdr->curco) }}
+                                        X {{ $d->qtyor }}
+                                        = {{ formatNumberOnly($d->plist * $d->qtyor, $ochdr->curco) }}
+                                    </td>
+                                </tr>
+                            @endif
     
                             @if(!empty($d->noted))
                                 <tr><td>{{ $d->noted }}</td></tr>
