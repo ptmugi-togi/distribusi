@@ -33,6 +33,13 @@ class PdfController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 10,
         ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
         
         $mpdf->WriteHTML($html);
 
@@ -59,6 +66,12 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
         $mpdf->WriteHTML($html);
 
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
@@ -81,6 +94,11 @@ class PdfController extends Controller
 
         
         $mpdf = new Mpdf();
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -104,6 +122,11 @@ class PdfController extends Controller
         $html = view('purchasing.tpo.pdf.tpo_pdf_pi', compact('tpohdr'))->render();
 
         $mpdf = new Mpdf();
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -168,6 +191,12 @@ class PdfController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 10,
         ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
 
         $mpdf->WriteHTML($html);
 
@@ -237,6 +266,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -286,6 +320,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -336,6 +375,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -370,6 +414,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -405,6 +454,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -439,6 +493,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -474,6 +533,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -505,6 +569,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -537,6 +606,11 @@ class PdfController extends Controller
             'margin_bottom' => 10,
         ]);
 
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
@@ -572,7 +646,13 @@ class PdfController extends Controller
             'margin_top' => 10,
             'margin_bottom' => 10,
         ]);
-        
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
         $mpdf->WriteHTML($html);
 
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
@@ -612,7 +692,15 @@ class PdfController extends Controller
         ]);
 
         $mpdf = new Mpdf();
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
         $mpdf->WriteHTML($html);
+
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
         $pdfContent = $mpdf->Output("{$ochdr->ocid}.pdf", "S");

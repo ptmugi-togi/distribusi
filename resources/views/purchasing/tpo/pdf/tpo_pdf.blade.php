@@ -7,6 +7,7 @@
     body {
         font-family: sans-serif; 
         font-size: 8pt;
+        margin-bottom: 0;
     }
 
     table {
@@ -18,6 +19,10 @@
         border: 1px solid #000; 
         padding: 5px; 
         font-size: inherit;
+    }
+
+    tr {
+        page-break-inside: avoid;
     }
 
     .no-border td, .no-border th {
@@ -32,13 +37,15 @@
         text-align: center;
     }
 
+    .content {
+        flex: 1;
+    }
+
     /* Bagian total + tanda tangan */
     .footer-summary {
-        position: relative;
-        bottom: 0;
-        left: 0;
-        right: 0;
         margin-top: 20px;
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
 
     .footer-summary table { 
@@ -53,119 +60,119 @@
     }
 </style>
 </head>
-<body style="min-height:100vh; display:flex; flex-direction:column;">
+<body>
 
-<!-- Header Perusahaan -->
-<table class="no-border">
-    <tr>
-        <td style="width:70%">
-            <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
-            Jl.M.T.HARYONO KAV.10, TEBET, TEBET BARAT, TEBET, KOTA ADM.JAKARTA SELATAN, DKI JAKARTA, 12810<br>
-            Phone : (62)21-8308415  Fax : (62)21-8308422 <br>
-            NPWP : 0013 0857 0906 2000 
-        </td>
-    </tr>
-    <br>
-    <br>
-    <tr>
-        <td class="center" style="width:30%">
-            <h1>PURCHASE ORDER</h1>
-        </td>
-    </tr>
-</table>
-
-<!-- Info Supplier & Penerima -->
-<table class="no-border" style="margin-top:10px;">
-    <tr>
-        <td class="left" style="width:33%; vertical-align:top">
-            <b>SUPPLIER :</b><br>
-            {{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}<br>
-            {{ $tpohdr->vendor->address ?? '' }}<br>
-            {{ $tpohdr->vendor->city ?? '' }}<br>
-            Tel: {{ $tpohdr->vendor->phone ?? '' }}<br>
-            Fax: {{ $tpohdr->vendor->fax ?? '' }}<br>
-            Attn: {{ $tpohdr->vendor->contact ?? '' }}<br>
-        </td>
-        <td class="left" style="width:33%; vertical-align:top">
-            <b>DIKIRIM KE :</b><br>
-            {{ $tpohdr->branches->conam }}<br>
-            {{ $tpohdr->branches->address }}<br>
-            ATTN: {{ $tpohdr->branches->contactp }}
-        </td>
-        <td style="width:5%"></td>
-        <td class="left" style="width:13%; vertical-align:top">
-            <b>NOMOR PO</b><br>
-            <b>TANGGAL PO</b> 
-        </td>
-        <td class="left" style="width:1%; vertical-align:top">
-            <b>:</b>
-            <br>
-            <b>:</b> 
-            <br>
-        </td>
-        <td class="left" style="width:13%; vertical-align:top">
-            {{ $tpohdr->pono }}<br>
-            {{ $tpohdr->podat }}<br>
-        </td>
-    </tr>
-</table>
-
-<!-- Info Nomor PO -->
-<table class="no-border" style="margin-top:10px;">
-    <tr>
-        <td class="left" style="width:50%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
-        <td class="right" style="width:50%">Currency: {{ $tpohdr->curco }}</td>
-    </tr>
-</table>
-
-<!-- Detail Barang (pakai garis) -->
-<table style="margin-top:15px; overflow: wrap; flex:1">
-    <thead>
+<div class="content">
+    <!-- Header Perusahaan -->
+    <table class="no-border">
         <tr>
-            <th style="width: 9%">Quantity</th>
-            <th style="width: 42%">Nama Barang</th>
-            <th style="width: 10%">Berat/Vol</th>
-            <th style="width: 12%">Harga Satuan</th>
-            <th style="width: 11%">Diskon Satuan</th>
-            <th style="width: 15%">Jumlah</th>
+            <td style="width:70%">
+                <img width="20%" src="{{ URL::asset('img/logomugi.png'); }}" alt="logo"><br>
+                Jl.M.T.HARYONO KAV.10, TEBET, TEBET BARAT, TEBET, KOTA ADM.JAKARTA SELATAN, DKI JAKARTA, 12810<br>
+                Phone : (62)21-8308415  Fax : (62)21-8308422 <br>
+                NPWP : 0013 0857 0906 2000 
+            </td>
         </tr>
-    </thead>
-    <tbody>
-        @php $subtotal = 0; @endphp
-        @php $total = 0; @endphp
-        @php $pph = 0; @endphp
-        @php $ppn = 0; @endphp
-        @php $totalpph = 0; @endphp
-        @foreach($tpohdr->tpodtl as $i => $d)
-            @php
-                if ($d->berat == 0) {
-                    $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->poqty;
-                } else {
-                    $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->berat * $d->poqty;
-                }
-                $subtotal += $jumlah;
-            @endphp
-            @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
+        <br>
+        <br>
+        <tr>
+            <td class="center" style="width:30%">
+                <h1>PURCHASE ORDER</h1>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- Info Supplier & Penerima -->
+    <table class="no-border" style="margin-top:10px;">
+        <tr>
+            <td class="left" style="width:33%; vertical-align:top">
+                <b>SUPPLIER :</b><br>
+                {{ $tpohdr->supno }} - {{ $tpohdr->vendor->supna ?? '' }}<br>
+                {{ $tpohdr->vendor->address ?? '' }}<br>
+                {{ $tpohdr->vendor->city ?? '' }}<br>
+                Tel: {{ $tpohdr->vendor->phone ?? '' }}<br>
+                Fax: {{ $tpohdr->vendor->fax ?? '' }}<br>
+                Attn: {{ $tpohdr->vendor->contact ?? '' }}<br>
+            </td>
+            <td class="left" style="width:33%; vertical-align:top">
+                <b>DIKIRIM KE :</b><br>
+                {{ $tpohdr->branches->conam }}<br>
+                {{ $tpohdr->branches->address }}<br>
+                ATTN: {{ $tpohdr->branches->contactp }}
+            </td>
+            <td style="width:5%"></td>
+            <td class="left" style="width:13%; vertical-align:top">
+                <b>NOMOR PO</b><br>
+                <b>TANGGAL PO</b> 
+            </td>
+            <td class="left" style="width:1%; vertical-align:top">
+                <b>:</b>
+                <br>
+                <b>:</b> 
+                <br>
+            </td>
+            <td class="left" style="width:13%; vertical-align:top">
+                {{ $tpohdr->pono }}<br>
+                {{ $tpohdr->podat }}<br>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- Info Nomor PO -->
+    <table class="no-border" style="margin-top:10px;">
+        <tr>
+            <td class="left" style="width:50%">TOP: {{ $tpohdr->topay }} {{ $tpohdr->tdesc }}</td>
+            <td class="right" style="width:50%">Currency: {{ $tpohdr->curco }}</td>
+        </tr>
+    </table>
+    
+    <!-- Detail Barang (pakai garis) -->
+    <table style="margin-top:15px; overflow: wrap; flex:1">
+        <thead>
             <tr>
-                <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
-                <td>
-                    {{ $d->mpromas->prona ?? '-' }}
-                    @if(!empty($d->noted))
-                    <table class="no-border" style="margin-left: 5px; overflow: wrap;">
-                        <tr><td>{{ $d->noted }}</td></tr>
-                    </table>
-                    @endif
-                </td>
-                <td class="center">{{ $d->berat ?? '-' }}</td>
-                <td class="right">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
-                <td class="right">{{ formatNumberOnly($d->price * ($d->odisp / 100), $tpohdr->curco) }}</td>
-                <td class="right">{{ formatNumberOnly($jumlah, $tpohdr->curco) }}</td>
+                <th style="width: 9%">Quantity</th>
+                <th style="width: 42%">Nama Barang</th>
+                <th style="width: 10%">Berat/Vol</th>
+                <th style="width: 12%">Harga Satuan</th>
+                <th style="width: 11%">Diskon Satuan</th>
+                <th style="width: 15%">Jumlah</th>
             </tr>
-        @endforeach
-    </tbody>
-</table>
-
-<htmlpagefooter name="myFooter">
+        </thead>
+        <tbody>
+            @php $subtotal = 0; @endphp
+            @php $total = 0; @endphp
+            @php $pph = 0; @endphp
+            @php $ppn = 0; @endphp
+            @php $totalpph = 0; @endphp
+            @foreach($tpohdr->tpodtl as $i => $d)
+                @php
+                    if ($d->berat == 0) {
+                        $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->poqty;
+                    } else {
+                        $jumlah = ($d->price - ($d->price * ($d->odisp / 100))) * $d->berat * $d->poqty;
+                    }
+                    $subtotal += $jumlah;
+                @endphp
+                @php $pph = $jumlah * ($d->pphd / 100); $totalpph += $pph @endphp
+                <tr>
+                    <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
+                    <td>
+                        {{ $d->mpromas->prona ?? '-' }}
+                        @if(!empty($d->noted))
+                        <table class="no-border" style="margin-left: 5px; overflow: wrap;">
+                            <tr><td>{{ $d->noted }}</td></tr>
+                        </table>
+                        @endif
+                    </td>
+                    <td class="center">{{ $d->berat ?? '-' }}</td>
+                    <td class="right">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($d->price * ($d->odisp / 100), $tpohdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($jumlah, $tpohdr->curco) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    
     <!-- Ringkasan Total & Tanda Tangan (tanpa outline) -->
     <div class="footer-summary">
         <div style="border-top:1px dashed #00000049; margin-bottom:10px; padding-top: 5px;"></div>
@@ -176,7 +183,7 @@
                 @php $ppn        = round(($subtotal - $diskon) * ($tpohdr->vatax / 100), 2); @endphp
                 @php $netamount  = round($subtotal - $diskon, 2); @endphp
                 @php $grandtotal = round($subtotal - $diskon + $ppn - $totalpph, 2); @endphp
-
+    
                 <td style="width:60%; vertical-align:top">
                     <b>Catatan:</b><br>
                     {{ $tpohdr->noteh }}
@@ -211,26 +218,26 @@
                 </td>
             </tr>
         </table>
-
+    
         <table class="no-border" style="width:100%; margin-top:40px;">
             <tr>
                 @if (!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
                     <td class="center">{{ $tpohdr->formcode?->pos1 ?? '' }}</td>
                 @endif
-
+    
                 @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
                     <td class="center">{{ $tpohdr->formcode->pos2 }}</td>
                 @endif
-
+    
                 @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
                     <td class="center">{{ $tpohdr->formcode->pos3 }}</td>
                 @endif
-
+    
                 @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
                     <td class="center">{{ $tpohdr->formcode->pos4 }}</td>
                 @endif
             </tr>
-
+    
             <tr style="height:80px;">
                 <td class="center" style="padding-top: 40px">&nbsp;</td>
                 @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1)) <td class="center"></td> @endif
@@ -238,36 +245,37 @@
                 @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3)) <td class="center"></td> @endif
                 @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4)) <td class="center"></td> @endif
             </tr>
-
+    
             <tr>
-                @if(!empty($tpohdr->formcode?->pos1) || !empty($tpohdr->formcode?->name1))
-                    <td class="center">( {{ $tpohdr->formcode?->name1 ?? '....................' }} )</td>
+                @if(!empty($tpohdr->formcode?->pos1))
+                    <td class="center">( {{ trim($tpohdr->formcode?->name1 ?? '') !== '' ? $tpohdr->formcode->name1 : '....................' }} )</td>
                 @endif
-
-                @if(!empty($tpohdr->formcode?->pos2) || !empty($tpohdr->formcode?->name2))
-                    <td class="center">( {{ $tpohdr->formcode->name2 }} )</td>
+    
+                @if(!empty($tpohdr->formcode?->pos2))
+                    <td class="center">( {{ trim($tpohdr->formcode?->name2 ?? '') !== '' ? $tpohdr->formcode->name2 : '....................' }} )</td>
                 @endif
-
-                @if(!empty($tpohdr->formcode?->pos3) || !empty($tpohdr->formcode?->name3))
-                    <td class="center">( {{ $tpohdr->formcode->name3 }} )</td>
+    
+                @if(!empty($tpohdr->formcode?->pos3))
+                    <td class="center">( {{ trim($tpohdr->formcode?->name3 ?? '') !== '' ? $tpohdr->formcode->name3 : '....................' }} )</td>
                 @endif
-
-                @if(!empty($tpohdr->formcode?->pos4) || !empty($tpohdr->formcode?->name4))
-                    <td class="center">( {{ $tpohdr->formcode->name4 }} )</td>
+    
+                @if(!empty($tpohdr->formcode?->pos4))
+                    <td class="center">( {{ trim($tpohdr->formcode?->name4 ?? '') !== '' ? $tpohdr->formcode->name4 : '....................' }} )</td>
                 @endif
             </tr>
         </table>
-
+    </div>
+    
+    <htmlpagefooter name="myFooter">
         <hr>
-
+    
         <div style="font-size: 10px">{{ date('d-m-Y H:i:s') }}</div>
         <div style="font-size: 10px">{{ $tpohdr->formcode?->docd1 ?? '' }}</div>
         <div style="font-size: 10px">{{ $tpohdr->formcode?->docd2 ?? '' }}</div>
         <div style="text-align: right; font-size: 9pt;">
             {PAGENO}/{nbpg}
         </div>
-    </div>
-</htmlpagefooter>
-
+    </htmlpagefooter>
+</div>
 </body>
 </html>
