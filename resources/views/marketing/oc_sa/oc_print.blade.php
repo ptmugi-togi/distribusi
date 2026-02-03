@@ -228,6 +228,13 @@
                                         = {{ formatNumberOnly($d->plist * $d->qtyor, $ochdr->curco) }}
                                     </td>
                                 </tr>
+                            @else
+                                <tr>
+                                    <td>
+                                        PL : {{ $ochdr->curco }}
+                                        {{ formatNumberOnly($d->plist, $ochdr->curco) }}
+                                    </td>
+                                </tr>
                             @endif
     
                             @if(!empty($d->noted))
