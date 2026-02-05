@@ -629,7 +629,8 @@ class PdfController extends Controller
             'ocdtls.mpromas',
             'msreno',
             'mcusmas',
-            'mtaxes'
+            'mtaxes',
+            'mdepo'
         ])->findOrFail($id);
 
         $delto = Mstmas::where('braco', $ochdr->braco)
@@ -665,7 +666,8 @@ class PdfController extends Controller
             'ocdtls.mpromas',
             'msreno',
             'mcusmas',
-            'mtaxes'
+            'mtaxes',
+            'mdepo'
         ])->findOrFail($id);
 
         $delto = Mstmas::where('braco', $ochdr->braco)

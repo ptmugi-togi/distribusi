@@ -20,6 +20,7 @@ class OcHdr extends Model
         'ocid',
         'sordt',
         'priod',
+        'depo',
         'bracoformc',
         'braco',
         'formc',
@@ -92,5 +93,10 @@ class OcHdr extends Model
     public function mtaxes()
     {
         return $this->belongsTo(Mtaxes::class, 'braco', 'braco');
+    }
+
+    public function mdepo()
+    {
+        return $this->belongsTo(Mdepo::class, 'depo', 'depo');
     }
 }

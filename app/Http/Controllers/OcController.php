@@ -62,7 +62,11 @@ class OcController extends Controller
 
         $currency = DB::table('mcurco_tbl')->get();
 
-        return view('marketing.oc_sa.oc_create', compact('periodeAktif', 'minDate', 'branches', 'customer', 'sales', 'currency'));
+        $depo = DB::table('mdepos')
+                    ->where('braco', auth()->user()->cabang)
+                    ->get();
+
+        return view('marketing.oc_sa.oc_create', compact('periodeAktif', 'minDate', 'branches', 'customer', 'sales', 'currency', 'depo'));
     }
 
     public function store(Request $request)
@@ -77,6 +81,7 @@ class OcController extends Controller
             // Simpan header
             OcHdr::create([
                 'ocid' => $ocid,
+                'depo' => $request->depo,
                 'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,

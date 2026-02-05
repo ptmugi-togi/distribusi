@@ -27,15 +27,38 @@
             <input type="text" class="form-control" id="formc" name="formc" value="SA" hidden>
             <input type="text" class="form-control" id="braco" name="braco" value="{{ auth()->user()->cabang }}" hidden>
                 
-            <div class="col-md-6 mt-3">
+            <div class="col-md-4 mt-3">
                 <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> *</span>
                 <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required readonly style="background-color:#e9ecef">
             </div>
 
-            <div class="col-md-6 mt-3">
+            <div class="col-md-4 mt-3">
                 <label for="sordt" class="form-label">OC Date</label><span class="text-danger"> *</span>
                 <input type="date" class="form-control" name="sordt" id="sordt" value="{{ old('sordt') }}" min="{{ $minDate }}" required>
                 <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
+            </div>
+
+            <div class="col-md-4 mt-3">
+                <label for="depo" class="form-label">Depo</label>
+                 <select name="depo" id="depo" class="form-control select2"
+                 
+                 {{ $depo->isEmpty() ? 'disabled' : '' }}>
+
+                    @if($depo->isEmpty())
+                        <option value="" selected>Depo tidak tersedia</option>
+                    @else
+                        <option value="" disabled {{ old('depo') ? '' : 'selected' }}>
+                            Silahkan Pilih Depo
+                        </option>
+
+                    @foreach ($depo as $d)
+                        <option value="{{ $d->depo }}" 
+                            {{ old('depo') == $d->depo ? 'selected' : '' }}>
+                            {{ $d->depo }} - {{ $d->name }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
             </div>
 
             <div class="col-md-6 mt-3">

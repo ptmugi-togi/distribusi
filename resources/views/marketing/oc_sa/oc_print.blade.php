@@ -131,7 +131,9 @@
     
             <td class="left" style="width:13%; vertical-align:top">
                 <b>NOMOR OC</b><br>
-                <br>
+                @if ($ochdr->depo != NULL)
+                    <b>Depo</b> <br>
+                @endif
                 <b>TANGGAL OC</b> <br>
                 <b>SALES REP</b> <br>
                 <b>INDUSTRY</b> <br>
@@ -141,7 +143,9 @@
     
             <td class="left" style="width:1%; vertical-align:top">
                 <b>:</b> <br>
-                <br>
+                @if ($ochdr->depo != NULL)
+                    <b>:</b><br>
+                @endif
                 <b>:</b> <br>
                 <b>:</b> <br>
                 <b>:</b> <br>
@@ -151,7 +155,9 @@
     
             <td class="left" style="width:20%; vertical-align:top">
                 {{ $ochdr->braco }}-{{ $ochdr->formc }} {{ $ochdr->sorno }}<br>
-                <br>
+                @if ($ochdr->depo != NULL)
+                    {{ $ochdr->depo }} - {{ $ochdr->mdepo->name ?? '-' }}<br>
+                @endif
                 {{ \Carbon\Carbon::parse($ochdr->sordt)->format('d-m-Y') }}<br>
                 {{ $ochdr->msreno->srena }}<br>
                 {{ $mcindu?->descr_cindu ?? '-' }}<br>

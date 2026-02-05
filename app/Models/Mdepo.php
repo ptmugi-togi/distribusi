@@ -9,6 +9,7 @@ class Mdepo extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $table = 'mdepos';
     protected $keyType = 'string';
     protected $primaryKey = 'depo';
     protected $fillable = ['depo','name','braco','address','cont','email','phone','faxno','npwp','pkp','tglsk'];

@@ -25,14 +25,19 @@
             <input type="text" id="braco" value="{{ auth()->user()->cabang }}" hidden>
 
             <div class="row">
-                <div class="col-md-6 mt-3">
+                <div class="col-md-4 mt-3">
                     <label for="sorno" class="form-label">OC No.</label>
                     <input type="text" class="form-control" id="sorno" value="{{ $oc->sorno }}" disabled>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label for="sordt" class="form-label">OC Date</label>
+                <div class="col-md-4 mt-3">
+                    <label for="depo" class="form-label">OC Date</label>
                     <input type="text" class="form-control" id="sordt" value="{{ \Carbon\Carbon::parse($oc->sordt)->format('d/m/Y') }}" disabled>
+                </div>
+
+                <div class="col-md-4 mt-3">
+                    <label for="depo" class="form-label">Depo</label>
+                    <input type="text" class="form-control" id="depo" value="{{ $oc->depo }} - {{ $oc->mdepo->name }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
