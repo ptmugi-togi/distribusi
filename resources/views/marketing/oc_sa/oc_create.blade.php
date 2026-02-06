@@ -575,15 +575,18 @@
                         return;
                     }
 
-                    let options = '<option value="" selected disabled>Silahkan pilih Delivery To</option>';
+                    let options = '';
 
-                    list.forEach(item => {
-                        options += `<option value="${item.shpto}">${item.shpto}</option>`;
+                    list.forEach((item, index) => {
+                        const selected = index === 0 ? 'selected' : '';
+                        options += `<option value="${item.shpto}" ${selected}>${item.shpto}</option>`;
                     });
 
-                    $('#delto').html(options);
+                    $('#delto').html(options).trigger('change.select2');
 
-                    $('#delto').trigger('change.select2');
+                    // auto load detail alamat pertama
+                    const firstDelto = list[0].shpto;
+                    loadDeltoDetail(cusno, firstDelto);
                 },
                 error: function (xhr) {
                     console.error(xhr.responseText);
@@ -591,6 +594,26 @@
                 }
             });
         });
+
+        function loadDeltoDetail(cusno, delto) {
+            $.ajax({
+                url: `/get-mstmas-detail`,
+                method: 'GET',
+                data: { cusno, delto },
+                success: function (res) {
+                    if (!res.success) return;
+
+                    const d = res.data;
+
+                    $('#delto_name').val(d.shpnm ?? '-');
+                    $('#delto_attn').val(d.contp ?? '-');
+                    $('#delto_prov').val(d.province ?? '-');
+                    $('#delto_kab').val(d.kabupaten ?? '-');
+                    $('#delto_addrress').val(d.deliveryaddress ?? '-');
+                    $('#delto_phone').val(d.phone ?? '-');
+                }
+            });
+        }
 
         $('#delto').on('change', function () {
             const cusno = $('#cusno').val();
