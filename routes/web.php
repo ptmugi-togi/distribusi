@@ -35,6 +35,7 @@ use App\Http\Controllers\StockStatusController;
 use App\Http\Controllers\OsrController;
 use App\Http\Controllers\WoController;
 use App\Http\Controllers\MstmasController;
+use App\Http\Controllers\OcSbController;
 
 /*
 |--------------------------------------------------------------------------
@@ -261,3 +262,16 @@ Route::put('/oc/{id}/cancel', [OcController::class,'cancel'])->middleware('auth'
 Route::delete('/oc/{id}/delete', [OcController::class,'destroy'])->middleware('auth')->name('oc.delete');
 Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');
 Route::get('/oc/printOc/{id}', [PdfController::class, 'printOc'])->name('oc.printOc');
+
+Route::get('/oc-sb', [OcSbController::class,'index'])->middleware('auth')->name('oc_sb.index');
+Route::get('/oc-sb/create', [OcSbController::class,'create'])->middleware('auth')->name('oc_sb.create');
+Route::get('/get-sub-product', [OcSbController::class, 'getSubProduct'])->name('get-sub-product');
+Route::get('/get-sales-by-branch', [OcSbController::class, 'getSalesByBranch']);
+Route::post('/oc-sb/store', [OcSbController::class,'store'])->middleware('auth')->name('oc_sb.store');
+Route::get('/oc-sb/{id}/detail', [OcSbController::class,'show'])->middleware('auth')->name('oc_sb.detail');
+// Route::get('/oc/{id}/edit', [OcController::class,'edit'])->middleware('auth')->name('oc.edit');
+// Route::put('/oc/{id}', [OcController::class,'update'])->middleware('auth')->name('oc.update');
+Route::put('/oc-sb/{id}/cancel', [OcSbController::class,'cancel'])->middleware('auth')->name('oc_sb.cancel');
+Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middleware('auth')->name('oc_sb.delete');
+// Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');
+// Route::get('/oc/printOc/{id}', [PdfController::class, 'printOc'])->name('oc.printOc');

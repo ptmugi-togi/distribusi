@@ -3,11 +3,11 @@
 @section('container')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>List OC Retail (SA)</h1>
+        <h1>List OC Project (SB)</h1>
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item active">List OC Retail (SA)</li>
+            <li class="breadcrumb-item active">List OC Project (SB)</li>
           </ol>
         </nav>
     </div>
@@ -24,7 +24,7 @@
                 </div>
                 @endif
                 <div class="col-lg-12" style="padding:0px 10px 10px 0px;">
-                    <a id="tambahOc" href="{{ route('oc.create') }}" type="button" class="btn btn-success"> Tambah</a>
+                    <a id="tambahOc" href="{{ route('oc_sb.create') }}" type="button" class="btn btn-success"> Tambah</a>
                 </div>
 
                 <div class="table-responsive">
@@ -41,7 +41,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach ($ochdr as $o)
+                      @foreach ($ocsbhdr as $o)
                       <tr>
                           <td class="text-center">{{ $o->braco ?? '-' }}</td>
                           <td class="text-center">{{ $o->sorno ?? '-' }}</td>
@@ -55,29 +55,29 @@
                                 <p class="badge bg-danger">CANCELED</p>
                               @endif
                               {{-- preview --}}
-                              {{-- <a href="{{ route('oc.previewOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                              {{-- <a href="{{ route('oc.previewOc', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                               {{-- print --}}
                               @if (!$periodClosed && $o->braco == auth()->user()->cabang)
                                 @if ($o->resta != 'C')
-                                  <a href="{{ route('oc.printOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                  <a href="{{ route('oc.printOc', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                 @endif
-                                <a href="/oc/{{ $o->ocid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                                <a href="/oc-sb/{{ $o->ocsbid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 
                                 @if ($o->resta != 'C')
-                                  <a href="/oc/{{ $o->ocid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                                  <form id="cancel-oc-{{ $o->ocid }}" action="{{ route('oc.cancel', $o->ocid) }}" method="POST" style="display:inline;">
+                                  <a href="/oc-sb/{{ $o->ocsbid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                                  <form id="cancel-oc-{{ $o->ocsbid }}" action="{{ route('oc.cancel', $o->ocsbid) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PUT')
-                                    <a class="badge bg-danger btn-cancel-oc" data-ocid="{{ $o->ocid }}" data-tooltip="true" data-bs-placement="top" title="Cancel" style="cursor: pointer;">
+                                    <a class="badge bg-danger btn-cancel-oc" data-ocsbid="{{ $o->ocsbid }}" data-tooltip="true" data-bs-placement="top" title="Cancel" style="cursor: pointer;">
                                           <i class="bi bi-x-circle"></i>
                                     </a>
                                   </form>
                                 @endif
-                                {{-- <form id="delete-oc-{{ $o->ocid }}" action="{{ url('/oc/'.$o->ocid.'/delete') }}" method="POST" style="display:inline;">
+                                {{-- <form id="delete-oc-{{ $o->ocsbid }}" action="{{ url('/oc/'.$o->ocsbid.'/delete') }}" method="POST" style="display:inline;">
                                   @csrf
                                   @method('DELETE')
-                                  <a class="badge bg-danger btn-delete-oc" data-ocid="{{ $o->ocid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                  <a class="badge bg-danger btn-delete-oc" data-ocsbid="{{ $o->ocsbid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
                                         <i class="bi bi-trash"></i>
                                   </a>
                                 </form> --}}
@@ -109,7 +109,7 @@
       </div>
 
       <div class="modal-body">
-        <input type="hidden" id="cancel_ocid">
+        <input type="hidden" id="cancel_ocsbid">
 
         <div class="mb-3">
           <label class="form-label">Tanggal Cancel</label><span class="text-danger">*</span>
@@ -158,9 +158,9 @@
     <script>
       $(document).on('click', '.btn-cancel-oc', function () {
 
-          let ocid = $(this).data('ocid');
+          let ocsbid = $(this).data('ocsbid');
 
-          $('#cancel_ocid').val(ocid);
+          $('#cancel_ocsbid').val(ocsbid);
           $('#cancd').val('');
           $('#cancp').val('');
           $('#reason').val('');
@@ -182,7 +182,7 @@
       // Submit cancel
       $('#btnSubmitCancel').on('click', function () {
 
-          let ocid  = $('#cancel_ocid').val();
+          let ocsbid  = $('#cancel_ocsbid').val();
           let cancd = $('#cancd').val();
           let reason = $('#reason').val();
 
@@ -191,7 +191,7 @@
               return;
           }
 
-          let form = document.getElementById('cancel-oc-' + ocid);
+          let form = document.getElementById('cancel-oc-' + ocsbid);
 
           $('<input>').attr({
               type: 'hidden',
@@ -217,12 +217,12 @@
           $(document).on('click', '.btn-delete-oc', function (e) {
               e.preventDefault();
 
-              const ocid = $(this).data('ocid');
-              const form = document.getElementById(`delete-oc-${ocid}`);
+              const ocsbid = $(this).data('ocsbid');
+              const form = document.getElementById(`delete-oc-${ocsbid}`);
 
               Swal.fire({
                   title: 'Hapus BPB?',
-                  text: `Yakin ingin menghapus data BPB "${ocid}" ini?`,
+                  text: `Yakin ingin menghapus data BPB "${ocsbid}" ini?`,
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonText: 'Ya, Hapus!',

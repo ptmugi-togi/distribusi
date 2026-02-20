@@ -186,6 +186,13 @@
             </a>
           </li>
         </ul>
+        <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('oc_sb.index') }}">
+            <i class="bi bi-circle"></i><span>OC Project (SB)</span>
+            </a>
+          </li>
+        </ul>
       </li>
 
       <li class="nav-item">
