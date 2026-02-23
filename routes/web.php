@@ -269,8 +269,8 @@ Route::get('/get-sub-product', [OcSbController::class, 'getSubProduct'])->name('
 Route::get('/get-sales-by-branch', [OcSbController::class, 'getSalesByBranch']);
 Route::post('/oc-sb/store', [OcSbController::class,'store'])->middleware('auth')->name('oc_sb.store');
 Route::get('/oc-sb/{id}/detail', [OcSbController::class,'show'])->middleware('auth')->name('oc_sb.detail');
-// Route::get('/oc/{id}/edit', [OcController::class,'edit'])->middleware('auth')->name('oc.edit');
-// Route::put('/oc/{id}', [OcController::class,'update'])->middleware('auth')->name('oc.update');
+Route::get('/oc-sb/{id}/edit', [OcSbController::class,'edit'])->middleware('auth')->name('oc_sb.edit');
+Route::put('/oc-sb/{id}', [OcSbController::class,'update'])->middleware('auth')->name('oc_sb.update');
 Route::put('/oc-sb/{id}/cancel', [OcSbController::class,'cancel'])->middleware('auth')->name('oc_sb.cancel');
 Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middleware('auth')->name('oc_sb.delete');
 // Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');

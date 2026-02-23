@@ -240,23 +240,38 @@ class OcSbController extends Controller
 
     public function edit(string $id)
     {
-        $oc = OcHdr::with('ocdtls.mpromas')->findOrFail($id);
+        $minDate = null;
 
-        $delto = DB::table('mstmas')
-            ->where('braco', $oc->braco)
-            ->where('cusno', $oc->cusno)
-            ->where('shpto', $oc->delto)
+        $periodeAktif = DB::table('tperiode')
+            ->where('braco', auth()->user()->cabang)
+            ->where('status', 'O')
+            ->orderBy('periode', 'desc')
             ->first();
 
-        $sales = DB::table('msreno')
-            ->where('braco', $oc->braco)
+        if ($periodeAktif) {
+            $priod = $periodeAktif->periode;
+            $year = substr($periodeAktif->periode, 0, 4);
+            $month = substr($periodeAktif->periode, 4, 2);
+            $minDate = "$year-$month-01";
+        }
+
+        $ocsb = OcSbHdr::with('ocsbdtls.mpromas', 'ocsbdtls.ocsbhdr')->findOrFail($id);
+
+        $bomList = DB::table('tprojc')
+            ->where('ocsbid', $id)
+            ->get()
+            ->groupBy('opron');
+        
+        $detailsInvoicing = DB::table('tprojd')
+            ->where('ocsbid', $id)
+            ->orderBy('phase')
             ->get();
 
         $branches = DB::table('mbranches')->get();
         
         $currency = DB::table('mcurco_tbl')->get();
 
-        return view('marketing.oc_sb.oc_edit', compact('oc', 'delto', 'sales', 'currency', 'branches'));
+        return view('marketing.oc_sb.oc_sb_edit', compact('periodeAktif', 'minDate', 'ocsb', 'bomList', 'detailsInvoicing', 'currency', 'branches'));
     }
 
     public function update(Request $request, string $id)
@@ -265,36 +280,26 @@ class OcSbController extends Controller
         DB::beginTransaction();
 
         try {
-            $ocid = $request->braco . $request->formc . $request->sorno;
+            $ocsbid = $request->braco . $request->formc . $request->sorno;
 
             // update header
-            OcHdr::where('ocid', $ocid)->update([
-                'sreno' => $request->sreno,
-                'topay' => $request->topay,
-                'cuspo' => $request->cuspo,
-                'curco' => $request->curco,
-                'crate' => $request->crate,
-                'ebtyp' => $request->ebtyp,
-                'edisp' => $request->edisp,
-                'edisa' => $request->edisa,
+            OcSbHdr::where('ocsbid', $ocsbid)->update([
+                'insfe' => $request->insfe,
                 'nodeb' => $request->nodeb,
-                'dpper' => $request->dpper,
-                'sqper' => $request->sqper,
-                'sqtbr' => $request->sqtbr,
-                'sqtsr' => $request->sqtsr,
-                'delto' => $request->delto,
+                'edisa' => $request->edisa_hdr,
+                'cuspo' => $request->cuspo,
                 'noteh' => $request->noteh,
                 'updated_at' => now(),
                 'updated_by' => Auth::user()->name,
             ]);
 
             // hapus detail
-            OcDtl::where('ocid', $ocid)->delete();
+            OcSbDtl::where('ocsbid', $ocsbid)->delete();
 
             // Loop tiap detail barang
             foreach ($request->opron as $i => $useOpron) {
-                OcDtl::create([
-                    'ocid' => $ocid,
+                OcSbDtl::create([
+                    'ocsbid' => $ocsbid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
                     'sorno' => $request->sorno,
@@ -302,20 +307,101 @@ class OcSbController extends Controller
                     'prona' => $request->prona[$i],
                     'qtyor' => $request->qtyor[$i],
                     'stdqu' => $request->stdqu[$i],
-                    'rqeta' => $request->rqeta[$i],
-                    'whetd' => $request->whetd[$i],
                     'price' => $request->price[$i],
                     'plist' => $request->plist[$i],
                     'odisp' => $request->odisp[$i],
                     'teknik' => $request->teknik[$i],
-                    'srcog' => $request->srcog[$i],
                     'putama' => $request->putama[$i],
-                    'noted' => $request->noted[$i],
+                    'delto' => $request->delto[$i],
+                    'noted' => $request->noted_installation[$i],
                 ]);
             }
 
+            DB::table('tprojc')
+                ->where('ocsbid', $ocsbid)
+                ->delete();
+
+            if ($request->has('bom')) {
+                foreach ($request->bom as $installIndex => $items) {
+                    foreach ($items as $item) {
+                        DB::table('tprojc')->insert([
+                            'ocsbid' => $ocsbid,
+                            'braco' => $request->braco,
+                            'formc' => $request->formc,
+                            'sorno' => $request->sorno,
+                            'delto' => $request->delto,
+
+                            'opron' => $item['matno'],
+                            'stdqu' => $item['unit'],
+                            'trqty' => $item['qty'],
+                            'delqt' => 0,
+
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            }
+
+            DB::table('tprojd')
+            ->where('ocsbid', $ocsbid)
+            ->delete();
+
+            if ($request->has('toppc')) {
+
+                foreach ($request->toppc as $i => $percent) {
+
+                    DB::table('tprojd')->insert([
+
+                        'ocsbid'   => $ocsbid,
+                        'braco'  => $request->braco,
+                        'formc'  => $request->formc,
+                        'sorno'  => $request->sorno,
+
+                        'phase'  => $i + 1,
+                        'descr'  => $request->descr[$i] ?? null,
+                        'toppc'  => $percent,
+
+                        'gross'  => $request->gross[$i] ?? 0,
+                        'odisa'  => $request->odisa[$i] ?? 0,
+                        'ntamt'  => $request->ntamt[$i] ?? 0,
+                        'blamt'  => $request->blamt[$i] ?? 0,
+                        'edisa'  => $request->edisa[$i] ?? 0,
+
+                        'billd'  => $request->billd[$i] ?? null,
+
+                        // QUOTA 1
+                        'smqp1'  => $request->smqp1[$i] ?? 0,
+                        'smqtb1' => $request->smqtb1[$i] ?? null,
+                        'smqts1' => $request->smqts1[$i] ?? null,
+
+                        // QUOTA 2
+                        'smqp2'  => $request->smqp2[$i] ?? 0,
+                        'smqtb2' => $request->smqtb2[$i] ?? null,
+                        'smqts2' => $request->smqts2[$i] ?? null,
+
+                        // QUOTA 3
+                        'smqp3'  => $request->smqp3[$i] ?? 0,
+                        'smqtb3' => $request->smqtb3[$i] ?? null,
+                        'smqts3' => $request->smqts3[$i] ?? null,
+
+                        // QUOTA 4
+                        'smqp4'  => $request->smqp4[$i] ?? 0,
+                        'smqtb4' => $request->smqtb4[$i] ?? null,
+                        'smqts4' => $request->smqts4[$i] ?? null,
+
+                        // QUOTA 5
+                        'smqp5'  => $request->smqp5[$i] ?? 0,
+                        'smqtb5' => $request->smqtb5[$i] ?? null,
+                        'smqts5' => $request->smqts5[$i] ?? null,
+
+                        'noted'  => $request->noted_invoicing[$i] ?? null,
+                    ]);
+                }
+            }
+
             DB::commit();
-            return redirect()->route('oc.index')->with('success', "Data OC \"$ocid\" berhasil dirubah.");
+            return redirect()->route('oc_sb.index')->with('success', "Data OC \"$ocsbid\" berhasil dirubah.");
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal ubah OC:', ['error' => $e->getMessage()]);
