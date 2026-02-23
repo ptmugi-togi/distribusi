@@ -269,7 +269,7 @@
             </div>
 
             <div class="mt-3 d-flex justify-content-between">
-                <a href="{{ route('oc.index') }}" class="btn btn-secondary">Kembali</a>
+                <a href="{{ route('oc_sb.index') }}" class="btn btn-secondary">Kembali</a>
                 <button type="submit" class="btn btn-primary">Simpan Data</button>
             </div>
         </form>
