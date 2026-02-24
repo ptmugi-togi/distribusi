@@ -68,132 +68,7 @@
 
                 <div class="col-md-6 mt-3">
                     <label for="billd" class="form-label">Plan Invoicing</label><span class="text-danger"> *</span>
-                    <input type="date" class="form-control" name="billd[]" id="billd" value="{{ old('billd.' .$i) }}" required>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <h5 style="margin-top: 35px">Quota 1 :</h5>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqp1-oc-{{ $i }}" class="form-label">Split (%)</label>
-                    <input type="number" name="smqp1[]" class="form-control" id="smqp1-oc-{{ $i }}" value="{{ old('smqp1.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqtb1-oc-{{ $i }}" class="form-label">Branch</label>
-                    <select name="smqtb1[]" id="smqtb1-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqtb1.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                        @foreach ($branches as $b)
-                            <option value="{{ $b->braco }}" {{ old('smqtb1.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqts1" class="form-label">Sales Rep.</label>
-                    <select name="smqts1[]" id="smqts1-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqts1.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <h5 style="margin-top: 35px">Quota 2 :</h5>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqp2-oc-{{ $i }}" class="form-label">Split (%)</label>
-                    <input type="number" name="smqp2[]" class="form-control" id="smqp2-oc-{{ $i }}" value="{{ old('smqp2.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqtb2-oc-{{ $i }}" class="form-label">Branch</label>
-                    <select name="smqtb2[]" id="smqtb2-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqtb2.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                        @foreach ($branches as $b)
-                            <option value="{{ $b->braco }}" {{ old('smqtb2.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqts2" class="form-label">Sales Rep.</label>
-                    <select name="smqts2[]" id="smqts2-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqts2.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <h5 style="margin-top: 35px">Quota 3 :</h5>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqp3-oc-{{ $i }}" class="form-label">Split (%)</label>
-                    <input type="number" name="smqp3[]" class="form-control" id="smqp3-oc-{{ $i }}" value="{{ old('smqp3.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqtb3-oc-{{ $i }}" class="form-label">Branch</label>
-                    <select name="smqtb3[]" id="smqtb3-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqtb3.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                        @foreach ($branches as $b)
-                            <option value="{{ $b->braco }}" {{ old('smqtb3.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqts3" class="form-label">Sales Rep.</label>
-                    <select name="smqts3[]" id="smqts3-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqts3.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <h5 style="margin-top: 35px">Quota 4 :</h5>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqp4-oc-{{ $i }}" class="form-label">Split (%)</label>
-                    <input type="number" name="smqp4[]" class="form-control" id="smqp4-oc-{{ $i }}" value="{{ old('smqp4.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqtb4-oc-{{ $i }}" class="form-label">Branch</label>
-                    <select name="smqtb4[]" id="smqtb4-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqtb4.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                        @foreach ($branches as $b)
-                            <option value="{{ $b->braco }}" {{ old('smqtb4.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqts4" class="form-label">Sales Rep.</label>
-                    <select name="smqts4[]" id="smqts4-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqts4.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <h5 style="margin-top: 35px">Quota 5 :</h5>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqp5-oc-{{ $i }}" class="form-label">Split (%)</label>
-                    <input type="number" name="smqp5[]" class="form-control" id="smqp5-oc-{{ $i }}" value="{{ old('smqp5.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqtb5-oc-{{ $i }}" class="form-label">Branch</label>
-                    <select name="smqtb5[]" id="smqtb5-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqtb5.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                        @foreach ($branches as $b)
-                            <option value="{{ $b->braco }}" {{ old('smqtb5.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label for="smqts5" class="form-label">Sales Rep.</label>
-                    <select name="smqts5[]" id="smqts5-oc-{{ $i }}" class="form-control select2">
-                        <option value="" disabled {{ old('smqts5.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                    </select>
+                    <input type="date" class="form-control" name="billd[]" id="billd-oc-{{ $i }}" value="{{ old('billd.' .$i) }}" required>
                 </div>
 
                 <div class="col-md-12 mt-3">
@@ -210,6 +85,138 @@
 
   <div class="text-end">
     <button type="button" id="btn-add-phase" class="btn mt-3" style="background-color:#4456f1;color:#fff" onclick="addOCInvoicing()">Tambah Detail Invoicing </button>
+  </div>
+
+  <div class="split">
+    <hr>
+    <div class="card p-3">
+        <div class="row">
+            <div class="col-md-3 mt-3">
+                <h5 style="margin-top: 35px">Quota 1 :</h5>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqp1-oc" class="form-label">Split (%)</label>
+                <input type="number" name="smqp1" class="form-control" id="smqp1-oc" value="{{ old('smqp1') }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(event)">
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqtb1-oc" class="form-label">Branch</label>
+                <select name="smqtb1" id="smqtb1-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqtb1') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                    @foreach ($branches as $b)
+                        <option value="{{ $b->braco }}" {{ old('smqtb1') == $b->braco ? 'selected' : '' }}>
+                            {{ $b->braco }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqts1" class="form-label">Sales Rep.</label>
+                <select name="smqts1" id="smqts1-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqts1') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                </select>
+            </div>
+        
+            <div class="col-md-3 mt-3">
+                <h5 style="margin-top: 35px">Quota 2 :</h5>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqp2-oc" class="form-label">Split (%)</label>
+                <input type="number" name="smqp2" class="form-control" id="smqp2-oc" value="{{ old('smqp2') }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(event)">
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqtb2-oc" class="form-label">Branch</label>
+                <select name="smqtb2" id="smqtb2-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqtb2') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                    @foreach ($branches as $b)
+                        <option value="{{ $b->braco }}" {{ old('smqtb2') == $b->braco ? 'selected' : '' }}>
+                            {{ $b->braco }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqts2" class="form-label">Sales Rep.</label>
+                <select name="smqts2" id="smqts2-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqts2') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                </select>
+            </div>
+        
+            <div class="col-md-3 mt-3">
+                <h5 style="margin-top: 35px">Quota 3 :</h5>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqp3-oc" class="form-label">Split (%)</label>
+                <input type="number" name="smqp3" class="form-control" id="smqp3-oc" value="{{ old('smqp3') }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(event)">
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqtb3-oc" class="form-label">Branch</label>
+                <select name="smqtb3" id="smqtb3-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqtb3') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                    @foreach ($branches as $b)
+                        <option value="{{ $b->braco }}" {{ old('smqtb3') == $b->braco ? 'selected' : '' }}>
+                            {{ $b->braco }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqts3" class="form-label">Sales Rep.</label>
+                <select name="smqts3" id="smqts3-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqts3') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                </select>
+            </div>
+        
+            <div class="col-md-3 mt-3">
+                <h5 style="margin-top: 35px">Quota 4 :</h5>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqp4-oc" class="form-label">Split (%)</label>
+                <input type="number" name="smqp4" class="form-control" id="smqp4-oc" value="{{ old('smqp4') }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(event)">
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqtb4-oc" class="form-label">Branch</label>
+                <select name="smqtb4" id="smqtb4-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqtb4') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                    @foreach ($branches as $b)
+                        <option value="{{ $b->braco }}" {{ old('smqtb4') == $b->braco ? 'selected' : '' }}>
+                            {{ $b->braco }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqts4" class="form-label">Sales Rep.</label>
+                <select name="smqts4" id="smqts4-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqts4') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                </select>
+            </div>
+        
+            <div class="col-md-3 mt-3">
+                <h5 style="margin-top: 35px">Quota 5 :</h5>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqp5-oc" class="form-label">Split (%)</label>
+                <input type="number" name="smqp5" class="form-control" id="smqp5-oc" value="{{ old('smqp5') }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(event)">
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqtb5-oc" class="form-label">Branch</label>
+                <select name="smqtb5" id="smqtb5-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqtb5') ? '' : 'selected' }}>Silahkan Pilih Branch</option>
+                    @foreach ($branches as $b)
+                        <option value="{{ $b->braco }}" {{ old('smqtb5') == $b->braco ? 'selected' : '' }}>
+                            {{ $b->braco }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3 mt-3">
+                <label for="smqts5" class="form-label">Sales Rep.</label>
+                <select name="smqts5" id="smqts5-oc" class="form-control select2">
+                    <option value="" disabled {{ old('smqts5') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                </select>
+            </div>
+        </div>
+    </div>
   </div>
 </div>
 
@@ -314,61 +321,43 @@
 
 {{-- validate quota --}}
 <script>
-    function validateQuota(phaseIndex, event) {
+    function validateQuota(event) {
 
         let total = 0;
 
         for (let i = 1; i <= 5; i++) {
-
-            $(`#smqp${i}-oc-${phaseIndex}`).prop('disabled', false);
-
-            $(`#smqtb${i}-oc-${phaseIndex}`)
-                .prop('disabled', false);
-
-            $(`#smqts${i}-oc-${phaseIndex}`)
-                .prop('disabled', false);
+            const val = parseFloat($(`#smqp${i}-oc`).val());
+            if (!isNaN(val) && val > 0) {
+                total += val;
+            }
         }
 
         for (let i = 1; i <= 5; i++) {
 
-            let splitInput = $(`#smqp${i}-oc-${phaseIndex}`);
-            let branchInput = $(`#smqtb${i}-oc-${phaseIndex}`);
-            let salesInput  = $(`#smqts${i}-oc-${phaseIndex}`);
+            const splitInput  = $(`#smqp${i}-oc`);
+            const branchInput = $(`#smqtb${i}-oc`);
+            const salesInput  = $(`#smqts${i}-oc`);
 
-            let val = parseFloat(splitInput.val()) || 0;
+            const val = parseFloat(splitInput.val());
 
-            total += val;
-
-            if (!val) {
-                branchInput.val('').prop('disabled', true).trigger('change');
-                salesInput.val('').prop('disabled', true).trigger('change');
+            if (!isNaN(val) && val > 0) {
+                branchInput.prop('disabled', false).trigger('change.select2');
+                salesInput.prop('disabled', false).trigger('change.select2');
+            } else {
+                branchInput.val('').prop('disabled', true).trigger('change.select2');
+                salesInput.val('').prop('disabled', true).trigger('change.select2');
             }
 
             if (total >= 100) {
-
-                for (let j = i + 1; j <= 5; j++) {
-
-                    $(`#smqp${j}-oc-${phaseIndex}`)
-                        .val('')
-                        .prop('disabled', true);
-
-                    $(`#smqtb${j}-oc-${phaseIndex}`)
-                        .val('')
-                        .prop('disabled', true)
-                        .trigger('change');
-
-                    $(`#smqts${j}-oc-${phaseIndex}`)
-                        .val('')
-                        .prop('disabled', true)
-                        .trigger('change');
+                if (isNaN(val) || val === 0) {
+                    splitInput.prop('disabled', true);
                 }
-
-                break;
+            } else {
+                splitInput.prop('disabled', false);
             }
         }
 
         if (total > 100) {
-
             Swal.fire({
                 icon: 'warning',
                 title: 'Quota Melebihi 100%',
@@ -379,8 +368,7 @@
             if (event && event.target) {
                 event.target.value = '';
             }
-
-            validateQuota(phaseIndex);
+            validateQuota();
             return;
         }
     }
@@ -392,15 +380,11 @@
 
         const id = $(this).attr('id'); 
 
-        const parts = id.split('-');
-        const quotaPart = parts[0];
-        const phaseIndex = parts[2];
-
-        const quotaNumber = quotaPart.replace('smqtb','');
+        const quotaNumber = id.match(/\d+/)[0];
 
         const branchCode = $(this).val();
 
-        const salesSelect = $(`#smqts${quotaNumber}-oc-${phaseIndex}`);
+        const salesSelect = $(`#smqts${quotaNumber}-oc`);
 
         if (!branchCode) {
             salesSelect.html('<option value="" disabled selected>Silahkan Pilih Sales Rep</option>');
@@ -419,23 +403,7 @@
                     options += `<option value="${item.sreno}">${item.sreno} - ${item.srena}</option>`;
                 });
 
-                salesSelect.html(options);
-
-                const oldSalesAll = {
-                    1: @json(old('smqts1', [])),
-                    2: @json(old('smqts2', [])),
-                    3: @json(old('smqts3', [])),
-                    4: @json(old('smqts4', [])),
-                    5: @json(old('smqts5', []))
-                };
-
-                const oldValue = oldSalesAll[quotaNumber]?.[phaseIndex];
-
-                if(oldValue){
-                    salesSelect.val(oldValue);
-                }
-
-                salesSelect.trigger('change');
+                salesSelect.html(options).trigger('change');
             }
         });
 
@@ -514,131 +482,6 @@
                             <input type="date" class="form-control" name="billd[]" id="billd-oc-${i}" value="{{ old('billd.' . $i) }}" required>
                         </div>
 
-                        <div class="col-md-3 mt-3">
-                            <h5 style="margin-top: 35px">Quota 1 :</h5>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqp1-oc-${i}" class="form-label">Split (%)</label>
-                            <input type="number" name="smqp1[]" class="form-control" id="smqp1-oc-${i}" value="{{ old('smqp1.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota(${i}, event) validateQuota({{ $i }}, event)">
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqtb1-oc-${i}" class="form-label">Branch</label>
-                            <select name="smqtb1[]" id="smqtb1-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqtb1.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                                @foreach ($branches as $b)
-                                    <option value="{{ $b->braco }}" {{ old('smqtb1.' .$i) == $b->braco ? 'selected' : '' }}>
-                                        {{ $b->braco }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqts1" class="form-label">Sales Rep.</label>
-                            <select name="smqts1[]" id="smqts1-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqts1.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mt-3">
-                            <h5 style="margin-top: 35px">Quota 2 :</h5>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqp2-oc-${i}" class="form-label">Split (%)</label>
-                            <input type="number" name="smqp2[]" class="form-control" id="smqp2-oc-${i}" value="{{ old('smqp2.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqtb2-oc-${i}" class="form-label">Branch</label>
-                            <select name="smqtb2[]" id="smqtb2-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqtb2.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                                @foreach ($branches as $b)
-                                    <option value="{{ $b->braco }}" {{ old('smqtb2.' .$i) == $b->braco ? 'selected' : '' }}>
-                                        {{ $b->braco }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqts2" class="form-label">Sales Rep.</label>
-                            <select name="smqts2[]" id="smqts2-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqts2.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mt-3">
-                            <h5 style="margin-top: 35px">Quota 3 :</h5>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqp3-oc-${i}" class="form-label">Split (%)</label>
-                            <input type="number" name="smqp3[]" class="form-control" id="smqp3-oc-${i}" value="{{ old('smqp3.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqtb3-oc-${i}" class="form-label">Branch</label>
-                            <select name="smqtb3[]" id="smqtb3-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqtb3.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                                @foreach ($branches as $b)
-                                    <option value="{{ $b->braco }}" {{ old('smqtb3.' .$i) == $b->braco ? 'selected' : '' }}>
-                                        {{ $b->braco }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqts3" class="form-label">Sales Rep.</label>
-                            <select name="smqts3[]" id="smqts3-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqts3.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mt-3">
-                            <h5 style="margin-top: 35px">Quota 4 :</h5>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqp4-oc-${i}" class="form-label">Split (%)</label>
-                            <input type="number" name="smqp4[]" class="form-control" id="smqp4-oc-${i}" value="{{ old('smqp4.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqtb4-oc-${i}" class="form-label">Branch</label>
-                            <select name="smqtb4[]" id="smqtb4-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqtb4.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                                @foreach ($branches as $b)
-                                    <option value="{{ $b->braco }}" {{ old('smqtb4.' .$i) == $b->braco ? 'selected' : '' }}>
-                                        {{ $b->braco }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqts4" class="form-label">Sales Rep.</label>
-                            <select name="smqts4[]" id="smqts4-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqts4.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mt-3">
-                            <h5 style="margin-top: 35px">Quota 5 :</h5>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqp5-oc-${i}" class="form-label">Split (%)</label>
-                            <input type="number" name="smqp5[]" class="form-control" id="smqp5-oc-${i}" value="{{ old('smqp5.'.$i) }}" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); validateQuota({{ $i }}, event)">
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqtb5-oc-${i}" class="form-label">Branch</label>
-                            <select name="smqtb5[]" id="smqtb5-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqtb5.' .$i) ? '' : 'selected' }}>Silahkan Pilih Branch</option>
-                                @foreach ($branches as $b)
-                                    <option value="{{ $b->braco }}" {{ old('smqtb5.' .$i) == $b->braco ? 'selected' : '' }}>
-                                        {{ $b->braco }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mt-3">
-                            <label for="smqts5" class="form-label">Sales Rep.</label>
-                            <select name="smqts5[]" id="smqts5-oc-${i}" class="form-control select2">
-                                <option value="" disabled {{ old('smqts5.' .$i) ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
-                            </select>
-                        </div>
-
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
                             <textarea type="text" class="form-control" name="noted_invoicing[]" id="noted-oc-${i}" maxlength="200">{{ old('noted_invoicing.'.$i) }}</textarea>
@@ -649,38 +492,6 @@
             </div>
         </div>`;
         $('#accordionOCInvoicing').append(dtl);
-
-        if (i > 0) {
-            for (let q = 1; q <= 5; q++) {
-
-                // COPY SPLIT
-                let prevSplit = $(`#smqp${q}-oc-${i-1}`).val();
-                if (prevSplit) {
-                    $(`#smqp${q}-oc-${i}`).val(prevSplit);
-                }
-
-                // COPY BRANCH
-                let prevBranch = $(`#smqtb${q}-oc-${i-1}`).val();
-                if (prevBranch) {
-                    $(`#smqtb${q}-oc-${i}`)
-                        .val(prevBranch)
-                        .trigger('change');
-                }
-
-                // COPY SALES
-                let prevSales = $(`#smqts${q}-oc-${i-1}`).val();
-                if (prevSales) {
-
-                    setTimeout(() => {
-                        $(`#smqts${q}-oc-${i}`)
-                            .val(prevSales)
-                            .trigger('change');
-                    }, 300);
-                }
-            }
-
-            validateQuota(i, { target: null });
-        }
 
         const $newSelect = $(`#opron-oc-${i}`);
 

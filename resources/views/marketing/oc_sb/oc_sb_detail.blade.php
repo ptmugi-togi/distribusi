@@ -179,7 +179,7 @@
 
                                 @if($bom->isNotEmpty())
                                     <div class="modal fade" id="bomModal{{ $i }}">
-                                        <div class="modal-dialog modal-lg">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-info text-white">
                                                     <h5 class="modal-title">Consist of Goods</h5>
@@ -197,7 +197,7 @@
                                                         <tbody>
                                                             @foreach($bom as $b)
                                                                 <tr>
-                                                                    <td>{{ $b->opron }}</td>
+                                                                    <td>{{ $b->opron }} - {{ $b->prona }}</td>
                                                                     <td>{{ $b->trqty }}</td>
                                                                     <td>{{ $b->stdqu }}</td>
                                                                 </tr>
@@ -366,37 +366,6 @@
                                     <input type="text" class="form-control price-display"
                                         value="{{ $dinv->edisa ?? 0 }}" disabled>
                                 </div>
-
-                                <hr class="my-4">
-
-                                <div class="col-md-12">
-                                    <h5>Split Quota</h5>
-
-                                    @for ($q = 1; $q <= 5; $q++)
-                                        @php
-                                            $percent = $dinv->{'smqp'.$q};
-                                            $branch  = $dinv->{'smqtb'.$q};
-                                            $sales   = $dinv->{'smqts'.$q};
-                                        @endphp
-
-                                        @if ($percent)
-                                        <div class="border rounded p-3 mb-2">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <strong>Split {{ $q }} %:</strong> {{ $percent }}%
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <strong>Branch:</strong> {{ $branch }}
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <strong>Sales:</strong> {{ $sales }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                    @endfor
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -407,6 +376,40 @@
                     </div>
                 @endforelse
             </div>
+        </div>
+
+        <div class="row mt-4">
+            <hr class="my-4">
+            <div class="card">
+                <div class="col-md-12">
+                    <h5>Split Quota</h5>
+    
+                    @for ($q = 1; $q <= 5; $q++)
+                        @php
+                            $percent = $dinv->{'smqp'.$q};
+                            $branch  = $dinv->{'smqtb'.$q};
+                            $sales   = $dinv->{'smqts'.$q};
+                        @endphp
+    
+                        @if ($percent)
+                        <div class="border rounded p-3 mb-2">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Split {{ $q }} %:</strong> {{ $percent }}%
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Branch:</strong> {{ $branch }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Sales:</strong> {{ $sales }} - {{ $salesName[$sales] ?? '' }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    @endfor
+                </div>
+            </div>
+
         </div>
 
         <div class="mt-4">

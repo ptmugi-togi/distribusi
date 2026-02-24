@@ -190,6 +190,29 @@
 @push('scripts')
 {{-- script installation --}}
 <script>
+    $(document).ready(function () {
+        @foreach($ocsb->ocsbdtls as $i => $detail)
+            @php
+                $bom = $bomList[$detail->opron] ?? collect();
+            @endphp
+
+            bomCache[{{ $i }}] = [
+                @foreach($bom as $b)
+                    {
+                        matno: "{{ $b->opron }}",
+                        prona: "{{ $b->prona }}",
+                        rqqty: "{{ $b->trqty }}",
+                        stdqu: "{{ $b->stdqu }}"
+                    },
+                @endforeach
+            ];
+
+            @if($bom->isNotEmpty())
+                $('#btn-bom-{{ $i }}').removeClass('d-none');
+            @endif
+        @endforeach
+    });
+
     $(document).on('select2:select', 'select.opron-oc', function (e) {
         const data = e.params.data;
 
@@ -291,5 +314,29 @@
             }
         });
     });
+</script>
+<script>
+    @foreach($ocsb->ocsbdtls as $i => $detail)
+
+        @php
+            $bom = $bomList[$detail->opron] ?? collect();
+        @endphp
+
+        bomCache[{{ $i }}] = [
+            @foreach($bom as $b)
+                {
+                    matno: "{{ $b->opron }}",
+                    prona: "{{ $b->prona }}",
+                    rqqty: "{{ $b->trqty }}",
+                    stdqu: "{{ $b->stdqu }}"
+                },
+            @endforeach
+        ];
+
+        @if($bom->isNotEmpty())
+            $('#btn-bom-{{ $i }}').removeClass('d-none');
+        @endif
+
+    @endforeach
 </script>
 @endpush

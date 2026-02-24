@@ -221,8 +221,8 @@
               const form = document.getElementById(`delete-oc-${ocsbid}`);
 
               Swal.fire({
-                  title: 'Hapus BPB?',
-                  text: `Yakin ingin menghapus data BPB "${ocsbid}" ini?`,
+                  title: 'Hapus OC?',
+                  text: `Yakin ingin menghapus data OC "${ocsbid}" ini?`,
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonText: 'Ya, Hapus!',

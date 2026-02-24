@@ -270,6 +270,7 @@ Route::get('/get-sales-by-branch', [OcSbController::class, 'getSalesByBranch']);
 Route::post('/oc-sb/store', [OcSbController::class,'store'])->middleware('auth')->name('oc_sb.store');
 Route::get('/oc-sb/{id}/detail', [OcSbController::class,'show'])->middleware('auth')->name('oc_sb.detail');
 Route::get('/oc-sb/{id}/edit', [OcSbController::class,'edit'])->middleware('auth')->name('oc_sb.edit');
+Route::get('/get-bom-by-oc', [OcSbController::class, 'getBomByOc'])->middleware('auth')->name('get-bom-by-oc');
 Route::put('/oc-sb/{id}', [OcSbController::class,'update'])->middleware('auth')->name('oc_sb.update');
 Route::put('/oc-sb/{id}/cancel', [OcSbController::class,'cancel'])->middleware('auth')->name('oc_sb.cancel');
 Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middleware('auth')->name('oc_sb.delete');

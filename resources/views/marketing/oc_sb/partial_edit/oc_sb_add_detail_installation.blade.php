@@ -66,8 +66,8 @@
                         <div class="col-md-6 mt-3">
                             <label for="putama-oc-${i}" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
                             <select name="putama[]" class="form-control select2" id="putama-oc-${i}" required>
-                                <option value="U" {{ old('putama.'.$i) == 'U' ? 'selected' : '' }}>Utama</option>
-                                <option value="N" {{ old('putama.'.$i) == 'N' ? 'selected' : '' }}>Non Utama</option>
+                                <option value="U">Utama</option>
+                                <option value="N">Non Utama</option>
                             </select>
                         </div>
 
@@ -113,7 +113,7 @@
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-${i}" maxlength="200">{{ old('noted_installation.'.$i) }}</textarea>
+                            <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-${i}" maxlength="200"></textarea>
                             <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
                         </div>
                     </div>
