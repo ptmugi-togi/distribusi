@@ -99,6 +99,18 @@
                             </select>
                         </div>
 
+                        <div class="col-md-6 mt-3">
+                            <label for="insby-oc-{{ $i }}" class="form-label">Install by Branch</label><span class="text-danger"> *</span>
+                            <select name="insby[]" class="form-control select2" id="insby-oc-{{ $i }}" required>
+                                <option value="{{ $detail->insby }}" selected>
+                                @foreach ($branches as $b)
+                                    <option value="{{ $b->braco }}" {{ $detail->insby == $b->braco ? 'selected' : '' }}>
+                                        {{ $b->braco }} - {{ $b->brana }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <hr class="my-4">
 
                         <h5>Installation Site</h5>

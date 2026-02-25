@@ -64,10 +64,30 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
+                            <label class="form-label">Jasa Teknik (Unit)</label>
+
+                            <input type="text" class="form-control price-input" id="teknik_display_oc_${i}" data-raw-target="teknik_raw_oc_${i}">
+
+                            <input type="text" name="teknik[]" id="teknik_raw_oc_${i}" hidden>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
                             <label for="putama-oc-${i}" class="form-label">Klasifikasi Produk</label><span class="text-danger"> *</span>
                             <select name="putama[]" class="form-control select2" id="putama-oc-${i}" required>
                                 <option value="U">Utama</option>
                                 <option value="N">Non Utama</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label for="insby-oc-${i}" class="form-label">Install by Branch</label><span class="text-danger"> *</span>
+                            <select name="insby[]" class="form-control select2" id="insby-oc-${i}" required>
+                                <option value="{{ auth()->user()->cabang }}">{{ auth()->user()->cabang }}</option>
+                                @foreach ($branches as $b)
+                                    <option value="{{ $b->braco }}">
+                                        {{ $b->braco }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 

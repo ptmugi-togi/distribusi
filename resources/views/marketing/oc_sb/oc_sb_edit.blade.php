@@ -401,7 +401,7 @@
 
                 const qty = parseFloat($(this).find('.qtyor-oc').val()) || 0;
                 const price = parseFloat($(this).find('[id^="price_raw_oc_"]').val()) || 0;
-                const discountPerUnit = parseFloat($(this).find('[id^="odisp_raw_oc_"]').val()) || 0;
+                const discountPerUnit = parseFloat($(this).find('[id^="odisa_raw_oc_"]').val()) || 0;
 
                 const grossDetail = price * qty;
                 const discountDetail = discountPerUnit * qty;
@@ -475,7 +475,7 @@
         });
 
         // Trigger kalau discount berubah
-        $(document).on('input', '[id^="odisp_display_oc_"]', function(){
+        $(document).on('input', '[id^="odisa_display_oc_"]', function(){
             setTimeout(calculateHeaderFromDetails, 50);
         });
 

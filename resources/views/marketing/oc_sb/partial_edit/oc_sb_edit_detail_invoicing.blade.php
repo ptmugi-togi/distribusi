@@ -64,9 +64,9 @@
 
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Extra Discount</label>
-                            <input type="text" class="form-control price-input" id="edisa_display_oc_{{ $i }}" data-raw-target="edisa_raw_oc_{{ $i }}" readonly style="background-color:#e9ecef">
+                            <input type="text" class="form-control price-input" id="ebamt_display_oc_{{ $i }}" data-raw-target="ebamt_raw_oc_{{ $i }}" readonly style="background-color:#e9ecef">
 
-                            <input type="hidden" name="edisa[]" id="edisa_raw_oc_{{ $i }}" value="{{ $dinv->edisa }}">
+                            <input type="hidden" name="ebamt[]" id="ebamt_raw_oc_{{ $i }}" value="{{ $dinv->ebamt }}">
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -165,14 +165,29 @@
             $(`#odisa_raw_oc_${phaseIndex}`).val(odisaMaster * ratio);
             $(`#ntamt_raw_oc_${phaseIndex}`).val(netMaster * ratio);
             $(`#blamt_raw_oc_${phaseIndex}`).val(billvMaster * ratio);
-            $(`#edisa_raw_oc_${phaseIndex}`).val(edisaMaster * ratio);
+            $(`#ebamt_raw_oc_${phaseIndex}`).val(edisaMaster * ratio);
 
             // Set Value ke form detail invoicing 
-            $(`#gross_display_oc_${phaseIndex}`).trigger('input');
-            $(`#odisa_display_oc_${phaseIndex}`).trigger('input');
-            $(`#ntamt_display_oc_${phaseIndex}`).trigger('input');
-            $(`#blamt_display_oc_${phaseIndex}`).trigger('input');
-            $(`#edisa_display_oc_${phaseIndex}`).trigger('input');
+            const currency = $('#curco').val();
+            $(`#gross_display_oc_${phaseIndex}`).val(
+            formatCurrency(grossMaster * ratio, currency)
+            );
+
+            $(`#odisa_display_oc_${phaseIndex}`).val(
+                formatCurrency(odisaMaster * ratio, currency)
+            );
+
+            $(`#ntamt_display_oc_${phaseIndex}`).val(
+                formatCurrency(netMaster * ratio, currency)
+            );
+
+            $(`#blamt_display_oc_${phaseIndex}`).val(
+                formatCurrency(billvMaster * ratio, currency)
+            );
+
+            $(`#ebamt_display_oc_${phaseIndex}`).val(
+                formatCurrency(edisaMaster * ratio, currency)
+            );
 
             // kalau pakai formatter
             initPriceFormatter(document.getElementById(`accordion-oc-invoicing-${phaseIndex}`));

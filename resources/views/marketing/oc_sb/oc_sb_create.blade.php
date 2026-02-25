@@ -30,6 +30,11 @@
             <div class="col-md-4 mt-3">
                 <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> *</span>
                 <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required>
+                @error('sorno')
+                    <span class="text-danger">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
 
             <div class="col-md-4 mt-3">
@@ -399,11 +404,11 @@
             let totalGross = 0;
             let totalDiscount = 0;
 
-            $('.accordion-item').each(function(){
+            $('#accordionOCInstallation .accordion-item').each(function(){
 
                 const qty = parseFloat($(this).find('.qtyor-oc').val()) || 0;
                 const price = parseFloat($(this).find('[id^="price_raw_oc_"]').val()) || 0;
-                const discountPerUnit = parseFloat($(this).find('[id^="odisp_raw_oc_"]').val()) || 0;
+                const discountPerUnit = parseFloat($(this).find('[id^="odisa_raw_oc_"]').val()) || 0;
 
                 const grossDetail = price * qty;
                 const discountDetail = discountPerUnit * qty;
@@ -477,7 +482,7 @@
         });
 
         // Trigger kalau discount berubah
-        $(document).on('input', '[id^="odisp_display_oc_"]', function(){
+        $(document).on('input', '[id^="odisa_display_oc_"]', function(){
             setTimeout(calculateHeaderFromDetails, 50);
         });
 

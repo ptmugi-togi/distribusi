@@ -60,9 +60,9 @@
 
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Extra Discount</label>
-                            <input type="text" class="form-control price-input" id="edisa_display_oc_${i}" data-raw-target="edisa_raw_oc_${i}" readonly style="background-color:#e9ecef">
+                            <input type="text" class="form-control price-input" id="ebamt_display_oc_${i}" data-raw-target="ebamt_raw_oc_${i}" readonly style="background-color:#e9ecef">
 
-                            <input type="text" name="edisa[]" id="edisa_raw_oc_${i}" hidden>
+                            <input type="text" name="ebamt[]" id="ebamt_raw_oc_${i}" hidden>
                         </div>
 
                         <div class="col-md-6 mt-3">

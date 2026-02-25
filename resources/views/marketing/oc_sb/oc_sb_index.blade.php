@@ -74,7 +74,7 @@
                                     </a>
                                   </form>
                                 @endif
-                                {{-- <form id="delete-oc-{{ $o->ocsbid }}" action="{{ url('/oc/'.$o->ocsbid.'/delete') }}" method="POST" style="display:inline;">
+                                {{-- <form id="delete-oc-{{ $o->ocsbid }}" action="{{ url('/oc-sb/'.$o->ocsbid.'/delete') }}" method="POST" style="display:inline;">
                                   @csrf
                                   @method('DELETE')
                                   <a class="badge bg-danger btn-delete-oc" data-ocsbid="{{ $o->ocsbid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">

@@ -78,6 +78,13 @@ class OcSbController extends Controller
         // dd($request->all());
         DB::beginTransaction();
 
+        $request->validate([
+            'sorno' => 'required|unique:tproja,sorno',
+        ], [
+            'sorno.required' => 'Nomor OC harus diisi',
+            'sorno.unique'   => 'Nomor OC sudah terpakai',
+        ]);
+
         try {
             $ocsbid = $request->braco . $request->formc . $request->sorno;
 
@@ -124,31 +131,30 @@ class OcSbController extends Controller
                     'stdqu' => $request->stdqu[$i],
                     'price' => $request->price[$i],
                     'plist' => $request->plist[$i],
-                    'odisp' => $request->odisp[$i],
+                    'odisa' => $request->odisa[$i],
                     'teknik' => $request->teknik[$i],
+                    'insby' => $request->insby[$i],
                     'putama' => $request->putama[$i],
                     'delto' => $request->delto[$i],
                     'noted' => $request->noted_installation[$i],
                 ]);
             }
 
-            if ($request->has('bom')) {
-                foreach ($request->bom as $installIndex => $items) {
-                    foreach ($items as $item) {
-                        DB::table('tprojc')->insert([
-                            'ocsbid' => $ocsbid,
-                            'braco' => $request->braco,
-                            'formc' => $request->formc,
-                            'sorno' => $request->sorno,
-                            'delto' => $request->delto[$installIndex],
+            foreach ($request->bom as $installIndex => $items) {
+                foreach ($items as $item) {
+                    DB::table('tprojc')->insert([
+                        'ocsbid' => $ocsbid,
+                        'braco' => $request->braco,
+                        'formc' => $request->formc,
+                        'sorno' => $request->sorno,
+                        'delto' => $request->delto[$installIndex],
 
-                            'uopron' => $request->opron[$installIndex],
-                            'opron' => $item['matno'],
-                            'stdqu' => $item['unit'],
-                            'trqty' => $item['qty'],
-                            'delqt' => 0,
-                        ]);
-                    }
+                        'uopron' => $request->opron[$installIndex],
+                        'opron' => $item['matno'] ?? $request->opron[$installIndex],
+                        'stdqu' => $item['unit'],
+                        'trqty' => $item['qty'],
+                        'delqt' => 0,
+                    ]);
                 }
             }
 
@@ -171,7 +177,7 @@ class OcSbController extends Controller
                         'odisa'  => $request->odisa[$i] ?? 0,
                         'ntamt'  => $request->ntamt[$i] ?? 0,
                         'blamt'  => $request->blamt[$i] ?? 0,
-                        'edisa'  => $request->edisa[$i] ?? 0,
+                        'ebamt'  => $request->ebamt[$i] ?? 0,
 
                         'billd'  => $request->billd[$i] ?? null,
 
@@ -219,7 +225,7 @@ class OcSbController extends Controller
 
     public function show(string $id)
     {
-        $ocsb = OcSbHdr::with('ocsbdtls.mpromas', 'ocsbdtls.ocsbhdr')->findOrFail($id);
+        $ocsb = OcSbHdr::with('ocsbdtls.mpromas', 'ocsbdtls.ocsbhdr', 'ocsbdtls.mbranch')->findOrFail($id);
 
         $bomList = DB::table('tprojc')
             ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
@@ -235,7 +241,7 @@ class OcSbController extends Controller
             ->where('ocsbid', $id)
             ->orderBy('phase')
             ->get();
-
+        
         $branches = DB::table('mbranches')->get();
 
         $salesList = DB::table('msreno')->get();
@@ -321,8 +327,9 @@ class OcSbController extends Controller
                     'stdqu' => $request->stdqu[$i],
                     'price' => $request->price[$i],
                     'plist' => $request->plist[$i],
-                    'odisp' => $request->odisp[$i],
+                    'odisa' => $request->odisa[$i],
                     'teknik' => $request->teknik[$i],
+                    'insby' => $request->insby[$i],
                     'putama' => $request->putama[$i],
                     'delto' => $request->delto[$i],
                     'noted' => $request->noted_installation[$i],
@@ -333,23 +340,21 @@ class OcSbController extends Controller
                 ->where('ocsbid', $ocsbid)
                 ->delete();
 
-            if ($request->has('bom')) {
-                foreach ($request->bom as $installIndex => $items) {
-                    foreach ($items as $item) {
-                        DB::table('tprojc')->insert([
-                            'ocsbid' => $ocsbid,
-                            'braco' => $request->braco,
-                            'formc' => $request->formc,
-                            'sorno' => $request->sorno,
-                            'delto' => $request->delto[$installIndex],
+            foreach ($request->bom as $installIndex => $items) {
+                foreach ($items as $item) {
+                    DB::table('tprojc')->insert([
+                        'ocsbid' => $ocsbid,
+                        'braco' => $request->braco,
+                        'formc' => $request->formc,
+                        'sorno' => $request->sorno,
+                        'delto' => $request->delto[$installIndex],
 
-                            'uopron' => $request->opron[$installIndex],
-                            'opron' => $item['matno'],
-                            'stdqu' => $item['unit'],
-                            'trqty' => $item['qty'],
-                            'delqt' => 0,
-                        ]);
-                    }
+                        'uopron' => $request->opron[$installIndex],
+                        'opron' => $item['matno'] ?? $request->opron[$installIndex],
+                        'stdqu' => $item['unit'],
+                        'trqty' => $item['qty'],
+                        'delqt' => 0,
+                    ]);
                 }
             }
 
@@ -376,7 +381,7 @@ class OcSbController extends Controller
                         'odisa'  => $request->odisa[$i] ?? 0,
                         'ntamt'  => $request->ntamt[$i] ?? 0,
                         'blamt'  => $request->blamt[$i] ?? 0,
-                        'edisa'  => $request->edisa[$i] ?? 0,
+                        'ebamt'  => $request->ebamt[$i] ?? 0,
 
                         'billd'  => $request->billd[$i] ?? null,
 

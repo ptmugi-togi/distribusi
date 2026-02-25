@@ -243,6 +243,11 @@
                                     <input type="text" class="form-control price-display" name="putama" id="putama" value="{{ $detail->putama == 'U' ? 'Utama' : 'Non Utama' }}" disabled>
                                 </div>
 
+                                <div class="col-md-6 mt-3">
+                                    <label class="form-label">Install by Branch</label>
+                                    <input type="text" class="form-control" value="{{ $detail->insby }} - {{ $detail->mbranch->brana ?? '-' }}" disabled>
+                                </div>
+
                                 <hr class="my-4">
 
                                 <h3>Address</h3>
@@ -364,7 +369,7 @@
                                 <div class="col-md-4 mt-3">
                                     <label class="form-label">Extra Discount</label>
                                     <input type="text" class="form-control price-display"
-                                        value="{{ $dinv->edisa ?? 0 }}" disabled>
+                                        value="{{ $dinv->ebamt ?? 0 }}" disabled>
                                 </div>
                             </div>
                         </div>

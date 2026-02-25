@@ -64,4 +64,9 @@ class OcSbDtl extends Model
             ->where('shpto', $this->delto)
             ->first();
     }
+
+    public function mbranch()
+    {
+        return $this->belongsTo(Mbranch::class, 'insby', 'braco');
+    }
 }
