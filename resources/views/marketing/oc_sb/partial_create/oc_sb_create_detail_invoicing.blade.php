@@ -63,7 +63,7 @@
 
                     <input type="text" class="form-control price-input" id="ebamt_display_oc_{{ $i }}" value="{{ old('edisa.'.$i) ? number_format(old('edisa.'.$i), 2, '.', '') : '' }}" data-raw-target="ebamt_raw_oc_{{ $i }}" readonly style="background-color:#e9ecef">
 
-                    <input type="text" name="ebamt[]" id="ebamt_raw_oc_{{ $i }}" value="{{ old('edisa.'.$i) }}" hidden>
+                    <input type="text" name="ebamt[]" id="ebamt_raw_oc_{{ $i }}" value="{{ old('ebamt.'.$i) }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -533,6 +533,10 @@
 
     window.removeOCInvoicing = function(i){
         $(`#accordion-oc-invoicing-${i}`).remove();
+
+        toggleAddButton();
+
+        $('button[onclick="addOCInvoicing()"]').prop('disabled', false);
     }
 </script>
 @endpush

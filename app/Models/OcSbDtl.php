@@ -35,6 +35,7 @@ class OcSbDtl extends Model
         'odisp',
         'odisa',
         'teknik',
+        'insby',
         'rqeta',
         'whetd',
         'srcog',

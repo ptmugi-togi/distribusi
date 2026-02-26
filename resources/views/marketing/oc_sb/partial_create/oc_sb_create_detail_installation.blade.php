@@ -93,7 +93,7 @@
                         <option value="{{ auth()->user()->cabang }}" {{ old('insby.' .$i) == auth()->user()->cabang ? 'selected' : '' }}>{{ auth()->user()->cabang }}</option>
                         @foreach ($branches as $b)
                             <option value="{{ $b->braco }}" {{ old('insby.' .$i) == $b->braco ? 'selected' : '' }}>
-                                {{ $b->braco }}
+                                {{ $b->braco }} - {{ $b->brana }}
                             </option>
                         @endforeach
                     </select>
@@ -162,7 +162,7 @@
     <div class="modal-content">
       <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Consist of Goods</h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-0">
         <table class="table table-bordered mb-0">
@@ -219,6 +219,35 @@
             .find('.accordion-title')
             .text('');
     });
+
+    $(document).on('input', '.qtyor-oc', function () {
+
+        const $input = $(this);
+        const index = $input.attr('id').split('-').pop();
+        const qtyor = parseFloat($input.val()) || 0;
+
+        const rows = bomCache[index] || [];
+
+        if (rows.length === 0) return;
+
+        const $hidden = $(`#bom-hidden-${index}`);
+
+        let hiddenHtml = '';
+
+        rows.forEach((r, i) => {
+
+            const finalQty = (parseFloat(r.rqqty) || 0) * qtyor;
+
+            hiddenHtml += `
+                <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
+                <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
+                <input type="hidden" name="bom[${index}][${i}][qty]" value="${finalQty}">
+                <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
+            `;
+        });
+
+        $hidden.html(hiddenHtml);
+    });
 </script>
 
 {{-- isian modal sub-product --}}
@@ -226,14 +255,19 @@
     function openBomModal(index) {
 
         const rows = bomCache[index] || [];
+        const qtyor = parseFloat($(`#qtyor-oc-${index}`).val()) || 0;
+
         let html = '';
 
         rows.forEach(r => {
+
+            const finalQty = (parseFloat(r.rqqty) || 0) * qtyor;
+
             html += `
             <tr>
                 <td>${r.matno}</td>
                 <td>${r.prona}</td>
-                <td class="text-end">${r.rqqty}</td>
+                <td class="text-end">${finalQty}</td>
                 <td>${r.stdqu}</td>
             </tr>`;
         });

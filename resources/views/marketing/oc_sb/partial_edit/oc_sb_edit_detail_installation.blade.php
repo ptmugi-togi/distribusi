@@ -81,8 +81,8 @@
 
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Total Official Discount</label>
-                            <input type="text" class="form-control price-input" id="odisp_display_oc_{{ $i }}" value="{{ $detail->odisp }}" data-raw-target="odisp_raw_oc_{{ $i }}" required>
-                            <input type="text" name="odisp[]" id="odisp_raw_oc_{{ $i }}" value="{{ $detail->odisp }}" hidden>
+                            <input type="text" class="form-control price-input" id="odisa_display_oc_{{ $i }}" value="{{ $detail->odisa }}" data-raw-target="odisa_raw_oc_{{ $i }}" required>
+                            <input type="text" name="odisa[]" id="odisa_raw_oc_{{ $i }}" value="{{ $detail->odisa }}" hidden>
                         </div>
 
                         <div class="col-md-6 mt-3">

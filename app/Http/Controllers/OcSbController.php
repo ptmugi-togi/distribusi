@@ -140,21 +140,47 @@ class OcSbController extends Controller
                 ]);
             }
 
-            foreach ($request->bom as $installIndex => $items) {
-                foreach ($items as $item) {
-                    DB::table('tprojc')->insert([
-                        'ocsbid' => $ocsbid,
-                        'braco' => $request->braco,
-                        'formc' => $request->formc,
-                        'sorno' => $request->sorno,
-                        'delto' => $request->delto[$installIndex],
+            if ($request->has('opron')) {
+                foreach ($request->opron as $i => $opron) {
+                    $qtyor = (float) $request->qtyor[$i];
 
-                        'uopron' => $request->opron[$installIndex],
-                        'opron' => $item['matno'] ?? $request->opron[$installIndex],
-                        'stdqu' => $item['unit'],
-                        'trqty' => $item['qty'],
-                        'delqt' => 0,
-                    ]);
+                    if (!empty($request->bom) && !empty($request->bom[$i])) {
+
+                        foreach ($request->bom[$i] as $item) {
+
+                            $baseQty = (float) $item['qty'];
+
+                            DB::table('tprojc')->insert([
+                                'ocsbid' => $ocsbid,
+                                'braco'  => $request->braco,
+                                'formc'  => $request->formc,
+                                'sorno'  => $request->sorno,
+                                'delto'  => $request->delto[$i],
+
+                                'uopron' => $opron,
+                                'opron'  => $item['matno'],
+                                'stdqu'  => $item['unit'],
+                                'trqty'  => $baseQty * $qtyor,
+                                'delqt'  => 0,
+                            ]);
+                        }
+
+                    } else {
+
+                        DB::table('tprojc')->insert([
+                            'ocsbid' => $ocsbid,
+                            'braco'  => $request->braco,
+                            'formc'  => $request->formc,
+                            'sorno'  => $request->sorno,
+                            'delto'  => $request->delto[$i],
+
+                            'uopron' => $opron,
+                            'opron'  => $opron,
+                            'stdqu'  => $request->stdqu[$i],
+                            'trqty'  => $qtyor,
+                            'delqt'  => 0,
+                        ]);
+                    }
                 }
             }
 
@@ -340,21 +366,47 @@ class OcSbController extends Controller
                 ->where('ocsbid', $ocsbid)
                 ->delete();
 
-            foreach ($request->bom as $installIndex => $items) {
-                foreach ($items as $item) {
-                    DB::table('tprojc')->insert([
-                        'ocsbid' => $ocsbid,
-                        'braco' => $request->braco,
-                        'formc' => $request->formc,
-                        'sorno' => $request->sorno,
-                        'delto' => $request->delto[$installIndex],
+            if ($request->has('opron')) {
+                foreach ($request->opron as $i => $opron) {
+                    $qtyor = (float) $request->qtyor[$i];
 
-                        'uopron' => $request->opron[$installIndex],
-                        'opron' => $item['matno'] ?? $request->opron[$installIndex],
-                        'stdqu' => $item['unit'],
-                        'trqty' => $item['qty'],
-                        'delqt' => 0,
-                    ]);
+                    if (!empty($request->bom) && !empty($request->bom[$i])) {
+
+                        foreach ($request->bom[$i] as $item) {
+
+                            $baseQty = (float) $item['qty'];
+
+                            DB::table('tprojc')->insert([
+                                'ocsbid' => $ocsbid,
+                                'braco'  => $request->braco,
+                                'formc'  => $request->formc,
+                                'sorno'  => $request->sorno,
+                                'delto'  => $request->delto[$i],
+
+                                'uopron' => $opron,
+                                'opron'  => $item['matno'],
+                                'stdqu'  => $item['unit'],
+                                'trqty'  => $baseQty * $qtyor,
+                                'delqt'  => 0,
+                            ]);
+                        }
+
+                    } else {
+
+                        DB::table('tprojc')->insert([
+                            'ocsbid' => $ocsbid,
+                            'braco'  => $request->braco,
+                            'formc'  => $request->formc,
+                            'sorno'  => $request->sorno,
+                            'delto'  => $request->delto[$i],
+
+                            'uopron' => $opron,
+                            'opron'  => $opron,
+                            'stdqu'  => $request->stdqu[$i],
+                            'trqty'  => $qtyor,
+                            'delqt'  => 0,
+                        ]);
+                    }
                 }
             }
 
