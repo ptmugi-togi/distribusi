@@ -412,8 +412,15 @@
             if (event && event.target) {
                 event.target.value = '';
             }
+
             validateQuota();
             return;
+        }
+
+        if (total === 100) {
+            $('#btn-save').prop('disabled', false);
+        } else {
+            $('#btn-save').prop('disabled', true);
         }
     }
 </script>

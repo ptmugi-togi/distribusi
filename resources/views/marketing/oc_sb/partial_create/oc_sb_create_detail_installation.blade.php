@@ -236,7 +236,9 @@
 
         rows.forEach((r, i) => {
 
-            const finalQty = (parseFloat(r.rqqty) || 0) * qtyor;
+            const baseQty = parseFloat(r.rqqty) || 0;
+
+            const finalQty = qtyor > 0 ? baseQty * qtyor : baseQty;
 
             hiddenHtml += `
                 <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
@@ -261,7 +263,9 @@
 
         rows.forEach(r => {
 
-            const finalQty = (parseFloat(r.rqqty) || 0) * qtyor;
+            const baseQty = parseFloat(r.rqqty) || 0;
+
+            const finalQty = qtyor > 0 ? baseQty * qtyor : baseQty;
 
             html += `
             <tr>

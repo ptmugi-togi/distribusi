@@ -203,6 +203,7 @@
 {{-- script installation --}}
 <script>
     $(document).ready(function () {
+        $('.qtyor-oc').trigger('input');
         @foreach($ocsb->ocsbdtls as $i => $detail)
             @php
                 $bom = $bomList[$detail->opron] ?? collect();
@@ -265,14 +266,23 @@
     function openBomModal(index) {
 
         const rows = bomCache[index] || [];
+        const qtyor = parseFloat($(`#qtyor-oc-${index}`).val()) || 0;
+
         let html = '';
 
         rows.forEach(r => {
+
+            const baseQty = parseFloat(r.rqqty) || 0;
+
+            const finalQty = qtyor > 0
+                ? baseQty * qtyor
+                : baseQty;
+
             html += `
             <tr>
                 <td>${r.matno}</td>
                 <td>${r.prona}</td>
-                <td class="text-end">${r.rqqty}</td>
+                <td class="text-end">${finalQty}</td>
                 <td>${r.stdqu}</td>
             </tr>`;
         });
@@ -280,6 +290,36 @@
         $('#bomBody').html(html);
         $('#modalSubOpron').modal('show');
     }
+
+    $(document).on('input', '.qtyor-oc', function () {
+
+        const index = $(this).attr('id').split('-').pop();
+        const qtyor = parseFloat($(this).val()) || 0;
+
+        const rows = bomCache[index] || [];
+        const $hidden = $(`#bom-hidden-${index}`);
+
+        let hiddenHtml = '';
+
+        rows.forEach((r, i) => {
+
+            const baseQty = parseFloat(r.rqqty) || 0;
+
+            const finalQty = qtyor > 0
+                ? baseQty * qtyor
+                : baseQty;
+
+            hiddenHtml += `
+                <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
+                <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
+                <input type="hidden" name="bom[${index}][${i}][qty]" value="${finalQty}">
+                <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
+            `;
+        });
+
+        $hidden.html(hiddenHtml);
+
+    });
 
     // {{-- simpan sub-product --}}
     let bomCache = {};

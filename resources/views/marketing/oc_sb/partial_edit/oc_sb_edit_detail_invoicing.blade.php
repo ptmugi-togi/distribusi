@@ -97,11 +97,7 @@
         {{-- script invoicing --}}
     <script>
         $(document).ready(function () {
-            $('[id^="smqp1-oc-"]').each(function(){
-                const id = $(this).attr('id');
-                const phaseIndex = id.split('-').pop();
-                validateQuota(phaseIndex);
-            });
+            validateQuota();
 
             $('[id^="smqtb"]').each(function(){
                 if($(this).val()){
@@ -241,8 +237,15 @@
                 if (event && event.target) {
                     event.target.value = '';
                 }
+
                 validateQuota();
                 return;
+            }
+
+            if (total === 100) {
+                $('#btn-save').prop('disabled', false);
+            } else {
+                $('#btn-save').prop('disabled', true);
             }
         }
 
