@@ -28,8 +28,8 @@
             <input type="text" class="form-control" id="braco" name="braco" value="{{ auth()->user()->cabang }}" hidden>
                 
             <div class="col-md-4 mt-3">
-                <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required>
+                <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> </span>
+                <input type="text" class="form-control text-uppercase" name="sorno" id="sorno" value="{{ strtoupper(old('sorno')) }}" required>
                 @error('sorno')
                     <span class="text-danger">
                         <strong>{{ $message }}</strong>

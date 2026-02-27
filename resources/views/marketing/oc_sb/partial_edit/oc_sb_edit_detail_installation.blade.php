@@ -180,7 +180,7 @@
         <div class="modal-content">
         <div class="modal-header bg-info text-white">
             <h5 class="modal-title">Consist of Goods</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
+            <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-0">
             <table class="table table-bordered mb-0">
@@ -202,6 +202,9 @@
 @push('scripts')
 {{-- script installation --}}
 <script>
+    let bomCache = {};
+    let bomAutoOpened = {};
+
     $(document).ready(function () {
         $('.qtyor-oc').trigger('input');
         @foreach($ocsb->ocsbdtls as $i => $detail)
@@ -214,7 +217,7 @@
                     {
                         matno: "{{ $b->opron }}",
                         prona: "{{ $b->prona }}",
-                        rqqty: "{{ $b->trqty }}",
+                        rqqty: "{{ $b->bsqty }}",
                         stdqu: "{{ $b->stdqu }}"
                     },
                 @endforeach
@@ -303,16 +306,11 @@
 
         rows.forEach((r, i) => {
 
-            const baseQty = parseFloat(r.rqqty) || 0;
-
-            const finalQty = qtyor > 0
-                ? baseQty * qtyor
-                : baseQty;
-
             hiddenHtml += `
                 <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
                 <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
-                <input type="hidden" name="bom[${index}][${i}][qty]" value="${finalQty}">
+                <input type="hidden" name="bom[${index}][${i}][qty]" value="${r.rqqty}">
+                <input type="hidden" name="bom[${index}][${i}][bsqty]" value="${r.rqqty}">
                 <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
             `;
         });
@@ -322,9 +320,6 @@
     });
 
     // {{-- simpan sub-product --}}
-    let bomCache = {};
-    let bomAutoOpened = {};
-
     $(document).on('select2:select', 'select.opron-oc', function (e) {
 
         const opron = e.params.data.id;
@@ -348,14 +343,20 @@
             bomCache[index] = res;
 
             let hiddenHtml = '';
-            res.forEach((r, i) => {
-                hiddenHtml += `
-                    <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
-                    <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
-                    <input type="hidden" name="bom[${index}][${i}][qty]" value="${r.rqqty}">
-                    <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
-                `;
-            });
+           res.forEach((r, i) => {
+
+            const qtyor   = parseFloat($(`#qtyor-oc-${index}`).val()) || 0;
+            const baseQty = parseFloat(r.rqqty) || 0;
+            const finalQty = qtyor > 0 ? baseQty * qtyor : baseQty;
+
+            hiddenHtml += `
+                <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
+                <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
+                <input type="hidden" name="bom[${index}][${i}][qty]" value="${finalQty}">
+                <input type="hidden" name="bom[${index}][${i}][bsqty]" value="${baseQty}">
+                <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
+            `;
+        });
 
             $hidden.html(hiddenHtml);
             $btn.removeClass('d-none');
@@ -379,7 +380,7 @@
                 {
                     matno: "{{ $b->opron }}",
                     prona: "{{ $b->prona }}",
-                    rqqty: "{{ $b->trqty }}",
+                    rqqty: "{{ $b->bsqty }}",
                     stdqu: "{{ $b->stdqu }}"
                 },
             @endforeach

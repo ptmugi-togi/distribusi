@@ -229,8 +229,8 @@
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label for="odisp" class="form-label">Total Official Discount</label>
-                                    <input type="text" class="form-control price-display" name="odisp" id="odisp" value="{{ $detail->odisp ?? '-' }}" disabled>
+                                    <label for="odisa" class="form-label">Total Official Discount</label>
+                                    <input type="text" class="form-control price-display" name="odisa" id="odisa" value="{{ $detail->odisa ?? '-' }}" disabled>
                                 </div>
 
                                 <div class="col-md-6 mt-3">

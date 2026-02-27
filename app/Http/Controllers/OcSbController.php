@@ -161,6 +161,7 @@ class OcSbController extends Controller
                                 'opron'  => $item['matno'],
                                 'stdqu'  => $item['unit'],
                                 'trqty'  => $baseQty * $qtyor,
+                                'bsqty'  => $item['bsqty'],
                                 'delqt'  => 0,
                             ]);
                         }
@@ -387,6 +388,7 @@ class OcSbController extends Controller
                                 'opron'  => $item['matno'],
                                 'stdqu'  => $item['unit'],
                                 'trqty'  => $baseQty * $qtyor,
+                                'bsqty'  => $item['bsqty'],
                                 'delqt'  => 0,
                             ]);
                         }

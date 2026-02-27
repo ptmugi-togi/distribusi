@@ -68,13 +68,13 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="odisa-oc-{{ $i }}" class="form-label">Total Official Discount</label>
+                    <label for="odisa-oc-{{ $i }}" class="form-label">Discount / Unit</label>
                     <input type="text" class="form-control price-input" id="odisa_display_oc_{{ $i }}" value="{{ old('odisa.'.$i) ? number_format(old('odisa.'.$i), 2, '.', '') : '' }}" data-raw-target="odisa_raw_oc_{{ $i }}">
                     <input type="text" name="odisa[]" id="odisa_raw_oc_{{ $i }}" value="{{ old('odisa.'.$i) }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="teknik-oc-{{ $i }}" class="form-label">Jasa Teknik (Unit)</label>
+                    <label for="teknik-oc-{{ $i }}" class="form-label">Jasa Teknik / Unit</label>
                     <input type="text" class="form-control price-input" id="teknik_display_oc_{{ $i }}" value="{{ old('teknik.'.$i) ? number_format(old('teknik.'.$i), 2, '.', '') : '' }}" data-raw-target="teknik_raw_oc_{{ $i }}">
                     <input type="text" name="teknik[]" id="teknik_raw_oc_{{ $i }}" value="{{ old('teknik.'.$i) }}" hidden>
                 </div>
@@ -236,14 +236,11 @@
 
         rows.forEach((r, i) => {
 
-            const baseQty = parseFloat(r.rqqty) || 0;
-
-            const finalQty = qtyor > 0 ? baseQty * qtyor : baseQty;
-
             hiddenHtml += `
                 <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
                 <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
-                <input type="hidden" name="bom[${index}][${i}][qty]" value="${finalQty}">
+                <input type="hidden" name="bom[${index}][${i}][qty]" value="${r.rqqty}">
+                <input type="hidden" name="bom[${index}][${i}][bsqty]" value="${r.rqqty}">
                 <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
             `;
         });
@@ -314,6 +311,7 @@
                     <input type="hidden" name="bom[${index}][${i}][matno]" value="${r.matno}">
                     <input type="hidden" name="bom[${index}][${i}][prona]" value="${r.prona}">
                     <input type="hidden" name="bom[${index}][${i}][qty]" value="${r.rqqty}">
+                    <input type="hidden" name="bom[${index}][${i}][bsqty]" value="${r.rqqty}">
                     <input type="hidden" name="bom[${index}][${i}][unit]" value="${r.stdqu}">
                 `;
             });
@@ -387,7 +385,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label class="form-label">Total Official Discount</label>
+                            <label class="form-label">Discount / Unit</label>
 
                             <input type="text" class="form-control price-input" id="odisa_display_oc_${i}" data-raw-target="odisa_raw_oc_${i}">
 
@@ -395,7 +393,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label class="form-label">Jasa Teknik (Unit)</label>
+                            <label class="form-label">Jasa Teknik / Unit</label>
 
                             <input type="text" class="form-control price-input" id="teknik_display_oc_${i}" data-raw-target="teknik_raw_oc_${i}">
 
