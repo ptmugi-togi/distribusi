@@ -125,9 +125,9 @@
 
             <div class="col-md-4 mt-3">
                 <label for="odisa_hdr" class="form-label">Official Discount</label>
-                <input type="text" class="form-control price-input" id="odisa_display" value="{{ old('odisa_hdr') ? number_format(old('odisa_hdr'), 2, '.', '') : '' }}" data-raw-target="odisa_raw" readonly style="background-color:#e9ecef">
+                <input type="text" class="form-control price-input" id="odisa_display" value="{{ old('odisa_hdr') ? number_format(old('odisa_hdr'), 2, '.', '') : '' }}" data-raw-target="odisa_raw_hdr" readonly style="background-color:#e9ecef">
 
-                <input type="text" name="odisa_hdr" id="odisa_raw" value="{{ old('odisa_hdr') }}" hidden>
+                <input type="text" name="odisa_hdr" id="odisa_raw_hdr" value="{{ old('odisa_hdr') }}" hidden>
             </div>
             
             <div class="col-md-4 mt-3">
@@ -420,7 +420,7 @@
             const currency = $('#curco').val();
 
             $('#gross_raw').val(totalGross.toFixed(2));
-            $('#odisa_raw').val(totalDiscount.toFixed(2));
+            $('#odisa_raw_hdr').val(totalDiscount.toFixed(2));
 
             $('#gross_display').val(formatCurrency(totalGross, currency));
             $('#odisa_display').val(formatCurrency(totalDiscount, currency));
@@ -433,7 +433,7 @@
         function calculateVat() {
 
             const gross   = parseFloat($('#gross_raw').val()) || 0;
-            const discount = parseFloat($('#odisa_raw').val()) || 0;
+            const discount = parseFloat($('#odisa_raw_hdr').val()) || 0;
             const installation = parseFloat($('#insfe_raw').val()) || 0;
             const taxPct  = parseFloat($('#tax_percent').val()) || 0;
             const curco   = $('#curco').val();
@@ -455,14 +455,14 @@
         function calculateBilling() {
 
             const gross = parseFloat($('#gross_raw').val()) || 0;
-            const disc  = parseFloat($('#odisa_raw').val()) || 0;
+            const disc  = parseFloat($('#odisa_raw_hdr').val()) || 0;
             const installation  = parseFloat($('#insfe_raw').val()) || 0;
             const vat   = parseFloat($('#vatax_raw').val()) || 0;
             const curco = $('#curco').val();
 
             const bill = gross - disc + installation + vat;
 
-            $('#billv_raw').val(bill.toFixed(2));
+            $('#billv_raw').val(bill.toFixed(2)).trigger('change');
             $('#billv_display').val(formatCurrency(bill, curco));
         }
 
@@ -604,6 +604,7 @@
                 if (currency === "IDR") {
                     const rawInt = display.replace(/[.,]/g, "");
                     hidden.value = rawInt ? parseInt(rawInt, 10) : "";
+                    $(hidden).trigger('change');
                     calculateVat();
                     calculateBilling();
                     return;
@@ -629,6 +630,7 @@
                 const normalized = intPart + (decPart ? "." + decPart : "");
 
                 hidden.value = normalized ? parseFloat(normalized) : "";
+                $(hidden).trigger('change');
                 calculateVat();
                 calculateBilling();
             });

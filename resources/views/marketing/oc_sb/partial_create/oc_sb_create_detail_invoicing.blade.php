@@ -111,8 +111,8 @@
             </div>
             <div class="col-md-3 mt-3">
                 <label for="smqts1" class="form-label">Sales Rep.</label>
-                <select name="smqts1" id="smqts1-oc" class="form-control select2">
-                    <option value="" disabled {{ old('smqts1') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                <select name="smqts1" id="smqts1-oc" class="form-control select2" data-old="{{ old('smqts1') }}">
+                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
                 </select>
             </div>
         
@@ -136,8 +136,8 @@
             </div>
             <div class="col-md-3 mt-3">
                 <label for="smqts2" class="form-label">Sales Rep.</label>
-                <select name="smqts2" id="smqts2-oc" class="form-control select2">
-                    <option value="" disabled {{ old('smqts2') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                <select name="smqts2" id="smqts2-oc" class="form-control select2" data-old="{{ old('smqts2') }}">
+                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
                 </select>
             </div>
         
@@ -161,8 +161,8 @@
             </div>
             <div class="col-md-3 mt-3">
                 <label for="smqts3" class="form-label">Sales Rep.</label>
-                <select name="smqts3" id="smqts3-oc" class="form-control select2">
-                    <option value="" disabled {{ old('smqts3') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                <select name="smqts3" id="smqts3-oc" class="form-control select2" data-old="{{ old('smqts3') }}">
+                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
                 </select>
             </div>
         
@@ -186,8 +186,8 @@
             </div>
             <div class="col-md-3 mt-3">
                 <label for="smqts4" class="form-label">Sales Rep.</label>
-                <select name="smqts4" id="smqts4-oc" class="form-control select2">
-                    <option value="" disabled {{ old('smqts4') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                <select name="smqts4" id="smqts4-oc" class="form-control select2" data-old="{{ old('smqts4') }}">
+                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
                 </select>
             </div>
         
@@ -211,8 +211,8 @@
             </div>
             <div class="col-md-3 mt-3">
                 <label for="smqts5" class="form-label">Sales Rep.</label>
-                <select name="smqts5" id="smqts5-oc" class="form-control select2">
-                    <option value="" disabled {{ old('smqts5') ? '' : 'selected' }}>Silahkan Pilih Sales Rep</option>
+                <select name="smqts5" id="smqts5-oc" class="form-control select2"  data-old="{{ old('smqts5') }}">
+                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
                 </select>
             </div>
         </div>
@@ -223,7 +223,22 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
+        $(document).on('change', '#gross_raw, #odisa_raw_hdr, #insfe_raw, #vatax_raw, #billv_raw, #edisa_raw', function () {
+            recalculateAllPhases();
+        });
+
+        validateQuota();
         toggleAddButton();
+
+        // reload sales rep jika ada old branch value
+         for (let i = 1; i <= 5; i++) {
+
+            const oldSales = $(`#smqts${i}-oc`).attr('data-old');
+
+            if ($(`#smqtb${i}-oc`).val()) {
+                loadSalesByBranch(i, oldSales);
+            }
+        }
     });
 </script>
 
@@ -294,7 +309,7 @@
 
         // get values header
         const grossMaster  = parseFloat($('#gross_raw').val()) || 0;
-        const odisaMaster  = parseFloat($('#odisa_raw').val()) || 0;
+        const odisaMaster  = parseFloat($('#odisa_raw_hdr').val()) || 0;
         const billvMaster  = parseFloat($('#billv_raw').val()) || 0;
         const edisaMaster  = parseFloat($('#edisa_raw').val()) || 0;
 
@@ -332,6 +347,19 @@
 
         // kalau pakai formatter
         initPriceFormatter(document.getElementById(`accordion-oc-invoicing-${phaseIndex}`));
+    }
+
+    function recalculateAllPhases() {
+
+        $('input[id^="toppc_oc_"]').each(function () {
+
+            const phaseIndex = $(this).attr('id').split('_').pop();
+
+            if ($(this).val()) {
+                calculatePhaseAmounts(phaseIndex);
+            }
+        });
+
     }
 </script>
 
@@ -392,14 +420,9 @@
 
 {{-- get sales per branch invoicing --}}
 <script>
-    $(document).on('change', '[id^="smqtb"]', function () {
+    function loadSalesByBranch(quotaNumber, selectedValue = null) {
 
-        const id = $(this).attr('id'); 
-
-        const quotaNumber = id.match(/\d+/)[0];
-
-        const branchCode = $(this).val();
-
+        const branchCode  = $(`#smqtb${quotaNumber}-oc`).val();
         const salesSelect = $(`#smqts${quotaNumber}-oc`);
 
         if (!branchCode) {
@@ -413,16 +436,27 @@
             data: { branch: branchCode },
             success: function (res) {
 
-                let options = '<option value="" disabled selected>Silahkan Pilih Sales Rep</option>';
+                let options = '<option value="" disabled>Silahkan Pilih Sales Rep</option>';
 
                 res.forEach(function (item) {
                     options += `<option value="${item.sreno}">${item.sreno} - ${item.srena}</option>`;
                 });
 
-                salesSelect.html(options).trigger('change');
+                salesSelect.html(options);
+
+                if (selectedValue) {
+                    salesSelect.val(selectedValue).trigger('change.select2');
+                } else {
+                    salesSelect.trigger('change.select2');
+                }
             }
         });
+    }
+    $(document).on('change', '[id^="smqtb"]', function () {
 
+        const quotaNumber = $(this).attr('id').match(/\d+/)[0];
+
+        loadSalesByBranch(quotaNumber);
     });
 </script>
 
