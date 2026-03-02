@@ -48,8 +48,8 @@
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($o->sordt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($o->sordt)->format('d/m/Y') }}
                           </td>
-                          <td class="text-center">{{ $o->mcusmas->cusna ?? '-' }}</td>
-                          <td class="text-center">{{ $o->msreno->srena ?? '-' }}</td>
+                          <td>{{ $o->mcusmas->cusna ?? '-' }}</td>
+                          <td>{{ $o->msreno->srena ?? '-' }}</td>
                           <td class="text-center">
                               @if ($o->resta == 'C')
                                 <p class="badge bg-danger">CANCELED</p>
@@ -146,7 +146,7 @@
       $(function () {
         $('#myTable').DataTable({
           destroy: true,
-          order: [[6, 'desc']], // sorting berdasarkan created at
+          order: [[1, 'desc']], // sorting berdasarkan sorno
           stateSave: false,
           columnDefs: [
             { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
