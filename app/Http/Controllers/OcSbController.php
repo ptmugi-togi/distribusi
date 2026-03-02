@@ -179,6 +179,7 @@ class OcSbController extends Controller
                             'opron'  => $opron,
                             'stdqu'  => $request->stdqu[$i],
                             'trqty'  => $qtyor,
+                            'bsqty'  => $qtyor,
                             'delqt'  => 0,
                         ]);
                     }
@@ -201,7 +202,7 @@ class OcSbController extends Controller
                         'toppc'  => $percent,
 
                         'gross'  => $request->gross[$i] ?? 0,
-                        'odisa'  => $request->odisa[$i] ?? 0,
+                        'odisa'  => $request->odisa_inv[$i] ?? 0,
                         'ntamt'  => $request->ntamt[$i] ?? 0,
                         'blamt'  => $request->blamt[$i] ?? 0,
                         'ebamt'  => $request->ebamt[$i] ?? 0,
@@ -406,6 +407,7 @@ class OcSbController extends Controller
                             'opron'  => $opron,
                             'stdqu'  => $request->stdqu[$i],
                             'trqty'  => $qtyor,
+                            'bsqty'  => $qtyor,
                             'delqt'  => 0,
                         ]);
                     }
@@ -432,7 +434,7 @@ class OcSbController extends Controller
                         'toppc'  => $percent,
 
                         'gross'  => $request->gross[$i] ?? 0,
-                        'odisa'  => $request->odisa[$i] ?? 0,
+                        'odisa'  => $request->odisa_inv[$i] ?? 0,
                         'ntamt'  => $request->ntamt[$i] ?? 0,
                         'blamt'  => $request->blamt[$i] ?? 0,
                         'ebamt'  => $request->ebamt[$i] ?? 0,

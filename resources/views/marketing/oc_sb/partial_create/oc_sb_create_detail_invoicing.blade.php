@@ -41,7 +41,7 @@
                     <label class="form-label">Official Discount</label>
                     <input type="text" class="form-control price-input" id="odisa_display_oc_{{ $i }}" value="{{ old('odisa.'.$i) ? number_format(old('odisa.'.$i), 2, '.', '') : '' }}" data-raw-target="odisa_raw_oc_{{ $i }}" readonly style="background-color:#e9ecef">
 
-                    <input type="text" name="odisa[]" id="odisa_raw_oc_{{ $i }}" value="{{ old('odisa.'.$i) }}" hidden>
+                    <input type="text" name="odisa_inv[]" id="odisa_raw_oc_{{ $i }}" value="{{ old('odisa.'.$i) }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -112,7 +112,7 @@
             <div class="col-md-3 mt-3">
                 <label for="smqts1" class="form-label">Sales Rep.</label>
                 <select name="smqts1" id="smqts1-oc" class="form-control select2" data-old="{{ old('smqts1') }}">
-                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                    <option value="" disabled>Silahkan Pilih Branch Terlebih Dahulu</option>
                 </select>
             </div>
         
@@ -137,7 +137,7 @@
             <div class="col-md-3 mt-3">
                 <label for="smqts2" class="form-label">Sales Rep.</label>
                 <select name="smqts2" id="smqts2-oc" class="form-control select2" data-old="{{ old('smqts2') }}">
-                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                    <option value="" disabled>Silahkan Pilih Branch Terlebih Dahulu</option>
                 </select>
             </div>
         
@@ -162,7 +162,7 @@
             <div class="col-md-3 mt-3">
                 <label for="smqts3" class="form-label">Sales Rep.</label>
                 <select name="smqts3" id="smqts3-oc" class="form-control select2" data-old="{{ old('smqts3') }}">
-                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                    <option value="" disabled>Silahkan Pilih Branch Terlebih Dahulu</option>
                 </select>
             </div>
         
@@ -187,7 +187,7 @@
             <div class="col-md-3 mt-3">
                 <label for="smqts4" class="form-label">Sales Rep.</label>
                 <select name="smqts4" id="smqts4-oc" class="form-control select2" data-old="{{ old('smqts4') }}">
-                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                    <option value="" disabled>Silahkan Pilih Branch Terlebih Dahulu</option>
                 </select>
             </div>
         
@@ -212,7 +212,7 @@
             <div class="col-md-3 mt-3">
                 <label for="smqts5" class="form-label">Sales Rep.</label>
                 <select name="smqts5" id="smqts5-oc" class="form-control select2"  data-old="{{ old('smqts5') }}">
-                    <option value="" disabled>Silahkan Pilih Sales Rep</option>
+                    <option value="" disabled>Silahkan Pilih Branch Terlebih Dahulu</option>
                 </select>
             </div>
         </div>
@@ -222,6 +222,7 @@
 
 @push('scripts')
 <script>
+    let isInitialLoad = true;
     $(document).ready(function () {
         $(document).on('change', '#gross_raw, #odisa_raw_hdr, #insfe_raw, #vatax_raw, #billv_raw, #edisa_raw', function () {
             recalculateAllPhases();
@@ -231,14 +232,23 @@
         toggleAddButton();
 
         // reload sales rep jika ada old branch value
-         for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 5; i++) {
 
-            const oldSales = $(`#smqts${i}-oc`).attr('data-old');
+            const branchVal = $(`#smqtb${i}-oc`).val();
+            const selectedValue = $(`#smqts${i}-oc`).data('old');
 
-            if ($(`#smqtb${i}-oc`).val()) {
-                loadSalesByBranch(i, oldSales);
+            if (branchVal) {
+                if (selectedValue) {
+                    loadSalesByBranch(i, selectedValue);
+                } else {
+                    loadSalesByBranch(i);
+                }
             }
         }
+
+        setTimeout(() => {
+            isInitialLoad = false;
+        }, 500);
     });
 </script>
 
@@ -443,26 +453,32 @@
             data: { branch: branchCode },
             success: function (res) {
 
-                let options = '<option value="" disabled>Silahkan Pilih Sales Rep</option>';
+                let options = '<option value="" disabled selected>Silahkan Pilih Sales Rep</option>';
 
                 res.forEach(function (item) {
-                    options += `<option value="${item.sreno}">${item.sreno} - ${item.srena}</option>`;
+
+                    options += `
+                        <option value="${item.sreno}">
+                            ${item.sreno} - ${item.srena}
+                        </option>
+                    `;
                 });
 
                 salesSelect.html(options);
 
-                if (selectedValue) {
-                    salesSelect.val(selectedValue).trigger('change.select2');
-                } else {
-                    salesSelect.trigger('change.select2');
+                if (selectedValue !== null && selectedValue !== undefined && selectedValue !== '') {
+                    salesSelect.val(selectedValue);
                 }
+
+                salesSelect.trigger('change.select2');
             }
         });
     }
     $(document).on('change', '[id^="smqtb"]', function () {
 
-        const quotaNumber = $(this).attr('id').match(/\d+/)[0];
+        if (isInitialLoad) return;
 
+        const quotaNumber = $(this).attr('id').match(/\d+/)[0];
         loadSalesByBranch(quotaNumber);
     });
 </script>
@@ -510,7 +526,7 @@
                             <label class="form-label">Official Discount</label>
                             <input type="text" class="form-control price-input" id="odisa_display_oc_${i}" data-raw-target="odisa_raw_oc_${i}" readonly style="background-color:#e9ecef">
 
-                            <input type="text" name="odisa[]" id="odisa_raw_oc_${i}" hidden>
+                            <input type="text" name="odisa_inv[]" id="odisa_raw_oc_${i}" hidden>
                         </div>
 
                         <div class="col-md-6 mt-3">
