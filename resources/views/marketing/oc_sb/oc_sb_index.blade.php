@@ -44,7 +44,7 @@
                       @foreach ($ocsbhdr as $o)
                       <tr>
                           <td class="text-center">{{ $o->braco ?? '-' }}</td>
-                          <td class="text-center">SB {{ $o->sorno ?? '-' }}</td>
+                          <td>SB {{ $o->sorno ?? '-' }}</td>
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($o->sordt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($o->sordt)->format('d/m/Y') }}
                           </td>

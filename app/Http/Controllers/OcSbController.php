@@ -86,7 +86,7 @@ class OcSbController extends Controller
         ]);
 
         try {
-            $ocsbid = $request->braco . $request->formc . $request->sorno;
+            $ocsbid = $request->braco . $request->formc . strtoupper($request->sorno);
 
             // Simpan header
             OcSbHdr::create([
@@ -94,7 +94,7 @@ class OcSbController extends Controller
                 'depo' => $request->depo,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
-                'sorno' => $request->sorno,
+                'sorno' => strtoupper($request->sorno),
                 'priod' => $request->priod,
                 'sordt' => $request->sordt,
                 'sreno' => $request->sreno,
@@ -124,7 +124,7 @@ class OcSbController extends Controller
                     'ocsbid' => $ocsbid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
-                    'sorno' => $request->sorno,
+                    'sorno' => strtoupper($request->sorno),
                     'opron' => $useOpron,
                     'prona' => $request->prona[$i],
                     'qtyor' => $request->qtyor[$i],
@@ -154,7 +154,7 @@ class OcSbController extends Controller
                                 'ocsbid' => $ocsbid,
                                 'braco'  => $request->braco,
                                 'formc'  => $request->formc,
-                                'sorno'  => $request->sorno,
+                                'sorno'  => strtoupper($request->sorno),
                                 'delto'  => $request->delto[$i],
 
                                 'uopron' => $opron,
@@ -172,7 +172,7 @@ class OcSbController extends Controller
                             'ocsbid' => $ocsbid,
                             'braco'  => $request->braco,
                             'formc'  => $request->formc,
-                            'sorno'  => $request->sorno,
+                            'sorno'  => strtoupper($request->sorno),
                             'delto'  => $request->delto[$i],
 
                             'uopron' => $opron,
@@ -195,7 +195,7 @@ class OcSbController extends Controller
                         'ocsbid'   => $ocsbid,
                         'braco'  => $request->braco,
                         'formc'  => $request->formc,
-                        'sorno'  => $request->sorno,
+                        'sorno'  => strtoupper($request->sorno),
 
                         'phase'  => $i + 1,
                         'descr'  => $request->descr[$i] ?? null,
@@ -326,7 +326,7 @@ class OcSbController extends Controller
         DB::beginTransaction();
 
         try {
-            $ocsbid = $request->braco . $request->formc . $request->sorno;
+            $ocsbid = $request->braco . $request->formc . strtoupper($request->sorno);
 
             // update header
             OcSbHdr::where('ocsbid', $ocsbid)->update([
@@ -348,7 +348,7 @@ class OcSbController extends Controller
                     'ocsbid' => $ocsbid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
-                    'sorno' => $request->sorno,
+                    'sorno' => strtoupper($request->sorno),
                     'opron' => $useOpron,
                     'prona' => $request->prona[$i],
                     'qtyor' => $request->qtyor[$i],
@@ -382,7 +382,7 @@ class OcSbController extends Controller
                                 'ocsbid' => $ocsbid,
                                 'braco'  => $request->braco,
                                 'formc'  => $request->formc,
-                                'sorno'  => $request->sorno,
+                                'sorno'  => strtoupper($request->sorno),
                                 'delto'  => $request->delto[$i],
 
                                 'uopron' => $opron,
@@ -400,7 +400,7 @@ class OcSbController extends Controller
                             'ocsbid' => $ocsbid,
                             'braco'  => $request->braco,
                             'formc'  => $request->formc,
-                            'sorno'  => $request->sorno,
+                            'sorno'  => strtoupper($request->sorno),
                             'delto'  => $request->delto[$i],
 
                             'uopron' => $opron,
@@ -427,7 +427,7 @@ class OcSbController extends Controller
                         'ocsbid'   => $ocsbid,
                         'braco'  => $request->braco,
                         'formc'  => $request->formc,
-                        'sorno'  => $request->sorno,
+                        'sorno'  => strtoupper($request->sorno),
 
                         'phase'  => $i + 1,
                         'descr'  => $request->descr[$i] ?? null,

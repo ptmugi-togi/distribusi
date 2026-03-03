@@ -662,25 +662,56 @@
 
     {{-- // SweetAlert confirm submit --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
+
             const form = document.getElementById('form-oc');
+
             form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Konfirmasi Simpan',
-                text: 'Apakah Anda yakin ingin menyimpan data ini?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Simpan!',
-                cancelButtonText: 'Batal'
-            }).then((res)=>{
-                if(res.isConfirmed){
-                Swal.fire({ title:'Menyimpan...', text:'Mohon tunggu sebentar', icon:'info', showConfirmButton:false, allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading() });
-                form.submit();
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                let totalTerm = 0;
+
+                document.querySelectorAll('[id^="toppc_oc_"]').forEach(function (input) {
+                    totalTerm += parseFloat(input.value) || 0;
+                });
+
+                if (totalTerm !== 100) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Term Percentage Harus 100%',
+                        text: 'Total Term Percentage harus tepat 100% sebelum disimpan.',
+                        confirmButtonColor: '#4456f1'
+                    });
+                    return false;
                 }
-            });
+
+                Swal.fire({
+                    title: 'Konfirmasi Simpan',
+                    text: 'Apakah Anda yakin ingin menyimpan data ini?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Simpan!',
+                    cancelButtonText: 'Batal'
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menyimpan...',
+                            text: 'Mohon tunggu sebentar',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+
+                        form.removeEventListener('submit', arguments.callee);
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

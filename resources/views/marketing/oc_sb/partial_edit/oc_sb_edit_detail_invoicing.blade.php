@@ -45,7 +45,7 @@
                             <label class="form-label">Official Discount</label>
                             <input type="text" class="form-control price-input" id="odisa_display_oc_{{ $i }}" data-raw-target="odisa_raw_oc_{{ $i }}" readonly style="background-color:#e9ecef">
 
-                            <input type="hidden" name="odisa[]" id="odisa_raw_oc_{{ $i }}" value="{{ $dinv->odisa }}">
+                            <input type="hidden" name="odisa_inv[]" id="odisa_raw_oc_{{ $i }}" value="{{ $dinv->odisa }}">
                         </div>
 
                         <div class="col-md-6 mt-3">

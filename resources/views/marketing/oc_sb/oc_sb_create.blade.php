@@ -184,7 +184,7 @@
             </div>
 
             <div class="mt-3 d-flex justify-content-between">
-                <a href="{{ route('oc.index') }}" class="btn btn-secondary">Kembali</a>
+                <a href="{{ route('oc_sb.index') }}" class="btn btn-secondary">Kembali</a>
                 <button type="submit" id="btn-save" class="btn btn-primary">Simpan Data</button>
             </div>
         </form>
@@ -695,10 +695,27 @@
 
     <script>
         // SweetAlert confirm submit
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById('form-oc');
-            form.addEventListener('submit', function (e) {
+        $(document).on('submit', '#form-oc', function (e) {
+
             e.preventDefault();
+            e.stopImmediatePropagation();
+
+            let totalTerm = 0;
+
+            $('input[id^="toppc_oc_"]').each(function () {
+                totalTerm += parseFloat($(this).val()) || 0;
+            });
+
+            if (totalTerm !== 100) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Term Percentage Harus 100%',
+                    text: 'Total Term Percentage harus tepat 100% sebelum disimpan.',
+                    confirmButtonColor: '#4456f1'
+                });
+                return false;
+            }
+
             Swal.fire({
                 title: 'Konfirmasi Simpan',
                 text: 'Apakah Anda yakin ingin menyimpan data ini?',
@@ -708,12 +725,21 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal'
-            }).then((res)=>{
-                if(res.isConfirmed){
-                Swal.fire({ title:'Menyimpan...', text:'Mohon tunggu sebentar', icon:'info', showConfirmButton:false, allowOutsideClick:false, allowEscapeKey:false, didOpen:()=>Swal.showLoading() });
-                form.submit();
+            }).then((res) => {
+
+                if (res.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menyimpan...',
+                        text: 'Mohon tunggu sebentar',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    this.submit();
                 }
-            });
             });
         });
     </script>

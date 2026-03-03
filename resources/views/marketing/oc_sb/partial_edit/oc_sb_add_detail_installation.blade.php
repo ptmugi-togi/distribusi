@@ -58,9 +58,9 @@
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Total Official Discount</label>
 
-                            <input type="text" class="form-control price-input" id="odisp_display_oc_${i}" data-raw-target="odisp_raw_oc_${i}">
+                            <input type="text" class="form-control price-input" id="odisa_display_oc_${i}" data-raw-target="odisa_raw_oc_${i}">
 
-                            <input type="text" name="odisp[]" id="odisp_raw_oc_${i}" hidden>
+                            <input type="text" name="odisa_ins[]" id="odisa_raw_oc_${i}" hidden>
                         </div>
 
                         <div class="col-md-6 mt-3">
