@@ -87,9 +87,9 @@
 
         <div class="col-md-6 mt-3">
             <label for="sorfcno" class="form-label">Order Confirmation Number</label><span class="text-danger"> *</span>
-            <input type="text" class="form-control" name="sorfcno" id="sorfcno" value="{{ old('sorno') }}" required readonly style="background-color:#e9ecef">
-            <input type="text" class="form-control" name="sorfc" id="sorfc" value="{{ old('sorfc') }}" required hidden>
-            <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required hidden>
+            <input type="text" class="form-control" name="sorfcno" id="sorfcno" value="{{ old('sorno') }}" readonly style="background-color:#e9ecef">
+            <input type="text" class="form-control" name="sorfc" id="sorfc" value="{{ old('sorfc') }}" hidden>
+            <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" hidden>
         </div>
 
         <div class="col-md-6 mt-3">
