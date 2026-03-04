@@ -356,7 +356,6 @@
                 $('#section-id').remove();
                 $('#section-ie').remove();
                 $('#section-ij').remove();
-                $('#section-import').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
               } 
@@ -370,7 +369,6 @@
                 $('#section-id').remove();
                 $('#section-ie').remove();
                 $('#section-ij').remove();
-                $('#section-if').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
