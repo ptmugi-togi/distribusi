@@ -23,67 +23,67 @@
             <?php } ?>
             <li>
                 <a href="/ssgrup">
-                <i class="bi bi-circle"></i><span>MSSGRUP</span>
+                <i class="bi bi-circle"></i><span>SubSubGroup</span>
                 </a>
             </li>
             <li>
                 <a href="/msgrup">
-                <i class="bi bi-circle"></i><span>MSGRUP</span>
+                <i class="bi bi-circle"></i><span>SubGroup</span>
                 </a>
             </li>
             <li>
                 <a href="/mpgrup">
-                <i class="bi bi-circle"></i><span>MPGRUP</span>
+                <i class="bi bi-circle"></i><span>Product Group</span>
                 </a>
             </li>
             <li>
                 <a href="/mbrand">
-                <i class="bi bi-circle"></i><span>MBRAND</span>
+                <i class="bi bi-circle"></i><span>Brand</span>
                 </a>
             </li>
             <li>
                 <a href="/mitype">
-                <i class="bi bi-circle"></i><span>MITYPE</span>
+                <i class="bi bi-circle"></i><span>Inventory Type</span>
                 </a>
             </li>
             <li>
                 <a href="/mcls">
-                <i class="bi bi-circle"></i><span>MCLS</span>
+                <i class="bi bi-circle"></i><span>Class</span>
                 </a>
             </li>
             <li>
                 <a href="/mpromas">
-                <i class="bi bi-circle"></i><span>MPROMAS</span>
+                <i class="bi bi-circle"></i><span>Product</span>
                 </a>
             </li>
             <li>
                 <a href="/msreno">
-                <i class="bi bi-circle"></i><span>MSRENO</span>
+                <i class="bi bi-circle"></i><span>Sales Rep</span>
                 </a>
             </li>
             <li>
                 <a href="/mcindu">
-                <i class="bi bi-circle"></i><span>MCINDU</span>
+                <i class="bi bi-circle"></i><span>Customer Industry</span>
                 </a>
             </li>
             <li>
                 <a href="/mstmas">
-                <i class="bi bi-circle"></i><span>MSTMAS</span>
+                <i class="bi bi-circle"></i><span>Shipment</span>
                 </a>
             </li>
             <li>
                 <a href="/mbranch">
-                <i class="bi bi-circle"></i><span>MBRANCH</span>
+                <i class="bi bi-circle"></i><span>Branch</span>
                 </a>
             </li>
             <li>
                 <a href="/mdepo">
-                <i class="bi bi-circle"></i><span>MDEPO</span>
+                <i class="bi bi-circle"></i><span>Depo</span>
                 </a>
             </li>
             <li>
                 <a href="/cusmas">
-                <i class="bi bi-circle"></i><span>CUSMAS</span>
+                <i class="bi bi-circle"></i><span>Customer Master</span>
                 </a>
             </li>
         </ul>
@@ -177,7 +177,7 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#marketing-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-shop"></i><span>marketing</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-shop"></i><span>Marketing</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
