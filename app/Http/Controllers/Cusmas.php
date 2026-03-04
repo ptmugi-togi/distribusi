@@ -18,12 +18,12 @@ class Cusmas extends Controller
         if(auth()->user()->cabang=="PST"){
             $mas=DB::table('mcusmas')
             ->select('mcusmas.*')
-            ->orderBy('mcusmas.id','ASC')->get();
+            ->orderBy('mcusmas.cusno','ASC')->get();
         }else{
             $mas=DB::table('mcusmas')
             ->select('mcusmas.*')
             ->where('mcusmas.braco',auth()->user()->cabang)
-            ->orderBy('mcusmas.id','ASC')->get();
+            ->orderBy('mcusmas.cusno','ASC')->get();
         }
 
         if (request()->ajax()) {
@@ -32,11 +32,11 @@ class Cusmas extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($item) {
                 $btn='';
-                $button =   '<a id="btn_edit_cusmas" data-bs-toggle="modal" data-bs-target="#mLCusmas" class="btn btn-block badge bg-info" i_d="'. $item->id .'" cusno="'. $item->cusno .'" braco="'. $item->braco .'" cusna="'. $item->cusna .'" billn="'. $item->billn .'" title="'. $item->title .'" prpos="'. $item->prpos .'"  pkp="'. $item->pkp .'" npwp="'. $item->npwp .'" address="'.$item->address.'" city="'.$item->city.'" kodepost="'.$item->kodepost.'" phone="'.$item->phone.'" fax="'.$item->fax.'" contact="'.$item->contact.'" email="'.$item->email.'" topay="'.$item->topay.'" cindu="'.$item->cindu.'" czone="'.$item->czone.'" carea="'.$item->carea.'" dopen="'.$item->dopen.'" crlim="'.$item->crlim.'" lauid="'.$item->lauid.'" ladup="'.$item->ladup.'" status="'.$item->status.'" barval="'.$item->barval.'" openo="'.$item->openo.'" oarval="'.$item->oarval.'" csect="'.$item->csect.'" >Ubah</a>';
+                $button =   '<a id="btn_edit_cusmas" data-bs-toggle="modal" data-bs-target="#mLCusmas" class="btn btn-block badge bg-info" i_d="'. $item->cusno .'" cusno="'. $item->cusno .'" braco="'. $item->braco .'" cusna="'. $item->cusna .'" billn="'. $item->billn .'" title="'. $item->title .'" prpos="'. $item->prpos .'"  address="'.$item->offad.'" city="'.$item->offad2.'" kodepost="'.$item->opost.'" phone="'.$item->offph.'" fax="'.$item->offax.'" contact="'.$item->ofcon.'" email="'.$item->email.'" topay="'.$item->topay.'" cindu="'.$item->cindu.'" czone="'.$item->carea.'" carea="'.$item->carea.'" dopen="'.$item->dopen.'" crlim="'.$item->crlim.'" lauid="'.$item->lauid.'" ladup="'.$item->ladup.'" barval="'.$item->barval.'" openo="'.$item->openo.'" oarval="'.$item->oarval.'" csect="'.$item->csect.'" >Ubah</a>';
                 $btn .= $button;
 
                 if(auth()->user()->level=="IT"){
-                $deleteButton = '<form class="d-inline" action=/cusmas/' . $item->id . '
+                $deleteButton = '<form class="d-inline" action=/cusmas/' . $item->cusno . '
                        method="POST">
                        <input type="hidden" name="_token" value=' . csrf_token() . '>
                        <input type="hidden" name="_method" value="delete">
@@ -69,8 +69,8 @@ class Cusmas extends Controller
             'billn'=>'required',
             'title'=>'required',
             'prpos'=>'required',
-            'pkp'=>'required',
-            'npwp'=>'required',
+            // 'pkp'=>'required',
+            // 'npwp'=>'required',
             'address'=>'required',
             'city'=>'required',
             'kodepost'=>'required',

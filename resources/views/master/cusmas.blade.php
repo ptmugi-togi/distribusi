@@ -25,7 +25,7 @@
                 @endif
                 <div class="col-lg-12" style="padding:0px 10px 10px 0px;">
                     {{-- <a id="tambahMcusmas" href="mcusmas/create" type="button" class="btn btn-success" > Tambah</a> --}}
-                    <button id="tambahMcusmas" type="button" class="btn btn-success"data-bs-toggle="modal" data-bs-target="#mTCusmas"> Tambah</button>
+                    {{-- <button id="tambahMcusmas" type="button" class="btn btn-success"data-bs-toggle="modal" data-bs-target="#mTCusmas"> Tambah</button> --}}
                 </div>
 
                 <div style="overflow-y: scroll;">
