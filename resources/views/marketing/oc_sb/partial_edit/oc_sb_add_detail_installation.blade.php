@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label class="form-label">Total Official Discount</label>
+                            <label class="form-label">Discount / Unit</label>
 
                             <input type="text" class="form-control price-input" id="odisa_display_oc_${i}" data-raw-target="odisa_raw_oc_${i}">
 
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label class="form-label">Jasa Teknik (Unit)</label>
+                            <label class="form-label">Jasa Teknik / Unit</label>
 
                             <input type="text" class="form-control price-input" id="teknik_display_oc_${i}" data-raw-target="teknik_raw_oc_${i}">
 
