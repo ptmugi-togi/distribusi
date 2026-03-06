@@ -52,7 +52,7 @@
                           <td>{{ $o->msreno->srena ?? '-' }}</td>
                           <td class="text-center">
                               @if ($o->resta == 'C')
-                                <p class="badge bg-danger">CANCELED</p>
+                                <span class="badge bg-danger">CANCELED</span>
                               @endif
                               {{-- preview --}}
                               <a href="{{ route('oc.previewOcSb', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
@@ -66,7 +66,7 @@
                                 
                                 @if ($o->resta != 'C')
                                   <a href="/oc-sb/{{ $o->ocsbid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                                  <form id="cancel-oc-{{ $o->ocsbid }}" action="{{ route('oc.cancel', $o->ocsbid) }}" method="POST" style="display:inline;">
+                                  <form id="cancel-oc-{{ $o->ocsbid }}" action="{{ route('oc_sb.cancel', $o->ocsbid) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PUT')
                                     <a class="badge bg-danger btn-cancel-oc" data-ocsbid="{{ $o->ocsbid }}" data-tooltip="true" data-bs-placement="top" title="Cancel" style="cursor: pointer;">
