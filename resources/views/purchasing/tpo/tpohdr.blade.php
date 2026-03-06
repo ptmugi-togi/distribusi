@@ -42,7 +42,7 @@
                   <tbody>
                     @foreach ($tpohdr as $tpo)
                     <tr>
-                      <td class="text-center">{{ $tpo->pono }}</td>
+                      <td>{{ $tpo->pono }}</td>
                       <td class="text-center">{{ $tpo->potype ?? '-' }}</td>
                       <td>{{ $tpo->vendor->supna ?? '-' }}</td>
                       <td class="text-center" data-order="{{ \Carbon\Carbon::parse($tpo->podat)->format('Y-m-d') }}">
