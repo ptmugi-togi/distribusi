@@ -92,6 +92,7 @@ class OcSbController extends Controller
             OcSbHdr::create([
                 'ocsbid' => $ocsbid,
                 'depo' => $request->depo,
+                'bracoformc' => $request->braco . $request->formc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
                 'sorno' => strtoupper($request->sorno),
@@ -122,6 +123,7 @@ class OcSbController extends Controller
             foreach ($request->opron as $i => $useOpron) {
                 OcSbDtl::create([
                     'ocsbid' => $ocsbid,
+                    'bracoformc' => $request->braco . $request->formc,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
                     'sorno' => strtoupper($request->sorno),
@@ -346,6 +348,7 @@ class OcSbController extends Controller
             foreach ($request->opron as $i => $useOpron) {
                 OcSbDtl::create([
                     'ocsbid' => $ocsbid,
+                    'bracoformc' => $request->braco . $request->formc,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
                     'sorno' => strtoupper($request->sorno),

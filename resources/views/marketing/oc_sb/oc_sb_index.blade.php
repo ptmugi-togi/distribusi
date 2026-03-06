@@ -55,12 +55,12 @@
                                 <p class="badge bg-danger">CANCELED</p>
                               @endif
                               {{-- preview --}}
-                              {{-- <a href="{{ route('oc.previewOc', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                              <a href="{{ route('oc.previewOcSb', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
 
                               {{-- print --}}
                               @if (!$periodClosed && $o->braco == auth()->user()->cabang)
                                 @if ($o->resta != 'C')
-                                  <a href="{{ route('oc.printOc', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                  <a href="{{ route('oc.printOcSb', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                 @endif
                                 <a href="/oc-sb/{{ $o->ocsbid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 
@@ -173,9 +173,9 @@
           let date = new Date(this.value);
 
           if (!isNaN(date)) {
-              let month = String(date.getMonth() + 1).padStart(2, '0');
-              let year  = date.getFullYear();
-              $('#cancp').val(month + year);
+            let year  = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            $('#cancp').val(year + month);
           }
       });
 

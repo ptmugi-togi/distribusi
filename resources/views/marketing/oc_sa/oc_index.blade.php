@@ -173,9 +173,9 @@
           let date = new Date(this.value);
 
           if (!isNaN(date)) {
-              let month = String(date.getMonth() + 1).padStart(2, '0');
-              let year  = date.getFullYear();
-              $('#cancp').val(month + year);
+            let year  = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            $('#cancp').val(year + month);
           }
       });
 
