@@ -113,7 +113,7 @@
 
                         <div class="col-md-6 mt-3">
                             <label for="insdt-oc-{{ $i }}" class="form-label">Planned Installation Date</label>
-                            <input type="date" class="form-control" name="insdt" id="insdt" value="{{ $detail->insdt }}">
+                            <input type="date" class="form-control" name="insdt[]" id="insdt" value="{{ $detail->insdt }}">
                         </div>
 
                         <hr class="my-4">
