@@ -247,6 +247,11 @@
                                     <label class="form-label">Install by Branch</label>
                                     <input type="text" class="form-control" value="{{ $detail->insby }} - {{ $detail->mbranch->brana ?? '-' }}" disabled>
                                 </div>
+                                
+                                <div class="col-md-6 mt-3">
+                                    <label for="insdt" class="form-label">Planned Installation Date</label>
+                                    <input type="text" class="form-control" name="insdt" id="insdt" value="{{ \Carbon\Carbon::parse($detail->insdt)->format('d/m/Y') }}" disabled>
+                                </div>
 
                                 <hr class="my-4">
 

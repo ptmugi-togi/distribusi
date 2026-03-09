@@ -87,12 +87,13 @@ class OcSbController extends Controller
 
         try {
             $ocsbid = $request->braco . $request->formc . strtoupper($request->sorno);
+            $bracoformc = $request->braco . $request->formc;
 
             // Simpan header
             OcSbHdr::create([
                 'ocsbid' => $ocsbid,
                 'depo' => $request->depo,
-                'bracoformc' => $request->braco . $request->formc,
+                'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
                 'sorno' => strtoupper($request->sorno),
@@ -137,6 +138,7 @@ class OcSbController extends Controller
                     'teknik' => $request->teknik[$i] ?? 0,
                     'insby' => $request->insby[$i],
                     'putama' => $request->putama[$i],
+                    'insdt' => $request->insdt[$i],
                     'delto' => $request->delto[$i],
                     'noted' => $request->noted_installation[$i],
                 ]);
@@ -329,6 +331,7 @@ class OcSbController extends Controller
 
         try {
             $ocsbid = $request->braco . $request->formc . strtoupper($request->sorno);
+            $bracoformc = $request->braco . $request->formc;
 
             // update header
             OcSbHdr::where('ocsbid', $ocsbid)->update([
@@ -362,6 +365,7 @@ class OcSbController extends Controller
                     'teknik' => $request->teknik[$i] ?? 0,
                     'insby' => $request->insby[$i],
                     'putama' => $request->putama[$i],
+                    'insdt' => $request->insdt[$i],
                     'delto' => $request->delto[$i],
                     'noted' => $request->noted_installation[$i],
                 ]);

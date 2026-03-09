@@ -91,6 +91,11 @@
                             </select>
                         </div>
 
+                        <div class="col-md-6 mt-3">
+                            <label for="insdt-oc-${i}" class="form-label">Planned Installation Date</label>
+                            <input type="date" class="form-control" name="insdt[]" id="insdt-oc-${i}"></input>
+                        </div>
+
                         <hr class="my-4">
                         <h5>Installation Site</h5>
 
