@@ -118,7 +118,7 @@
                 <b>TANGGAL OC</b> <br>
                 <b>SALES REP</b> <br>
                 <b>INDUSTRY</b> <br>
-                <b>RENCANA CUTT-OFF</b> <br>
+                <b>RENCANA CUT-OFF</b> <br>
                 <b>DISPOSISI EB</b> <br>
                 <b>MATA UANG</b>
             </td>
@@ -144,7 +144,7 @@
                 {{ \Carbon\Carbon::parse($ocsbhdr->sordt)->format('d-m-Y') }}<br>
                 {{ $ocsbhdr->msreno->srena }}<br>
                 {{ $mcindu?->descr_cindu ?? '-' }}<br>
-                {{ $ocsbhdr->pcuto }}<br>
+                {{ \Carbon\Carbon::parse($ocsbhdr->pcuto)->format('d-m-Y') }}<br>
                 {{ $ocsbhdr->nodeb }}<br>
                 {{ $ocsbhdr->curco }}
             </td>
