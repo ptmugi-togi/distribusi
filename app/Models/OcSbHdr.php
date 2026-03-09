@@ -65,6 +65,11 @@ class OcSbHdr extends Model
         return $this->hasMany(OcSbDtl::class, 'ocsbid', 'ocsbid');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(Tprojd::class, 'ocsbid', 'ocsbid');
+    }
+
     public function mbranch()
     {
         return $this->belongsTo(Mbranch::class, 'braco', 'braco');

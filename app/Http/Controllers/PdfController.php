@@ -640,7 +640,7 @@ class PdfController extends Controller
 
         $mcindu = Mcindu::where('cindu', $ochdr->mcusmas->cindu)->first();
 
-        $html = view('marketing.oc_sa.oc_print', compact('ochdr', 'delto', 'mcindu'))->render();
+        $html = view('marketing.oc_sa.oc_print', compact('ochdr', 'mcindu'))->render();
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
@@ -710,5 +710,82 @@ class PdfController extends Controller
         return response($pdfContent)
         ->header('Content-Type', 'application/pdf')
         ->header('Content-Disposition', 'attachment; filename="'.$ochdr->ocid.'.pdf"');
+    }
+
+    public function previewOcSb($id)
+    {
+        $ocsbhdr = \App\Models\OcSbHdr::with([
+            'ocsbdtls.mpromas',
+            'mformcode',
+            'msreno',
+            'mcusmas',
+            'mtaxes',
+            'mdepo',
+            'invoices'
+        ])->findOrFail($id);
+
+        $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();
+
+        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu'))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
+        $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output(); 
+    }
+
+    public function printOcSb($id) 
+    {
+        $ocsbhdr = \App\Models\OcSbHdr::with([
+            'ocsbdtls.mpromas',
+            'mformcode',
+            'msreno',
+            'mcusmas',
+            'mtaxes',
+            'mdepo',
+            'invoices'
+        ])->findOrFail($id);
+
+        $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();;
+
+        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu'))->render();
+
+        // increment counter total print
+        DB::table('tproja')
+        ->where('ocsbid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new Mpdf();
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+
+        $mpdf->WriteHTML($html);
+
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $pdfContent = $mpdf->Output("{$ocsbhdr->ocsbid}.pdf", "S");
+
+        return response($pdfContent)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'attachment; filename="'.$ocsbhdr->ocsbid.'.pdf"');
     }
 }   

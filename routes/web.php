@@ -274,5 +274,5 @@ Route::get('/get-bom-by-oc', [OcSbController::class, 'getBomByOc'])->middleware(
 Route::put('/oc-sb/{id}', [OcSbController::class,'update'])->middleware('auth')->name('oc_sb.update');
 Route::put('/oc-sb/{id}/cancel', [OcSbController::class,'cancel'])->middleware('auth')->name('oc_sb.cancel');
 Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middleware('auth')->name('oc_sb.delete');
-// Route::get('/oc/previewOc/{id}', [PdfController::class, 'previewOc'])->name('oc.previewOc');
-// Route::get('/oc/printOc/{id}', [PdfController::class, 'printOc'])->name('oc.printOc');
+Route::get('/oc/previewOcSb/{id}', [PdfController::class, 'previewOcSb'])->name('oc.previewOcSb');
+Route::get('/oc/printOcSb/{id}', [PdfController::class, 'printOcSb'])->name('oc.printOcSb');

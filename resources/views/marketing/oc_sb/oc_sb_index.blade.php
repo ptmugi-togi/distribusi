@@ -59,9 +59,9 @@
 
                               {{-- print --}}
                               @if (!$periodClosed && $o->braco == auth()->user()->cabang)
-                                {{-- @if ($o->resta != 'C')
+                                @if ($o->resta != 'C')
                                   <a href="{{ route('oc.printOcSb', $o->ocsbid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                @endif --}}
+                                @endif
                                 <a href="/oc-sb/{{ $o->ocsbid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 
                                 @if ($o->resta != 'C')
