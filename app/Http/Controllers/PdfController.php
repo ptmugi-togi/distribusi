@@ -726,7 +726,21 @@ class PdfController extends Controller
 
         $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();
 
-        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu'))->render();
+        $bomList = DB::table('tprojc')
+            ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
+            ->where('tprojc.ocsbid', $id)
+            ->select(
+                'tprojc.uopron',
+                'tprojc.opron',
+                'tprojc.trqty',
+                'tprojc.stdqu',
+                'mpromas.prona'
+            )
+            ->orderBy('tprojc.opron')
+            ->get()
+            ->groupBy('uopron');
+
+        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu', 'bomList'))->render();
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
@@ -759,9 +773,23 @@ class PdfController extends Controller
             'invoices'
         ])->findOrFail($id);
 
-        $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();;
+        $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();
 
-        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu'))->render();
+        $bomList = DB::table('tprojc')
+    ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
+    ->where('tprojc.ocsbid', $id)
+    ->select(
+        'tprojc.uopron',
+        'tprojc.opron',
+        'tprojc.trqty',
+        'tprojc.stdqu',
+        'mpromas.prona'
+    )
+    ->orderBy('tprojc.opron')
+    ->get()
+    ->groupBy('uopron');
+
+        $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu', 'bomList'))->render();
 
         // increment counter total print
         DB::table('tproja')

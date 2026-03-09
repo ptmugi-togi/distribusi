@@ -156,9 +156,7 @@
         <thead>
             <tr>
                 <th style="width: 5%">NO.</th>
-                <th style="width: 13%">KODE PRODUK</th>
-                <th style="width: 8%">MERK</th>
-                <th style="width: 28%">NAMA PRODUK</th>
+                <th style="width: 49%">PRODUK</th>
                 <th style="width: 11%">JUMLAH</th>
                 <th style="width: 11%">HARGA SATUAN</th>
                 <th style="width: 10%">DISCOUNT</th>
@@ -188,18 +186,16 @@
     
                 <tr>
                     <td class="center">{{ $i + 1 }}.</td>
-                    <td class="center">{{ $d->opron }}</td>
-                    <td class="center">{{ $d->mpromas->brand_name }}</td>
-    
                     <td>
+                        <b>{{ $d->mpromas->opron ?? '-' }} </b>
                         <b>{{ $d->mpromas->prona ?? '-' }}</b>
     
                         <table class="no-border" style="margin-left: 5px; overflow: wrap;">
-                            <tr><td>INSTALLATION BY: {{ $d->insby ?? '-' }}</td></tr>
-                            <tr><td>Planned Ins Date: {{ $d->insdt ?? '-' }}</td></tr>
+                            <tr><td style="padding:0;">INSTALLATION BY: {{ $d->insby ?? '-' }}</td></tr>
+                            <tr><td style="padding:0;">Planned Ins Date: {{ $d->insdt ?? '-' }}</td></tr>
                             @if ($d->qtyor > 1)
                                 <tr>
-                                    <td>
+                                    <td style="padding:0;">
                                         PL : {{ $ocsbhdr->curco }}
                                         {{ formatNumberOnly($d->plist, $ocsbhdr->curco) }}
                                         X {{ $d->qtyor }}
@@ -208,15 +204,35 @@
                                 </tr>
                             @else
                                 <tr>
-                                    <td>
+                                    <td style="padding:0;">
                                         PL : {{ $ocsbhdr->curco }}
                                         {{ formatNumberOnly($d->plist, $ocsbhdr->curco) }}
                                     </td>
                                 </tr>
                             @endif
+
+                            @if(isset($bomList[$d->opron]) && $bomList[$d->opron]->count())
+                                <tr>
+                                    <td style="padding:0; padding-top:5px;">
+                                        <b>CONSIST OF GOODS :</b>
+                                        <table style="width:100%; border-collapse:collapse; font-size:9px;">
+                                        @foreach($bomList[$d->opron] as $bom)
+                                        <tr>
+                                            <td style="width:80%; padding:0;">
+                                                - {{ $bom->opron }} {{ $bom->prona }}
+                                            </td>
+                                            <td style="width:20%; text-align:right; padding:0;">
+                                                {{ $bom->trqty }} {{ $bom->stdqu }}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        </table>
+                                    </td>
+                                </tr>
+                            @endif
     
                             @if(!empty($d->noted))
-                                <tr><td>{{ $d->noted }}</td></tr>
+                                <tr><td style="padding:0; padding-top:5px;">{{ $d->noted }}</td></tr>
                             @endif
                         </table>
                     </td>
@@ -224,10 +240,8 @@
                     <td class="center">{{ $d->qtyor }} {{ $d->mpromas->stdqu}}</td>
                     <td class="right">{{ formatNumberOnly($price, $ocsbhdr->curco) }}</td>
     
-                    {{-- DISCOUNT (nominal per unit sesuai data) --}}
                     <td class="right">{{ formatNumberOnly($odisp, $ocsbhdr->curco) }}</td>
     
-                    {{-- GROSS AMOUNT kolom kamu isinya NET per row (setelah diskon) --}}
                     <td class="right">{{ formatNumberOnly($netRow, $ocsbhdr->curco) }}</td>
                 </tr>
             @endforeach
@@ -237,9 +251,9 @@
     <table class="no-border" width="100%" style="margin-top:5px; font-size:10px;">
         <tr>
             <td width="3%"></td>
-            <td width="25%"><b>RENCANA FAKTUR :</b></td>
+            <td width="33%"><b>RENCANA FAKTUR :</b></td>
             <td width="8%"></td>
-            <td width="64%"><b>SPLIT QUOTA :</b></td>
+            <td width="56%"><b>SPLIT QUOTA :</b></td>
         </tr>
 
         @foreach ($ocsbhdr->invoices as $i => $inv)
@@ -249,7 +263,6 @@
             </td>
             <td>
                 {{ \Carbon\Carbon::parse($ocsbhdr->sordt)->format('d-m-Y') }}
-                {{ $inv->toppc }}%
                 {{ $inv->descr }}
             </td>
 
@@ -266,7 +279,7 @@
                     @endphp
 
                     @if ($inv->$p)
-                        {{ $inv->$p }}% / {{ $inv->$tb }} / {{ $inv->$ts }}&nbsp;&nbsp;
+                        {{ $inv->$p }}%/{{ $inv->$tb }}/{{ $inv->$ts }}&nbsp;
                     @endif
                 @endfor
             </td>
@@ -297,7 +310,7 @@
                     </tr>
                     <tr>
                         <td>INSTALLATION</td>
-                        <td class="right">{{ $ocsbhdr->insfe != 0 ? '- ' . formatNumberOnly($ocsbhdr->insfe, $ocsbhdr->curco) : '0' }}</td>
+                        <td class="right">{{ formatNumberOnly($ocsbhdr->insfe, $ocsbhdr->curco) ?? '0' }}</td>
                     </tr>
                     <tr>
                         <td>PPN {{ $ocsbhdr->vatax }}%</td>
