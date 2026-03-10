@@ -146,8 +146,7 @@
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
-                    <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-{{ $i }}" maxlength="200">{{ old('noted_installation.'.$i) }}</textarea>
-                    <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
+                    <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-{{ $i }}">{{ old('noted_installation.'.$i) }}</textarea>
                 </div>
             </div>
           </div>
@@ -472,8 +471,7 @@
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-${i}" maxlength="200">{{ old('noted_installation.'.$i) }}</textarea>
-                            <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
+                            <textarea type="text" class="form-control" name="noted_installation[]" id="noted-oc-${i}">{{ old('noted_installation.'.$i) }}</textarea>
                         </div>
                     </div>
                 </div>

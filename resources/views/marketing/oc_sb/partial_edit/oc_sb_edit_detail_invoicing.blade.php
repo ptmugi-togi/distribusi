@@ -76,7 +76,7 @@
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="noted_invoicing[]" maxlength="200">{{ $dinv->noted }}</textarea>
+                            <textarea class="form-control" name="noted_invoicing[]">{{ $dinv->noted }}</textarea>
                         </div>
                     </div>
                 </div>

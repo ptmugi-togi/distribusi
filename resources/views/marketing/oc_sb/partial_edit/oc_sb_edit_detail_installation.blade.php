@@ -161,8 +161,7 @@
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="noted-oc-{{ $i }}" name="noted_installation[]" maxlength="200">{{ $detail->noted }}</textarea>
-                            <div class="form-text text-danger text-end" style="font-size:0.7rem;"> Maksimal 200 karakter
+                            <textarea class="form-control" id="noted-oc-{{ $i }}" name="noted_installation[]">{{ $detail->noted }}</textarea>
                             </div>
                         </div>
                     </div>

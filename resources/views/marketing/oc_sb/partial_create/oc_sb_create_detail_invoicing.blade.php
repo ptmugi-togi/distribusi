@@ -23,6 +23,7 @@
                 <div class="col-md-6 mt-3">
                     <label for="descr" class="form-label">Deskripsi Termin</label><span class="text-danger"> *</span>
                     <input type="text" class="form-control" name="descr[]" id="descr_oc_{{ $i }}" value="{{ old('descr.' .$i) }}" required>
+                    <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -73,8 +74,7 @@
 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
-                    <textarea type="text" class="form-control" name="noted_invoicing[]" id="noted-oc-{{ $i }}" maxlength="200">{{ old('noted_invoicing.'.$i) }}</textarea>
-                    <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
+                    <textarea type="text" class="form-control" name="noted_invoicing[]" id="noted-oc-{{ $i }}">{{ old('noted_invoicing.'.$i) }}</textarea>
                 </div>
             </div>
           </div>
@@ -557,8 +557,7 @@
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea type="text" class="form-control" name="noted_invoicing[]" id="noted-oc-${i}" maxlength="200">{{ old('noted_invoicing.'.$i) }}</textarea>
-                            <div class="form-text text-danger text-end" style="font-size:0.7rem;">Maksimal 200 karakter</div>
+                            <textarea type="text" class="form-control" name="noted_invoicing[]" id="noted-oc-${i}">{{ old('noted_invoicing.'.$i) }}</textarea>
                         </div>
                     </div>
                 </div>
