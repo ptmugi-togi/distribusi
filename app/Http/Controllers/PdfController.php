@@ -776,18 +776,18 @@ class PdfController extends Controller
         $mcindu = Mcindu::where('cindu', $ocsbhdr->mcusmas->cindu)->first();
 
         $bomList = DB::table('tprojc')
-    ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
-    ->where('tprojc.ocsbid', $id)
-    ->select(
-        'tprojc.uopron',
-        'tprojc.opron',
-        'tprojc.trqty',
-        'tprojc.stdqu',
-        'mpromas.prona'
-    )
-    ->orderBy('tprojc.opron')
-    ->get()
-    ->groupBy('uopron');
+            ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
+            ->where('tprojc.ocsbid', $id)
+            ->select(
+                'tprojc.uopron',
+                'tprojc.opron',
+                'tprojc.trqty',
+                'tprojc.stdqu',
+                'mpromas.prona'
+            )
+            ->orderBy('tprojc.opron')
+            ->get()
+            ->groupBy('uopron');
 
         $html = view('marketing.oc_sb.oc_sb_print', compact('ocsbhdr', 'mcindu', 'bomList'))->render();
 
@@ -798,7 +798,11 @@ class PdfController extends Controller
             'prctr' => DB::raw('prctr + 1')
         ]);
 
-        $mpdf = new Mpdf();
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
 
         $mpdf->SetHTMLFooter('
             <div style="text-align:right; font-size:9pt;">

@@ -100,6 +100,9 @@
                 @if (!empty($ocsbhdr->mcusmas->offad3))
                     {{ $ocsbhdr->mcusmas->offad3 }} <br>
                 @endif
+                @if (!empty($ocsbhdr->mcusmas->offad4))
+                    {{ $ocsbhdr->mcusmas->offad4 }} <br>
+                @endif
                 @if (!empty($ocsbhdr->mcusmas->opost))
                     {{ $ocsbhdr->mcusmas->opost }} <br>
                 @endif
@@ -251,9 +254,9 @@
     <table class="no-border" width="100%" style="margin-top:5px; font-size:10px;">
         <tr>
             <td width="3%"></td>
-            <td width="33%"><b>RENCANA FAKTUR :</b></td>
-            <td width="8%"></td>
-            <td width="56%"><b>SPLIT QUOTA :</b></td>
+            <td width="36%"><b>RENCANA FAKTUR :</b></td>
+            <td width="14%"></td>
+            <td width="47%"><b>SPLIT QUOTA :</b></td>
         </tr>
 
         @foreach ($ocsbhdr->invoices as $i => $inv)
@@ -288,17 +291,12 @@
     </table>
 </div>
 
-<div class="footer-summary">
+<div class="">
     <div style="border-top:1px dashed #00000049; margin-bottom:5px; padding-top: 5px;"></div>
-
     <table class="no-border" style="margin-top:5px;">
         <tr>
-            <td style="width:60%; vertical-align:top">
-                <b>REMARK:</b><br>
-                {{ $ocsbhdr->noteh }}
-            </td>
-
-            <td style="width:40%">
+            <td style="width:60%;"></td>
+            <td style="width:40%; vertical-align:top">
                 <table class="no-border">
                     <tr>
                         <td>TOTAL GROSS</td>
@@ -321,6 +319,20 @@
                         <td class="right">{{ formatNumberOnly($ocsbhdr->billv, $ocsbhdr->curco) }}</td>
                     </tr>
                 </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="footer-summary">
+    <table class="no-border" style="margin-top:5px;">
+        <tr>
+            <td style="width:60%; vertical-align:top">
+                <b>REMARK:</b><br>
+                {!! nl2br(e($ocsbhdr->noteh)) !!}
+            </td>
+
+            <td style="width:40%; vertical-align:top">
             </td>
         </tr>
     </table>
