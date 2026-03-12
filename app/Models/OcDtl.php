@@ -31,6 +31,7 @@ class OcDtl extends Model
         'tobed',
         'plist',
         'price',
+        'gross',
         'odisp',
         'odisa',
         'teknik',

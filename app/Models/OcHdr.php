@@ -41,6 +41,7 @@ class OcHdr extends Model
         'ebtyp',
         'edisp',
         'edisa',
+        'gross',
         'sqper',
         'sqtbr',
         'sqtsr',

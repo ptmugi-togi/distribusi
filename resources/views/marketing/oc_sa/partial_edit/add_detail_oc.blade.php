@@ -51,7 +51,7 @@
 
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Official Discount</label>
-                            <input type="text" class="form-control price-input" name="odisp[]" id="odisp_oc_${i}">
+                            <input type="text" class="form-control price-input" name="odisa[]" id="odisa_oc_${i}">
                         </div>
 
                         <div class="col-md-6 mt-3">

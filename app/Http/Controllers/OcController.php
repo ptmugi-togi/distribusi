@@ -74,12 +74,14 @@ class OcController extends Controller
         DB::beginTransaction();
 
         try {
-            $ocid = $request->braco . $request->formc . $request->sorno;
 
+            $ocid = $request->braco . $request->formc . $request->sorno;
             $bracoformc = $request->braco . $request->formc;
 
-            // Simpan header
-            OcHdr::create([
+            $totalGross = 0;
+            $totalOfficialDisc = 0;
+
+            $header = OcHdr::create([
                 'ocid' => $ocid,
                 'depo' => $request->depo,
                 'bracoformc' => $bracoformc,
@@ -94,8 +96,6 @@ class OcController extends Controller
                 'curco' => $request->curco,
                 'crate' => $request->crate,
                 'ebtyp' => $request->ebtyp,
-                'edisp' => $request->edisp,
-                'edisa' => $request->edisa,
                 'nodeb' => $request->nodeb,
                 'cuspo' => $request->cuspo,
                 'dpper' => $request->dpper,
@@ -112,22 +112,30 @@ class OcController extends Controller
                 'updated_by' => Auth::user()->name,
             ]);
 
-            // Loop tiap detail barang
-            foreach ($request->opron as $i => $useOpron) {
+            foreach ($request->opron as $i => $opron) {
+
+                $qty   = (float) $request->qtyor[$i];
+                $price = (float) $request->price[$i];
+
+                $gross = $qty * $price;
+
+                $totalGross += $gross;
+
                 OcDtl::create([
                     'ocid' => $ocid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
                     'sorno' => $request->sorno,
-                    'opron' => $useOpron,
+                    'opron' => $opron,
                     'prona' => $request->prona[$i],
-                    'qtyor' => $request->qtyor[$i],
+                    'qtyor' => $qty,
                     'stdqu' => $request->stdqu[$i],
                     'rqeta' => $request->rqeta[$i],
                     'whetd' => $request->whetd[$i],
-                    'price' => $request->price[$i],
                     'plist' => $request->plist[$i],
-                    'odisp' => $request->odisp[$i],
+                    'price' => $price,
+                    'gross' => $gross,
+                    'odisa' => $request->odisa[$i],
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
                     'putama' => $request->putama[$i],
@@ -135,16 +143,38 @@ class OcController extends Controller
                 ]);
             }
 
+            $edisp = (float) $request->edisp;
+            $edisa = (float) $request->edisa;
+
+            if ($request->ebtyp == 'P') {
+                $edisa = ($edisp / 100) * $totalGross;
+            } elseif ($request->ebtyp == 'V') {
+                $edisp = $totalGross > 0 ? ($edisa / $totalGross) * 100 : 0;
+            }
+
+            OcHdr::where('ocid', $ocid)->update([
+                'gross' => $totalGross,
+                'edisp' => $edisp,
+                'edisa' => $edisa
+            ]);
+
             DB::commit();
 
-            return redirect()->route('oc.index')->with('success', "Data OC \"$ocid\" berhasil disimpan.");
-            } catch (\Exception $e) {
-                DB::rollBack();
-                \Log::error('Gagal simpan OC:', ['error' => $e->getMessage()]);
-                return back()
+            return redirect()->route('oc.index')
+                ->with('success', "Data OC \"$ocid\" berhasil disimpan.");
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('Gagal simpan OC', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()
                 ->withInput()
                 ->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
-            } 
+        }
     }
 
     public function show(string $id)
@@ -226,9 +256,10 @@ class OcController extends Controller
                     'stdqu' => $request->stdqu[$i],
                     'rqeta' => $request->rqeta[$i],
                     'whetd' => $request->whetd[$i],
-                    'price' => $request->price[$i],
                     'plist' => $request->plist[$i],
-                    'odisp' => $request->odisp[$i],
+                    'price' => $request->price[$i],
+                    'gross' => (float) $request->price[$i] * (float) $request->qtyor[$i],
+                    'odisa' => $request->odisa[$i],
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
                     'putama' => $request->putama[$i],

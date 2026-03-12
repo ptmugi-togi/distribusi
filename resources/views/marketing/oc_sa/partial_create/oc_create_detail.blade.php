@@ -67,9 +67,9 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label for="odisp-oc-{{ $i }}" class="form-label">Official Discount</label>
-                    <input type="text" class="form-control price-input" id="odisp_display_oc_{{ $i }}" value="{{ old('odisp.'.$i) ? number_format(old('odisp.'.$i), 2, '.', '') : '' }}" data-raw-target="odisp_raw_oc_{{ $i }}">
-                    <input type="text" name="odisp[]" id="odisp_raw_oc_{{ $i }}" value="{{ old('odisp.'.$i) }}" hidden>
+                    <label for="odisa-oc-{{ $i }}" class="form-label">Official Discount</label>
+                    <input type="text" class="form-control price-input" id="odisa_display_oc_{{ $i }}" value="{{ old('odisa.'.$i) ? number_format(old('odisa.'.$i), 2, '.', '') : '' }}" data-raw-target="odisa_raw_oc_{{ $i }}">
+                    <input type="text" name="odisa[]" id="odisa_raw_oc_{{ $i }}" value="{{ old('odisa.'.$i) }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">
@@ -209,9 +209,9 @@
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Official Discount</label>
 
-                            <input type="text" class="form-control price-input" id="odisp_display_oc_${i}" data-raw-target="odisp_raw_oc_${i}">
+                            <input type="text" class="form-control price-input" id="odisa_display_oc_${i}" data-raw-target="odisa_raw_oc_${i}">
 
-                            <input type="text" name="odisp[]" id="odisp_raw_oc_${i}" hidden>
+                            <input type="text" name="odisa[]" id="odisa_raw_oc_${i}" hidden>
                         </div>
 
                         <div class="col-md-6 mt-3">
