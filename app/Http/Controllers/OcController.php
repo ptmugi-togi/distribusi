@@ -71,6 +71,7 @@ class OcController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -213,13 +214,15 @@ class OcController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // dd($request->all());
+        // dd(request()->all());
         DB::beginTransaction();
 
         try {
+
             $ocid = $request->braco . $request->formc . $request->sorno;
 
-            // update header
+            $totalGross = 0;
+
             OcHdr::where('ocid', $ocid)->update([
                 'sreno' => $request->sreno,
                 'topay' => $request->topay,
@@ -227,8 +230,6 @@ class OcController extends Controller
                 'curco' => $request->curco,
                 'crate' => $request->crate,
                 'ebtyp' => $request->ebtyp,
-                'edisp' => $request->edisp,
-                'edisa' => $request->edisa,
                 'nodeb' => $request->nodeb,
                 'dpper' => $request->dpper,
                 'sqper' => $request->sqper,
@@ -240,25 +241,31 @@ class OcController extends Controller
                 'updated_by' => Auth::user()->name,
             ]);
 
-            // hapus detail
             OcDtl::where('ocid', $ocid)->delete();
 
-            // Loop tiap detail barang
-            foreach ($request->opron as $i => $useOpron) {
+            foreach ($request->opron as $i => $opron) {
+
+                $qty   = (float) $request->qtyor[$i];
+                $price = (float) $request->price[$i];
+
+                $gross = $qty * $price;
+
+                $totalGross += $gross;
+
                 OcDtl::create([
                     'ocid' => $ocid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
                     'sorno' => $request->sorno,
-                    'opron' => $useOpron,
+                    'opron' => $opron,
                     'prona' => $request->prona[$i],
-                    'qtyor' => $request->qtyor[$i],
+                    'qtyor' => $qty,
                     'stdqu' => $request->stdqu[$i],
                     'rqeta' => $request->rqeta[$i],
                     'whetd' => $request->whetd[$i],
                     'plist' => $request->plist[$i],
-                    'price' => $request->price[$i],
-                    'gross' => (float) $request->price[$i] * (float) $request->qtyor[$i],
+                    'price' => $price,
+                    'gross' => $gross,
                     'odisa' => $request->odisa[$i],
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
@@ -267,14 +274,37 @@ class OcController extends Controller
                 ]);
             }
 
+            $edisp = (float) $request->edisp;
+            $edisa = (float) $request->edisa;
+
+            if ($request->ebtyp == 'P') {
+                $edisa = ($edisp / 100) * $totalGross;
+            } elseif ($request->ebtyp == 'V') {
+                $edisp = $totalGross > 0 ? ($edisa / $totalGross) * 100 : 0;
+            }
+
+            OcHdr::where('ocid', $ocid)->update([
+                'gross' => $totalGross,
+                'edisp' => $edisp,
+                'edisa' => $edisa
+            ]);
+
             DB::commit();
-            return redirect()->route('oc.index')->with('success', "Data OC \"$ocid\" berhasil dirubah.");
+
+            return redirect()->route('oc.index')
+                ->with('success', "Data OC \"$ocid\" berhasil dirubah.");
+
         } catch (\Exception $e) {
+
             DB::rollBack();
-            \Log::error('Gagal ubah OC:', ['error' => $e->getMessage()]);
+
+            Log::error('Gagal ubah OC:', [
+                'error' => $e->getMessage()
+            ]);
+
             return back()
-            ->withInput()
-            ->with('error', 'Terjadi kesalahan saat mengubah: ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat mengubah: ' . $e->getMessage());
         }
     }
 

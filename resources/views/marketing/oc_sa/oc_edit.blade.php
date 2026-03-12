@@ -144,7 +144,7 @@
                     <div class="col-md-4 mt-3">
                         <label for="sqtsr" class="form-label">Sales Rep.</label>
                         <select name="sqtsr" id="sqtsr" class="form-control select2">
-                            <option value="{{ $oc->sqtsr }}" selected>{{ $oc->sqtsr }} - {{ $oc->msreno->srena }}</option>
+                            <option value="{{ $oc->sqtsr }}" selected>{{ $oc->sqtsr }} - {{ $oc->msreno_split->srena ?? '' }}</option>
                         </select>
                     </div>
 
@@ -254,8 +254,8 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label for="odisp" class="form-label">Official Discount</label>
-                                        <input type="text" class="form-control price-input" name="odisp[]" id="odisp-oc-{{ $i }}" value="{{ $detail->odisp ?? '-' }}">
+                                        <label for="odisa" class="form-label">Official Discount</label>
+                                        <input type="text" class="form-control price-input" name="odisa[]" id="odisa-oc-{{ $i }}" value="{{ $detail->odisa ?? '-' }}">
                                     </div>
 
                                     <div class="col-md-6 mt-3">

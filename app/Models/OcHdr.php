@@ -91,6 +91,11 @@ class OcHdr extends Model
         return $this->belongsTo(Msreno::class, 'sreno', 'sreno');
     }
 
+    public function msreno_split()
+    {
+        return $this->belongsTo(Msreno::class, 'sqtsr', 'sreno');
+    }
+
     public function mtaxes()
     {
         return $this->belongsTo(Mtaxes::class, 'braco', 'braco');
