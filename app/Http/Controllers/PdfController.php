@@ -10,7 +10,7 @@ use App\Models\BbkHdr;
 use App\Models\BpbHdr;
 use App\Models\TaHdr;
 use App\Models\WoHdr;
-use App\Models\Mstmas;
+use App\Models\MstMas;
 use App\Models\Mcindu;
 use Mpdf\Mpdf;
 
@@ -633,7 +633,7 @@ class PdfController extends Controller
             'mdepo'
         ])->findOrFail($id);
 
-        $delto = Mstmas::where('braco', $ochdr->braco)
+        $delto = MstMas::where('braco', $ochdr->braco)
         ->where('cusno', $ochdr->cusno)
         ->where('shpto', $ochdr->delto)
         ->first();
@@ -670,7 +670,7 @@ class PdfController extends Controller
             'mdepo'
         ])->findOrFail($id);
 
-        $delto = Mstmas::where('braco', $ochdr->braco)
+        $delto = MstMas::where('braco', $ochdr->braco)
         ->where('cusno', $ochdr->cusno)
         ->where('shpto', $ochdr->delto)
         ->first();
