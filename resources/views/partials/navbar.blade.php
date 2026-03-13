@@ -6,6 +6,7 @@
         <a class="nav-link " href="/">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
+          <h1>testt</h1>
         </a>
       </li><!-- End Dashboard Nav -->
 
