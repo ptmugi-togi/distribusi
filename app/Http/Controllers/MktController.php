@@ -79,12 +79,11 @@ class MktController extends Controller
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
             'd.qtyor as qty',
-            DB::raw("(d.qtyor * d.price) as gross"),
+            DB::raw("(d.qtyor * (d.price - COALESCE(d.teknik,0))) as gross"),
             DB::raw("COALESCE(d.odisa,0) as disc"),
             DB::raw("COALESCE(h.edisa,0) as edisa"),
             DB::raw("(COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) as totalDisc"),
-            DB::raw("(((COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) / (d.qtyor * d.price)) * 100) as discp"),
-            DB::raw("((d.qtyor * d.price) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
+            DB::raw("((d.qtyor * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
         );
 
         // SB
@@ -107,12 +106,11 @@ class MktController extends Controller
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
             'd.qtyor as qty',
-            DB::raw("(d.qtyor * d.price) as gross"),
+            DB::raw("(d.qtyor * (d.price - COALESCE(d.teknik,0))) as gross"),
             DB::raw("COALESCE(d.odisa,0) as disc"),
             DB::raw("COALESCE(h.edisa,0) as edisa"),
             DB::raw("(COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) as totalDisc"),
-            DB::raw("(((COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) / (d.qtyor * d.price)) * 100) as discp"),
-            DB::raw("((d.qtyor * d.price) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
+            DB::raw("((d.qtyor * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
         );
 
         return DB::query()

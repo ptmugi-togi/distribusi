@@ -110,7 +110,7 @@
                         <th rowspan="2" class="right">GROSS AMOUNT</th>
                         <th rowspan="2" class="right">OFFICIAL DISCOUNT</th>
                         <th rowspan="2" class="right">EXTRA BONUS</th>
-                        <th colspan="2" class="center">TOTAL DISC + BONUS</th>
+                        <th colspan="2" class="center">TOTAL DISC + EB</th>
                         <th rowspan="2" class="right">NET AMOUNT</th>
                     </tr>
 
@@ -123,32 +123,41 @@
                 <tbody>
                     @php
                         $current = '';
+                        $qty = 0;
                         $gross = 0;
                         $odisa = 0;
                         $edisa = 0;
                         $totalDisc = 0;
-                        $discp = 0;
                         $total = 0;
+
+                        // GRAND TOTAL
+                        $gt_qty = 0;
+                        $gt_gross = 0;
+                        $gt_odisa = 0;
+                        $gt_edisa = 0;
+                        $gt_totalDisc = 0;
+                        $gt_total = 0;
                     @endphp
 
                     @foreach($items as $row)
 
                         @if($current != $row->sreno && $current != null)
                             <tr>
-                                <td colspan="6"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
+                                <td colspan="5"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
+                                <td class="center"><b>{{ $qty }}</b></td>
                                 <td class="right"><b>{{ number_format($gross,0,',','.') }}</b></td>
                                 <td class="right"><b>{{ number_format($odisa,0,',','.') }}</b></td>
                                 <td class="right"><b>{{ number_format($edisa,0,',','.') }}</b></td>
                                 <td class="right"><b>{{ number_format($totalDisc,0,',','.') }}</b></td>
-                                <td class="right"><b>{{ number_format($discp,0,',','.') }}</b></td>
+                                <td class="right"><b>{{ $gross != 0 ? number_format(($totalDisc / $gross) * 100,2) : 0 }}%</b></td>
                                 <td class="right"><b>{{ number_format($total,0,',','.') }}</b></td>
                             </tr>
                             @php
                                 $gross = 0;
+                                $qty = 0;
                                 $odisa = 0;
                                 $edisa = 0;
                                 $totalDisc = 0;
-                                $discp = 0;
                                 $total = 0;
                             @endphp
                         @endif
@@ -164,29 +173,49 @@
                             <td class="right">{{ number_format($row->disc,0,',','.') }}</td>
                             <td class="right">{{ number_format($row->edisa,0,',','.') }}</td>
                             <td class="right">{{ number_format($row->totalDisc,0,',','.') }}</td>
-                            <td class="right">{{ number_format($row->discp,2) }}%</td>
+                            <td class="right">{{ $gross != 0 ? number_format(($totalDisc / $gross) * 100,2) : 0 }}%</td>
                             <td class="right">{{ number_format($row->net,0,',','.') }}</td>
                         </tr>
 
                         @php
                             $current = $row->sreno;
+                            $qty += $row->qty;
                             $gross += $row->gross;
                             $odisa += $row->disc;
                             $edisa += $row->edisa;
                             $totalDisc += $row->totalDisc;
-                            $discp += $row->discp;
                             $total += $row->net;
+
+                            // GRAND TOTAL
+                            $gt_qty += $row->qty;
+                            $gt_gross += $row->gross;
+                            $gt_odisa += $row->disc;
+                            $gt_edisa += $row->edisa;
+                            $gt_totalDisc += $row->totalDisc;
+                            $gt_total += $row->net;
                         @endphp
                     @endforeach
 
                     <tr>
-                        <td colspan="6"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
+                        <td colspan="5"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
+                        <td class="right"><b>{{ $qty }}</b></td>
                         <td class="right"><b>{{ number_format($gross,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($odisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($edisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($totalDisc,0,',','.') }}</b></td>
-                        <td class="right"><b>{{ number_format($discp,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ $gross != 0 ? number_format(($totalDisc / $gross) * 100,2) : 0 }}%</b></td>
                         <td class="right"><b>{{ number_format($total,0,',','.') }}</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="5"><b>Grand Total</b></td>
+                        <td class="right"><b>{{ $gt_qty }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_gross,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_odisa,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_edisa,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_totalDisc,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ $gt_gross != 0 ? number_format(($gt_totalDisc / $gt_gross) * 100,2) : 0 }}%</b></td>
+                        <td class="right"><b>{{ number_format($gt_total,0,',','.') }}</b></td>
                     </tr>
                 </tbody>
             </table>
