@@ -36,6 +36,7 @@ use App\Http\Controllers\OsrController;
 use App\Http\Controllers\WoController;
 use App\Http\Controllers\MstmasController;
 use App\Http\Controllers\OcSbController;
+use App\Http\Controllers\MktController;
 
 /*
 |--------------------------------------------------------------------------
@@ -276,3 +277,6 @@ Route::put('/oc-sb/{id}/cancel', [OcSbController::class,'cancel'])->middleware('
 Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middleware('auth')->name('oc_sb.delete');
 Route::get('/oc/previewOcSb/{id}', [PdfController::class, 'previewOcSb'])->name('oc.previewOcSb');
 Route::get('/oc/printOcSb/{id}', [PdfController::class, 'printOcSb'])->name('oc.printOcSb');
+
+Route::get('/mkt', [MktController::class, 'create'])->name('mkt.createMkt');
+Route::get('/mkt/preview', [MktController::class, 'previewMkt'])->name('mkt.previewMkt');

@@ -19,7 +19,7 @@
                 <a href="/register">
                 <i class="bi bi-circle"></i><span>REGISTER</span>
                 </a>
-            </li>
+          </li>
             <?php } ?>
             <li>
                 <a href="/ssgrup">
@@ -148,23 +148,19 @@
               <i class="bi bi-chevron-down ms-auto"></i>
             </a>
 
-            <ul id="subLogistic-nav" class="nav-content collapse">
+            <ul id="subLogistic-nav" class="nav-content collapse" data-bs-parent="#logistic-nav">
               <li>
                 <a href="{{ route('sms.create') }}">
                 <i class="bi bi-circle"></i><span>Stock Movement Summary</span>
                 </a>
               </li>
-            </ul>
 
-            <ul id="subLogistic-nav" class="nav-content collapse">
               <li>
                 <a href="{{ route('ss.index') }}">
                   <i class="bi bi-circle"></i><span>Stock Status</span>
                 </a>
               </li>
-            </ul>
 
-            <ul id="subLogistic-nav" class="nav-content collapse">
               <li>
                 <a href="{{ route('osr.create') }}">
                 <i class="bi bi-circle"></i><span>Outstanding Stock Requisition</span>
@@ -185,12 +181,24 @@
             <i class="bi bi-circle"></i><span>OC Retail (SA)</span>
             </a>
           </li>
-        </ul>
-        <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('oc_sb.index') }}">
             <i class="bi bi-circle"></i><span>OC Project (SB)</span>
             </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" data-bs-target="#subMarketing-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </a>
+
+              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
+                <li>
+                  <a href="{{ route('mkt.createMkt') }}">
+                  <i class="bi bi-circle"></i><span>OC Closed By Sales Rep</span>
+                  </a>
+                </li>
+              </ul>
           </li>
         </ul>
       </li>
