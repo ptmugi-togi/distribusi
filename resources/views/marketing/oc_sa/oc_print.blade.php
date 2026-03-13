@@ -220,14 +220,14 @@
     
                         <table class="no-border" style="margin-left: 5px; overflow: wrap;">
                             @if ($d->srcog == 1)
-                                <tr><td>Source of goods : Branch's Stock</td></tr>
+                                <tr><td style="padding: 0;">Source of goods : Branch's Stock</td></tr>
                             @elseif ($d->srcog == 2)
-                                <tr><td>Source of goods : Request to Head Office</td></tr>
+                                <tr><td style="padding: 0;">Source of goods : Request to Head Office</td></tr>
                             @endif
     
                             @if ($d->qtyor > 1)
                                 <tr>
-                                    <td>
+                                    <td style="padding: 0;">
                                         PL : {{ $ochdr->curco }}
                                         {{ formatNumberOnly($d->plist, $ochdr->curco) }}
                                         X {{ $d->qtyor }}
@@ -236,9 +236,19 @@
                                 </tr>
                             @else
                                 <tr>
-                                    <td>
+                                    <td style="padding: 0;">
                                         PL : {{ $ochdr->curco }}
                                         {{ formatNumberOnly($d->plist, $ochdr->curco) }}
+                                    </td>
+                                </tr>
+                            @endif
+
+                            @if (!empty($d->teknik))
+                                <tr>
+                                    <td style="padding: 0;">
+                                        Teknik : 
+                                        {{ $ochdr->curco }}
+                                        {{ formatNumberOnly($d->teknik, $ochdr->curco) }}
                                     </td>
                                 </tr>
                             @endif

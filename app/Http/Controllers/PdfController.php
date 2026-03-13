@@ -640,7 +640,7 @@ class PdfController extends Controller
 
         $mcindu = Mcindu::where('cindu', $ochdr->mcusmas->cindu)->first();
 
-        $html = view('marketing.oc_sa.oc_print', compact('ochdr', 'mcindu'))->render();
+        $html = view('marketing.oc_sa.oc_print', compact('ochdr', 'delto', 'mcindu'))->render();
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',

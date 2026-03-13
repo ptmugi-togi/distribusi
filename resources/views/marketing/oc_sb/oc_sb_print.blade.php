@@ -214,6 +214,16 @@
                                 </tr>
                             @endif
 
+                            @if (!empty($d->teknik))
+                                <tr>
+                                    <td style="padding:0;">
+                                        Teknik : 
+                                        {{ $ocsbhdr->curco }}
+                                        {{ formatNumberOnly($d->teknik, $ocsbhdr->curco) }}
+                                    </td>
+                                </tr>
+                            @endif
+
                             @if(isset($bomList[$d->opron]) && $bomList[$d->opron]->count())
                                 <tr>
                                     <td style="padding:0; padding-top:5px;">
