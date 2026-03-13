@@ -278,5 +278,5 @@ Route::delete('/oc-sb/{id}/delete', [OcSbController::class,'destroy'])->middlewa
 Route::get('/oc/previewOcSb/{id}', [PdfController::class, 'previewOcSb'])->name('oc.previewOcSb');
 Route::get('/oc/printOcSb/{id}', [PdfController::class, 'printOcSb'])->name('oc.printOcSb');
 
-Route::get('/mkt', [MktController::class, 'create'])->name('mkt.createMkt');
+Route::get('/mkt', [MktController::class, 'create'])->middleware('auth')->name('mkt.createMkt');
 Route::get('/mkt/preview', [MktController::class, 'previewMkt'])->name('mkt.previewMkt');
