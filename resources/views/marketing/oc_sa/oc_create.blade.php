@@ -241,6 +241,7 @@
             setTimeout(function(){
                 refreshAccordionTitles();
                 loadMasterProductAll();
+                restoreUnitLabels();
             }, 500);
 
             $('select[name="srcog[]"]').each(function(){
@@ -250,9 +251,19 @@
                 }
             });
 
-            $('#edisp').attr('disabled', true).val('');
-            $('#edisa_display').attr('disabled', true).val('');
-            $('#edisa_raw').attr('disabled', true).val('');
+            const oldEbType = "{{ old('ebtyp') }}";
+
+            if(oldEbType === 'P'){
+                $('#edisp').prop('disabled', false);
+                $('#edisa_display').prop('disabled', true);
+                $('#edisa_raw').prop('disabled', true);
+            }
+
+            else if(oldEbType === 'V'){
+                $('#edisp').prop('disabled', true);
+                $('#edisa_display').prop('disabled', false);
+                $('#edisa_raw').prop('disabled', false);
+            }
 
             if (!$('#curco').val()) {
                 $('#curco').val('IDR').trigger('change.select2');
@@ -513,6 +524,26 @@
                         return data.text;
                     }
                 });
+            });
+        }
+
+        function restoreUnitLabels(){
+            $('.opron-oc').each(function(){
+
+                const $select = $(this);
+                const $body = $select.closest('.accordion-body');
+
+                const prona = $body.find('.prona-oc').val();
+                const stdqu = $body.find('.stdqu-oc').val();
+
+                if(stdqu){
+                    $body.find('.unit-label-oc').text(stdqu);
+                }
+                if(prona){
+                    $body.find('.accordion-item')
+                        .find('.accordion-title')
+                        .text($select.find('option:selected').text());
+                }
             });
         }
 
