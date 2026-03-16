@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
+use App\Models\Mbranch;
 use App\Models\OcHdr;
 use App\Models\OcDtl;
 use App\Models\OcSbHdr;
@@ -200,12 +201,14 @@ class MktController extends Controller
     public function previewMkt(Request $req)
     {
         $data = $this->getData($req);
+        $branch = Mbranch::where('braco', Auth::user()->cabang)->first();
 
         $html = view('marketing.reports.mkt.mkt_preview',[
             'items'=>$data,
             'start'=>$req->sodat_s,
             'end'=>$req->sodat_e,
-            'braco'=>Auth::user()->cabang
+            'braco'=>Auth::user()->cabang,
+            'brana' => $branch->brana ?? ''
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([

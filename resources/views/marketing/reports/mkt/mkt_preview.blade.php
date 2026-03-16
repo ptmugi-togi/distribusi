@@ -66,7 +66,7 @@
                 <table class="no-border" width="100%">
                     <tr>
                         <td width="33%">
-                            <b>PT. MUGI JAKARTA-1</b><br>
+                            <b>PT. MUGI {{ $brana }}</b><br>
                         </td>
 
                         <td width="34%" class="center">
