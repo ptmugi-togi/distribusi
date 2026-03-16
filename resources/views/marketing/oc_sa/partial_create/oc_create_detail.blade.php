@@ -40,7 +40,7 @@
                         oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         <span class="input-group-text unit-label-oc"></span>
                     </div>
-                    <input type="text" class="stdqu-oc" name="stdqu[]" id="stdqu-oc-{{ $i }}" hidden>
+                    <input type="text" class="stdqu-oc" name="stdqu[]" value="{{ old('stdqu.'.$i) }}" id="stdqu-oc-{{ $i }}" hidden>
                 </div>
 
                 <div class="col-md-6 mt-3">
