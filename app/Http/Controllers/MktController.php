@@ -154,7 +154,7 @@ class MktController extends Controller
             DB::raw("($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb) as gross"),
             DB::raw("(COALESCE(d.odisa,0) * $qtySb * $factorSb) as disc"),
             DB::raw("(COALESCE(h.edisa,0) * $qtySb * $factorSb) as edisa"),
-            DB::raw("((COALESCE(d.odisa,0) * $qtySb) + (COALESCb(h.edisa,0) * $qtySb) * $factorSb) as totalDisc"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtySb) + (COALESCE(h.edisa,0) * $qtySb) * $factorSb) as totalDisc"),
             DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0))) - ((COALESCE(d.odisa,0) * $qtySb) + COALESCE(h.edisa,0))) * $factorSb as net")
         )
         ->whereRaw("$qtySb > 0");
