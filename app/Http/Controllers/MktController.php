@@ -78,6 +78,14 @@ class MktController extends Controller
                 ELSE d.qtyor
             END
         ";
+        
+        $totalGrossSa = "
+        (
+            SELECT SUM(d2.qtyor * (d2.price - COALESCE(d2.teknik,0)))
+            FROM tcored d2
+            WHERE d2.ocid = h.ocid
+        )
+        ";
 
         // split
         $factorSa = "
@@ -100,9 +108,9 @@ class MktController extends Controller
             DB::raw("$qtySa as qty"),
             DB::raw("($qtySa * (d.price - COALESCE(d.teknik,0)) * $factorSa) as gross"),
             DB::raw("(COALESCE(d.odisa,0) * $qtySa * $factorSa) as disc"),
-            DB::raw("COALESCE(h.edisa,0) * $qtySa * $factorSa as edisa"),
-            DB::raw("((COALESCE(d.odisa,0) * $qtySa) + (COALESCE(h.edisa,0) * $qtySa) * $factorSa) as totalDisc"),
-            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) * $factorSa as net")
+            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa as edisa"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtySa * $factorSa) + (($qtySa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa) as totalDisc"),
+            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0)) * $factorSa)-((COALESCE(d.odisa,0) * $qtySa * $factorSa)+(($qtySa * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa)) as net"),
         )
         ->whereRaw("$qtySa > 0");
 
@@ -124,6 +132,14 @@ class MktController extends Controller
                 THEN 0
                 ELSE d.qtyor
             END
+        ";
+
+        $totalGrossSb = "
+        (
+            SELECT SUM(d2.qtyor * (d2.price - COALESCE(d2.teknik,0)))
+            FROM tprojb d2
+            WHERE d2.ocsbid = h.ocsbid
+        )
         ";
 
         // split
@@ -153,9 +169,9 @@ class MktController extends Controller
             DB::raw("$qtySb as qty"),
             DB::raw("($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb) as gross"),
             DB::raw("(COALESCE(d.odisa,0) * $qtySb * $factorSb) as disc"),
-            DB::raw("(COALESCE(h.edisa,0) * $qtySb * $factorSb) as edisa"),
-            DB::raw("((COALESCE(d.odisa,0) * $qtySb) + (COALESCE(h.edisa,0) * $qtySb) * $factorSb) as totalDisc"),
-            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0))) - ((COALESCE(d.odisa,0) * $qtySb) + COALESCE(h.edisa,0))) * $factorSb as net")
+            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb as edisa"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtySb * $factorSb) + (($qtySb * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb) as totalDisc"),
+            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb)-((COALESCE(d.odisa,0) * $qtySb * $factorSb)+(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb)) as net"),
         )
         ->whereRaw("$qtySb > 0");
 
