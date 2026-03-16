@@ -198,7 +198,7 @@
 
                     <tr>
                         <td colspan="5"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
-                        <td class="right"><b>{{ $gross != 0 ? $qty : 0 }}</b></td>
+                        <td class="center"><b>{{ $gross != 0 ? $qty : 0 }}</b></td>
                         <td class="right"><b>{{ number_format($gross,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($odisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($edisa,0,',','.') }}</b></td>
@@ -209,7 +209,7 @@
 
                     <tr>
                         <td colspan="5"><b>Grand Total</b></td>
-                        <td class="right"><b>{{ $gt_gross != 0 ? $gt_qty : 0 }}</b></td>
+                        <td class="center"><b>{{ $gt_gross != 0 ? $gt_qty : 0 }}</b></td>
                         <td class="right"><b>{{ number_format($gt_gross,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($gt_odisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($gt_edisa,0,',','.') }}</b></td>
