@@ -77,7 +77,7 @@
 
                 <div class="col-md-4 mt-3">
                     <label for="edisp" class="form-label">EB (%)</label>
-                    <input type="text" class="form-control" id="edisp" value="{{ $oc->edisp ?? '-' }}" disabled>
+                    <input type="text" class="form-control" id="edisp" value="{{ number_format($oc->edisp, 2, '.', ',') ?? '-' }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">
