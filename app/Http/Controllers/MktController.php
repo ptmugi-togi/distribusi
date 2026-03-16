@@ -71,6 +71,25 @@ class MktController extends Controller
             $sa->where('h.sreno',$sreno);
         }
 
+        $qtySa = "
+            CASE 
+                WHEN h.sqper != 0 AND h.sqtbr != '$braco'
+                THEN 0
+                ELSE d.qtyor
+            END
+        ";
+
+        // split
+        $factorSa = "
+            CASE
+                WHEN h.sqper != 0 AND h.braco = '$braco'
+                    THEN (h.sqper / 100)
+                WHEN h.sqper != 0 AND h.braco != '$braco'
+                    THEN 0
+                ELSE 1
+            END
+        ";
+
         $sa = $sa->select(
             'h.sreno',
             DB::raw("'SA' as formc"),
@@ -78,13 +97,14 @@ class MktController extends Controller
             'h.sordt as date',
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
-            'd.qtyor as qty',
-            DB::raw("(d.qtyor * (d.price - COALESCE(d.teknik,0))) as gross"),
-            DB::raw("COALESCE(d.odisa,0) as disc"),
-            DB::raw("COALESCE(h.edisa,0) as edisa"),
-            DB::raw("(COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) as totalDisc"),
-            DB::raw("((d.qtyor * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
-        );
+            DB::raw("$qtySa as qty"),
+            DB::raw("($qtySa * (d.price - COALESCE(d.teknik,0)) * $factorSa) as gross"),
+            DB::raw("(COALESCE(d.odisa,0) * $qtySa * $factorSa) as disc"),
+            DB::raw("COALESCE(h.edisa,0) * $factorSa as edisa"),
+            DB::raw("(COALESCE(d.odisa,0) + COALESCE(h.edisa,0) * $factorSa) as totalDisc"),
+            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) * $factorSa as net")
+        )
+        ->whereRaw("$qtySa > 0");
 
         // SB
         $sb = DB::table('tproja as h')
@@ -98,6 +118,31 @@ class MktController extends Controller
             $sb->where('h.sreno',$sreno);
         }
 
+        $qtySb = "
+            CASE 
+                WHEN d.insby != '$braco'
+                THEN 0
+                ELSE d.qtyor
+            END
+        ";
+
+        // split
+        $factorSb = "
+            (
+                SELECT
+                    (
+                        CASE WHEN smqtb1 = '$braco' THEN COALESCE(smqp1,0) ELSE 0 END +
+                        CASE WHEN smqtb2 = '$braco' THEN COALESCE(smqp2,0) ELSE 0 END +
+                        CASE WHEN smqtb3 = '$braco' THEN COALESCE(smqp3,0) ELSE 0 END +
+                        CASE WHEN smqtb4 = '$braco' THEN COALESCE(smqp4,0) ELSE 0 END +
+                        CASE WHEN smqtb5 = '$braco' THEN COALESCE(smqp5,0) ELSE 0 END
+                    ) / 100
+                FROM tprojd
+                WHERE tprojd.ocsbid = h.ocsbid
+                LIMIT 1
+            )
+        ";
+
         $sb = $sb->select(
             'h.sreno',
             DB::raw("'SB' as formc"),
@@ -105,16 +150,18 @@ class MktController extends Controller
             'h.sordt as date',
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
-            'd.qtyor as qty',
-            DB::raw("(d.qtyor * (d.price - COALESCE(d.teknik,0))) as gross"),
-            DB::raw("COALESCE(d.odisa,0) as disc"),
-            DB::raw("COALESCE(h.edisa,0) as edisa"),
-            DB::raw("(COALESCE(d.odisa,0) + COALESCE(h.edisa,0)) as totalDisc"),
-            DB::raw("((d.qtyor * (d.price - COALESCE(d.teknik,0))) - (COALESCE(d.odisa,0) + COALESCE(h.edisa,0))) as net")
-        );
+            DB::raw("$qtySb as qty"),
+            DB::raw("($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb) as gross"),
+            DB::raw("(COALESCE(d.odisa,0) * $qtySb * $factorSb) as disc"),
+            DB::raw("(COALESCE(h.edisa,0) * $factorSb) as edisa"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtySb) + COALESCE(h.edisa,0)) * $factorSb as totalDisc"),
+            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0))) - ((COALESCE(d.odisa,0) * $qtySb) + COALESCE(h.edisa,0))) * $factorSb as net")
+        )
+        ->whereRaw("$qtySb > 0");
 
         return DB::query()
             ->fromSub($sa->unionAll($sb), 'x')
+            ->where('gross','>',0)
             ->orderBy('sreno')
             ->orderBy('date')
             ->get();

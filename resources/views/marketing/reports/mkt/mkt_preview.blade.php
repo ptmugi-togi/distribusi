@@ -144,7 +144,7 @@
                         @if($current != $row->sreno && $current != null)
                             <tr>
                                 <td colspan="5"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
-                                <td class="center"><b>{{ $qty }}</b></td>
+                                <td class="center"><b>{{ $gross != 0 ? $qty : 0 }}</b></td>
                                 <td class="right"><b>{{ number_format($gross,0,',','.') }}</b></td>
                                 <td class="right"><b>{{ number_format($odisa,0,',','.') }}</b></td>
                                 <td class="right"><b>{{ number_format($edisa,0,',','.') }}</b></td>
@@ -168,18 +168,18 @@
                             <td>{{ date('d-m-y',strtotime($row->date)) }}</td>
                             <td>{{ $row->customer }}</td>
                             <td>{{ $row->product }}</td>
-                            <td class="center">{{ $row->qty }}</td>
+                            <td class="center">{{ $row->gross != 0 ? $row->qty : 0 }}</td>
                             <td class="right">{{ number_format($row->gross,0,',','.') }}</td>
                             <td class="right">{{ number_format($row->disc,0,',','.') }}</td>
                             <td class="right">{{ number_format($row->edisa,0,',','.') }}</td>
                             <td class="right">{{ number_format($row->totalDisc,0,',','.') }}</td>
-                            <td class="right">{{ $gross != 0 ? number_format(($totalDisc / $gross) * 100,2) : 0 }}%</td>
+                            <td class="right">{{ $row->gross != 0 ? number_format(($row->totalDisc / $row->gross) * 100,2) : 0 }}%</td>
                             <td class="right">{{ number_format($row->net,0,',','.') }}</td>
                         </tr>
 
                         @php
                             $current = $row->sreno;
-                            $qty += $row->qty;
+                            $qty += ($row->gross != 0 ? $row->qty : 0);
                             $gross += $row->gross;
                             $odisa += $row->disc;
                             $edisa += $row->edisa;
@@ -187,7 +187,7 @@
                             $total += $row->net;
 
                             // GRAND TOTAL
-                            $gt_qty += $row->qty;
+                            $gt_qty += ($row->gross != 0 ? $row->qty : 0);
                             $gt_gross += $row->gross;
                             $gt_odisa += $row->disc;
                             $gt_edisa += $row->edisa;
@@ -198,7 +198,7 @@
 
                     <tr>
                         <td colspan="5"><b>TOTAL BY SALES REP [{{ $current }}]</b></td>
-                        <td class="right"><b>{{ $qty }}</b></td>
+                        <td class="right"><b>{{ $gross != 0 ? $qty : 0 }}</b></td>
                         <td class="right"><b>{{ number_format($gross,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($odisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($edisa,0,',','.') }}</b></td>
@@ -209,7 +209,7 @@
 
                     <tr>
                         <td colspan="5"><b>Grand Total</b></td>
-                        <td class="right"><b>{{ $gt_qty }}</b></td>
+                        <td class="right"><b>{{ $gt_gross != 0 ? $gt_qty : 0 }}</b></td>
                         <td class="right"><b>{{ number_format($gt_gross,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($gt_odisa,0,',','.') }}</b></td>
                         <td class="right"><b>{{ number_format($gt_edisa,0,',','.') }}</b></td>
