@@ -200,11 +200,11 @@
                 @php
                     $qty   = (float) $d->qtyor;
                     $price = (float) $d->price;
-                    $odisp = (float) $d->odisp;
+                    $odisa = (float) $d->odisa;
     
                     $grossRow = $price * $qty;
-                    $discRow  = $odisp * $qty;
-                    $netRow   = ($price - $odisp) * $qty;
+                    $discRow  = $odisa * $qty;
+                    $netRow   = ($price - $odisa) * $qty;
     
                     $totalGross += $grossRow;
                     $totalDisc  += $discRow;
@@ -263,7 +263,7 @@
                     <td class="right">{{ formatNumberOnly($price, $ochdr->curco) }}</td>
     
                     {{-- DISCOUNT (nominal per unit sesuai data) --}}
-                    <td class="right">{{ formatNumberOnly($odisp, $ochdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($odisa, $ochdr->curco) }}</td>
     
                     {{-- GROSS AMOUNT kolom kamu isinya NET per row (setelah diskon) --}}
                     <td class="right">{{ formatNumberOnly($netRow, $ochdr->curco) }}</td>
