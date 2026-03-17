@@ -201,20 +201,6 @@ class MktController extends Controller
             ->get();
     }
 
-    public function getTotalSales($data)
-    {
-        return collect($data)
-            ->groupBy('sreno')
-            ->map(function($rows){
-                return [
-                    'total_gross' => $rows->sum('gross'),
-                    'total_disc'  => $rows->sum('disc'),
-                    'total_edisa' => $rows->sum('edisa'),
-                    'total_net'   => $rows->sum('net')
-                ];
-            });
-    }
-
     public function previewMkt(Request $req)
     {
         $data = $this->getData($req);

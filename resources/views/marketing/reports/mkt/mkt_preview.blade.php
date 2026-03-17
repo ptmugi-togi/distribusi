@@ -107,16 +107,16 @@
                         <th rowspan="2">CUSTOMER NAME</th>
                         <th rowspan="2">PRODUCT NAME</th>
                         <th rowspan="2">QTY</th>
-                        <th rowspan="2" class="right">GROSS AMOUNT</th>
-                        <th rowspan="2" class="right">OFFICIAL DISCOUNT</th>
-                        <th rowspan="2" class="right">EXTRA BONUS</th>
+                        <th rowspan="2" class="center">GROSS AMOUNT</th>
+                        <th rowspan="2" class="center">OFFICIAL DISCOUNT</th>
+                        <th rowspan="2" class="center">EXTRA BONUS</th>
                         <th colspan="2" class="center">TOTAL DISC + EB</th>
-                        <th rowspan="2" class="right">NET AMOUNT</th>
+                        <th rowspan="2" class="center">NET AMOUNT</th>
                     </tr>
 
                     <tr>
-                        <th class="right">AMOUNT</th>
-                        <th class="right">%</th>
+                        <th class="center">AMOUNT</th>
+                        <th class="center">%</th>
                     </tr>
                 </thead>
 
