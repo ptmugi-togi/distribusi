@@ -195,7 +195,7 @@ class MktController extends Controller
 
         return DB::query()
             ->fromSub($sa->unionAll($sb), 'x')
-            // ->where('gross','>',0)
+            ->where('gross','>',0)
             ->orderBy('sreno')
             ->orderBy('date')
             ->get();
