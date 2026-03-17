@@ -164,7 +164,7 @@
 
                         <tr>
                             <td>{{ $row->sreno }}</td>
-                            <td>{{ $row->formc }} {{ $row->number }}</td>
+                            <td>{{ $row->nomor_oc }}</td>
                             <td>{{ date('d-m-y',strtotime($row->date)) }}</td>
                             <td>{{ $row->customer }}</td>
                             <td>{{ $row->product }}</td>

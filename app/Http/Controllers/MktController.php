@@ -107,9 +107,21 @@ class MktController extends Controller
         ";
 
         $sa = $sa->select(
-            'h.sreno',
-            DB::raw("'SA' as formc"),
-            'h.sorno as number',
+            DB::raw("
+            CASE 
+                WHEN h.sqper != 0 AND h.sqtbr = '$braco'
+                    THEN h.sqtsr
+                ELSE h.sreno
+            END as sreno
+            "),
+            'h.braco as braco',
+            DB::raw("
+                CASE 
+                    WHEN h.braco != '$braco'
+                        THEN CONCAT(h.braco, '-', 'SA ', h.sorno)
+                    ELSE CONCAT('SA ', h.sorno)
+                END as nomor_oc
+            "),
             'h.sordt as date',
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
@@ -181,7 +193,22 @@ class MktController extends Controller
         ";
 
         $sb = $sb->select(
-            'h.sreno',
+            DB::raw("
+            (
+                SELECT 
+                    CASE 
+                        WHEN smqtb1 = '$braco' THEN smqts1
+                        WHEN smqtb2 = '$braco' THEN smqts2
+                        WHEN smqtb3 = '$braco' THEN smqts3
+                        WHEN smqtb4 = '$braco' THEN smqts4
+                        WHEN smqtb5 = '$braco' THEN smqts5
+                        ELSE h.sreno
+                    END
+                FROM tprojd
+                WHERE tprojd.ocsbid = h.ocsbid
+                LIMIT 1
+            ) as sreno
+            "),
             DB::raw("'SB' as formc"),
             'h.sorno as number',
             'h.sordt as date',
