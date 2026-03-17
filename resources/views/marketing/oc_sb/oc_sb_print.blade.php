@@ -177,11 +177,11 @@
                 @php
                     $qty   = (float) $d->qtyor;
                     $price = (float) $d->price;
-                    $odisp = (float) $d->odisp;
+                    $odisa = (float) $d->odisa;
     
                     $grossRow = $price * $qty;
-                    $discRow  = $odisp * $qty;
-                    $netRow   = ($price - $odisp) * $qty;
+                    $discRow  = $odisa * $qty;
+                    $netRow   = ($price - $odisa) * $qty;
     
                     $totalGross += $grossRow;
                     $totalDisc  += $discRow;
@@ -253,7 +253,7 @@
                     <td class="center">{{ $d->qtyor }} {{ $d->mpromas->stdqu}}</td>
                     <td class="right">{{ formatNumberOnly($price, $ocsbhdr->curco) }}</td>
     
-                    <td class="right">{{ formatNumberOnly($odisp, $ocsbhdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($odisa, $ocsbhdr->curco) }}</td>
     
                     <td class="right">{{ formatNumberOnly($netRow, $ocsbhdr->curco) }}</td>
                 </tr>
