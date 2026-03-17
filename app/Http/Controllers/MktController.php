@@ -65,7 +65,10 @@ class MktController extends Controller
             ->join('tcored as d','h.ocid','=','d.ocid')
             ->leftJoin('mcusmas as c','h.cusno','=','c.cusno')
             ->leftJoin('mpromas as p','d.opron','=','p.opron')
-            ->where('h.braco',$braco)
+            ->where(function($q) use ($braco){
+                $q->where('h.braco',$braco)
+                ->orWhere('h.sqtbr',$braco);
+            })
             ->whereBetween('h.sordt',[$start,$end]);
 
         if($sreno){
@@ -75,10 +78,12 @@ class MktController extends Controller
         $qtySa = "
             CASE 
                 WHEN h.sqper != 0 AND h.sqtbr != '$braco'
-                THEN 0
+                    THEN 0
                 ELSE d.qtyor
             END
         ";
+
+        $qtyCalcSa = "d.qtyor";
         
         $totalGrossSa = "
         (
@@ -91,7 +96,7 @@ class MktController extends Controller
         // split
         $factorSa = "
             CASE
-                WHEN h.sqper != 0 AND h.braco = '$braco'
+                WHEN h.sqper != 0 AND h.sqtbr = '$braco'
                     THEN (h.sqper / 100)
                 WHEN h.sqper != 0 AND h.braco != '$braco'
                     THEN 0
@@ -107,20 +112,33 @@ class MktController extends Controller
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
             DB::raw("$qtySa as qty"),
-            DB::raw("($qtySa * (d.price - COALESCE(d.teknik,0)) * $factorSa) as gross"),
-            DB::raw("(COALESCE(d.odisa,0) * $qtySa * $factorSa) as disc"),
-            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa as edisa"),
-            DB::raw("((COALESCE(d.odisa,0) * $qtySa * $factorSa) + (($qtySa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa) as totalDisc"),
-            DB::raw("(($qtySa * (d.price - COALESCE(d.teknik,0)) * $factorSa)-((COALESCE(d.odisa,0) * $qtySa * $factorSa)+(($qtySa * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa)) as net"),
-        )
-        ->whereRaw("$qtySa > 0");
+            DB::raw("($qtyCalcSa * (d.price - COALESCE(d.teknik,0)) * $factorSa) as gross"),
+            DB::raw("(COALESCE(d.odisa,0) * $qtyCalcSa * $factorSa) as disc"),
+            DB::raw("(($qtyCalcSa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa as edisa"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtyCalcSa * $factorSa) + (($qtyCalcSa * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa) as totalDisc"),
+            DB::raw("(($qtyCalcSa * (d.price - COALESCE(d.teknik,0)) * $factorSa)-((COALESCE(d.odisa,0) * $qtyCalcSa * $factorSa)+(($qtyCalcSa * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSa,0)) * COALESCE(h.edisa,0) * $factorSa)) as net"),
+        );
 
         // SB
         $sb = DB::table('tproja as h')
             ->join('tprojb as d','h.ocsbid','=','d.ocsbid')
             ->leftJoin('mcusmas as c','h.cusno','=','c.cusno')
             ->leftJoin('mpromas as p','d.opron','=','p.opron')
-            ->where('h.braco',$braco)
+            ->where(function($q) use ($braco) {
+                $q->where('h.braco',$braco)
+                ->orWhereExists(function($sub) use ($braco){
+                    $sub->select(DB::raw(1))
+                        ->from('tprojd')
+                        ->whereColumn('tprojd.ocsbid','h.ocsbid')
+                        ->where(function($x) use ($braco){
+                            $x->where('smqtb1',$braco)
+                                ->orWhere('smqtb2',$braco)
+                                ->orWhere('smqtb3',$braco)
+                                ->orWhere('smqtb4',$braco)
+                                ->orWhere('smqtb5',$braco);
+                        });
+                });
+            })
             ->whereBetween('h.sordt',[$start,$end]);
 
         if($sreno){
@@ -130,7 +148,7 @@ class MktController extends Controller
         $qtySb = "
             CASE 
                 WHEN d.insby != '$braco'
-                THEN 0
+                    THEN 0
                 ELSE d.qtyor
             END
         ";
@@ -173,12 +191,11 @@ class MktController extends Controller
             DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb as edisa"),
             DB::raw("((COALESCE(d.odisa,0) * $qtySb * $factorSb) + (($qtySb * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb) as totalDisc"),
             DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb)-((COALESCE(d.odisa,0) * $qtySb * $factorSb)+(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb)) as net"),
-        )
-        ->whereRaw("$qtySb > 0");
+        );
 
         return DB::query()
             ->fromSub($sa->unionAll($sb), 'x')
-            ->where('gross','>',0)
+            // ->where('gross','>',0)
             ->orderBy('sreno')
             ->orderBy('date')
             ->get();
