@@ -100,6 +100,8 @@ class MktController extends Controller
                     THEN (h.sqper / 100)
                 WHEN h.sqper != 0 AND h.braco != '$braco'
                     THEN 0
+                WHEN h.sqper != 0 AND h.sqtbr != '$braco'
+                    THEN (100 - h.sqper) / 100
                 ELSE 1
             END
         ";
