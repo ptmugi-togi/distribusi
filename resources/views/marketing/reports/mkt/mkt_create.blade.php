@@ -8,11 +8,11 @@
 <main id="main" class="main">
     <div class="d-flex justify-content-between align-items-center">
         <div class="pagetitle">
-        <h1>Print Data MKT OC</h1>
+        <h1>Print Data Sales Report/Sales Rep</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active">Print Data MKT OC</li>
+                <li class="breadcrumb-item active">Print Data Sales Report/Sales Rep</li>
             </ol>
         </nav>
         </div>

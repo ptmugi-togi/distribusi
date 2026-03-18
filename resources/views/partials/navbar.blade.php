@@ -191,11 +191,17 @@
                 <i class="bi bi-file-earmark-text"></i><span>Reports</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
               </a>
-
               <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
                 <li>
                   <a href="{{ route('mkt.createMkt') }}">
-                  <i class="bi bi-circle"></i><span>OC Closed By Sales Rep</span>
+                  <i class="bi bi-circle"></i><span>Sales Report/Sales Rep</span>
+                  </a>
+                </li>
+              </ul>
+              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
+                <li>
+                  <a href="{{ route('mkt.createMktSs') }}">
+                  <i class="bi bi-circle"></i><span>Sales Report/Product Group</span>
                   </a>
                 </li>
               </ul>

@@ -280,3 +280,5 @@ Route::get('/oc/printOcSb/{id}', [PdfController::class, 'printOcSb'])->name('oc.
 
 Route::get('/mkt', [MktController::class, 'create'])->middleware('auth')->name('mkt.createMkt');
 Route::get('/mkt/preview', [MktController::class, 'previewMkt'])->name('mkt.previewMkt');
+Route::get('/mkt-ss', [MktController::class, 'createSs'])->middleware('auth')->name('mkt.createMktSs');
+Route::get('/mkt-ss/preview', [MktController::class, 'previewMktSs'])->name('mkt.previewMktSs');
