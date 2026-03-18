@@ -167,6 +167,8 @@ class MktController extends Controller
             END
         ";
 
+        $qtyCalcSb = "d.qtyor";
+
         $totalGrossSb = "
         (
             SELECT SUM(d2.qtyor * (d2.price - COALESCE(d2.teknik,0)))
@@ -177,19 +179,21 @@ class MktController extends Controller
 
         // split
         $factorSb = "
-            (
-                SELECT
-                    (
-                        CASE WHEN smqtb1 = '$braco' THEN COALESCE(smqp1,0) ELSE 0 END +
-                        CASE WHEN smqtb2 = '$braco' THEN COALESCE(smqp2,0) ELSE 0 END +
-                        CASE WHEN smqtb3 = '$braco' THEN COALESCE(smqp3,0) ELSE 0 END +
-                        CASE WHEN smqtb4 = '$braco' THEN COALESCE(smqp4,0) ELSE 0 END +
-                        CASE WHEN smqtb5 = '$braco' THEN COALESCE(smqp5,0) ELSE 0 END
-                    ) / 100
-                FROM tprojd
-                WHERE tprojd.ocsbid = h.ocsbid
-                LIMIT 1
-            )
+            COALESCE(
+                (
+                    SELECT
+                        (
+                            CASE WHEN smqtb1 = '$braco' THEN COALESCE(smqp1,0) ELSE 0 END +
+                            CASE WHEN smqtb2 = '$braco' THEN COALESCE(smqp2,0) ELSE 0 END +
+                            CASE WHEN smqtb3 = '$braco' THEN COALESCE(smqp3,0) ELSE 0 END +
+                            CASE WHEN smqtb4 = '$braco' THEN COALESCE(smqp4,0) ELSE 0 END +
+                            CASE WHEN smqtb5 = '$braco' THEN COALESCE(smqp5,0) ELSE 0 END
+                        ) / 100
+                    FROM tprojd
+                    WHERE tprojd.ocsbid = h.ocsbid
+                    LIMIT 1
+                )
+            , 0)
         ";
 
         $sb = $sb->select(
@@ -209,17 +213,23 @@ class MktController extends Controller
                 LIMIT 1
             ) as sreno
             "),
-            DB::raw("'SB' as formc"),
-            'h.sorno as number',
+            'h.braco as braco',
+            DB::raw("
+                CASE 
+                    WHEN h.braco != '$braco'
+                        THEN CONCAT(h.braco, '-', 'SB ', h.sorno)
+                    ELSE CONCAT('SB ', h.sorno)
+                END as nomor_oc
+            "),
             'h.sordt as date',
             'c.cusna as customer',
             DB::raw("CONCAT(p.opron,' / ',p.prona) as product"),
             DB::raw("$qtySb as qty"),
-            DB::raw("($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb) as gross"),
-            DB::raw("(COALESCE(d.odisa,0) * $qtySb * $factorSb) as disc"),
-            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb as edisa"),
-            DB::raw("((COALESCE(d.odisa,0) * $qtySb * $factorSb) + (($qtySb * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb) as totalDisc"),
-            DB::raw("(($qtySb * (d.price - COALESCE(d.teknik,0)) * $factorSb)-((COALESCE(d.odisa,0) * $qtySb * $factorSb)+(($qtySb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb)) as net"),
+            DB::raw("($qtyCalcSb * (d.price - COALESCE(d.teknik,0)) * $factorSb) as gross"),
+            DB::raw("(COALESCE(d.odisa,0) * $qtyCalcSb * $factorSb) as disc"),
+            DB::raw("(($qtyCalcSb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb as edisa"),
+            DB::raw("((COALESCE(d.odisa,0) * $qtyCalcSb * $factorSb) + (($qtyCalcSb * (d.price - COALESCE(d.teknik,0))) / NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb) as totalDisc"),
+            DB::raw("(($qtyCalcSb * (d.price - COALESCE(d.teknik,0)) * $factorSb)-((COALESCE(d.odisa,0) * $qtyCalcSb * $factorSb)+(($qtyCalcSb * (d.price - COALESCE(d.teknik,0)))/ NULLIF($totalGrossSb,0)) * COALESCE(h.edisa,0) * $factorSb)) as net"),
         );
 
         return DB::query()
