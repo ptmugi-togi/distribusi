@@ -214,7 +214,7 @@
                                 </tr>
                             @endif
 
-                            @if (!empty($d->teknik))
+                            @if (($d->teknik) > 0)
                                 <tr>
                                     <td style="padding:0;">
                                         Teknik : 
@@ -224,7 +224,7 @@
                                 </tr>
                             @endif
 
-                            @if(isset($bomList[$d->opron]) && $bomList[$d->opron]->count())
+                            @if(isset($bomList[$d->opron]) && $bomList[$d->opron]->contains(function ($bom) use ($d) {return $bom->opron != $d->opron;}))
                                 <tr>
                                     <td style="padding:0; padding-top:5px;">
                                         <b>CONSIST OF GOODS :</b>
@@ -271,19 +271,19 @@
 
         @foreach ($ocsbhdr->invoices as $i => $inv)
         <tr>
-            <td>
+            <td style="padding: 0">
                 {{ $inv->phase }}. 
             </td>
-            <td>
+            <td style="padding: 0">
                 {{ \Carbon\Carbon::parse($ocsbhdr->sordt)->format('d-m-Y') }}
                 {{ $inv->descr }}
             </td>
 
-            <td>
+            <td class="right" style="padding: 0 5px">
                 {{ formatNumberOnly($inv->blamt, $ocsbhdr->curco) }}
             </td>
 
-            <td style="white-space:nowrap;">
+            <td style="white-space:nowrap; padding: 0">
                 @for ($q = 1; $q <= 5; $q++)
                     @php
                         $p = "smqp".$q;
@@ -301,7 +301,17 @@
     </table>
 </div>
 
-<div class="">
+<div class="" style="margin-top:5px;">
+    @php
+        $gross = (float) $ocsbhdr->gross;
+        $disc  = (float) $ocsbhdr->odisa;
+        $inst  = (float) $ocsbhdr->insfe;
+        $taxRate = (float) $ocsbhdr->vatax;
+
+        $netAmount = $gross - $disc + $inst;
+        $ppnAmount = $netAmount * ($taxRate / 100);
+        $billingAmount = $netAmount + $ppnAmount;
+    @endphp
     <div style="border-top:1px dashed #00000049; margin-bottom:5px; padding-top: 5px;"></div>
     <table class="no-border" style="margin-top:5px;">
         <tr>
@@ -309,24 +319,31 @@
             <td style="width:40%; vertical-align:top">
                 <table class="no-border">
                     <tr>
-                        <td>TOTAL GROSS</td>
-                        <td class="right">{{ formatNumberOnly($ocsbhdr->gross, $ocsbhdr->curco) }}</td>
+                        <td style="padding:0;">TOTAL GROSS</td>
+                        <td class="right" style="padding:0;">{{ formatNumberOnly($ocsbhdr->gross, $ocsbhdr->curco) }}</td>
                     </tr>
                     <tr>
-                        <td>DISCOUNT</td>
-                        <td class="right">{{ $ocsbhdr->odisa != 0 ? '- ' . formatNumberOnly($ocsbhdr->odisa, $ocsbhdr->curco) : '0' }}</td>
+                        <td style="padding:0;">DISCOUNT</td>
+                        <td class="right" style="padding:0;">{{ $ocsbhdr->odisa != 0 ? '- ' . formatNumberOnly($ocsbhdr->odisa, $ocsbhdr->curco) : '0' }}</td>
                     </tr>
                     <tr>
-                        <td>INSTALLATION</td>
-                        <td class="right">{{ formatNumberOnly($ocsbhdr->insfe, $ocsbhdr->curco) ?? '0' }}</td>
+                        <td style="padding:0;">INSTALLATION</td>
+                        <td class="right" style="padding:0;">{{ formatNumberOnly($inst, $ocsbhdr->curco) }}</td>
                     </tr>
+
                     <tr>
-                        <td>PPN {{ $ocsbhdr->vatax }}%</td>
-                        <td class="right">{{ formatNumberOnly($ocsbhdr->vtamt, $ocsbhdr->curco) }}</td>
+                        <td style="padding:0;"><b>NET AMOUNT</b></td>
+                        <td class="right" style="padding:0;">{{ formatNumberOnly($netAmount, $ocsbhdr->curco) }}</td>
                     </tr>
+
                     <tr>
-                        <td><b>BILLING AMOUNT</b></td>
-                        <td class="right">{{ formatNumberOnly($ocsbhdr->billv, $ocsbhdr->curco) }}</td>
+                        <td style="padding:0;">PPN {{ $taxRate }}%</td>
+                        <td class="right" style="padding:0;">{{ formatNumberOnly($ppnAmount, $ocsbhdr->curco) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:0;"><b>BILLING AMOUNT</b></td>
+                        <td class="right" style="padding:0;">{{ formatNumberOnly($billingAmount, $ocsbhdr->curco) }}</td>
                     </tr>
                 </table>
             </td>
