@@ -1,9 +1,8 @@
 {{-- Detail Installation --}}
 <div class="row">
     <h4 class="my-2">OC Installation (Edit)</h4>
+    @foreach ($ocsb->ocsbdtls as $i => $detail)
     <div class="accordion" id="accordionOCInstallation">
-
-        @foreach ($ocsb->ocsbdtls as $i => $detail)
         <div class="accordion-item" id="accordion-oc-installation-{{ $i }}">
             <h2 class="accordion-header d-flex justify-content-between align-items-center">
                 <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
