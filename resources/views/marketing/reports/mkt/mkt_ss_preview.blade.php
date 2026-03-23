@@ -137,13 +137,16 @@
                         ->map(function($item){
                             return $item->groupBy('mssgrup_name');
                         });
+
+                        // grand total
+                        $grand = collect();
                     @endphp
 
                     @foreach($grouped as $sgrup => $ssgroups)
 
                         <tr>
                             <td colspan="13" style="border-top:2px solid #000;">
-                                <b>* {{ strtoupper($sgrup) }}</b>
+                                <b>**  {{ strtoupper($sgrup) }}</b>
                             </td>
                         </tr>
 
@@ -172,27 +175,76 @@
                             </tr>
                             @endforeach
 
+                            @php
+                                $total_qty = $rows->sum('qty');
+                                $total_gross = $rows->sum('gross');
+                                $total_disc = $rows->sum('disc');
+                                $total_edisa = $rows->sum('edisa');
+                                $total_totalDisc = $rows->sum('totalDisc');
+                                $total_net = $rows->sum('net');
+                            @endphp
+
+                            <tr>
+                                <td colspan="6">
+                                    <b>* TOTAL {{ strtoupper($ssgrup != '-' ? $ssgrup : 'LAIN-LAIN') }}</b>
+                                </td>
+                                <td class="center"><b>{{ $total_qty }}</b></td>
+                                <td class="right"><b>{{ number_format($total_gross,0,',','.') }}</b></td>
+                                <td class="right"><b>{{ number_format($total_disc,0,',','.') }}</b></td>
+                                <td class="right"><b>{{ number_format($total_edisa,0,',','.') }}</b></td>
+                                <td class="right"><b>{{ number_format($total_totalDisc,0,',','.') }}</b></td>
+                                <td class="right">
+                                    <b>{{ $total_gross != 0 ? number_format(($total_totalDisc / $total_gross)*100,2) : 0 }}%</b>
+                                </td>
+                                <td class="right"><b>{{ number_format($total_net,0,',','.') }}</b></td>
+                            </tr>
+
                         @endforeach
 
-                    @endforeach
+                        @php
+                            $allRows = $ssgroups->flatten();
+                            $grand = $grand->merge($ssgroups->flatten());
+                        @endphp
 
+                        <tr style="background:#eee;">
+                            <td colspan="6">
+                                <b>** TOTAL {{ strtoupper($sgrup) }}</b>
+                            </td>
+                            <td class="center"><b>{{ $allRows->sum('qty') }}</b></td>
+                            <td class="right"><b>{{ number_format($allRows->sum('gross'),0,',','.') }}</b></td>
+                            <td class="right"><b>{{ number_format($allRows->sum('disc'),0,',','.') }}</b></td>
+                            <td class="right"><b>{{ number_format($allRows->sum('edisa'),0,',','.') }}</b></td>
+                            <td class="right"><b>{{ number_format($allRows->sum('totalDisc'),0,',','.') }}</b></td>
+                            <td class="right">
+                                <b>{{ $allRows->sum('gross') != 0 ? number_format(($allRows->sum('totalDisc') / $allRows->sum('gross'))*100,2) : 0 }}%</b>
+                            </td>
+                            <td class="right"><b>{{ number_format($allRows->sum('net'),0,',','.') }}</b></td>
+                        </tr>
+                    @endforeach
+                    
+                    {{-- grand total --}}
                     @php
-                        $allRows = $ssgroups->flatten();
+                        $gt_qty = $grand->sum('qty');
+                        $gt_gross = $grand->sum('gross');
+                        $gt_disc = $grand->sum('disc');
+                        $gt_edisa = $grand->sum('edisa');
+                        $gt_totalDisc = $grand->sum('totalDisc');
+                        $gt_net = $grand->sum('net');
                     @endphp
 
-                    <tr style="background:#eee;">
+                    <tr style="background:#ddd; border-top:3px solid #000;">
                         <td colspan="6">
-                            <b>** TOTAL {{ strtoupper($sgrup) }}</b>
+                            <b>GRAND TOTAL</b>
                         </td>
-                        <td class="center"><b>{{ $allRows->sum('qty') }}</b></td>
-                        <td class="right"><b>{{ number_format($allRows->sum('gross'),0,',','.') }}</b></td>
-                        <td class="right"><b>{{ number_format($allRows->sum('disc'),0,',','.') }}</b></td>
-                        <td class="right"><b>{{ number_format($allRows->sum('edisa'),0,',','.') }}</b></td>
-                        <td class="right"><b>{{ number_format($allRows->sum('totalDisc'),0,',','.') }}</b></td>
+                        <td class="center"><b>{{ $gt_qty }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_gross,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_disc,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_edisa,0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_totalDisc,0,',','.') }}</b></td>
                         <td class="right">
-                            <b>{{ $allRows->sum('gross') != 0 ? number_format(($allRows->sum('totalDisc') / $allRows->sum('gross'))*100,2) : 0 }}%</b>
+                            <b>{{ $gt_gross != 0 ? number_format(($gt_totalDisc / $gt_gross)*100,2) : 0 }}%</b>
                         </td>
-                        <td class="right"><b>{{ number_format($allRows->sum('net'),0,',','.') }}</b></td>
+                        <td class="right"><b>{{ number_format($gt_net,0,',','.') }}</b></td>
                     </tr>
                 </tbody>
             </table>
