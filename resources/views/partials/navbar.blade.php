@@ -142,6 +142,11 @@
               <i class="bi bi-circle"></i><span>TA (Transfer Note)</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('do.index') }}">
+              <i class="bi bi-circle"></i><span>DO (Delivery Order)</span>
+            </a>
+          </li>
           <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#subLogistic-nav" data-bs-toggle="collapse" href="#">
               <i class="bi bi-file-earmark-text"></i><span>Reports</span>

@@ -37,6 +37,7 @@ use App\Http\Controllers\WoController;
 use App\Http\Controllers\MstmasController;
 use App\Http\Controllers\OcSbController;
 use App\Http\Controllers\MktController;
+use App\Http\Controllers\DoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -282,3 +283,15 @@ Route::get('/mkt', [MktController::class, 'create'])->middleware('auth')->name('
 Route::get('/mkt/preview', [MktController::class, 'previewMkt'])->name('mkt.previewMkt');
 Route::get('/mkt-ss', [MktController::class, 'createSs'])->middleware('auth')->name('mkt.createMktSs');
 Route::get('/mkt-ss/preview', [MktController::class, 'previewMktSs'])->name('mkt.previewMktSs');
+
+Route::get('/do', [DoController::class,'index'])->middleware('auth')->name('do.index');
+Route::get('/do/create', [DoController::class,'create'])->middleware('auth')->name('do.create');
+Route::post('/do/store', [DoController::class,'store'])->middleware('auth')->name('do.store');
+Route::get('/generate-trano-do', [DoController::class,'generateTrano'])->name('generate-trano-do');
+Route::get('/get-oc', [DoController::class, 'getOc'])->name('get-oc');
+Route::get('/get-barang-oc', [DoController::class, 'getBarangByOC'])->name('get-barang-oc');
+Route::get('/get-lot-oc', [DoController::class, 'getLotByOC'])->name('get-lot-oc');
+Route::get('/do/{id}/detail', [DoController::class,'show'])->middleware('auth')->name('do.detail');
+Route::get('/do/{id}/edit', [DoController::class,'edit'])->middleware('auth')->name('do.edit');
+Route::put('/do/{id}', [DoController::class,'update'])->middleware('auth')->name('do.update');
+Route::delete('/do/{id}/delete', [DoController::class,'destroy'])->middleware('auth')->name('do.delete');
