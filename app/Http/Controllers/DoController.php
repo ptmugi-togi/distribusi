@@ -496,12 +496,19 @@ class DoController extends Controller
             $data = DB::table('tcoreh as h')
                 ->join('tcored as d', 'h.ocid', '=', 'd.ocid')
                 ->join('mpromas as p', 'p.opron', '=', 'd.opron')
+                ->leftJoin('stobw_tbl as s', function ($join) {
+                    $join->on('s.opron', '=', 'd.opron')
+                        ->where('s.braco', Auth::user()->cabang);
+                })
+                ->where('h.braco', Auth::user()->cabang)
                 ->where('h.sorno', $sorno)
+                ->where('d.qtyor', '>', 'd.qtydo')
                 ->select(
                     'd.opron',
                     DB::raw('(d.qtyor - d.qtydo) as qty'),
                     'p.prona',
-                    'p.stdqu'
+                    'p.stdqu',
+                    DB::raw('COALESCE(s.toqoh, 0) as toqoh')
                 )
                 ->get();
 
@@ -510,13 +517,19 @@ class DoController extends Controller
             $data = DB::table('tproja as h')
                 ->join('tprojc as d', 'h.ocsbid', '=', 'd.ocsbid')
                 ->join('mpromas as p', 'p.opron', '=', 'd.opron')
+                ->leftJoin('stobw_tbl as s', function ($join) {
+                    $join->on('s.opron', '=', 'd.opron')
+                        ->where('s.braco', Auth::user()->cabang);
+                })
+                ->where('h.braco', Auth::user()->cabang)
                 ->where('h.sorno', $sorno)
                 ->where('d.trqty', '>', 'd.delqt')
                 ->select(
                     'd.opron',
                     DB::raw('(d.trqty - d.delqt) as qty'),
                     'p.prona',
-                    'p.stdqu'
+                    'p.stdqu',
+                    DB::raw('COALESCE(s.toqoh, 0) as toqoh')
                 )
                 ->get();
         }

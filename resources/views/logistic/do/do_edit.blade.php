@@ -142,23 +142,29 @@
                 });
 
                 // sweetalert qty input
-                $(document).on('input', 'input[name="trqty[]"]', function() {
-                    const id = $(this).attr('id');
-                    const index = id.split('-').pop();
-                    let maxIn = Number($(`#rqqty-do-${index}`).val());
-                    if(!maxIn) maxIn = Number($(`#rqqty-do-${index}`).val());
+                $(document).on('input', '.trqty-do', function() {
+                    const idx = this.id.split('-').pop();
+                    const qty = parseFloat($(this).val()) || 0;
 
-                    if(!maxIn || isNaN(maxIn) || maxIn <= 0){
-                        return; 
-                    }
+                    const maxOrder = parseFloat($(`#rqqty-do-${idx}`).val()) || 0;
+                    const maxStock = parseFloat($(`#toqoh-do-${idx}`).val()) || 0;
 
-                    if(Number($(this).val()) > maxIn){
+                    if (qty > maxOrder) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Qty Melebihi Batas',
-                            text: `Issue Qty tidak boleh lebih dari ${maxIn}`
+                            text: `DO Qty Melebihi OC QTY.`
                         });
-                        $(this).val(maxIn);
+                        $(this).val(maxOrder);
+                    }
+
+                    if (qty > maxStock) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Qty Melebihi Batas',
+                            text: `DO Qty Melebihi Stock.`
+                        });
+                        $(this).val(maxStock);
                     }
                 });
 

@@ -25,22 +25,30 @@
                                 <option value="" disabled selected>Pilih Stock Requisition Terlebih Dahulu</option>
                             </select>
                         </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="rqqty-do-${i}" class="form-label">Outstanding Quantity</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control rqqty-do" id="rqqty-do-${i}" name="rqqty[]" value="{{ old('rqqty.'.$i) }}" min="1" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+                                <span id="unit-label-oc-${i}" class="input-group-text unit-label-do"></span>
+                                <input type="text" id="qunit-do-${i}" name="qunit[]" hidden>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="toqoh-do-${i}" class="form-label">Stock Available</label><span class="text-danger"> *</span>
+                            <div class="input-group">
+                                <input type="number" class="form-control toqoh-do" id="toqoh-do-${i}" name="toqoh[]" value="{{ old('toqoh.'.$i) }}" disabled>
+                                <span id="unit-label-st-${i}" class="input-group-text unit-label-do"></span>
+                            </div>
+                        </div>
                         
                         <div class="col-md-6 mt-3">
                             <label class="form-label">Serial Number</label><span class="text-danger"> *</span>
                             <select class="select2 form-control lotno-do" name="lotno[]" id="lotno-do-${i}" required>
                                 <option value="" disabled selected>Pilih Barang Terlebih Dahulu</option>
                             </select>
-                        </div>
-
-                        <div class="col-md-6 mt-3">
-                            <label for="rqqty-do-${i}" class="form-label">Outstanding Quantity</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control rqqty-do" id="rqqty-do-${i}" name="rqqty[]" value="{{ old('rqqty.'.$i) }}" min="1" required
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
-                                <span id="unit-label-do-${i}" class="input-group-text unit-label-do"></span>
-                                <input type="text" id="qunit-do-${i}" name="qunit[]" hidden>
-                            </div>
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -88,7 +96,8 @@
                 $itemSelect.append(`
                     <option value="${item.opron}" 
                             data-qty="${item.qty}" 
-                            data-stdqu="${item.stdqu}">
+                            data-stdqu="${item.stdqu}"
+                            data-toqoh="${item.toqoh}">
                         ${item.opron} - ${item.prona}
                     </option>
                 `);
@@ -107,14 +116,16 @@
 
             const unit = selected.data('stdqu') ?? '-';
             const qty  = selected.data('qty') ?? 0;
+            const toqoh = selected.data('toqoh') ?? 0;
 
             $(`#rqqty-do-${idx}`).val(qty);
 
             // unit
-            $(`#unit-label-tao-${idx}`).text(unit);
+            $(`#unit-label-oc-${idx}`).text(unit);
+            $(`#unit-label-st-${idx}`).text(unit);
             $(`#unit-label-do-${idx}`).text(unit);
             $(`#qunit-do-${idx}`).val(unit);
-
+            $(`#toqoh-do-${idx}`).val(toqoh);
             // reset loc
             $(`#locco-do-${idx}`).val('');
 
