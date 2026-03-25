@@ -27,6 +27,7 @@
             <div class="card p-3 shadow-sm">
                 {{-- Header --}}
                 <div class="row">
+                    <input type="text" class="form-control" id="braco" name="braco" value="{{ $do->braco }}" hidden>
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Form Code</label>
                         <input type="text" class="form-control" value="{{ $do->formc }}" disabled>
@@ -45,8 +46,8 @@
                     <div class="col-md-6 mt-3">
                         <label class="form-label">OC No.</label>
                         <input type="text" class="form-control" value="{{ $do->rfc01 }} - {{ $do->ref01 }}" disabled>
-                        <input type="hidden" id="rfc01" value="{{ $do->rfc01 }}">
-                        <input type="hidden" id="ref01" value="{{ $do->ref01 }}">
+                        <input type="hidden" id="rfc01" name="rfc01" value="{{ $do->rfc01 }}">
+                        <input type="hidden" id="ref01" name="ref01" value="{{ $do->ref01 }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -79,7 +80,8 @@
                                     <div class="row">
                                         <div class="col-md-6 mt-3">
                                             <label class="form-label">Barang</label>
-                                            <input type="text" name="opron[]" class="form-control" value="{{ $detail->opron }}" required readonly style="background-color:#e9ecef">
+                                            <input type="text" class="form-control" value="{{ $detail->opron }} - {{ $detail->mpromas->prona }}" required readonly style="background-color:#e9ecef">
+                                            <input type="text" name="opron[]" class="form-control" value="{{ $detail->opron }}" hidden>
                                         </div>
 
                                         <div class="col-md-6 mt-3">

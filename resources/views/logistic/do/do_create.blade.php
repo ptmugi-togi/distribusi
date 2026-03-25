@@ -113,7 +113,7 @@
                     ocno.append('<option value="" disabled selected>Silahkan Pilih OC</option>');
 
                     data.forEach(function(item){
-                        ocno.append(`<option value="${item.value}">${item.text}</option>`);
+                        ocno.append(`<option value="${item.value}">${item.text} (${item.cust})</option>`);
                     });
                 });
           });

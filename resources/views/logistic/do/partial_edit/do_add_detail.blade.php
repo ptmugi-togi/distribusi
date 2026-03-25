@@ -104,11 +104,26 @@
             const idx = this.id.split('-').pop();
 
             const selected = $(this).find('option:selected');
+
             const unit = selected.data('stdqu') ?? '-';
+            const qty  = selected.data('qty') ?? 0;
+
+            $(`#rqqty-do-${idx}`).val(qty);
+
+            // unit
+            $(`#unit-label-tao-${idx}`).text(unit);
+            $(`#unit-label-do-${idx}`).text(unit);
+            $(`#qunit-do-${idx}`).val(unit);
+
+            // reset loc
+            $(`#locco-do-${idx}`).val('');
 
             const $lotno = $(`#lotno-do-${idx}`);
 
-            $lotno.html('<option>Loading...</option>').prop('disabled', true);
+            $lotno.empty()
+                .append('<option disabled selected>Loading...</option>')
+                .prop('disabled', true)
+                .trigger('change.select2');
 
             $.get("{{ route('get-lot-oc') }}", {opron}, function (res) {
 
@@ -119,42 +134,30 @@
                     return;
                 }
 
-                $lotno.append('<option value="" disabled selected>Pilih Serial Number</option>');
                 $lotno.prop('disabled', false);
+                $lotno.append('<option value="" disabled selected>Pilih Serial Number</option>');
 
                 res.forEach(item => {
                     $lotno.append(`
                         <option value="${item.lotno}"
-                                data-toqoh="${item.toqoh}"
                                 data-locco="${item.locco}">
-                            ${item.lotno} (Stok: ${item.toqoh})
+                            ${item.lotno}
                         </option>
                     `);
                 });
 
-                $lotno.val('').trigger('change');
+                $lotno.val(null).trigger('change.select2');
             });
-
-            // set unit
-            $(`#unit-label-tao-${idx}`).text(unit);
-            $(`#unit-label-do-${idx}`).text(unit);
-            $(`#qunit-do-${idx}`).val(unit);
-
-            // reset field
-            $(`#rqqty-do-${idx}`).val('');
-            $(`#locco-do-${idx}`).val('');
         });
 
-        // PILIH LOTNO -> isi rqqty, locco
+        // PILIH LOTNO -> isi locco
         $(document).on('change', '.lotno-do', function () {
 
             const idx = this.id.split('-').pop();
             const selected = $(this).find('option:selected');
 
-            const qty = selected.data('toqoh') ?? 0;
             const locco = selected.data('locco') ?? '-';
 
-            $(`#rqqty-do-${idx}`).val(qty);
             $(`#locco-do-${idx}`).val(locco);
         });
     }

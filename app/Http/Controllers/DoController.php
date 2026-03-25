@@ -66,6 +66,7 @@ class DoController extends Controller
      */
     public function store(Request $request)
     {
+        // dd(request()->all());
         DB::beginTransaction();
 
         try {
@@ -127,7 +128,6 @@ class DoController extends Controller
                         ->where('opron', $opron)
                         ->update([
                             'toqoh' => DB::raw("toqoh - $trqty"),
-                            'qtyit' => DB::raw("qtyit + $trqty"),
                         ]);
                 }
 
@@ -144,7 +144,28 @@ class DoController extends Controller
                         ->where('lotno', $lotno)
                         ->update([
                             'toqoh' => DB::raw("toqoh - $trqty"),
-                            'qtyit' => DB::raw("qtyit + $trqty"),
+                        ]);
+                }
+
+                if($request->rfc01 == 'SA') {
+                    DB::table('tcored')
+                        ->where('braco', $request->braco)
+                        ->where('formc', $request->rfc01)
+                        ->where('sorno', $request->ref01)
+                        ->where('opron', $opron)
+                        ->update([
+                            'qtydo' => DB::raw("qtydo + $trqty")
+                        ]);
+                }
+
+                if($request->rfc01 == 'SB') {
+                    DB::table('tprojc')
+                        ->where('braco', $request->braco)
+                        ->where('formc', $request->rfc01)
+                        ->where('sorno', $request->ref01)
+                        ->where('opron', $opron)
+                        ->update([
+                            'delqt' => DB::raw("delqt + $trqty")
                         ]);
                 }
             }
@@ -243,6 +264,36 @@ class DoController extends Controller
                             'qtyit' => max(0, $stobl->qtyit - $old->trqty),
                         ]);
                 }
+
+                // ROLLBACK SA
+                if ($do->rfc01 == 'SA') {
+                    $ocid = DB::table('tcoreh')
+                        ->where('braco', $do->braco)
+                        ->where('sorno', $do->ref01)
+                        ->value('ocid');
+
+                    DB::table('tcored')
+                        ->where('ocid', $ocid)
+                        ->where('opron', $old->opron)
+                        ->update([
+                            'qtydo' => DB::raw("GREATEST(qtydo - {$old->trqty}, 0)")
+                        ]);
+                }
+
+                // ROLLBACK SB
+                if ($do->rfc01 == 'SB') {
+                    $ocsbid = DB::table('tproja')
+                        ->where('braco', $do->braco)
+                        ->where('sorno', $do->ref01)
+                        ->value('ocsbid');
+
+                    DB::table('tprojc')
+                        ->where('ocsbid', $ocsbid)
+                        ->where('opron', $old->opron)
+                        ->update([
+                            'delqt' => DB::raw("GREATEST(delqt - {$old->trqty}, 0)")
+                        ]);
+                }
             }
 
             // Hapus detail lama
@@ -281,9 +332,8 @@ class DoController extends Controller
                         'warco' => '-',
                         'opron' => $opron,
                         'toqoh' => 0,
-                        'qtyit' => 0,
                     ]);
-                    $stobw = (object)['qtyit'=>0,'toqoh'=>0];
+                    $stobw = (object)['toqoh'=>0];
                 }
 
                 DB::table('stobw_tbl')
@@ -291,7 +341,6 @@ class DoController extends Controller
                     ->where('opron', $opron)
                     ->update([
                         'toqoh' => DB::raw("toqoh - {$trqty}"),
-                        'qtyit' => $stobw->qtyit + $trqty,
                     ]);
 
                 // Update STOBL
@@ -311,9 +360,8 @@ class DoController extends Controller
                         'qunit' => $qunit,
                         'locco' => $locco,
                         'toqoh' => 0,
-                        'qtyit' => 0,
                     ]);
-                    $stobl = (object)['qtyit'=>0,'toqoh'=>0];
+                    $stobl = (object)['toqoh'=>0];
                 }
 
                 DB::table('stobl_tbl')
@@ -324,8 +372,37 @@ class DoController extends Controller
                     ->where('locco', $locco)
                     ->update([
                         'toqoh' => DB::raw("toqoh - {$trqty}"),
-                        'qtyit' => $stobl->qtyit + $trqty,
                     ]);
+
+                $ocid = null;
+                if ($request->rfc01 == 'SA') {
+                    $ocid = DB::table('tcoreh')
+                        ->where('braco', $request->braco)
+                        ->where('sorno', $request->ref01)
+                        ->value('ocid');
+
+                    DB::table('tcored')
+                        ->where('ocid', $ocid)
+                        ->where('opron', $opron)
+                        ->update([
+                            'qtydo' => DB::raw("COALESCE(qtydo,0) + $trqty")
+                        ]);
+                }
+
+                $ocsbid = null;
+                if ($request->rfc01 == 'SB') {
+                    $ocsbid = DB::table('tproja')
+                        ->where('braco', $request->braco)
+                        ->where('sorno', $request->ref01)
+                        ->value('ocsbid');
+
+                    DB::table('tprojc')
+                        ->where('ocsbid', $ocsbid)
+                        ->where('opron', $opron)
+                        ->update([
+                            'delqt' => DB::raw("COALESCE(delqt,0) + $trqty")
+                        ]);
+                }
             }
 
             DB::commit();
@@ -384,19 +461,27 @@ class DoController extends Controller
     {
         $braco = Auth::user()->cabang;
 
-        $sa = DB::table('tcoreh')
+        $sa = DB::table('tcoreh as h')
+            ->join('mcusmas as c', 'c.cusno', '=', 'h.cusno')
             ->select(
-                'sorno as value',
-                DB::raw("CONCAT(formc,' - ',sorno) as text")
+                'h.sorno as value',
+                DB::raw("'SA' as type"),
+                'h.sorno',
+                'c.cusna as cust',
+                DB::raw("CONCAT('SA',' - ',h.sorno) as text")
             )
-            ->where('braco', $braco);
+            ->where('h.braco', $braco);
 
-        $sb = DB::table('tproja')
+        $sb = DB::table('tproja as h')
+            ->join('mcusmas as c', 'c.cusno', '=', 'h.cusno')
             ->select(
-                'sorno as value',
-                DB::raw("CONCAT(formc,' - ',sorno) as text")
+                'h.sorno as value',
+                DB::raw("'SB' as type"),
+                'h.sorno',
+                'c.cusna as cust',
+                DB::raw("CONCAT('SB',' - ',h.sorno) as text")
             )
-            ->where('braco', $braco);
+            ->where('h.braco', $braco);
 
         return $sa->unionAll($sb)->orderBy('text')->get();
     }
@@ -414,7 +499,7 @@ class DoController extends Controller
                 ->where('h.sorno', $sorno)
                 ->select(
                     'd.opron',
-                    'd.qtyor as qty',
+                    DB::raw('(d.qtyor - d.qtydo) as qty'),
                     'p.prona',
                     'p.stdqu'
                 )
@@ -429,7 +514,7 @@ class DoController extends Controller
                 ->where('d.trqty', '>', 'd.delqt')
                 ->select(
                     'd.opron',
-                    'd.trqty as qty',
+                    DB::raw('(d.trqty - d.delqt) as qty'),
                     'p.prona',
                     'p.stdqu'
                 )
@@ -439,7 +524,6 @@ class DoController extends Controller
         return response()->json($data);
     }
 
-
    public function getLotByOC(Request $req)
     {
         $braco = Auth::user()->cabang;
@@ -448,10 +532,8 @@ class DoController extends Controller
         $data = DB::table('stobl_tbl')
             ->where('braco', $braco)
             ->where('opron', $opron)
-            ->where('toqoh', '>', 0)
             ->select(
                 'lotno',
-                'toqoh',
                 'locco'
             )
             ->get();

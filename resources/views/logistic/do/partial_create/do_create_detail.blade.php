@@ -89,7 +89,7 @@
         let parts = selectedText.split(' - ');
 
         let type = parts[0] || '';
-        let sorno = parts[1] || '';
+        let sorno = parts[1] ? parts[1].split('(')[0].trim() : '';
 
         $('#rfc01').val(type);
         $('#ref01').val(sorno);
@@ -134,7 +134,18 @@
         const idx = this.id.split('-').pop();
 
         const selected = $(this).find('option:selected');
+
         const unit = selected.data('stdqu') ?? '-';
+        const qty  = selected.data('qty') ?? 0;
+
+        $(`#rqqty-do-${idx}`).val(qty);
+
+        // set unit
+        $(`#unit-label-tao-${idx}`).text(unit);
+        $(`#unit-label-do-${idx}`).text(unit);
+        $(`#qunit-do-${idx}`).val(unit);
+
+        $(`#locco-do-${idx}`).val('');
 
         const $itemSelect = $(`#lotno-do-${idx}`);
 
@@ -158,9 +169,8 @@
             res.forEach(item => {
                 $itemSelect.append(`
                     <option value="${item.lotno}"
-                            data-toqoh="${item.toqoh}"
                             data-locco="${item.locco}">
-                        ${item.lotno} (Stok: ${item.toqoh})
+                        ${item.lotno}
                     </option>
                 `);
             });
@@ -168,14 +178,6 @@
             $itemSelect.val(null).trigger('change.select2');
         });
 
-        // set unit
-        $(`#unit-label-tao-${idx}`).text(unit);
-        $(`#unit-label-do-${idx}`).text(unit);
-        $(`#qunit-do-${idx}`).val(unit);
-
-        // reset field
-        $(`#rqqty-do-${idx}`).val('');
-        $(`#locco-do-${idx}`).val('');
     });
 
     // Ketika user pilih LOTNO -> update qty & unit
@@ -183,10 +185,8 @@
         const idx = this.id.split('-').pop();
         const selected = $(this).find('option:selected');
 
-        const qty = selected.data('toqoh') ?? '';
         const locco = selected.data('locco') ?? '-';
 
-        $(`#rqqty-do-${idx}`).val(qty);
         $(`#locco-do-${idx}`).val(locco);
     });
 
