@@ -133,8 +133,37 @@
             // refresh select2 clean
             $itemSelect.val(null).trigger('change.select2');
         });
-
     });
+    
+    // guard agar tidak bisa pilih lotno yang sama
+    function refreshLotnoOptions() {
+        let selectedLotnos = [];
+
+        // ambil semua lotno yang sudah dipilih
+        $('.lotno-do').each(function () {
+            const val = $(this).val();
+            if (val) selectedLotnos.push(val);
+        });
+
+        $('.lotno-do').each(function () {
+            const currentVal = $(this).val();
+
+            $(this).find('option').each(function () {
+                const optVal = $(this).val();
+
+                if (!optVal) return;
+
+                // disable kalau sudah dipakai di tempat lain
+                if (selectedLotnos.includes(optVal) && optVal !== currentVal) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+        });
+
+        $('.lotno-do').trigger('change.select2');
+    }
 
     // PILIH LOTNO
     $(document).on('change', '.opron-do', function () {
@@ -187,8 +216,9 @@
             });
 
             $itemSelect.val(null).trigger('change.select2');
-        });
 
+            refreshLotnoOptions();
+        });
     });
 
     // Ketika user pilih LOTNO -> update qty & unit
@@ -199,6 +229,8 @@
         const locco = selected.data('locco') ?? '-';
 
         $(`#locco-do-${idx}`).val(locco);
+
+        refreshLotnoOptions();
     });
 
     $(document).on('input', '.trqty-do', function() {

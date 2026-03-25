@@ -483,7 +483,9 @@ class DoController extends Controller
             )
             ->where('h.braco', $braco);
 
-        return $sa->unionAll($sb)->orderBy('text')->get();
+        return $sa->unionAll($sb)
+            ->orderByRaw("CASE WHEN type = 'SA' THEN 0 ELSE 1 END, text DESC")
+            ->get();
     }
 
     public function getBarangByOC(Request $req)
@@ -545,6 +547,7 @@ class DoController extends Controller
         $data = DB::table('stobl_tbl')
             ->where('braco', $braco)
             ->where('opron', $opron)
+            ->where('toqoh', '>', 0)
             ->select(
                 'lotno',
                 'locco'

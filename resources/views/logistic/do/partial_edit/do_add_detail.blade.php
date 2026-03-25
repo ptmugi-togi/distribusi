@@ -79,6 +79,40 @@
         setTimeout(()=>{
             $(`#details-do-${i}`).collapse('show');
         },100);
+
+        function refreshLotnoOptions() {
+            let selectedLotnos = [];
+
+            $('.lotno-do').each(function () {
+                const val = $(this).val();
+                if (val) selectedLotnos.push(val);
+            });
+
+            $('input[name="lotno[]"]').each(function () {
+                const val = $(this).val();
+                if (val) selectedLotnos.push(val);
+            });
+
+            // disable di dropdown
+            $('.lotno-do').each(function () {
+                const currentVal = $(this).val();
+
+                $(this).find('option').each(function () {
+                    const optVal = $(this).val();
+
+                    if (!optVal) return;
+
+                    if (selectedLotnos.includes(optVal) && optVal !== currentVal) {
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).prop('disabled', false);
+                    }
+                });
+            });
+
+            $('.lotno-do').trigger('change.select2');
+        }
+
         const $itemSelect = $(`#opron-do-${i}`);
 
         $itemSelect.html('<option>Loading...</option>');
@@ -158,6 +192,8 @@
                 });
 
                 $lotno.val(null).trigger('change.select2');
+
+                refreshLotnoOptions();
             });
         });
 
@@ -170,6 +206,8 @@
             const locco = selected.data('locco') ?? '-';
 
             $(`#locco-do-${idx}`).val(locco);
+
+            refreshLotnoOptions();
         });
     }
     
