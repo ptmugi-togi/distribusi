@@ -63,7 +63,7 @@ class DoHdr extends Model
 
     public function getShiptoAttribute()
     {
-        return \App\Models\Mstmas::where('cusno', $this->cusno)
+        return \App\Models\MstMas::where('cusno', $this->cusno)
             ->where('shpto', $this->shpto)
             ->where('braco', $this->braco)
             ->first();
