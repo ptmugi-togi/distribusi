@@ -36,7 +36,7 @@
 
                 <div class="col-md-4 mt-3">
                     <label for="depo" class="form-label">Depo</label>
-                    <input type="text" class="form-control" id="depo" value="{{ $ocsb->depo }} - {{ $ocsb->mdepo->name }}" disabled>
+                    <input type="text" class="form-control" id="depo" value="{{ $ocsb->depo }} - {{ $ocsb->mdepo->name ?? '' }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
