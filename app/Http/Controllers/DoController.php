@@ -10,6 +10,7 @@ use Carbon\Carbon;
 
 use App\Models\DoHdr;
 use App\Models\DoDtl;
+use mpdf\Mpdf;
 
 class DoController extends Controller
 {
@@ -87,6 +88,7 @@ class DoController extends Controller
                 'ref01'      => $request->ref01,
                 'exped'      => $request->exped,
                 'noteh'      => $request->noteh,
+                'shpto'      => $request->shpto,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
@@ -463,27 +465,53 @@ class DoController extends Controller
 
         $sa = DB::table('tcoreh as h')
             ->join('mcusmas as c', 'c.cusno', '=', 'h.cusno')
+            ->join('mstmas as m', function($join) use ($braco){
+                $join->on('m.cusno', '=', 'h.cusno')
+                    ->on('m.shpto', '=', 'h.delto')
+                    ->where('m.braco', $braco);
+            })
             ->select(
                 'h.sorno as value',
                 DB::raw("'SA' as type"),
                 'h.sorno',
                 'c.cusna as cust',
-                DB::raw("CONCAT('SA',' - ',h.sorno) as text")
+                DB::raw("CONCAT('SA',' - ',h.sorno) as text"),
+                'm.shpto as shpto',
+                'm.shpnm as shpnm',
+                'm.phone as phone',
+                'm.contp as contp',
+                'm.province as province',
+                'm.kabupaten as kabupaten',
+                'm.deliveryaddress as address'
             )
             ->where('h.braco', $braco);
 
         $sb = DB::table('tproja as h')
             ->join('mcusmas as c', 'c.cusno', '=', 'h.cusno')
+            ->join('tprojb as d', 'd.sorno', '=', 'h.sorno')
+            ->join('mstmas as m', function($join) use ($braco){
+                $join->on('m.cusno', '=', 'h.cusno')
+                    ->on('m.shpto', '=', 'd.delto')
+                    ->where('m.braco', $braco);
+            })
             ->select(
                 'h.sorno as value',
                 DB::raw("'SB' as type"),
                 'h.sorno',
                 'c.cusna as cust',
-                DB::raw("CONCAT('SB',' - ',h.sorno) as text")
+                DB::raw("CONCAT('SB',' - ',h.sorno) as text"),
+                'm.shpto as shpto',
+                'm.shpnm as shpnm',
+                'm.phone as phone',
+                'm.contp as contp',
+                'm.province as province',
+                'm.kabupaten as kabupaten',
+                'm.deliveryaddress as address'
             )
             ->where('h.braco', $braco);
 
         return $sa->unionAll($sb)
+            ->distinct()
             ->orderByRaw("CASE WHEN type = 'SA' THEN 0 ELSE 1 END, text DESC")
             ->get();
     }

@@ -75,6 +75,49 @@
         </div>
       </div>
 
+      <div class="Address">
+        <hr>
+        <h5>Address</h5>
+        <div id="section-address">
+          <div class="row">
+            <div class="col-md-4 mt-3">
+              <label for="shpto" class="form-label">Transfer To</label>
+              <input type="text" class="form-control" name="shpto" id="shpto" value="{{ old('shpto') }}" readonly style="background-color:#e9ecef">
+            </div>
+
+            <div class="col-md-4 mt-3">
+              <label for="shpto_name" class="form-label">Transfer To Name</label>
+              <input type="text" class="form-control" name="shpto_name" id="shpto_name" value="{{ old('shpto_name') }}" disabled>
+          </div>
+
+            <div class="col-md-4 mt-3">
+              <label for="shpto_attn" class="form-label">Attn</label>
+              <input type="text" class="form-control" name="shpto_attn" id="shpto_attn" value="{{ old('shpto_attn') }}" disabled>
+            </div>
+
+            <div class="col-md-4 mt-3">
+              <label for="shpto_prov" class="form-label">Provinsi</label>
+              <input type="text" class="form-control" name="shpto_prov" id="shpto_prov" value="{{ old('shpto_prov') }}" disabled>
+            </div>
+
+            <div class="col-md-4 mt-3">
+              <label for="shpto_kab" class="form-label">Kabupaten</label>
+              <input type="text" class="form-control" name="shpto_kab" id="shpto_kab" value="{{ old('shpto_kab') }}" disabled>
+            </div>
+
+            <div class="col-md-4 mt-3">
+              <label for="shpto_phone" class="form-label">Phone</label>
+              <input type="text" class="form-control" name="shpto_phone" id="shpto_phone" value="{{ old('shpto_phone') }}" disabled>
+            </div>
+
+            <div class="col-md-12 mt-3">
+              <label for="shpto_address" class="form-label">Transfer To Address</label>
+              <textarea class="form-control" name="shpto_address" id="shpto_address" rows="2" disabled>{{ old('shpto_address') }}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="section-do">
         @include('logistic.do.partial_create.do_create_detail')
       </div>
@@ -113,7 +156,18 @@
                     ocno.append('<option value="" disabled selected>Silahkan Pilih OC</option>');
 
                     data.forEach(function(item){
-                        ocno.append(`<option value="${item.value}">${item.text} (${item.cust})</option>`);
+                        ocno.append(`<option 
+                          value="${item.value}"
+                          data-shpto="${item.shpto}"
+                          data-shpnm="${item.shpnm}"
+                          data-contp="${item.contp}"
+                          data-province="${item.province}"
+                          data-kabupaten="${item.kabupaten}"
+                          data-phone="${item.phone}"
+                          data-address="${item.address}"
+                        >
+                          ${item.text} (${item.cust})
+                        </option>`);
                     });
                 });
           });

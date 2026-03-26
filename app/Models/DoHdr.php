@@ -30,6 +30,7 @@ class DoHdr extends Model
         'exped',
         'prctr',
         'noteh',
+        'shpto',
         'supno',
         'created_at',
         'created_by',

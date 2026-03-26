@@ -93,6 +93,7 @@
     // PILIH BARANG
     $('#ocno').on('change', function(){
 
+        let selected = $(this).find(':selected');
         let selectedText = $("#ocno option:selected").text();
         let parts = selectedText.split(' - ');
 
@@ -101,6 +102,14 @@
 
         $('#rfc01').val(type);
         $('#ref01').val(sorno);
+
+        $('#shpto').val(selected.data('shpto'));
+        $('#shpto_name').val(selected.data('shpnm'));
+        $('#shpto_attn').val(selected.data('contp'));
+        $('#shpto_prov').val(selected.data('province'));
+        $('#shpto_kab').val(selected.data('kabupaten'));
+        $('#shpto_phone').val(selected.data('phone'));
+        $('#shpto_address').val(selected.data('address'));
 
         let $itemSelect = $('.opron-do');
 

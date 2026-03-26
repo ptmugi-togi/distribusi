@@ -48,14 +48,14 @@
                           <td class="text-center">{{ $d->rfc01 }} {{ $d->ref01 ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
-                              {{-- <a href="{{ route('do.previewTa', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                              <a href="{{ route('do.previewDo', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
 
                               {{-- print --}}
                               @if (!$periodClosed && $d->braco == auth()->user()->cabang)
-                                {{-- <a href="{{ route('do.printTa', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                                {{-- <a href="{{ route('do.printDo', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
                                 
                                 <a href="/do/{{ $d->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                                <a href="/do/{{ $d->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                                {{-- <a href="/do/{{ $d->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a> --}}
                                 <form id="delete-do-{{ $d->bbkid }}" action="{{ url('/do/'.$d->bbkid.'/delete') }}" method="POST" style="display:inline;">
                                   @csrf
                                   @method('DELETE')
