@@ -295,3 +295,5 @@ Route::get('/do/{id}/detail', [DoController::class,'show'])->middleware('auth')-
 Route::get('/do/{id}/edit', [DoController::class,'edit'])->middleware('auth')->name('do.edit');
 Route::put('/do/{id}', [DoController::class,'update'])->middleware('auth')->name('do.update');
 Route::delete('/do/{id}/delete', [DoController::class,'destroy'])->middleware('auth')->name('do.delete');
+Route::get('/do/previewDo/{id}', [DoController::class, 'previewDo'])->name('do.previewDo');
+Route::get('/do/printDo/{id}', [DoController::class, 'printDo'])->name('do.printDo');

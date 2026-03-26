@@ -322,7 +322,7 @@ class DoController extends Controller
                     'trqty' => $trqty,
                     'qunit' => $qunit,
                     'locco' => $locco,
-                    'warco' => $do->warco[$i],
+                    'warco' => $request->warco[$i],
                     'noted' => $noted,
                 ]);
 
@@ -592,5 +592,118 @@ class DoController extends Controller
             ->get();
 
         return response()->json($data);
+    }
+    
+    public function previewDo($id)
+    {
+        $dohdr = DoHdr::with([
+            'mbranch',
+            'mformcode',
+            'mcusmas',
+            'dodtls.mpromas',
+        ])->findOrFail($id);
+
+        $dodtls = collect($dohdr->dodtls)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name ?? '',
+                $i->mpromas->prona ?? '',
+                trim($i->noted ?? ''),
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+
+            $first->lotno_merged = implode(', ', 
+                $group->pluck('lotno')->filter()->toArray()
+            );
+
+            $first->trqty = $group->sum('trqty');
+
+            return $first;
+        });
+
+        $html = view('logistic.do.do_print', [
+            'dohdr' => $dohdr,
+            'dodtls' => $dodtls,
+        ])->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 65,
+            'margin_bottom' => 60,
+        ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        $mpdf->Output();
+    }
+
+    public function printDo($id)
+    {
+        $dohdr = DoHdr::with([
+            'mbranch',
+            'mformcode',
+            'mcusmas',
+            'dodtls.mpromas',
+        ])->findOrFail($id);
+
+        $dodtls = collect($dohdr->dodtls)->groupBy(function($i){
+            return implode('|', [
+                $i->opron,
+                $i->mpromas->brand_name ?? '',
+                $i->mpromas->prona ?? '',
+                trim($i->noted ?? ''),
+            ]);
+        })->map(function($group){
+            $first = $group->first();
+
+            $first->lotno_merged = implode(', ', 
+                $group->pluck('lotno')->filter()->toArray()
+            );
+
+            $first->trqty = $group->sum('trqty');
+
+            return $first;
+        });
+
+        $html = view('logistic.do.do_print', [
+            'dohdr' => $dohdr,
+            'dodtls' => $dodtls,
+        ])->render();
+
+        // increment counter total print
+        DB::table('tsisnh')
+        ->where('bbkid', $id)
+        ->update([
+            'prctr' => DB::raw('prctr + 1')
+        ]);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 65,
+            'margin_bottom' => 60,
+        ]);
+
+        $mpdf->SetHTMLFooter('
+            <div style="text-align:right; font-size:9pt;">
+                {PAGENO}/{nbpg}
+            </div>
+        ');
+        $mpdf->WriteHTML($html);
+        $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
+
+        // save PDF jadi string
+        $filename = $dohdr->braco.'-'.$dohdr->formc.$dohdr->trano.'.pdf';
+        $pdfContent = $mpdf->Output($filename, 'S');
+
+        return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 }

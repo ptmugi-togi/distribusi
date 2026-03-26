@@ -61,10 +61,12 @@ class DoHdr extends Model
         return $this->belongsTo(Mcusmas::class, 'cusno', 'cusno');
     }
 
-    public function mstmas()
+    public function getShiptoAttribute()
     {
-        return $this->belongsTo(Mstmas::class, 'cusno', 'cusno')
-        ->whereColumn('mstmas.shpto', 'dohdr.shpto');
+        return \App\Models\Mstmas::where('cusno', $this->cusno)
+            ->where('shpto', $this->shpto)
+            ->where('braco', $this->braco)
+            ->first();
     }
 
     public function mpromas()

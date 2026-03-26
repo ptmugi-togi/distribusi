@@ -81,6 +81,7 @@
         <div id="section-address">
           <div class="row">
             <input type="text" name="cusno" id="cusno" value="{{ old('cusno') }}" hidden>
+            <input type="text" name="cuspo" id="cuspo" value="{{ old('cuspo') }}" hidden>
             <div class="col-md-4 mt-3">
               <label for="shpto" class="form-label">Transfer To</label>
               <input type="text" class="form-control" name="shpto" id="shpto" value="{{ old('shpto') }}" readonly style="background-color:#e9ecef">
