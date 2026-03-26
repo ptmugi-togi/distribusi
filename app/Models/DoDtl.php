@@ -24,6 +24,7 @@ class DoDtl extends Model
         'qunit',
         'trqty',
         'lotno',
+        'warco',
         'locco',
         'reffc',
         'refno',

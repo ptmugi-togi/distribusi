@@ -80,6 +80,7 @@
         <h5>Address</h5>
         <div id="section-address">
           <div class="row">
+            <input type="text" name="cusno" id="cusno" value="{{ old('cusno') }}" hidden>
             <div class="col-md-4 mt-3">
               <label for="shpto" class="form-label">Transfer To</label>
               <input type="text" class="form-control" name="shpto" id="shpto" value="{{ old('shpto') }}" readonly style="background-color:#e9ecef">
@@ -158,6 +159,8 @@
                     data.forEach(function(item){
                         ocno.append(`<option 
                           value="${item.value}"
+                          data-cusno="${item.cusno}"
+                          data-cuspo="${item.cuspo}"
                           data-shpto="${item.shpto}"
                           data-shpnm="${item.shpnm}"
                           data-contp="${item.contp}"

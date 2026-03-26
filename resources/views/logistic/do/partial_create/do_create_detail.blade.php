@@ -66,6 +66,7 @@
                     <label for="locco-do-{{ $i }}" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
                     <input type="text" class="form-control locco-do" id="locco-do-{{ $i }}" name="locco[]" value="{{ old('aloka.'.$i) }}" required readonly style="background-color:#e9ecef">
                 </div>
+                <input type="text" class="warco-do" name="warco[]" id="warco-do-{{ $i }}" hidden>
                 
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Notes</label>
@@ -103,6 +104,8 @@
         $('#rfc01').val(type);
         $('#ref01').val(sorno);
 
+        $('#cusno').val(selected.data('cusno'));
+        $('#cuspo').val(selected.data('cuspo'));
         $('#shpto').val(selected.data('shpto'));
         $('#shpto_name').val(selected.data('shpnm'));
         $('#shpto_attn').val(selected.data('contp'));
@@ -218,7 +221,8 @@
             res.forEach(item => {
                 $itemSelect.append(`
                     <option value="${item.lotno}"
-                            data-locco="${item.locco}">
+                            data-locco="${item.locco}"
+                            data-warco="${item.warco}">
                         ${item.lotno}
                     </option>
                 `);
@@ -236,8 +240,10 @@
         const selected = $(this).find('option:selected');
 
         const locco = selected.data('locco') ?? '-';
+        const warco = selected.data('warco') ?? '-';
 
         $(`#locco-do-${idx}`).val(locco);
+        $(`#warco-do-${idx}`).val(warco);
 
         refreshLotnoOptions();
     });
@@ -326,6 +332,8 @@
                             <label for="locco-do-${i}" class="form-label">Warehouse Location</label><span class="text-danger"> *</span>
                             <input type="text" class="form-control locco-do" id="locco-do-${i}" name="locco[]" value="{{ old('aloka.'.$i) }}" required readonly style="background-color:#e9ecef">
                         </div>
+
+                        <input type="text" class="warco-do" name="warco[]" id="warco-do-${i}" hidden>
 
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>

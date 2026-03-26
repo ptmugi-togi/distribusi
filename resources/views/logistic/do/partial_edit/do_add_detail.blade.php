@@ -65,6 +65,8 @@
                             <input type="text" class="form-control locco-do" id="locco-do-${i}" name="locco[]" value="{{ old('aloka.'.$i) }}" required readonly style="background-color:#e9ecef">
                         </div>
 
+                        <input type="text" class="warco-do" name="warco[]" id="warco-do-${i}" hidden>
+
                         <div class="col-md-12 mt-3">
                             <label class="form-label">Notes</label>
                             <textarea class="form-control" name="noted[]" id="noted-do-${i}" maxlength="200"></textarea>
@@ -185,7 +187,8 @@
                 res.forEach(item => {
                     $lotno.append(`
                         <option value="${item.lotno}"
-                                data-locco="${item.locco}">
+                                data-locco="${item.locco}"
+                                data-warco="${item.warco}">
                             ${item.lotno}
                         </option>
                     `);
@@ -204,8 +207,10 @@
             const selected = $(this).find('option:selected');
 
             const locco = selected.data('locco') ?? '-';
+            const warco = selected.data('warco') ?? '-';
 
             $(`#locco-do-${idx}`).val(locco);
+            $(`#warco-do-${idx}`).val(warco);
 
             refreshLotnoOptions();
         });

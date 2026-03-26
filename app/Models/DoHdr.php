@@ -24,7 +24,9 @@ class DoHdr extends Model
         'trano',
         'tradt',
         'priod',
-        'rqbrc',    
+        'rqbrc', 
+        'cusno', 
+        'cuspo',  
         'rfc01',
         'ref01',
         'exped',
@@ -52,6 +54,17 @@ class DoHdr extends Model
     public function mformcode()
     {
         return $this->belongsTo(Mformcode::class, 'bracoformc', 'bracoformc');
+    }
+
+    public function mcusmas()
+    {
+        return $this->belongsTo(Mcusmas::class, 'cusno', 'cusno');
+    }
+
+    public function mstmas()
+    {
+        return $this->belongsTo(Mstmas::class, 'cusno', 'cusno')
+        ->whereColumn('mstmas.shpto', 'dohdr.shpto');
     }
 
     public function mpromas()

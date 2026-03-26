@@ -84,6 +84,8 @@ class DoController extends Controller
                 'trano'      => $request->trano,
                 'tradt'      => $request->tradt,
                 'priod'      => $request->priod,
+                'cusno'      => $request->cusno,
+                'cuspo'      => $request->cuspo,
                 'rfc01'      => $request->rfc01,
                 'ref01'      => $request->ref01,
                 'exped'      => $request->exped,
@@ -113,6 +115,7 @@ class DoController extends Controller
                     'trqty' => $trqty,
                     'lotno' => $lotno,
                     'locco' => $locco,
+                    'warco' => $request->warco[$i],
                     'qtyit' => $trqty,
                     'reffc' => $request->rfc01,
                     'refno' => $request->ref01,
@@ -319,6 +322,7 @@ class DoController extends Controller
                     'trqty' => $trqty,
                     'qunit' => $qunit,
                     'locco' => $locco,
+                    'warco' => $do->warco[$i],
                     'noted' => $noted,
                 ]);
 
@@ -473,6 +477,8 @@ class DoController extends Controller
             ->select(
                 'h.sorno as value',
                 DB::raw("'SA' as type"),
+                'h.cusno as cusno',
+                'h.cuspo as cuspo',
                 'h.sorno',
                 'c.cusna as cust',
                 DB::raw("CONCAT('SA',' - ',h.sorno) as text"),
@@ -497,6 +503,8 @@ class DoController extends Controller
             ->select(
                 'h.sorno as value',
                 DB::raw("'SB' as type"),
+                'h.cusno as cusno',
+                'h.cuspo as cuspo',
                 'h.sorno',
                 'c.cusna as cust',
                 DB::raw("CONCAT('SB',' - ',h.sorno) as text"),
@@ -538,7 +546,7 @@ class DoController extends Controller
                     DB::raw('(d.qtyor - d.qtydo) as qty'),
                     'p.prona',
                     'p.stdqu',
-                    DB::raw('COALESCE(s.toqoh, 0) as toqoh')
+                    DB::raw('COALESCE(s.toqoh, 0) as toqoh'),
                 )
                 ->get();
 
@@ -559,7 +567,7 @@ class DoController extends Controller
                     DB::raw('(d.trqty - d.delqt) as qty'),
                     'p.prona',
                     'p.stdqu',
-                    DB::raw('COALESCE(s.toqoh, 0) as toqoh')
+                    DB::raw('COALESCE(s.toqoh, 0) as toqoh'),
                 )
                 ->get();
         }
@@ -578,7 +586,8 @@ class DoController extends Controller
             ->where('toqoh', '>', 0)
             ->select(
                 'lotno',
-                'locco'
+                'locco',
+                'warco'
             )
             ->get();
 
