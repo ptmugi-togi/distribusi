@@ -83,7 +83,7 @@ class BbkController extends Controller
     {
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
-        $formc = $request->formc_store;
+        $formc = $request->formc;
         $tradt = $request->tradt;
         $year = Carbon::parse($tradt)->format('y');
 

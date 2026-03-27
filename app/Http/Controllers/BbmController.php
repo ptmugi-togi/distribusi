@@ -187,7 +187,7 @@ class BbmController extends Controller
     {
         $braco = auth()->user()->cabang;
         $warco = $request->warco;
-        $formc = $request->formc_store;
+        $formc = $request->formc;
         $tradt = $request->tradt;
         $year = Carbon::parse($tradt)->format('y');
 
@@ -198,7 +198,7 @@ class BbmController extends Controller
             ->whereRaw("LEFT(trano,2) = ?", [$year])
             ->orderBy('trano','desc')
             ->value('trano');
-
+        
         if ($last) {
             $number = (int)substr($last, 2) + 1;
         } else {
