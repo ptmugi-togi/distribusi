@@ -112,7 +112,7 @@
                         </tr>
                     </table>
                 </td>
-                <td style="width:15%; vertical-align:top;">
+                <td style="width:13%; vertical-align:top;">
                     DO NO. <br>
                     DO DATE <br>
                     CUSTOMER PO. <br>
@@ -122,7 +122,7 @@
                 <td style="width:1%; vertical-align:top;">
                     :<br>:<br>:<br>:<br>:
                 </td>
-                <td style="width:13%; vertical-align:top;">
+                <td style="width:15%; vertical-align:top;">
                     {{ $dohdr->braco }}-DO{{ $dohdr->trano }}<br>
                     {{ \Carbon\Carbon::parse($dohdr->reqdt)->format('d-m-Y') }}<br>
                     {{ $dohdr->cuspo }}<br>
