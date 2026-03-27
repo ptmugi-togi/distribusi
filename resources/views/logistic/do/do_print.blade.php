@@ -93,8 +93,7 @@
                                 {{ $dohdr->mcusmas->offad }} <br>
                                 {{ $dohdr->mcusmas->offad2 }}
                                 {{ $dohdr->mcusmas->offad3 }}
-                                {{ $dohdr->mcusmas->offad4 }}
-                                <br><br>
+                                {{ $dohdr->mcusmas->offad4 }}<br>
                                 Attn. {{ $dohdr->mcusmas->ofcon }}
                             </td>
                         </tr>
@@ -107,8 +106,7 @@
                             <td>
                                 {{ $dohdr->shipto->shpnm ?? '' }} <br>
                                 {{ $dohdr->shipto->deliveryaddress ?? '' }} <br>
-                                Attn. {{ $dohdr->shipto->contp ?? '' }}
-                                <br><br>
+                                Attn. {{ $dohdr->shipto->contp ?? '' }}<br>
                                 Phone. {{ $dohdr->shipto->phone ?? '' }}
                             </td>
                         </tr>
@@ -160,8 +158,8 @@
                         <br>
                         @if(!empty($i->noted))
                            C/W :{{ $i->noted }}
+                           <br>
                         @endif
-                        <br><br>
                         @if(!empty($i->lotno_merged))
                             S/N : {{ $i->lotno_merged }}
                         @endif

@@ -54,6 +54,49 @@
                 </div>
             </div>
 
+            <div class="Address">
+                <hr>
+                <h5>Address</h5>
+                <div id="section-address">
+                <div class="row">
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto" class="form-label">Deliver To</label>
+                        <input name="shpto" id="shpto" class="form-control" value="{{ $do->shpto }}" disabled>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto_name" class="form-label">Deliver To Name</label>
+                        <input type="text" class="form-control" name="shpto_name" id="shpto_name" value="{{ $do->shipto->shpnm }}" disabled>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto_attn" class="form-label">Attn</label>
+                        <input type="text" class="form-control" name="shpto_attn" id="shpto_attn" value="{{ $do->shipto->contp }}" disabled>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto_prov" class="form-label">Provinsi</label>
+                        <input type="text" class="form-control" name="shpto_prov" id="shpto_prov" value="{{ $do->shipto->province }}" disabled>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto_kab" class="form-label">Kabupaten</label>
+                        <input type="text" class="form-control" name="shpto_kab" id="shpto_kab" value="{{ $do->shipto->kabupaten }}" disabled>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label for="shpto_phone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" name="shpto_phone" id="shpto_phone" value="{{ $do->shipto->phone }}" disabled>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                        <label for="shpto_address" class="form-label">Deliver To Address</label>
+                        <textarea class="form-control" name="shpto_address" id="shpto_address" rows="2" disabled>{{ $do->shipto->deliveryaddress }}</textarea>
+                    </div>
+                </div>
+                </div>
+            </div>
+
             {{-- Detail --}}
             <div class="row mt-4">
                 <h3>DO Detail</h3>

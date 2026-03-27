@@ -288,6 +288,7 @@ Route::get('/do', [DoController::class,'index'])->middleware('auth')->name('do.i
 Route::get('/do/create', [DoController::class,'create'])->middleware('auth')->name('do.create');
 Route::post('/do/store', [DoController::class,'store'])->middleware('auth')->name('do.store');
 Route::get('/generate-trano-do', [DoController::class,'generateTrano'])->name('generate-trano-do');
+Route::get('/get-shipto', [DoController::class, 'getShiptoByCusno'])->name('get-shipto-by-cusno');
 Route::get('/get-oc/do', [DoController::class, 'getOc'])->name('get-oc');
 Route::get('/get-barang-oc', [DoController::class, 'getBarangByOC'])->name('get-barang-oc');
 Route::get('/get-lot-oc', [DoController::class, 'getLotByOC'])->name('get-lot-oc');

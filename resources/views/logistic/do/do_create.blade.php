@@ -84,13 +84,13 @@
             <input type="text" name="cuspo" id="cuspo" value="{{ old('cuspo') }}" hidden>
             <div class="col-md-4 mt-3">
               <label for="shpto" class="form-label">Deliver To</label>
-              <input type="text" class="form-control" name="shpto" id="shpto" value="{{ old('shpto') }}" readonly style="background-color:#e9ecef">
+              <select name="shpto" id="shpto" class="form-control select2"></select>
             </div>
 
             <div class="col-md-4 mt-3">
-              <label for="shpto_name" class="form-label">Transfer To Name</label>
+              <label for="shpto_name" class="form-label">Deliver To Name</label>
               <input type="text" class="form-control" name="shpto_name" id="shpto_name" value="{{ old('shpto_name') }}" disabled>
-          </div>
+            </div>
 
             <div class="col-md-4 mt-3">
               <label for="shpto_attn" class="form-label">Attn</label>
@@ -113,7 +113,7 @@
             </div>
 
             <div class="col-md-12 mt-3">
-              <label for="shpto_address" class="form-label">Transfer To Address</label>
+              <label for="shpto_address" class="form-label">Deliver To Address</label>
               <textarea class="form-control" name="shpto_address" id="shpto_address" rows="2" disabled>{{ old('shpto_address') }}</textarea>
             </div>
           </div>
@@ -187,6 +187,105 @@
                       $('#trano').val(res);
                   });
               }
+          });
+
+          // PILIH BARANG
+          $('#ocno').on('change', function(){
+
+              let selected = $(this).find(':selected');
+              let selectedText = $("#ocno option:selected").text();
+              let parts = selectedText.split(' - ');
+
+              let type = parts[0] || '';
+              let sorno = parts[1] ? parts[1].split('(')[0].trim() : '';
+
+              $('#rfc01').val(type);
+              $('#ref01').val(sorno);
+
+              $('#cusno').val(selected.data('cusno'));
+              $('#cuspo').val(selected.data('cuspo'));
+              $('#shpto').val(selected.data('shpto'));
+              $('#shpto_name').val(selected.data('shpnm'));
+              $('#shpto_attn').val(selected.data('contp'));
+              $('#shpto_prov').val(selected.data('province'));
+              $('#shpto_kab').val(selected.data('kabupaten'));
+              $('#shpto_phone').val(selected.data('phone'));
+              $('#shpto_address').val(selected.data('address'));
+
+              let cusno = selected.data('cusno');
+              let defaultShpto = selected.data('shpto');
+
+              $.get("{{ route('get-shipto-by-cusno') }}", { cusno }, function(res){
+                  let $shpto = $('#shpto');
+                  $shpto.empty();
+
+                  if(!res.length){
+                      $shpto.append('<option disabled selected>Tidak ada alamat</option>');
+                      return;
+                  }
+
+                  $shpto.append('<option value="" disabled>Pilih Deliver To</option>');
+
+                  res.forEach(item => {
+                      $shpto.append(`
+                          <option value="${item.shpto}"
+                              data-shpnm="${item.shpnm}"
+                              data-contp="${item.contp}"
+                              data-province="${item.province}"
+                              data-kabupaten="${item.kabupaten}"
+                              data-phone="${item.phone}"
+                              data-address="${item.address}"
+                              ${item.shpto == defaultShpto ? 'selected' : ''}
+                          >
+                              ${item.shpto}
+                          </option>
+                      `);
+                  });
+                  $shpto.trigger('change.select2');
+              });
+
+              let $itemSelect = $('.opron-do');
+
+              // reset select2 dengan benar
+              $itemSelect.empty().append('<option>Loading...</option>');
+              $itemSelect.trigger('change.select2');
+
+              $.get("{{ route('get-barang-oc') }}", {type, sorno}, function(res){
+
+                  $itemSelect.empty();
+
+                  if(!res.length){
+                      $itemSelect.append('<option disabled selected>Tidak ada barang</option>');
+                      return;
+                  }
+
+                  $itemSelect.append('<option value="" disabled selected>Pilih Barang</option>');
+
+                  res.forEach(item => {
+                      $itemSelect.append(`
+                          <option value="${item.opron}" 
+                                  data-qty="${item.qty}" 
+                                  data-stdqu="${item.stdqu}"
+                                  data-toqoh="${item.toqoh}">
+                              ${item.opron} - ${item.prona}
+                          </option>
+                      `);
+                  });
+
+                  // refresh select2 clean
+                  $itemSelect.val(null).trigger('change.select2');
+              });
+          });
+
+          $('#shpto').on('change', function(){
+              let selected = $(this).find(':selected');
+
+              $('#shpto_name').val(selected.data('shpnm'));
+              $('#shpto_attn').val(selected.data('contp'));
+              $('#shpto_prov').val(selected.data('province'));
+              $('#shpto_kab').val(selected.data('kabupaten'));
+              $('#shpto_phone').val(selected.data('phone'));
+              $('#shpto_address').val(selected.data('address'));
           });
 
           // ubah nama accordion 

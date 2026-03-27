@@ -91,62 +91,6 @@
         $('.select2').select2({ width:'100%', theme: 'bootstrap-5' });
     })
 
-    // PILIH BARANG
-    $('#ocno').on('change', function(){
-
-        let selected = $(this).find(':selected');
-        let selectedText = $("#ocno option:selected").text();
-        let parts = selectedText.split(' - ');
-
-        let type = parts[0] || '';
-        let sorno = parts[1] ? parts[1].split('(')[0].trim() : '';
-
-        $('#rfc01').val(type);
-        $('#ref01').val(sorno);
-
-        $('#cusno').val(selected.data('cusno'));
-        $('#cuspo').val(selected.data('cuspo'));
-        $('#shpto').val(selected.data('shpto'));
-        $('#shpto_name').val(selected.data('shpnm'));
-        $('#shpto_attn').val(selected.data('contp'));
-        $('#shpto_prov').val(selected.data('province'));
-        $('#shpto_kab').val(selected.data('kabupaten'));
-        $('#shpto_phone').val(selected.data('phone'));
-        $('#shpto_address').val(selected.data('address'));
-
-        let $itemSelect = $('.opron-do');
-
-        // reset select2 dengan benar
-        $itemSelect.empty().append('<option>Loading...</option>');
-        $itemSelect.trigger('change.select2');
-
-        $.get("{{ route('get-barang-oc') }}", {type, sorno}, function(res){
-
-            $itemSelect.empty();
-
-            if(!res.length){
-                $itemSelect.append('<option disabled selected>Tidak ada barang</option>');
-                return;
-            }
-
-            $itemSelect.append('<option value="" disabled selected>Pilih Barang</option>');
-
-            res.forEach(item => {
-                $itemSelect.append(`
-                    <option value="${item.opron}" 
-                            data-qty="${item.qty}" 
-                            data-stdqu="${item.stdqu}"
-                            data-toqoh="${item.toqoh}">
-                        ${item.opron} - ${item.prona}
-                    </option>
-                `);
-            });
-
-            // refresh select2 clean
-            $itemSelect.val(null).trigger('change.select2');
-        });
-    });
-    
     // guard agar tidak bisa pilih lotno yang sama
     function refreshLotnoOptions() {
         let selectedLotnos = [];

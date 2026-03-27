@@ -33,6 +33,7 @@
                         <th class="text-center">DO No.</th>
                         <th class="text-center">DO Date</th>
                         <th class="text-center">OC No.</th>
+                        <th class="text-center">Customer</th>
                         <th class="text-center">Action</th>
                         <th class="text-center">Created At</th>
                     </tr>
@@ -46,6 +47,7 @@
                               {{ \Carbon\Carbon::parse($d->tradt)->format('d/m/Y') }}
                           </td>
                           <td class="text-center">{{ $d->rfc01 }} {{ $d->ref01 ?? '-' }}</td>
+                          <td class="text-center">{{ $d->mcusmas->cusna ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
                               {{-- <a href="{{ route('do.previewDo', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
@@ -85,10 +87,10 @@
       $(function () {
         $('#myTable').DataTable({
           destroy: true,
-          order: [[4, 'desc']], // sorting berdasarkan created at
+          order: [[5, 'desc']], // sorting berdasarkan created at
           stateSave: false,
           columnDefs: [
-            { targets: [4], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
+            { targets: [5], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
           ]
         });
       });

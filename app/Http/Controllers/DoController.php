@@ -21,7 +21,7 @@ class DoController extends Controller
     {
         $userBraco = Auth::user()->cabang;
 
-        $dohdr = DoHdr::with('mformcode')
+        $dohdr = DoHdr::with('mformcode', 'mcusmas')
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -522,6 +522,25 @@ class DoController extends Controller
             ->distinct()
             ->orderByRaw("CASE WHEN type = 'SA' THEN 0 ELSE 1 END, text DESC")
             ->get();
+    }
+
+    public function getShiptoByCusno(Request $req)
+    {
+        $data = DB::table('mstmas')
+            ->where('cusno', $req->cusno)
+            ->where('braco', Auth::user()->cabang)
+            ->select(
+                'shpto',
+                'shpnm',
+                'contp',
+                'province',
+                'kabupaten',
+                'phone',
+                'deliveryaddress as address'
+            )
+            ->get();
+
+        return response()->json($data);
     }
 
     public function getBarangByOC(Request $req)
