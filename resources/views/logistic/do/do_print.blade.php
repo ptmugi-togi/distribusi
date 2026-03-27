@@ -123,10 +123,10 @@
                     :<br>:<br>:<br>:<br>:
                 </td>
                 <td style="width:13%; vertical-align:top;">
-                    TA{{ $dohdr->trano }}<br>
+                    {{ $dohdr->braco }}-DO{{ $dohdr->trano }}<br>
                     {{ \Carbon\Carbon::parse($dohdr->reqdt)->format('d-m-Y') }}<br>
                     {{ $dohdr->cuspo }}<br>
-                    {{ $dohdr->rfc01 }} {{ $dohdr->ref01 }}<br>
+                    {{ $dohdr->braco }}-{{ $dohdr->rfc01 }} {{ $dohdr->ref01 }}<br>
                     {{ $dohdr->exped }}
                 </td>
             </tr>
