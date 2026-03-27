@@ -494,7 +494,10 @@ class DoController extends Controller
 
         $sb = DB::table('tproja as h')
             ->join('mcusmas as c', 'c.cusno', '=', 'h.cusno')
-            ->join('tprojb as d', 'd.sorno', '=', 'h.sorno')
+            ->join(
+                    DB::raw('(SELECT sorno, MIN(delto) as delto FROM tprojb GROUP BY sorno) as d'),
+                    'd.sorno', '=', 'h.sorno'
+                    )
             ->join('mstmas as m', function($join) use ($braco){
                 $join->on('m.cusno', '=', 'h.cusno')
                     ->on('m.shpto', '=', 'd.delto')
