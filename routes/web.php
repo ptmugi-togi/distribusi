@@ -38,6 +38,7 @@ use App\Http\Controllers\MstmasController;
 use App\Http\Controllers\OcSbController;
 use App\Http\Controllers\MktController;
 use App\Http\Controllers\DoController;
+use App\Http\Controllers\ScController;
 
 /*
 |--------------------------------------------------------------------------
@@ -298,3 +299,6 @@ Route::put('/do/{id}', [DoController::class,'update'])->middleware('auth')->name
 Route::delete('/do/{id}/delete', [DoController::class,'destroy'])->middleware('auth')->name('do.delete');
 Route::get('/do/previewDo/{id}', [DoController::class, 'previewDo'])->name('do.previewDo');
 Route::get('/do/printDo/{id}', [DoController::class, 'printDo'])->name('do.printDo');
+
+Route::get('/sc/create', [ScController::class,'create'])->middleware('auth')->name('sc.create');
+Route::get('/sc/preview', [ScController::class, 'preview'])->name('sc.preview');

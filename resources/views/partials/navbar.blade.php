@@ -167,6 +167,12 @@
               </li>
 
               <li>
+                <a href="{{ route('sc.create') }}">
+                <i class="bi bi-circle"></i><span>Stock Card</span>
+                </a>
+              </li>
+
+              <li>
                 <a href="{{ route('osr.create') }}">
                 <i class="bi bi-circle"></i><span>Outstanding Stock Requisition</span>
                 </a>

@@ -10,14 +10,6 @@ use illuminate\Support\Facades\Log;
 class SmsController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        // 
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -45,14 +37,6 @@ class SmsController extends Controller
         }
 
         return view('logistic.reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     public function getData(Request $req)
