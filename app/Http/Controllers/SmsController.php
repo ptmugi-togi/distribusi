@@ -26,9 +26,9 @@ class SmsController extends Controller
 
         $mitype = DB::table('mitype_tbl')->get();
 
-        $msgrup = DB::table('msgrup_tbl')->get();
+        $msgrup = DB::table('msgrup')->get();
 
-        $mssgrup = DB::table('mssgrup_tbl')->get();
+        $mssgrup = DB::table('mssgrup')->get();
 
         $openPeriod = DB::table('tperiode')
             ->where('status', 'O')

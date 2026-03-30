@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Msgrup_tbl;
+use App\Models\msgrup;
 
 class SgrupController extends Controller
 {
@@ -13,7 +13,7 @@ class SgrupController extends Controller
     public function index()
     {
         return view('master.msgrup',[
-            'msgrups'=>Msgrup_tbl::all(),
+            'msgrups'=>msgrup::all(),
         ]);
     }
 
@@ -31,10 +31,10 @@ class SgrupController extends Controller
     public function store(Request $request)
     {
         $validasi=$request->validate([
-            'sgrup_id'=>'required|max:3|unique:msgrup_tbl',
-            'descr_sgrup'=> 'required|max:100|unique:msgrup_tbl',
+            'sgrup_id'=>'required|max:3|unique:msgrup',
+            'descr_sgrup'=> 'required|max:100|unique:msgrup',
         ]);
-        Msgrup_tbl::create($validasi);
+        msgrup::create($validasi);
         return redirect('/msgrup')->with('success','MSGRUP berhasil ditambahkan');
     }
 
@@ -48,19 +48,19 @@ class SgrupController extends Controller
         //
     }
 
-    public function update(Request $request, Msgrup_tbl $msgrup)
+    public function update(Request $request, msgrup $msgrup)
     {
         $validasi= $request->validate([
-            'descr_sgrup'=> 'required|max:100|unique:msgrup_tbl',
+            'descr_sgrup'=> 'required|max:100|unique:msgrup',
         ]);
-        Msgrup_tbl::where('sgrup_id',$msgrup->sgrup_id)
+        msgrup::where('sgrup_id',$msgrup->sgrup_id)
                     ->update($validasi);
         return redirect('/msgrup')->with('success','MSGRUP berhasil diubah');
     }
 
-    public function destroy(Msgrup_tbl $msgrup)
+    public function destroy(msgrup $msgrup)
     {
-        Msgrup_tbl::destroy($msgrup->sgrup_id);
+        msgrup::destroy($msgrup->sgrup_id);
         return redirect('/msgrup')->with('success','MSGRUP berhasil dihapus');
     }
 }

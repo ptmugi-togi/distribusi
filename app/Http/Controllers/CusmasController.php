@@ -144,11 +144,11 @@ class CusmasController extends Controller
     }
 
     public function getMesin($id){
-        $mesin=Mcusmas::select('lokasi','mssgrup_tbl.descr_ssgrup','type','kapasitas','serial_num','sn_indikator','status','intalled','akhir_tera','nomor_mc','awal_mc','akhir_mc','no_garansi','awal_mc_garansi','akhir_mc_garansi','tmesin_tbl.idmesin','tcustomer_tbl.customer_id')
+        $mesin=Mcusmas::select('lokasi','mssgrup.descr_ssgrup','type','kapasitas','serial_num','sn_indikator','status','intalled','akhir_tera','nomor_mc','awal_mc','akhir_mc','no_garansi','awal_mc_garansi','akhir_mc_garansi','tmesin_tbl.idmesin','tcustomer_tbl.customer_id')
             ->join('tmesin_tbl','tcustomer_tbl.customer_id','=','tmesin_tbl.customer_id')
             ->join('provinsi','provinsi.id_prov','=','tcustomer_tbl.provinsi')
             ->join('tmc_tbl','tmc_tbl.idmesin','=','tmesin_tbl.idmesin')
-            ->join('mssgrup_tbl','mssgrup_tbl.ssgrup_id','=','tmesin_tbl.product')
+            ->join('mssgrup','mssgrup.ssgrup_id','=','tmesin_tbl.product')
             ->where('tcustomer_tbl.customer_id',$id)->get(); ?>
         <table id="myTable13" class="table table-striped nowrap" style="width:100%">
             <div class="col-lg-12">

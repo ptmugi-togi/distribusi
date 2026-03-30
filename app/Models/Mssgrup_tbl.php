@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Mssgrup_tbl extends Model
+class mssgrup extends Model
 {
-    public $table = "mssgrup_tbl";
+    public $table = "mssgrup";
     public $timestamps = false;
     use HasFactory;
     protected $fillable = ['descr_ssgrup'];
