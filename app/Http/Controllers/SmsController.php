@@ -106,8 +106,8 @@ class SmsController extends Controller
             ->pluck('d.opron');
 
         $opronKeluar = DB::table('toutg as d')
-            ->join('tsisnh as h', 'h.bbkid', '=', 'd.bbkid')
-            ->where('h.warco', $warco)
+            ->leftJoin('tsisnh as h', 'h.bbkid', '=', 'd.bbkid')
+            ->where('d.warco', $warco)
             ->whereIn('h.priod', $periods)
             ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
             ->pluck('d.opron');
@@ -149,7 +149,7 @@ class SmsController extends Controller
                     SELECT d.opron, SUM(d.trqty) AS keluar
                     FROM toutg d
                     JOIN tsisnh h ON h.bbkid = d.bbkid
-                    WHERE h.warco = '{$warco}'
+                    WHERE d.warco = '{$warco}'
                     AND h.priod IN ({$periodList})
                     AND CAST(h.tradt AS DATE) <= '{$asof}'
                     GROUP BY d.opron
@@ -204,38 +204,5 @@ class SmsController extends Controller
         $mpdf->WriteHTML($html);
         
         $mpdf->Output();
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
