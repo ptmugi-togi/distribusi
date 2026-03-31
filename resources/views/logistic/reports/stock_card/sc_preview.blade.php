@@ -40,8 +40,8 @@
                 BRANCH <br>
                 PRODUCT <br>
             </td>
-            <td style="width:2%">&nbsp;<br>:<br>:<br></td>
-            <td style="width:25%">
+            <td style="width:1%">&nbsp;<br>:<br>:<br></td>
+            <td style="width:29%">
                 &nbsp;<br>
                 {{ $braco }} <br>
                 {{ $opron }} {{ $prona }} <br>
@@ -62,8 +62,8 @@
                 TIME <br>
                 PAGE
             </td>
-            <td style="width:2%">:<br>:<br>:</td>
-            <td style="width:11%">
+            <td style="width:1%">:<br>:<br>:</td>
+            <td style="width:9%">
                 {{ date('d-m-Y') }} <br>
                 {{ date('H:i:s') }} <br>
                 {PAGENO}
