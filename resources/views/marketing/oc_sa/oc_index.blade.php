@@ -52,7 +52,7 @@
                           <td class="text-center">{{ $o->msreno->srena ?? '-' }}</td>
                           <td class="text-center">
                               @if ($o->resta == 'C')
-                                <p class="badge bg-danger">CANCELED</p>
+                                <span class="badge bg-danger">CANCELED</span>
                               @endif
                               {{-- preview --}}
                               {{-- <a href="{{ route('oc.previewOc', $o->ocid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
