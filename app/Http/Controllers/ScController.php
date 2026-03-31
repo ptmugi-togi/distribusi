@@ -60,6 +60,7 @@ class ScController extends Controller
             ->leftJoin('mformcode_tbl as f', 'f.formc', '=', 'h.formc')
             ->leftJoin('mpromas as p', 'p.opron', '=', 'd.opron')
             ->select(
+                DB::raw("1 as sorting"),
                 DB::raw("CAST(h.tradt AS DATE) as date"),
                 'h.formc',
                 'h.trano',
@@ -83,6 +84,7 @@ class ScController extends Controller
             ->leftJoin('mcusmas as c', 'c.cusno', '=', 'h.cusno')
             ->leftJoin('mpromas as p', 'p.opron', '=', 'd.opron')
             ->select(
+                DB::raw("2 as sorting"),
                 DB::raw("CAST(h.tradt AS DATE) as date"),
                 'h.formc',
                 'h.trano',
@@ -101,6 +103,7 @@ class ScController extends Controller
 
         return DB::query()
             ->fromSub($in->unionAll($out), 'x')
+            ->orderBy('sorting')
             ->orderBy('date')
             ->orderBy('formc')
             ->orderBy('trano')
