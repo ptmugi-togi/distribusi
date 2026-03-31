@@ -142,19 +142,23 @@ class ScController extends Controller
         $totalOut = $rows->sum('qty_out');
         $stockAkhir = $stockAwal + $totalIn - $totalOut;
 
-        $html = view('logistic.reports.stock_card.sc_preview', [
-            'rows' => $rows,
-            'stockAwal' => $stockAwal,
-            'start' => $start,
-            'end' => $end,
-            'totalIn' => $totalIn,
-            'totalOut' => $totalOut,
-            'stockAkhir' => $stockAkhir,
-            'opron' => $opron,
-            'prona' => $rows->first()->prona ?? '',
-            'braco' => $braco,
-            'brana' => $branch->brana ?? ''
-        ])->render();
+        if ($rows->count() === 0) {
+            $html = '<p>Tidak ada data Stock Card</p>';
+        } else {
+            $html = view('logistic.reports.stock_card.sc_preview', [
+                'rows' => $rows,
+                'stockAwal' => $stockAwal,
+                'start' => $start,
+                'end' => $end,
+                'totalIn' => $totalIn,
+                'totalOut' => $totalOut,
+                'stockAkhir' => $stockAkhir,
+                'opron' => $opron,
+                'prona' => $rows->first()->prona ?? '',
+                'braco' => $braco,
+                'brana' => $branch->brana ?? ''
+            ])->render();
+        }
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4-L',
@@ -172,3 +176,4 @@ class ScController extends Controller
         $mpdf->Output();
     }
 }
+
