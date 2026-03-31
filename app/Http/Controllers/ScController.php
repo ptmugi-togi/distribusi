@@ -57,18 +57,8 @@ class ScController extends Controller
         // IN
         $in = DB::table('tstord as d')
             ->join('tstorh as h', 'h.bbmid', '=', 'd.bbmid')
-            ->leftJoin(
-                    DB::raw("(SELECT formc, MAX(descr) as descr FROM mformcode_tbl GROUP BY formc) as f"),
-                    'f.formc',
-                    '=',
-                    'h.formc'
-                )
-            ->leftJoin(
-                    DB::raw("(SELECT opron, MAX(prona) as prona FROM mpromas GROUP BY opron) as p"),
-                    'p.opron',
-                    '=',
-                    'd.opron'
-                )
+            ->leftJoin('mformcode_tbl as f', 'f.bracoformc', '=', 'h.bracoformc')
+            ->leftJoin('mpromas as p', 'p.opron', '=', 'd.opron')
             ->select(
                 DB::raw("1 as sorting"),
                 DB::raw("CAST(h.tradt AS DATE) as date"),
@@ -90,19 +80,9 @@ class ScController extends Controller
         // OUT
         $out = DB::table('toutg as d')
             ->join('tsisnh as h', 'h.bbkid', '=', 'd.bbkid')
-            ->leftJoin(
-                    DB::raw("(SELECT formc, MAX(descr) as descr FROM mformcode_tbl GROUP BY formc) as f"),
-                    'f.formc',
-                    '=',
-                    'h.formc'
-                )
+            ->leftJoin('mformcode_tbl as f', 'f.bracoformc', '=', 'h.bracoformc')
             ->leftJoin('mcusmas as c', 'c.cusno', '=', 'h.cusno')
-            ->leftJoin(
-                    DB::raw("(SELECT opron, MAX(prona) as prona FROM mpromas GROUP BY opron) as p"),
-                    'p.opron',
-                    '=',
-                    'd.opron'
-                )
+            ->leftJoin('mpromas as p', 'p.opron', '=', 'd.opron')
             ->select(
                 DB::raw("2 as sorting"),
                 DB::raw("CAST(h.tradt AS DATE) as date"),
