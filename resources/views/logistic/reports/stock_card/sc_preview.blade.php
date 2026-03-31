@@ -44,7 +44,7 @@
             <td style="width:29%">
                 &nbsp;<br>
                 {{ $braco }} <br>
-                {{ $opron }} {{ $prona }} <br>
+                {{ $opron }} - {{ $prona }} <br>
             </td>
 
             <td style="width:40%" class="center">
