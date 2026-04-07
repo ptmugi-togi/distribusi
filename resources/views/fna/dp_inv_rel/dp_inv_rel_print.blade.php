@@ -172,7 +172,7 @@
             @foreach($dpinvrelhdr->dpinvreldtls as $i => $d)
                 <tr>
                     <td class="center">{{ $i + 1 }}.</td>
-                    <td>{{ $dpinvrelhdr->itext ?? '-' }}</td>
+                    <td>{!! nl2br(e($dpinvrelhdr->itext)) !!}</td>
                     <td class="right">{{ formatNumberOnly($dpinvrelhdr->gramt, $dpinvrelhdr->curco) }}</td>
                 </tr>
             @endforeach

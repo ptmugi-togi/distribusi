@@ -31,8 +31,8 @@
                   <table id="myTable" class="table table-striped nowrap" style="width:100%">
                     <thead>
                       <tr>
-                          <th class="text-center">SO NO.</th>
-                          <th class="text-center">SO Date</th>
+                          <th class="text-center">OC NO.</th>
+                          <th class="text-center">OC Date</th>
                           <th class="text-center">CUSTOMER</th>
                           <th class="text-center">DP %</th>
                           <th class="text-center">DP AMOUNT</th>
@@ -47,7 +47,7 @@
                             <td class="text-center" data-order="{{ \Carbon\Carbon::parse($d->invdt)->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($d->invdt)->format('d/m/Y') }}
                             </td>
-                            <td class="text-center">{{ $d->mcusmas->cusna ?? '-' }}</td>
+                            <td class="text-left">{{ $d->mcusmas->cusna ?? '-' }}</td>
                             <td class="text-center">{{ $d->dpper ?? '-' }}</td>
                             <td class="text-center">{{ number_format($d->dpamt, 0) }}</td>
                         <td class="text-center">
@@ -91,7 +91,7 @@
       $(function () {
         $('#myTable').DataTable({
           destroy: true,
-          order: [[6, 'desc']], // sorting berdasarkan created at
+          order: [[0, 'desc']], // sorting berdasarkan created at
           stateSave: false,
           columnDefs: [
             { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
