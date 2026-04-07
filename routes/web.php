@@ -39,6 +39,7 @@ use App\Http\Controllers\OcSbController;
 use App\Http\Controllers\MktController;
 use App\Http\Controllers\DoController;
 use App\Http\Controllers\ScController;
+use App\Http\Controllers\DpInvRelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -302,3 +303,14 @@ Route::get('/do/printDo/{id}', [DoController::class, 'printDo'])->name('do.print
 
 Route::get('/sc/create', [ScController::class,'create'])->middleware('auth')->name('sc.create');
 Route::get('/sc/preview', [ScController::class, 'preview'])->name('sc.preview');
+
+Route::get('/dp-inv-rel/index', [DpInvRelController::class,'index'])->middleware('auth')->name('dp_inv_rel.index');
+Route::get('/dp-inv-rel/create', [DpInvRelController::class,'create'])->middleware('auth')->name('dp_inv_rel.create');
+Route::get('/generate-invno-sc', [DpInvRelController::class,'generateInvno'])->name('generate-invno-sc');
+Route::get('/get-oc/sc', [DpInvRelController::class, 'getOcSa'])->name('get-oc-sa');
+Route::get('/get-main-address', [DpInvRelController::class, 'getMainAddress'])->name('get-main-address');
+Route::get('/get-opron-by-oc-sa', [DpInvRelController::class, 'getOpronByOcSa'])->name('get-opron-by-oc-sa');
+Route::post('/dp-inv-rel/store', [DpInvRelController::class,'store'])->middleware('auth')->name('dp_inv_rel.store');
+Route::put('/dp-inv-rel/release/{invid}', [DpInvRelController::class,'release'])->middleware('auth')->name('dp_inv_rel.release');
+Route::get('/dp-inv-rel/preview/{invid}', [DpInvRelController::class,'preview'])->middleware('auth')->name('dp_inv_rel.preview');
+Route::get('/dp-inv-rel/print/{invid}', [DpInvRelController::class,'print'])->middleware('auth')->name('dp_inv_rel.print');

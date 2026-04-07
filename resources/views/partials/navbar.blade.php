@@ -116,6 +116,57 @@
           </li>
         </ul>
       </li> --}}
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#fna-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-calculator-fill"></i><span>F & A</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="fna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('dp_inv_rel.index') }}">
+            <i class="bi bi-circle"></i><span>DP Invoice Release</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#marketing-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-shop"></i><span>Marketing</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('oc.index') }}">
+            <i class="bi bi-circle"></i><span>OC Retail (SA)</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('oc_sb.index') }}">
+            <i class="bi bi-circle"></i><span>OC Project (SB)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" data-bs-target="#subMarketing-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
+                <li>
+                  <a href="{{ route('mkt.createMkt') }}">
+                  <i class="bi bi-circle"></i><span>Sales Report/Sales Rep</span>
+                  </a>
+                </li>
+              </ul>
+              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
+                <li>
+                  <a href="{{ route('mkt.createMktSs') }}">
+                  <i class="bi bi-circle"></i><span>Sales Report/Product Group</span>
+                  </a>
+                </li>
+              </ul>
+          </li>
+        </ul>
+      </li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#logistic-nav" data-bs-toggle="collapse" href="#">
@@ -178,44 +229,6 @@
                 </a>
               </li>
             </ul>
-          </li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#marketing-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-shop"></i><span>Marketing</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="marketing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{ route('oc.index') }}">
-            <i class="bi bi-circle"></i><span>OC Retail (SA)</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('oc_sb.index') }}">
-            <i class="bi bi-circle"></i><span>OC Project (SB)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link collapsed" data-bs-target="#subMarketing-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
-                <i class="bi bi-chevron-down ms-auto"></i>
-              </a>
-              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
-                <li>
-                  <a href="{{ route('mkt.createMkt') }}">
-                  <i class="bi bi-circle"></i><span>Sales Report/Sales Rep</span>
-                  </a>
-                </li>
-              </ul>
-              <ul id="subMarketing-nav" class="nav-content collapse" data-bs-parent="#marketing-nav">
-                <li>
-                  <a href="{{ route('mkt.createMktSs') }}">
-                  <i class="bi bi-circle"></i><span>Sales Report/Product Group</span>
-                  </a>
-                </li>
-              </ul>
           </li>
         </ul>
       </li>
