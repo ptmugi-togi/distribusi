@@ -244,7 +244,8 @@ class DpInvRelController extends Controller
                 $q->where('h.dpist', '!=', 'Y')
                 ->orWhereNull('h.dpist');
             })
-            ->where('h.dpper', '>' , 0);
+            ->where('h.dpper', '>' , 0)
+            ->orderBy('h.sorno', 'desc');
 
             return $sa
             ->get();
