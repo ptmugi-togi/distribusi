@@ -26,6 +26,7 @@ class DpInvRelController extends Controller
                     ->on('h.braco', '=', 'tinmas.braco');
             })
             ->where('tinmas.braco', $userBraco)
+            ->where('tinmas.sorfc', 'SA')
             ->select('tinmas.*', 'h.dpist')
             ->get();
 
@@ -110,6 +111,7 @@ class DpInvRelController extends Controller
                 'txamt'      => $request->txamt,
                 'blamt'      => $request->blamt,
                 'itext'      => $request->itext,
+                'invtp'      => '1',
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
@@ -149,6 +151,14 @@ class DpInvRelController extends Controller
                 ]);
             }
 
+            DB::table('tcoreh')
+                ->where('braco', $request->braco)
+                ->where('formc', $request->sorfc)
+                ->where('sorno', $request->sorno)
+                ->update([
+                    'dpist' => 'Y'
+                ]);
+
             DB::commit();
             return redirect()->route('dp_inv_rel.index')->with('success', "data DP Invoice Relelase \"$invid\" berhasil disimpan.");
 
@@ -156,41 +166,6 @@ class DpInvRelController extends Controller
             DB::rollBack();
             \Log::error('Gagal simpan DP Inv Rel:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-
-    public function release($invid)
-    {
-        DB::beginTransaction();
-
-        try {
-
-            $hdr = DpInvRelHdr::where('invid', $invid)->first();
-
-            if (!$hdr) {
-                throw new \Exception('Data tidak ditemukan');
-            }
-
-            DB::table('tcoreh')
-                ->where('braco', $hdr->braco)
-                ->where('formc', $hdr->sorfc)
-                ->where('sorno', $hdr->sorno)
-                ->update([
-                    'dpist' => 'Y'
-                ]);
-
-            DB::commit();
-
-            return back()->with('success', "Invoice \"$invid\" berhasil di-release");
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            \Log::error('Gagal release DP Inv Rel:', [
-                'error' => $e->getMessage()
-            ]);
-
-            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -265,6 +240,10 @@ class DpInvRelController extends Controller
                 'h.topay as topay',
             )
             ->where('h.braco', $braco)
+            ->where(function($q) {
+                $q->where('h.dpist', '!=', 'Y')
+                ->orWhereNull('h.dpist');
+            })
             ->where('h.dpper', '>' , 0);
 
             return $sa
