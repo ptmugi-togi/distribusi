@@ -88,6 +88,7 @@
           destroy: true,
           order: [[8, 'desc']], // sorting berdasarkan created at
           stateSave: false,
+          responsive: true,
           columnDefs: [
             { targets: [8], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
           ]
