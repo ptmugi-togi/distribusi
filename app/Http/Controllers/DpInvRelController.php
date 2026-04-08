@@ -309,7 +309,7 @@ class DpInvRelController extends Controller
 
     public function preview($id)
     {
-        $dpinvrelhdr = \App\Models\DpInvrelHdr::with([
+        $dpinvrelhdr = \App\Models\DpInvRelHdr::with([
             'dpinvreldtls.mpromas',
             'mbranch',
             'mformcode',
@@ -357,7 +357,7 @@ class DpInvRelController extends Controller
 
     public function print($id) 
     {
-        $dpinvrelhdr = \App\Models\DpInvrelHdr::with([
+        $dpinvrelhdr = \App\Models\DpInvRelHdr::with([
             'dpinvreldtls.mpromas',
             'mbranch',
             'mformcode',
