@@ -81,11 +81,27 @@
 @push('scripts')
     <script>
       $(function () {
-        $('#myTable').DataTable({
+        var table = $('#myTable').DataTable({
           destroy: true,
-          order: [[0, 'desc']], // sorting berdasarkan created at
+          order: [[0, 'desc']],
           stateSave: false,
-          responsive: true
+          responsive: true,
+        });
+
+        function initTooltip() {
+          document.querySelectorAll('[data-tooltip="true"]').forEach(function (el) {
+            new bootstrap.Tooltip(el, {
+              container: 'body',
+              boundary: 'window',
+              placement: 'top'
+            });
+          });
+        }
+
+        initTooltip();
+
+        table.on('draw responsive-display', function () {
+          initTooltip();
         });
       });
     </script>
