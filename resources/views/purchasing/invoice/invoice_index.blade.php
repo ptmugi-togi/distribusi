@@ -79,14 +79,30 @@
 @push('scripts')
     <script>
       $(function () {
-        $('#myTable').DataTable({
+        var table = $('#myTable').DataTable({
           destroy: true,
-          order: [[6, 'desc']], // sorting berdasarkan created at
+          order: [[6, 'desc']],
           stateSave: false,
           responsive: true,
           columnDefs: [
-            { targets: [6], visible: false } //ilangin tabel created at, karna hanya untuk sorting saja
+            { targets: [6], visible: false }
           ]
+        });
+
+        function initTooltip() {
+          document.querySelectorAll('[data-tooltip="true"]').forEach(function (el) {
+            new bootstrap.Tooltip(el, {
+              container: 'body',
+              boundary: 'window',
+              placement: 'top'
+            });
+          });
+        }
+
+        initTooltip();
+
+        table.on('draw responsive-display', function () {
+          initTooltip();
         });
       });
     </script>
