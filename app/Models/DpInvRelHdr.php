@@ -122,7 +122,7 @@ class DpInvRelHdr extends Model
 
     public function mstmas()
     {
-        return $this->belongsTo(Mstmas::class, 'cusno', 'cusno');
+        return $this->belongsTo(MstMas::class, 'cusno', 'cusno');
     }
 
     public function mdepo()
