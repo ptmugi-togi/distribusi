@@ -268,7 +268,7 @@
                 let invdt = $('#invdt').val();
 
                 if(formc && invdt){
-                    $.get("{{ route('generate-invno-sc') }}", {formc, invdt}, function(res){
+                    $.get("{{ route('generate-invno-sc-dp') }}", {formc, invdt}, function(res){
 
                         let display = formc + '-' + res;
 
@@ -375,6 +375,13 @@
 
                 let container = $('#table_detail');
                 container.empty(); // reset dulu
+                
+                if(!res.length){
+                    $('.section-detail').hide();
+                    return;
+                }
+
+                $('.section-detail').show();
 
                 if(!res.length){
                     container.html('<p class="text-muted">Tidak ada detail</p>');
