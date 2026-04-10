@@ -145,15 +145,20 @@
     </table>
     <table class="no-border" style="margin-top:5px;">
         <tr>
-            <td class="left" style="width:33%; vertical-align:top">
-                <b>NPWP/NITKU : {{ $dpinvrelhdr->mcusmas->npwp }}/{{ $dpinvrelhdr->mcusmas->nitku }}</b>
+            <td class="left" style="width:50%; vertical-align:top">
+                <b>NPWP/NITKU : {{ $dpinvrelhdr->mcusmas->taxrn }} /
+                    @if ($dpinvrelhdr->delto == '0' && $dpinvrelhdr->mcusmas->nitku != null)
+                        {{ $dpinvrelhdr->mcusmas->nitku }}</b>
+                    @elseif ($dpinvrelhdr->delto != '0' && $dpinvrelhdr->mstmas->nitku != null)
+                        {{ $dpinvrelhdr->mstmas->nitku }}</b>
+                    @else
+                        -
+                    @endif
+                </b>
             </td>
     
-            <td class="left" style="width:33%; vertical-align:top">
+            <td class="left" style="width:50%; vertical-align:top">
                 <b>PO PELANGGAN : {{ $dpinvrelhdr->cuspo }}</b>
-            </td>
-    
-            <td class="left" style="width:33%; vertical-align:top">
             </td>
         </tr>
     </table>
@@ -169,13 +174,18 @@
         </thead>
     
         <tbody>
-            @foreach($dpinvrelhdr->dpinvreldtls as $i => $d)
-                <tr>
-                    <td class="center">{{ $i + 1 }}.</td>
-                    <td>{!! nl2br(e($dpinvrelhdr->itext)) !!}</td>
-                    <td class="right">{{ formatNumberOnly($dpinvrelhdr->gramt, $dpinvrelhdr->curco) }}</td>
-                </tr>
-            @endforeach
+            @php
+                $text = e($dpinvrelhdr->itext);
+
+                $text = str_replace('    ', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $text);
+
+                $text = nl2br($text);
+            @endphp
+            <tr>
+                <td class="center"></td>
+                <td>{!! $text !!}</td>
+                <td class="right">{{ formatNumberOnly($dpinvrelhdr->gramt, $dpinvrelhdr->curco) }}</td>
+            </tr>
         </tbody>
     </table>
 </div>

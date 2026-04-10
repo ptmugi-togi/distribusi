@@ -147,10 +147,12 @@
         <tr>
             <td class="left" style="width:50%; vertical-align:top">
                 <b>NPWP/NITKU : {{ $projectinvrelhdr->mcusmas->taxrn }}/
-                    @if ($projectinvrelhdr->delto == '0')
+                    @if ($projectinvrelhdr->delto == '0' && $projectinvrelhdr->mcusmas->nitku != null)
                         {{ $projectinvrelhdr->mcusmas->nitku }}</b>
-                    @else
+                    @elseif ($projectinvrelhdr->delto != '0' && $projectinvrelhdr->mstmas->nitku != null)
                         {{ $projectinvrelhdr->mstmas->nitku }}</b>
+                    @else
+                        -
                     @endif
             </td>
             
