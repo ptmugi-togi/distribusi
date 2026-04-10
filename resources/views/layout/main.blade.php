@@ -756,6 +756,36 @@
     });
   });
 </script>
+{{-- script tab untuk text area --}}
+<script>
+    document.querySelectorAll('textarea').forEach(function(textarea){
+        textarea.addEventListener('keydown', function(e){
+
+            let start = this.selectionStart;
+            let end = this.selectionEnd;
+
+            // TAB
+            if(e.key === 'Tab' && !e.shiftKey){
+                e.preventDefault();
+                this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+            }
+
+            // SHIFT + TAB
+            if(e.key === 'Tab' && e.shiftKey){
+                e.preventDefault();
+
+                let before = this.value.substring(0, start);
+
+                if(before.endsWith("    ")){
+                    this.value = this.value.substring(0, start - 4) + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start - 4;
+                }
+            }
+
+        });
+    });
+</script>
 {{-- script tooltip --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
