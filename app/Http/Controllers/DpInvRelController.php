@@ -295,10 +295,10 @@ class DpInvRelController extends Controller
                 'd.prona',
                 'd.stdqu',
                 'd.qtyor',
-                'd.plist as plist',
-                'd.price as price',
-                'd.gross as gross_dtl',
-                'd.odisa as odisa_dtl',
+                DB::raw('(d.plist * (h.dpper / 100)) * d.qtyor as plist'),
+                DB::raw('(d.price * (h.dpper / 100)) * d.qtyor as price'),
+                DB::raw('(d.gross * (h.dpper / 100)) * d.qtyor as gross_dtl'),
+                DB::raw('(d.odisa * (h.dpper / 100)) * d.qtyor as odisa_dtl'),
                 'd.teknik',
                 'd.noted',
             )
@@ -318,21 +318,8 @@ class DpInvRelController extends Controller
             'mtaxes',
             'mdepo',
             'mstmas',
+            'mstmas_print'
         ])->findOrFail($id);
-
-        $bomList = DB::table('tprojc')
-            ->join('mpromas', 'tprojc.opron', '=', 'mpromas.opron')
-            ->where('tprojc.ocsbid', $id)
-            ->select(
-                'tprojc.uopron',
-                'tprojc.opron',
-                'tprojc.trqty',
-                'tprojc.stdqu',
-                'mpromas.prona'
-            )
-            ->orderBy('tprojc.opron')
-            ->get()
-            ->groupBy('uopron');
 
         $html = view('fna.dp_inv_rel.dp_inv_rel_print', compact('dpinvrelhdr'))->render();
 
@@ -366,6 +353,7 @@ class DpInvRelController extends Controller
             'mtaxes',
             'mdepo',
             'mstmas',
+            'mstmas_print'
         ])->findOrFail($id);
 
         $html = view('fna.dp_inv_rel.dp_inv_rel_print', compact('dpinvrelhdr'))->render();
