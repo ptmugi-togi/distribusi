@@ -166,8 +166,8 @@ class ProjectInvRelController extends Controller
                 ->where('sorno', $request->sorno)
                 ->where('phase', $request->phase)
                 ->update([
-                    'invfc' => $request->sorfc,
-                    'invno' => $request->sorno
+                    'invfc' => $request->formc,
+                    'invno' => $request->invno
                 ]);
 
             DB::commit();
@@ -210,6 +210,11 @@ class ProjectInvRelController extends Controller
 
         return DB::table('tproja as h')
             ->leftJoin('mcusmas as c', 'c.cusno', '=', 'h.cusno')
+            ->join('tprojd as d', function ($join) {
+                $join->on('d.ocsbid', '=', 'h.ocsbid')
+                    ->whereNull('d.invfc')
+                    ->whereNull('d.invno');
+            })
             ->select(
                 DB::raw("DATE_FORMAT(h.sordt, '%d-%m-%Y') as ocdt"),
                 'h.sorno as value',
@@ -226,6 +231,17 @@ class ProjectInvRelController extends Controller
                 $q->whereNull('h.resta')
                     ->orWhere('h.resta', '!=', 'C');
             })
+            ->groupBy(
+                'h.ocsbid',
+                'h.sordt',
+                'h.sorno',
+                'h.cusno',
+                'h.cuspo',
+                'h.sreno',
+                'c.cusna',
+                'h.curco',
+                'h.crate'
+            )
             ->orderBy('h.sorno', 'desc')
             ->get();
     }
