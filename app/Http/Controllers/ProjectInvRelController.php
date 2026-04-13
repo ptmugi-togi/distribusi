@@ -160,6 +160,16 @@ class ProjectInvRelController extends Controller
                     'dpist' => 'Y'
                 ]);
 
+            DB::table('tprojd')
+                ->where('braco', $request->braco)
+                ->where('formc', $request->sorfc)
+                ->where('sorno', $request->sorno)
+                ->where('phase', $request->phase)
+                ->update([
+                    'invfc' => $request->sorfc,
+                    'invno' => $request->sorno
+                ]);
+
             DB::commit();
             return redirect()->route('project_inv_rel.index')->with('success', "data Project Invoice Relelase \"$invid\" berhasil disimpan.");
 
@@ -212,6 +222,10 @@ class ProjectInvRelController extends Controller
                 'h.crate'
             )
             ->where('h.braco', $braco)
+            ->where(function($q) {
+                $q->whereNull('h.resta')
+                    ->orWhere('h.resta', '!=', 'C');
+            })
             ->orderBy('h.sorno', 'desc')
             ->get();
     }
