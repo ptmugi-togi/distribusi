@@ -113,6 +113,7 @@ class ProjectInvRelController extends Controller
                 'blamt'      => $request->blamt,
                 'itext'      => $request->noted,
                 'invtp'      => '1',
+                'phase'      => $request->phase,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),

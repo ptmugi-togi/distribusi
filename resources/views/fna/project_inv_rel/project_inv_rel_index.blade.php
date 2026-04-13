@@ -36,8 +36,9 @@
                           <th class="text-center">OC NO.</th>
                           <th class="text-center">OC Date</th>
                           <th class="text-center">CUSTOMER</th>
-                          <th class="text-center">Termin %</th>
-                          <th class="text-center">Termin AMOUNT</th>
+                          <th class="text-center">TERMIN</th>
+                          <th class="text-center">TERMIN %</th>
+                          <th class="text-center">BILLING AMOUNT</th>
                           <th class="text-center">Action</th>
                       </tr>
                     </thead>
@@ -53,8 +54,9 @@
                                 {{ \Carbon\Carbon::parse($p->duedt)->format('d/m/Y') }}
                             </td>
                             <td class="text-left">{{ $p->mcusmas->cusna ?? '-' }}</td>
+                            <td class="text-center">{{ $p->phase ?? '-' }}</td>
                             <td class="text-center">{{ $p->toppc ?? '-' }}</td>
-                            <td class="text-center">{{ number_format($p->ntamt, 0) }}</td>
+                            <td class="text-right">{{ number_format($p->blamt, 0) }}</td>
                         <td class="text-center">
                           {{-- preview --}}
                           {{-- <a href="{{ route('project_inv_rel.preview', $p->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
