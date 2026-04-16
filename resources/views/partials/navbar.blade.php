@@ -128,6 +128,11 @@
             </a>
           </li>
           <li>
+            <a href="{{ route('retail_inv_rel.index') }}">
+            <i class="bi bi-circle"></i><span>Retail Invoice Release</span>
+            </a>
+          </li>
+          <li>
             <a href="{{ route('project_inv_rel.index') }}">
             <i class="bi bi-circle"></i><span>Project Invoice Release</span>
             </a>

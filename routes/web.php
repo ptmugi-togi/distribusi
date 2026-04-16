@@ -41,6 +41,7 @@ use App\Http\Controllers\DoController;
 use App\Http\Controllers\ScController;
 use App\Http\Controllers\DpInvRelController;
 use App\Http\Controllers\ProjectInvRelController;
+use App\Http\Controllers\RetailInvRelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -327,3 +328,14 @@ Route::post('/project-inv-rel/store', [ProjectInvRelController::class,'store'])-
 Route::put('/project-inv-rel/release/{invid}', [ProjectInvRelController::class,'release'])->middleware('auth')->name('project_inv_rel.release');
 Route::get('/project-inv-rel/preview/{invid}', [ProjectInvRelController::class,'preview'])->middleware('auth')->name('project_inv_rel.preview');
 Route::get('/project-inv-rel/print/{invid}', [ProjectInvRelController::class,'print'])->middleware('auth')->name('project_inv_rel.print');
+
+Route::get('/retail-inv-rel/index', [RetailInvRelController::class,'index'])->middleware('auth')->name('retail_inv_rel.index');
+Route::get('/retail-inv-rel/create', [RetailInvRelController::class,'create'])->middleware('auth')->name('retail_inv_rel.create');
+Route::get('/generate-invno-sc-retail', [RetailInvRelController::class,'generateInvno'])->name('generate-invno-sc-retail');
+Route::get('/get-oc/sc-do', [RetailInvRelController::class, 'getDo'])->name('get-do');
+Route::get('/get-main-address', [RetailInvRelController::class, 'getMainAddress'])->name('get-main-address');
+Route::get('/get-opron-by-do-sa', [RetailInvRelController::class, 'getOpronByDoSa'])->name('get-opron-by-do-sa');
+Route::post('/retail-inv-rel/store', [RetailInvRelController::class,'store'])->middleware('auth')->name('retail_inv_rel.store');
+Route::put('/retail-inv-rel/release/{invid}', [RetailInvRelController::class,'release'])->middleware('auth')->name('retail_inv_rel.release');
+Route::get('/retail-inv-rel/preview/{invid}', [RetailInvRelController::class,'preview'])->middleware('auth')->name('retail_inv_rel.preview');
+Route::get('/retail-inv-rel/print/{invid}', [RetailInvRelController::class,'print'])->middleware('auth')->name('retail_inv_rel.print');
