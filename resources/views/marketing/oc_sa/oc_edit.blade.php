@@ -254,12 +254,12 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label for="odisa" class="form-label">Official Discount</label>
+                                        <label for="odisa" class="form-label">Discount/Unit</label>
                                         <input type="text" class="form-control price-input" name="odisa[]" id="odisa-oc-{{ $i }}" value="{{ $detail->odisa ?? '-' }}">
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label for="teknik" class="form-label">Jasa Teknik (Unit)</label>
+                                        <label for="teknik" class="form-label">Jasa Teknik/Unit</label>
                                         <input type="text" class="form-control price-input" name="teknik[]" id="teknik-oc-{{ $i }}" value="{{ $detail->teknik }}">
                                     </div>
 
