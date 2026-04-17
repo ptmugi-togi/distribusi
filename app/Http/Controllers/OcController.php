@@ -118,6 +118,9 @@ class OcController extends Controller
                 $qty   = (float) $request->qtyor[$i];
                 $price = (float) $request->price[$i];
 
+                $odisa = (float) $request->odisa[$i];
+                $totalOdisa = $odisa * $qty;
+
                 $gross = $qty * $price;
 
                 $totalGross += $gross;
@@ -136,7 +139,7 @@ class OcController extends Controller
                     'plist' => $request->plist[$i],
                     'price' => $price,
                     'gross' => $gross,
-                    'odisa' => $request->odisa[$i],
+                    'odisa' => $totalOdisa,
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
                     'putama' => $request->putama[$i],
@@ -248,6 +251,9 @@ class OcController extends Controller
                 $qty   = (float) $request->qtyor[$i];
                 $price = (float) $request->price[$i];
 
+                $odisa = (float) $request->odisa[$i];
+                $totalOdisa = $odisa * $qty;
+
                 $gross = $qty * $price;
 
                 $totalGross += $gross;
@@ -266,7 +272,7 @@ class OcController extends Controller
                     'plist' => $request->plist[$i],
                     'price' => $price,
                     'gross' => $gross,
-                    'odisa' => $request->odisa[$i],
+                    'odisa' => $totalOdisa,
                     'teknik' => $request->teknik[$i],
                     'srcog' => $request->srcog[$i],
                     'putama' => $request->putama[$i],
