@@ -263,7 +263,7 @@
                     <td class="right">{{ formatNumberOnly($price, $ochdr->curco) }}</td>
     
                     {{-- DISCOUNT (nominal per unit sesuai data) --}}
-                    <td class="right">{{ formatNumberOnly($odisa, $ochdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($discRow, $ochdr->curco) }}</td>
     
                     {{-- GROSS AMOUNT kolom kamu isinya NET per row (setelah diskon) --}}
                     <td class="right">{{ formatNumberOnly($netRow, $ochdr->curco) }}</td>
@@ -278,7 +278,7 @@
 
     @php
         $PPN_RATE  = $ochdr->mtaxes->taxes;
-        $dpp = round($totalGross - $totalDisc, 2);
+        $dpp       = round($totalGross - $totalDisc, 2);
         $ppn       = round($dpp * ($PPN_RATE / 100), 2);
         $billing   = round($dpp + $ppn, 2);
         $dpAmount  = round($billing * ((float)$ochdr->dpper / 100), 2);
