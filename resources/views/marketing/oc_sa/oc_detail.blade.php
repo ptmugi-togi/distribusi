@@ -211,7 +211,7 @@
 
                                 <div class="col-md-6 mt-3">
                                     <label for="odisa" class="form-label">Discount/Unit</label>
-                                    <input type="text" class="form-control price-display" name="odisa" id="odisa" value="{{ $detail->odisa ?? '-' }}" disabled>
+                                    <input type="text" class="form-control price-display" name="odisa" id="odisa" value="{{ number_format($detail->odisa / $detail->qtyor, 2, '.', '') }}" disabled>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
