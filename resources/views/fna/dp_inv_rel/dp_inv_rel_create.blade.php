@@ -76,13 +76,6 @@
           <input type="text" class="form-control price-input" id="gross" value="{{ old('gross') }}" readonly style="background-color: #E9ECEF">
           <input type="hidden" name="gross" id="gross_raw">
         </div>
-                
-        <div class="col-md-6 mt-3">
-          <label for="odisa" class="form-label">Discount</label>
-          <input type="text" class="form-control price-input" id="odisa" value="{{ old('odisa') }}" readonly style="background-color: #E9ECEF">
-          <input type="hidden" name="odisa" id="odisa_raw">
-        </div>
-
 
         <div class="col-md-6 mt-3">
           <label for="dpper" class="form-label">Down Payment (%)</label>
@@ -94,6 +87,13 @@
           <label for="dpamt" class="form-label">Down Payment</label>
           <input type="text" class="form-control price-input" id="dpamt" value="{{ old('dpamt') }}" readonly style="background-color: #E9ECEF">
           <input type="hidden" name="dpamt" id="dpamt_raw">
+        </div>
+
+                        
+        <div class="col-md-6 mt-3">
+          <label for="odisa" class="form-label">Discount</label>
+          <input type="text" class="form-control price-input" id="odisa" value="{{ old('odisa') }}" readonly style="background-color: #E9ECEF">
+          <input type="hidden" name="odisa" id="odisa_raw">
         </div>
 
         <div class="col-md-6 mt-3">
