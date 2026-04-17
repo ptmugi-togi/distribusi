@@ -298,7 +298,7 @@ class DpInvRelController extends Controller
                 DB::raw('(d.plist * (h.dpper / 100)) * d.qtyor as plist'),
                 DB::raw('(d.price * (h.dpper / 100)) * d.qtyor as price'),
                 DB::raw('(d.gross * (h.dpper / 100)) * d.qtyor as gross_dtl'),
-                DB::raw('(d.odisa * (h.dpper / 100)) * d.qtyor as odisa_dtl'),
+                DB::raw('(d.odisa * (h.dpper / 100)) as odisa_dtl'),
                 'd.teknik',
                 'd.noted',
             )

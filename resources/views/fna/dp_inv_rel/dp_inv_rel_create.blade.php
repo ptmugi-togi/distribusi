@@ -390,7 +390,7 @@
 
                 res.forEach((item, i) => {
 
-                  let net = (item.price || 0) - (item.odisa || 0);
+                  let net = (item.price || 0) - (item.odisa_dtl || 0);
 
                   let html = `
                   <tr>
