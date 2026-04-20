@@ -53,7 +53,7 @@
                                 {{ \Carbon\Carbon::parse($p->duedt)->format('d/m/Y') }}
                             </td>
                             <td class="text-left">{{ $p->mcusmas->cusna ?? '-' }}</td>
-                            <td class="text-center">{{ $p->toppc ?? '-' }}</td>
+                            <td class="text-center">{{ $p->dpper ?? '-' }}</td>
                             <td class="text-right">{{ number_format($p->blamt, 0) }}</td>
                         <td class="text-center">
                           {{-- preview --}}

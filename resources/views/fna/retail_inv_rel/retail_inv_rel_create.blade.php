@@ -46,7 +46,7 @@
 
         <div class="col-md-6 mt-3">
           <label for="invdd" class="form-label">Invoice Due Date</label><span class="text-danger"> *</span>
-          <input type="date" class="form-control" name="invdd" id="invdd" value="{{ old('invdd', date('Y-m-d')) }}" required min="{{ $minDate }}">
+          <input type="date" class="form-control" name="invdd" id="invdd" value="{{ old('invdd') }}" required min="{{ $minDate }}">
         </div>
 
         <input type="hidden" name="topay" id="topay" value="{{ old('topay') }}">
@@ -308,11 +308,26 @@
             $('#refcno').val(selected.data('text'));
 
             $('#ocdt').val(selected.data('ocdt'));
-            $('#topay').val(selected.data('topay'));
             $('#cusno').val(selected.data('cusno'));
             $('#sreno').val(selected.data('sreno'));
             $('#cuspo').val(selected.data('cuspo'));
             $('#shpto').val(selected.data('shpto'));
+
+            let topay = Number(selected.data('topay')) || 0;
+            $('#topay').val(topay);
+
+            let invdt = $('#invdt').val();
+
+            if(invdt){
+                let dueDate = new Date(invdt);
+                dueDate.setDate(dueDate.getDate() + topay);
+
+                let yyyy = dueDate.getFullYear();
+                let mm = String(dueDate.getMonth() + 1).padStart(2, '0');
+                let dd = String(dueDate.getDate()).padStart(2, '0');
+
+                $('#invdd').val(`${yyyy}-${mm}-${dd}`);
+            }
 
             let curco = selected.data('curco');
             let crate = selected.data('crate');

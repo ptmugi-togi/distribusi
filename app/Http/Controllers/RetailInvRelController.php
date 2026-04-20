@@ -80,9 +80,6 @@ class RetailInvRelController extends Controller
             $bracoformc = $request->braco . $request->formc;
 
             $invdt = Carbon::parse($request->invdt);
-            $topay = (int) $request->topay;
-
-            $duedt = $invdt->copy()->addDays($topay);
 
             RetailInvRelHdr::create([
                 'invid'      => $invid,
@@ -93,7 +90,7 @@ class RetailInvRelController extends Controller
                 'invno'      => $request->invno,
                 'invdt'      => $request->invdt,
                 'priod'      => $request->priod,
-                'duedt'      => $duedt,
+                'duedt'      => $request->invdd,
                 'delto'      => $request->shpto ?? '0',
                 'dorfc'      => $request->sorfc,
                 'donom'      => $request->sorno,
@@ -102,7 +99,7 @@ class RetailInvRelController extends Controller
                 'cusno'      => $request->cusno,
                 'sreno'      => $request->sreno,
                 'cuspo'      => $request->cuspo,
-                'topay'      => $topay,
+                'topay'      => $request->topay,
                 'vatax'      => $request->vatax,
                 'curco'      => $request->curco,
                 'crate'      => $request->crate,
@@ -315,7 +312,7 @@ class RetailInvRelController extends Controller
                 DB::raw('d.price as price'),
                 DB::raw('d.price * t.trqty as gross_dtl'),
                 DB::raw('d.odisa as odisa_dtl'),
-                DB::raw('((d.gross * t.trqty) - d.odisa * (h.dpper / 100) as dpamt'),
+                DB::raw('((d.gross * t.trqty) - d.odisa * (h.dpper / 100)) as dpamt'),
                 'd.teknik',
                 't.noted',
                 'h.dpper',
