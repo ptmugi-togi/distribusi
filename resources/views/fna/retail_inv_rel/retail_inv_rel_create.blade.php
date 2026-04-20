@@ -405,10 +405,9 @@
                 let html = `
                 <tr>
                     <td>
-                        ${item.opron} - ${item.prona} (${item.lotno})
+                        ${item.opron} - ${item.prona}
                         <input type="hidden" name="opron[]" value="${item.opron}">
                         <input type="hidden" name="prona[]" value="${item.prona}">
-                        <input type="hidden" name="lotno[]" value="${item.lotno}">
                     </td>
 
                     <td>

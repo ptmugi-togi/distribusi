@@ -291,31 +291,40 @@ class RetailInvRelController extends Controller
         $refno = $request->refno;
         $trano = $request->trano;
 
+        $toutg = DB::table('toutg')
+            ->select(
+                'opron',
+                'reffc',
+                'refno',
+                DB::raw('SUM(trqty) as trqty'),
+                DB::raw('MAX(noted) as noted')
+            )
+            ->where('trano', $trano)
+            ->groupBy('opron', 'reffc', 'refno');
+
         $data = DB::table('tcored as d')
-            ->join('toutg as t', function($join){
+            ->joinSub($toutg, 't', function ($join) {
                 $join->on('t.opron', '=', 'd.opron')
                     ->on('t.reffc', '=', 'd.formc')
                     ->on('t.refno', '=', 'd.sorno');
             })
             ->join('tcoreh as h', 'h.ocid', '=', 'd.ocid')
-            ->where('t.trano', $trano)
             ->where('d.braco', $braco)
             ->where('d.sorno', $refno)
             ->select(
                 'd.opron',
                 'd.prona',
-                't.lotno',
                 'd.stdqu',
-                't.trqty', 
+                't.trqty',
                 'd.odisp',
                 DB::raw('d.plist * t.trqty as plist'),
                 DB::raw('d.price as price'),
                 DB::raw('d.price * t.trqty as gross_dtl'),
                 DB::raw('d.odisa as odisa_dtl'),
-                DB::raw('((d.gross * t.trqty) - d.odisa * (h.dpper / 100)) as dpamt'),
+                DB::raw('((d.price * t.trqty) - d.odisa * (h.dpper / 100)) as dpamt'),
                 'd.teknik',
                 't.noted',
-                'h.dpper',
+                'h.dpper'
             )
             ->get();
 
