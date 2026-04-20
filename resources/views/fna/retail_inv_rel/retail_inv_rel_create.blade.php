@@ -37,6 +37,15 @@
           <input type="hidden" name="invno" id="invno_raw" value="{{ old('invno') }}">
         </div>
 
+        <div class="col-md-6 mt-3">
+          <label for="dono" class="form-label">DO No.</label><span class="text-danger"> *</span>
+          <select name="dono" id="dono" class="form-control select2" required>
+            <option value="" disabled selected>Loading data DO...</option>
+          </select>
+          <input type="hidden" id="sorfc" name="sorfc" value="{{ old('sorfc') }}">
+          <input type="hidden" id="sorno" name="sorno" value="{{ old('sorno') }}">
+        </div>
+
         <input type="hidden" name="priod" id="priod" value="{{ old('priod') }}">
 
         <div class="col-md-6 mt-3">
@@ -50,15 +59,6 @@
         </div>
 
         <input type="hidden" name="topay" id="topay" value="{{ old('topay') }}">
-
-        <div class="col-md-6 mt-3">
-          <label for="ocno" class="form-label">OC No.</label><span class="text-danger"> *</span>
-          <select name="ocno" id="ocno" class="form-control select2" required>
-            <option value="" disabled selected>Loading data OC...</option>
-          </select>
-          <input type="hidden" id="sorfc" name="sorfc" value="{{ old('sorfc') }}">
-          <input type="hidden" id="sorno" name="sorno" value="{{ old('sorno') }}">
-        </div>
 
         <div class="col-md-6 mt-3">
           <label for="ocdt" class="form-label">OC Date</label>
@@ -219,22 +219,22 @@
                     generatePriod(invdt);
                 }
 
-                let ocno = $('#ocno');
-                ocno.prop('disabled', true);
-                ocno.empty().append('<option disabled selected>Memuat data OC...</option>');
+                let dono = $('#dono');
+                dono.prop('disabled', true);
+                dono.empty().append('<option disabled selected>Memuat data OC...</option>');
 
                 $.get("{{ route('get-do') }}", function(data){
-                    ocno.empty();
+                    dono.empty();
 
                     if(!data.length){
-                        ocno.append('<option disabled selected>Tidak ada data OC</option>');
+                        dono.append('<option disabled selected>Tidak ada data OC</option>');
                         return;
                     }
 
-                    ocno.append('<option value="" disabled selected>Silahkan Pilih OC</option>');
+                    dono.append('<option value="" disabled selected>Silahkan Pilih OC</option>');
 
                     data.forEach(function(item){
-                        ocno.append(`<option 
+                        dono.append(`<option 
                         value="${item.value}"
                         data-text="${item.text}"
                         data-formc="${item.formc}"
@@ -261,7 +261,7 @@
                         ${item.formc} - ${item.value} (${item.cust})
                         </option>`);
                     });
-                  ocno.prop('disabled', false);
+                  dono.prop('disabled', false);
                 });
         });
 
@@ -296,9 +296,9 @@
             }
         });
 
-        $('#ocno').on('change', function(){
+        $('#dono').on('change', function(){
             let selected = $(this).find(':selected');
-            let selectedText = $("#ocno option:selected").text();
+            let selectedText = $("#dono option:selected").text();
             let parts = selectedText.split(' - ');
 
             $('#rfc01').val(selected.data('rfc01'));
