@@ -139,7 +139,6 @@ class RetailInvRelController extends Controller
                     'sorno' => $request->sorno,
                     'opron' => $opron,
                     'prona' => $prona,
-                    'lotno' => $request->lotno[$i],
                     'stdqu' => $stdqu,
                     'qtyin' => $qty,
                     'price' => $price,
