@@ -105,7 +105,7 @@ class RetailInvRelController extends Controller
                 'crate'      => $request->crate,
                 'gramt'      => $request->gross,
                 'odisa'      => $request->odisa,
-                'dpper'      => $request->dpper,
+                'dpper'      => $request->dpper ?? '0',
                 'dpamt'      => $request->dpamt,
                 'ntamt'      => $request->ntamt,
                 'txamt'      => $request->txamt,
@@ -145,7 +145,7 @@ class RetailInvRelController extends Controller
                     'gramt' => $request->gross_dtl[$i],
                     'odisa' => $request->odisa_dtl[$i],
                     'netamt' => $net,
-                    'dpper' => $request->dpper,
+                    'dpper' => $request->dpper ?? '0',
                     'dpamt' => $request->dpamt,
                     'netbe' => $netbe,
                 ]);
