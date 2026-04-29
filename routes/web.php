@@ -42,6 +42,7 @@ use App\Http\Controllers\ScController;
 use App\Http\Controllers\DpInvRelController;
 use App\Http\Controllers\ProjectInvRelController;
 use App\Http\Controllers\RetailInvRelController;
+use App\Http\Controllers\InvoicePaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -339,3 +340,12 @@ Route::post('/retail-inv-rel/store', [RetailInvRelController::class,'store'])->m
 Route::put('/retail-inv-rel/release/{invid}', [RetailInvRelController::class,'release'])->middleware('auth')->name('retail_inv_rel.release');
 Route::get('/retail-inv-rel/preview/{invid}', [RetailInvRelController::class,'preview'])->middleware('auth')->name('retail_inv_rel.preview');
 Route::get('/retail-inv-rel/print/{invid}', [RetailInvRelController::class,'print'])->middleware('auth')->name('retail_inv_rel.print');
+
+Route::get('/invoice-payment/index', [InvoicePaymentController::class,'index'])->middleware('auth')->name('invoice_payment.index');
+Route::get('/invoice-payment/create', [InvoicePaymentController::class,'create'])->middleware('auth')->name('invoice_payment.create');
+Route::get('/generate-invoice-payment-no', [InvoicePaymentController::class,'generateInvoicePaymentNo'])->name('generate-invoice-payment-no');
+Route::get('/get-invoice', [InvoicePaymentController::class, 'getInvoice'])->name('get-invoice');
+Route::post('/invoice-payment/store', [InvoicePaymentController::class,'store'])->middleware('auth')->name('invoice_payment.store');
+Route::get('/invoice-payment/detail/{id}', [InvoicePaymentController::class,'show'])->where('id', '.*')->middleware('auth')->name('invoice_payment.detail');
+Route::get('/invoice-payment/edit/{id}', [InvoicePaymentController::class,'edit'])->where('id', '.*')->middleware('auth')->name('invoice_payment.edit');
+Route::put('/invoice-payment/update/{id}', [InvoicePaymentController::class,'update'])->where('id', '.*')->middleware('auth')->name('invoice_payment.update');

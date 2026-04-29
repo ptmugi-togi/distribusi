@@ -137,6 +137,11 @@
             <i class="bi bi-circle"></i><span>Project Invoice Release</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('invoice_payment.index') }}">
+            <i class="bi bi-circle"></i><span>Invoice Payment</span>
+            </a>
+          </li>
           {{-- <li class="nav-item">
               <a class="nav-link collapsed" data-bs-target="#subFna-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-file-earmark-text"></i><span>Project Invoice Release</span>
