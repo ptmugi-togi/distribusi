@@ -81,7 +81,7 @@
             <h4>Invoice Payment Detail</h4>
             <div class="accordion" id="accordionDetail">
                 @foreach($invp->invoicepaymentdtls as $i => $row)
-                <div class="accordion-item mb-2">
+                <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#detail{{ $i }}">
                             Invoice {{ $i + 1 }}

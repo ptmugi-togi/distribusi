@@ -201,6 +201,7 @@ class InvoicePaymentController extends Controller
 
             // UPDATE HEADER
             $hdr->update([
+                'tpaye'      => $request->total,
                 'noteh'      => $request->noteh,
                 'updated_at' => now(),
                 'updated_by' => Auth::user()->name,

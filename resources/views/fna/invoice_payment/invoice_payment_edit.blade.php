@@ -104,11 +104,6 @@
                 <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $i }}">
                     Invoice {{ $i + 1 }}
                 </button>
-                @if($i > 0)
-                <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeRow({{ $i }})">
-                    <i class="bi bi-trash"></i>
-                </button>
-                @endif
             </h2>
 
             <div id="collapse{{ $i }}"
