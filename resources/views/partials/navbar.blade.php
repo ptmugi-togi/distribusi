@@ -142,6 +142,11 @@
             <i class="bi bi-circle"></i><span>Invoice Payment</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('writeoff_ar.index') }}">
+            <i class="bi bi-circle"></i><span>Write Off A/R</span>
+            </a>
+          </li>
           {{-- <li class="nav-item">
               <a class="nav-link collapsed" data-bs-target="#subFna-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-file-earmark-text"></i><span>Project Invoice Release</span>

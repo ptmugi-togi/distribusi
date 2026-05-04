@@ -43,6 +43,7 @@ use App\Http\Controllers\DpInvRelController;
 use App\Http\Controllers\ProjectInvRelController;
 use App\Http\Controllers\RetailInvRelController;
 use App\Http\Controllers\InvoicePaymentController;
+use App\Http\Controllers\WoffController;
 
 /*
 |--------------------------------------------------------------------------
@@ -349,3 +350,12 @@ Route::post('/invoice-payment/store', [InvoicePaymentController::class,'store'])
 Route::get('/invoice-payment/detail/{id}', [InvoicePaymentController::class,'show'])->where('id', '.*')->middleware('auth')->name('invoice_payment.detail');
 Route::get('/invoice-payment/edit/{id}', [InvoicePaymentController::class,'edit'])->where('id', '.*')->middleware('auth')->name('invoice_payment.edit');
 Route::put('/invoice-payment/update/{id}', [InvoicePaymentController::class,'update'])->where('id', '.*')->middleware('auth')->name('invoice_payment.update');
+
+Route::get('/writeoff-ar/index', [WoffController::class,'index'])->middleware('auth')->name('writeoff_ar.index');
+Route::get('/writeoff-ar/create', [WoffController::class,'create'])->middleware('auth')->name('writeoff_ar.create');
+Route::get('/generate-writeoff-ar-no', [WoffController::class,'generateWoffNo'])->name('generate-writeoff-ar-no');
+Route::get('/get-invoice-writeoff', [WoffController::class, 'getInvoice'])->name('get-invoice-writeoff');
+Route::post('/writeoff-ar/store', [WoffController::class,'store'])->middleware('auth')->name('writeoff_ar.store');
+Route::get('/writeoff-ar/detail/{id}', [WoffController::class,'show'])->middleware('auth')->name('writeoff_ar.detail');
+Route::get('/writeoff-ar/edit/{id}', [WoffController::class,'edit'])->middleware('auth')->name('writeoff_ar.edit');
+Route::put('/writeoff-ar/update/{id}', [WoffController::class,'update'])->middleware('auth')->name('writeoff_ar.update');
