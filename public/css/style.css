@@ -780,6 +780,10 @@ body::-webkit-scrollbar-thumb:hover {
       font-size: 16px !important;
   }
 
+  #fna-nav > li.nav-item > a.nav-link i {
+      font-size: 16px !important;
+  }
+
   /*--------------------------------------------------------------
   # Dashboard
   --------------------------------------------------------------*/

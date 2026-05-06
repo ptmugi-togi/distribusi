@@ -44,6 +44,7 @@ use App\Http\Controllers\ProjectInvRelController;
 use App\Http\Controllers\RetailInvRelController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Http\Controllers\WoffController;
+use App\Http\Controllers\PaymentListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -359,3 +360,6 @@ Route::post('/writeoff-ar/store', [WoffController::class,'store'])->middleware('
 Route::get('/writeoff-ar/detail/{id}', [WoffController::class,'show'])->middleware('auth')->name('writeoff_ar.detail');
 Route::get('/writeoff-ar/edit/{id}', [WoffController::class,'edit'])->middleware('auth')->name('writeoff_ar.edit');
 Route::put('/writeoff-ar/update/{id}', [WoffController::class,'update'])->middleware('auth')->name('writeoff_ar.update');
+
+Route::get('/payment-list/create', [PaymentListController::class,'create'])->middleware('auth')->name('payment_list.create');
+Route::get('/payment-list/preview', [PaymentListController::class, 'previewPaymentList'])->middleware('auth')->name('payment_list.preview');

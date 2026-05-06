@@ -147,19 +147,19 @@
             <i class="bi bi-circle"></i><span>Write Off A/R</span>
             </a>
           </li>
-          {{-- <li class="nav-item">
+          <li class="nav-item">
               <a class="nav-link collapsed" data-bs-target="#subFna-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-file-earmark-text"></i><span>Project Invoice Release</span>
+                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
               </a>
               <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
                 <li>
-                  <a href="{{ route('mkt.createMktSs') }}">
-                  <i class="bi bi-circle"></i><span>Sales Report/Product Group</span>
+                  <a href="{{ route('payment_list.create') }}">
+                  <i class="bi bi-circle"></i><span>Payment List</span>
                   </a>
                 </li>
               </ul>
-          </li> --}}
+          </li>
         </ul>
       </li>
       
