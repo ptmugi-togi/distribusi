@@ -46,6 +46,7 @@ use App\Http\Controllers\InvoicePaymentController;
 use App\Http\Controllers\WoffController;
 use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\ArWoffListController;
+use App\Http\Controllers\AgingArByInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -367,3 +368,7 @@ Route::get('/payment-list/preview', [PaymentListController::class, 'previewPayme
 
 Route::get('/ar-woff-list/create', [ArWoffListController::class,'create'])->middleware('auth')->name('ar_woff_list.create');
 Route::get('/ar-woff-list/preview', [ArWoffListController::class, 'previewArWoffList'])->middleware('auth')->name('ar_woff_list.preview');
+
+Route::get('/aging-ar-by-invoice/create', [AgingArByInvoiceController::class,'create'])->middleware('auth')->name('aging_ar_by_invoice.create');
+Route::get('/aging-ar-by-invoice/customer', [AgingArByInvoiceController::class,'getCustomer'])->middleware('auth')->name('aging_ar_by_invoice.customer');
+Route::get('/aging-ar-by-invoice/preview', [AgingArByInvoiceController::class, 'previewAgingArByInvoiceList'])->middleware('auth')->name('aging_ar_by_invoice.preview');
