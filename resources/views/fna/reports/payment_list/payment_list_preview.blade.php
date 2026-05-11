@@ -155,7 +155,7 @@
                                 @endif
 
                                 {{-- detail invoice --}}
-                                <td class="center">{{ $row->invrn }}</td>
+                                <td class="center">{{ $row->invfc }} {{ $row->invrn }}</td>
                                 <td class="center">{{ isset($row->pdate) ? date('d-m-Y', strtotime($row->pdate)) : '-' }}</td>
 
                                 <td class="right">{{ number_format($row->blamt,0,',','.') }}</td>
