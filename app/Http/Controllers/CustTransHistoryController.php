@@ -79,7 +79,7 @@ class CustTransHistoryController extends Controller
                     $q->whereRaw('COALESCE(h.blamt,0) - COALESCE(h.caval,0) - COALESCE(h.recwo,0) - COALESCE(h.cramt,0) > 0');
                 }
                 if ($req->outs == 'No') {
-                    $q->whereRaw('COALESCE(h.blamt,0) - COALESCE(h.caval,0) - COALESCE(h.recwo,0) - COALESCE(h.cramt,0) = 0');
+                    $q->whereRaw('COALESCE(h.blamt,0) - COALESCE(h.caval,0) - COALESCE(h.recwo,0) - COALESCE(h.cramt,0) >= 0');
                 }
             })
 
