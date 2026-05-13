@@ -104,7 +104,7 @@ class WoffController extends Controller
                     ->where('formc', $request->formc_inv[$i])
                     ->where('invno', $request->invno_raw[$i])
                     ->update([
-                        'recwo' => $request->pcwo[$i],
+                        'recwo' => DB::raw('COALESCE(recwo,0) + ' . (float)($request->pcwo[$i] ?? 0)),
                     ]);
             }
 

@@ -47,6 +47,7 @@ use App\Http\Controllers\WoffController;
 use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\ArWoffListController;
 use App\Http\Controllers\AgingArByInvoiceController;
+use App\Http\Controllers\CustTransHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -372,3 +373,7 @@ Route::get('/ar-woff-list/preview', [ArWoffListController::class, 'previewArWoff
 Route::get('/aging-ar-by-invoice/create', [AgingArByInvoiceController::class,'create'])->middleware('auth')->name('aging_ar_by_invoice.create');
 Route::get('/aging-ar-by-invoice/customer', [AgingArByInvoiceController::class,'getCustomer'])->middleware('auth')->name('aging_ar_by_invoice.customer');
 Route::get('/aging-ar-by-invoice/preview', [AgingArByInvoiceController::class, 'previewAgingArByInvoiceList'])->middleware('auth')->name('aging_ar_by_invoice.preview');
+
+Route::get('/cust-trans-history/create', [CustTransHistoryController::class,'create'])->middleware('auth')->name('cust_trans_history.create');
+Route::get('/cust-trans-history/customer', [CustTransHistoryController::class,'getCustomer'])->middleware('auth')->name('cust_trans_history.customer');
+Route::get('/cust-trans-history/preview', [CustTransHistoryController::class, 'previewCustTransHistory'])->middleware('auth')->name('cust_trans_history.preview');

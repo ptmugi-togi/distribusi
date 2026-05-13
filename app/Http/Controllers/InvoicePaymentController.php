@@ -111,8 +111,8 @@ class InvoicePaymentController extends Controller
                     ->where('formc', $request->formc_inv[$i])
                     ->where('invno', $request->invno_raw[$i])
                     ->update([
-                        'caval' => $request->pcval[$i],
-                        'recwo' => $request->pcwo[$i],
+                        'caval' => DB::raw('COALESCE(caval,0) + ' . ($request->pcval[$i] ?? 0)),
+                        'recwo' => DB::raw('COALESCE(recwo,0) + ' . ($request->pcwo[$i] ?? 0)),
                     ]);
             }
 
@@ -193,13 +193,24 @@ class InvoicePaymentController extends Controller
     {
         DB::beginTransaction();
 
-        // dd($request->all());
-
         try {
-
             $hdr = InvoicePaymentHdr::where('invpid', $id)->firstOrFail();
 
-            // UPDATE HEADER
+            $oldDetails = InvoicePaymentDtl::where('invpid', $id)->get();
+
+            foreach ($oldDetails as $old) {
+                DB::table('tinmas')
+                    ->where('braco', $old->braco)
+                    ->where('formc', $old->invfc)
+                    ->where('invno', $old->invrn)
+                    ->update([
+                        'caval' => DB::raw('COALESCE(caval,0) - ' . (float)$old->pcval),
+                        'recwo' => DB::raw('COALESCE(recwo,0) - ' . (float)$old->pcwo),
+                    ]);
+            }
+
+            InvoicePaymentDtl::where('invpid', $id)->delete();
+
             $hdr->update([
                 'tpaye'      => $request->total,
                 'noteh'      => $request->noteh,
@@ -207,13 +218,10 @@ class InvoicePaymentController extends Controller
                 'updated_by' => Auth::user()->name,
             ]);
 
-            InvoicePaymentDtl::where('invpid', $id)->delete();
-
-            // INSERT DETAIL BARU
             foreach ($request->invrn as $i => $invrn) {
+                $pcval = (float)($request->pcval[$i] ?? 0);
+                $pcwo  = (float)($request->pcwo[$i] ?? 0);
 
-                $pcval = $request->pcval[$i] ?? 0;
-                $pcwo  = $request->pcwo[$i] ?? 0;
                 $payva = $pcval + $pcwo;
 
                 InvoicePaymentDtl::create([
@@ -222,11 +230,9 @@ class InvoicePaymentController extends Controller
                     'formc'  => $request->formc,
                     'vcrno'  => $hdr->vcrno,
                     'iorno'  => $hdr->iorno,
-
                     'cusno'  => $request->cusno[$i],
                     'invfc'  => $request->formc_inv[$i],
                     'invrn'  => $request->invrn[$i],
-
                     'pcval'  => $pcval,
                     'pcwo'   => $pcwo,
                     'payva'  => $payva,
@@ -238,8 +244,8 @@ class InvoicePaymentController extends Controller
                     ->where('formc', $request->formc_inv[$i])
                     ->where('invno', $request->invrn[$i])
                     ->update([
-                        'caval' => $pcval,
-                        'recwo' => $pcwo,
+                        'caval' => DB::raw('COALESCE(caval,0) + ' . $pcval),
+                        'recwo' => DB::raw('COALESCE(recwo,0) + ' . $pcwo),
                     ]);
             }
 

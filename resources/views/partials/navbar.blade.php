@@ -173,6 +173,13 @@
                   </a>
                 </li>
               </ul>
+              <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
+                <li>
+                  <a href="{{ route('cust_trans_history.create') }}">
+                  <i class="bi bi-circle"></i><span>Customer Transaction History</span>
+                  </a>
+                </li>
+              </ul>
           </li>
         </ul>
       </li>
