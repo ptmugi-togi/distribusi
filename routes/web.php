@@ -48,6 +48,7 @@ use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\ArWoffListController;
 use App\Http\Controllers\AgingArByInvoiceController;
 use App\Http\Controllers\CustTransHistoryController;
+use App\Http\Controllers\DeliveryNoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,9 @@ use App\Http\Controllers\CustTransHistoryController;
 Route::get('/', [LoginController::class,'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class,'auth']);
 Route::post('/logout', [LoginController::class,'logout']);
+
+Route::get('/api/products', [ProductController::class, 'getProducts'])->name('api.products');
+Route::get('/api/spareparts', [ProductController::class, 'getSpareparts'])->name('api.spareparts');
 
 Route::get('/dashboard', function () { return view('home'); })->middleware('auth')->name('dashboard');
 
@@ -131,7 +135,6 @@ Route::resource('/roce', OcController::class)->middleware('auth');
 
 Route::get('/tpo', [TpoController::class,'index'])->middleware('auth')->name('tpo.index');
 Route::get('/get-currency-rate/{curco}', [TpoController::class, 'getCurrencyRate']);
-Route::get('/api/products', [ProductController::class, 'getProducts'])->name('api.products');
 Route::get('/tpo/create', [TpoController::class, 'create'])->middleware('auth')->name('tpo.create');
 Route::post('/tpo/store', [TpoController::class, 'store'])->middleware('auth')->name('tpo.store');
 Route::get('/tpo/{id}/detail', [TpoController::class, 'show'])->middleware('auth')->name('tpo.detail');
@@ -377,3 +380,15 @@ Route::get('/aging-ar-by-invoice/preview', [AgingArByInvoiceController::class, '
 Route::get('/cust-trans-history/create', [CustTransHistoryController::class,'create'])->middleware('auth')->name('cust_trans_history.create');
 Route::get('/cust-trans-history/customer', [CustTransHistoryController::class,'getCustomer'])->middleware('auth')->name('cust_trans_history.customer');
 Route::get('/cust-trans-history/preview', [CustTransHistoryController::class, 'previewCustTransHistory'])->middleware('auth')->name('cust_trans_history.preview');
+
+Route::get('/delivery-note/index', [DeliveryNoteController::class,'index'])->middleware('auth')->name('delivery_note.index');
+Route::get('/delivery-note/create', [DeliveryNoteController::class,'create'])->middleware('auth')->name('delivery_note.create');
+Route::post('/delivery-note/store', [DeliveryNoteController::class,'store'])->middleware('auth')->name('delivery_note.store');
+Route::get('/generate-dnnum', [DeliveryNoteController::class,'generateDnnum'])->middleware('auth')->name('generate-dnnum');
+Route::get('/get-bill-address-dn', [DeliveryNoteController::class,'getBillAddress'])->middleware('auth')->name('get-bill-address-dn');
+Route::get('/get-currency-rate-dn', [DeliveryNoteController::class,'getCrate'])->middleware('auth')->name('get-currency-rate-dn');
+Route::get('/get-lotno-dn', [DeliveryNoteController::class,'getLotnoSparepart'])->middleware('auth')->name('get-lotno-dn');
+Route::get('/delivery-note/detail/{dnid}', [DeliveryNoteController::class, 'show'])->middleware('auth')->name('delivery_note.show');
+Route::get('/delivery-note/edit/{dnid}', [DeliveryNoteController::class, 'edit'])->middleware('auth')->name('delivery_note.edit');
+Route::put('/delivery-note/update/{dnid}', [DeliveryNoteController::class, 'update'])->middleware('auth')->name('delivery_note.update');
+Route::patch('/delivery-note/cancel/{dnid}', [DeliveryNoteController::class, 'cancel'])->middleware('auth')->name('delivery_note.cancel');
