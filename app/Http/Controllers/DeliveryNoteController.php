@@ -113,6 +113,8 @@ class DeliveryNoteController extends Controller
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
                 'updated_by' => Auth::user()->name,
+                'deleted_at' => null,
+                'deleted_by' => null,
             ]);
 
             foreach ($request->opron as $i => $opron) {
@@ -701,5 +703,116 @@ class DeliveryNoteController extends Controller
             ->get();
 
         return response()->json($lotnos);
+    }
+
+    public function preview($id)
+    {
+        $dn = DnHdr::with([
+            'mbranch',
+            'mformcode',
+            'mcusmas',
+        ])->where('dnid', $id)->firstOrFail();
+
+        $services = DB::table('tdna')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tdna.opron')
+            ->where('tdna.dnid', $id)
+            ->select('tdna.*', 'mpromas.prona')
+            ->orderBy('tdna.dnlin')
+            ->get();
+
+        $serviceFees = DB::table('tdnb')
+            ->where('dnid', $id)
+            ->orderBy('dnlin')
+            ->get()
+            ->groupBy('dnlin');
+
+        $spareparts = DB::table('tdnc')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tdnc.opron')
+            ->where('tdnc.dnid', $id)
+            ->select('tdnc.*', 'mpromas.prona')
+            ->get();
+
+        $shipto = DB::table('mstmas')
+            ->where('cusno', $dn->cusno)
+            ->where('shpto', $dn->delto)
+            ->first();
+
+        $html = view('teknik.delivery_note.delivery_note_print', compact(
+            'dn',
+            'services',
+            'serviceFees',
+            'spareparts',
+            'shipto'
+        ))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 8,
+            'margin_bottom' => 45,
+            'margin_left' => 8,
+            'margin_right' => 8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+
+    public function print($id)
+    {
+        $dn = DnHdr::where('dnid', $id)->firstOrFail();
+
+        DB::table('tdnh')
+            ->where('dnid', $id)
+            ->update([
+                'prctr' => DB::raw('COALESCE(prctr, 0) + 1')
+            ]);
+
+        $services = DB::table('tdna')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tdna.opron')
+            ->where('tdna.dnid', $id)
+            ->select('tdna.*', 'mpromas.prona')
+            ->orderBy('tdna.dnlin')
+            ->get();
+
+        $serviceFees = DB::table('tdnb')
+            ->where('dnid', $id)
+            ->orderBy('dnlin')
+            ->get()
+            ->groupBy('dnlin');
+
+        $spareparts = DB::table('tdnc')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tdnc.opron')
+            ->where('tdnc.dnid', $id)
+            ->select('tdnc.*', 'mpromas.prona')
+            ->get();
+
+        $shipto = DB::table('mstmas')
+            ->where('cusno', $dn->cusno)
+            ->where('shpto', $dn->delto)
+            ->first();
+
+        $html = view('teknik.delivery_note.delivery_note_print', compact(
+            'dn',
+            'services',
+            'serviceFees',
+            'spareparts',
+            'shipto'
+        ))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_top' => 8,
+            'margin_bottom' => 45,
+            'margin_left' => 8,
+            'margin_right' => 8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $pdfContent = $mpdf->Output("{$dn->dnid}.pdf", "S");
+
+        return response($pdfContent)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="'.$dn->dnid.'.pdf"');
     }
 }

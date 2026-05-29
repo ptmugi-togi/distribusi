@@ -52,11 +52,11 @@
                           <td class="text-center">{{ $d->cuspo ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
-                              {{-- <a href="{{ route('do.previewDo', $d->dnid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                              {{-- <a href="{{ route('delivery_note.preview', $d->dnid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                               {{-- print --}}
                               @if (!$periodClosed && $d->braco == auth()->user()->cabang && $d->resta != 'C')
-                                {{-- <a href="{{ route('do.printDo', $d->dnid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                                <a href="{{ route('delivery_note.print', $d->dnid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                 
                                 <a href="/delivery-note/detail/{{ $d->dnid }}" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 <a href="/delivery-note/edit/{{ $d->dnid }}" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

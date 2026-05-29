@@ -392,3 +392,5 @@ Route::get('/delivery-note/detail/{dnid}', [DeliveryNoteController::class, 'show
 Route::get('/delivery-note/edit/{dnid}', [DeliveryNoteController::class, 'edit'])->middleware('auth')->name('delivery_note.edit');
 Route::put('/delivery-note/update/{dnid}', [DeliveryNoteController::class, 'update'])->middleware('auth')->name('delivery_note.update');
 Route::patch('/delivery-note/cancel/{dnid}', [DeliveryNoteController::class, 'cancel'])->middleware('auth')->name('delivery_note.cancel');
+Route::get('/delivery-note/preview/{id}', [DeliveryNoteController::class, 'preview'])->middleware('auth')->name('delivery_note.preview');
+Route::get('/delivery-note/print/{id}', [DeliveryNoteController::class, 'print'])->middleware('auth')->name('delivery_note.print');

@@ -66,9 +66,19 @@ class DnHdr extends Model
         return $this->hasMany(DnDtl::class, 'dnid', 'dnid');
     }
 
+    public function dndtbs()
+    {
+        return $this->hasMany(DnDtlService::class, 'dnid', 'dnid');
+    }
+
+    public function dndtcs()
+    {
+        return $this->hasMany(DnDtlSparepart::class, 'dnid', 'dnid');
+    }
+
     public function mbranch()
     {
-        return $this->belongsTo(Mbranch::class, 'rqbrc', 'braco');
+        return $this->belongsTo(Mbranch::class, 'braco', 'braco');
     }
 
     public function mformcode()
@@ -81,16 +91,9 @@ class DnHdr extends Model
         return $this->belongsTo(Mcusmas::class, 'cusno', 'cusno');
     }
 
-    public function getShiptoAttribute()
+    public function mstmas()
     {
-        return \App\Models\MstMas::where('cusno', $this->cusno)
-            ->where('shpto', $this->shpto)
-            ->where('braco', $this->braco)
-            ->first();
-    }
-
-    public function mpromas()
-    {
-        return $this->belongsTo(Mpromas::class, 'opron', 'opron');
+        return $this->belongsTo(MstMas::class, 'delto', 'shpto')
+            ->where('cusno', $this->cusno);
     }
 }

@@ -2,17 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DnDtl extends Model
+class DnDtlSparepart extends Model
 {
-    use HasFactory;
-
-    protected $table = 'tdna';
+    protected $table = 'tdnc';
     protected $primaryKey = 'id';
-    protected $keyType = 'int';
-    public $increment = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,17 +16,18 @@ class DnDtl extends Model
         'braco',
         'formc',
         'dnnum',
-        'dnlin',
-        'tofee',
-        'descr',
         'opron',
-        'stdqu',
-        'trqty',
         'lotno',
+        'warco',
+        'locco',
+        'trqty',
+        'qunit',
+        'price',
         'gramt',
         'odisp',
         'odisa',
         'netbe',
+        'descr',
     ];
 
     public function dnhdr()
@@ -42,11 +38,5 @@ class DnDtl extends Model
     public function mpromas()
     {
         return $this->belongsTo(Mpromas::class, 'opron', 'opron');
-    }
-
-    public function services()
-    {
-        return $this->hasMany(DnDtlService::class, 'dnlin', 'dnlin')
-            ->where('dnid', $this->dnid);
     }
 }
