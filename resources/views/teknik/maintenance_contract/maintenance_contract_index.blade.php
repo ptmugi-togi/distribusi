@@ -46,7 +46,7 @@
                     @if ($m->formc === 'MC')
                       <tr>
                           <td class="text-center">{{ $m->braco ?? '-' }}</td>
-                          <td class="text-center">{{ $m->refno ?? '-' }}</td>
+                          <td class="">{{ $m->refno ?? '-' }}</td>
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($m->tradt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($m->mcdat)->format('d/m/Y') }}
                           </td>
@@ -56,8 +56,8 @@
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($m->tradt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($m->gmcto)->format('d/m/Y') }}
                           </td>
-                          <td class="text-center">{{ $m->mcusmas->cusna ?? '-' }}</td>
-                          <td class="text-center">{{ $m->mcnom ?? '-' }}</td>
+                          <td class="">{{ $m->mcusmas->cusna ?? '-' }}</td>
+                          <td class="">{{ $m->mcnom ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
                               {{-- <a href="{{ route('maintenance_contract.preview', $m->mcid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
@@ -83,6 +83,7 @@
                                 </form>
                               @endif
                               @if ($m->resta == 'C')
+                                <a href="/maintenance-contract/detail/{{ $m->mcid }}" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 <div class="badge bg-danger">CANCELED</div>
                               @endif
                           </td>
