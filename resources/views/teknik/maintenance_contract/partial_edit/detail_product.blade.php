@@ -56,19 +56,19 @@
                             </div>
 
                             <div class="col-md-6 mt-3">
-                                <label for="shpto_{{ $i }}" class="form-label">Delivery To</label>
+                                <label for="shpto_{{ $i }}" class="form-label">Site</label>
                                 <select class="form-control select2" name="shpto[]" id="shpto_{{ $i }}" data-selected="{{ old("shpto.$i", $detail->shpto ?? '') }}" >
                                     <option value="">Loading...</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6 mt-3">
-                                <label for="delcon_{{ $i }}" class="form-label">Delivery Contact</label>
+                                <label for="delcon_{{ $i }}" class="form-label">Site Contact</label>
                                 <input class="form-control" name="delcon[]" id="delcon_{{ $i }}" value="{{ old("delcon.$i", $detail->delcon) }}" readonly style="background-color:#e9ecef" >
                             </div>
 
                             <div class="col-md-6 mt-3">
-                                <label for="deladr_{{ $i }}" class="form-label">Delivery Address</label>
+                                <label for="deladr_{{ $i }}" class="form-label">Site Address</label>
                                 <span class="text-danger"> *</span>
                                 <textarea class="form-control" name="deladr[]" id="deladr_{{ $i }}" rows="2" required readonly style="background-color:#e9ecef" >{{ trim(($detail->add01 ?? '') . ", " . ($detail->add02 ?? '') . "\n" . ($detail->add03 ?? '') . "\n" . ($detail->add04 ?? '') . "\n" . ($detail->city ?? '')) }}</textarea>
                                 <input type="hidden" name="add01[]" id="add01_{{ $i }}" value="{{ old("add01.$i", $detail->add01) }}">
@@ -423,19 +423,19 @@
                             </div>
                                             
                             <div class="col-md-6 mt-3">
-                                <label for="shpto" class="form-label">Delivery To</label>
+                                <label for="shpto" class="form-label">Site</label>
                                 <select class="form-control select2" name="shpto[]" id="shpto_${detailIndex}" data-selected="">
-                                    <option value="" disabled selected>Pilih Delivery To</option>
+                                    <option value="" disabled selected>Pilih Site</option>
                                 </select>
                             </div>
                             
                             <div class="col-md-6 mt-3">
-                                <label for="delcon" class="form-label">Delivery Contact</label>
+                                <label for="delcon" class="form-label">Site Contact</label>
                                 <input class="form-control" name="delcon[]" id="delcon_${detailIndex}" readonly style="background-color:#e9ecef">
                             </div>
 
                             <div class="col-md-6 mt-3">
-                                <label for="deladr" class="form-label">Delivery Address</label><span class="text-danger"> *</label>
+                                <label for="deladr" class="form-label">Site Address</label><span class="text-danger"> *</label>
                                 <textarea class="form-control" name="deladr[]" id="deladr_${detailIndex}" rows="2" required readonly style="background-color:#e9ecef"></textarea>
                                 <input type="hidden" name="add01[]" id="add01_${detailIndex}">
                                 <input type="hidden" name="add02[]" id="add02_${detailIndex}">

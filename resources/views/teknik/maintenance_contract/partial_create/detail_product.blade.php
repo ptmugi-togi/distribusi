@@ -44,19 +44,19 @@
                         </div>
                                         
                         <div class="col-md-6 mt-3">
-                            <label for="shpto" class="form-label">Delivery To</label>
+                            <label for="shpto" class="form-label">Site</label>
                             <select class="form-control select2" name="shpto[]" id="shpto_0" value="{{ old('shpto.0') }}">
-                                <Option value="" disabled selected>Pilih Delivery To</Option>
+                                <Option value="" disabled selected>Pilih Site</Option>
                             </select>
                         </div>
                         
                         <div class="col-md-6 mt-3">
-                            <label for="delcon" class="form-label">Delivery Contact</label>
+                            <label for="delcon" class="form-label">Site Contact</label>
                             <input class="form-control" name="delcon[]" id="delcon_0" value="{{ old('delcon.0') }}" readonly style="background-color:#e9ecef">
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label for="deladr" class="form-label">Delivery Address</label><span class="text-danger"> *</label>
+                            <label for="deladr" class="form-label">Site Address</label><span class="text-danger"> *</label>
                             <textarea class="form-control" name="deladr[]" id="deladr_0" rows="2" required readonly style="background-color:#e9ecef">{{ old('deladd.0') }}</textarea>
                             <input type="hidden" name="add01[]" id="add01_0" value="{{ old('add01.0') }}">
                             <input type="hidden" name="add02[]" id="add02_0" value="{{ old('add02.0') }}">
@@ -388,19 +388,19 @@
                             </div>
                                             
                             <div class="col-md-6 mt-3">
-                                <label for="shpto" class="form-label">Delivery To</label>
+                                <label for="shpto" class="form-label">Site</label>
                                 <select class="form-control select2" name="shpto[]" id="shpto_${detailIndex}">
-                                    <Option value="" disabled selected>Pilih Delivery To</Option>
+                                    <Option value="" disabled selected>Pilih Site</Option>
                                 </select>
                             </div>
                             
                             <div class="col-md-6 mt-3">
-                                <label for="delcon" class="form-label">Delivery Contact</label>
+                                <label for="delcon" class="form-label">Site Contact</label>
                                 <input class="form-control" name="delcon[]" id="delcon_${detailIndex}" readonly style="background-color:#e9ecef">
                             </div>
 
                             <div class="col-md-6 mt-3">
-                                <label for="deladr" class="form-label">Delivery Address</label><span class="text-danger"> *</label>
+                                <label for="deladr" class="form-label">Site Address</label><span class="text-danger"> *</label>
                                 <textarea class="form-control" name="deladr[]" id="deladr_${detailIndex}" rows="2" required readonly style="background-color:#e9ecef"></textarea>
                                 <input type="hidden" name="add01[]" id="add01_${detailIndex}">
                                 <input type="hidden" name="add02[]" id="add02_${detailIndex}">

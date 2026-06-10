@@ -400,7 +400,7 @@ Route::get('/maintenance-contract/index', [MaintenanceContractController::class,
 Route::get('/maintenance-contract/create', [MaintenanceContractController::class,'create'])->middleware('auth')->name('maintenance_contract.create');
 Route::get('/get-customer-address-mc', [MaintenanceContractController::class,'getCustomerAddress'])->middleware('auth')->name('get-customer-address-mc');
 Route::post('/maintenance-contract/store', [MaintenanceContractController::class,'store'])->middleware('auth')->name('maintenance_contract.store');
-Route::get('/maintenance-contract/detail/{mcid}', [MaintenanceContractController::class, 'show'])->middleware('auth')->name('maintenance_contract.show');
-Route::get('/maintenance-contract/edit/{mcid}', [MaintenanceContractController::class, 'edit'])->middleware('auth')->name('maintenance_contract.edit');
-Route::put('/maintenance-contract/update/{mcid}', [MaintenanceContractController::class, 'update'])->middleware('auth')->name('maintenance_contract.update');
-Route::patch('/maintenance-contract/cancel/{mcid}', [MaintenanceContractController::class, 'cancel'])->middleware('auth')->name('maintenance_contract.cancel');
+Route::get('/maintenance-contract/detail/{mcid}', [MaintenanceContractController::class, 'show'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.show');
+Route::get('/maintenance-contract/edit/{mcid}', [MaintenanceContractController::class, 'edit'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.edit');
+Route::put('/maintenance-contract/update/{mcid}', [MaintenanceContractController::class, 'update'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.update');
+Route::patch('/maintenance-contract/cancel/{mcid}', [MaintenanceContractController::class, 'cancel'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.cancel');

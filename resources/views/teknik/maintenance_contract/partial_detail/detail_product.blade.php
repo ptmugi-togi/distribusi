@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="col-md-6 mt-3">
-                            <label class="form-label">Delivery Address</label>
+                            <label class="form-label">Site Address</label>
                             <textarea class="form-control" rows="2" disabled>{{ trim(($detail->add01 ?? '') . ", " . ($detail->add02 ?? '') . "\n" . ($detail->add03 ?? '') . "\n" . ($detail->add04 ?? '') . "\n" . ($detail->city ?? '')) }}</textarea>
                         </div>
 

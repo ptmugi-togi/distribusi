@@ -68,7 +68,7 @@
                                 
                                 <a href="/maintenance-contract/detail/{{ $m->mcid }}" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                                 <a href="/maintenance-contract/edit/{{ $m->mcid }}" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <form id="cancel-mc-{{ $m->mcid }}" action="{{ route('maintenance_contract.cancel', $m->mcid) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('maintenance_contract.cancel', $m->mcid) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PATCH')
 
@@ -133,25 +133,26 @@
       });
 
       $(document).on('click', '.btn-cancel-mc', function(e){
-        e.preventDefault();
+          e.preventDefault();
 
-        let mcid = $(this).data('mcid');
+          let form = $(this).closest('form');
+          let mcid = $(this).data('mcid');
 
-        Swal.fire({
-            title: 'Cancel Maintenance Contract?',
-            text: 'Data akan dicancel.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Cancel',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d'
-        }).then((result) => {
-            if(result.isConfirmed){
-                $('#cancel-mc-' + mcid).submit();
-            }
-        });
-    });
+          Swal.fire({
+              title: 'Cancel Maintenance Contract?',
+              text: 'Data akan dicancel.',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Ya, Cancel',
+              cancelButtonText: 'Batal',
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#6c757d'
+          }).then((result) => {
+              if(result.isConfirmed){
+                  form.submit();
+              }
+          });
+      });
     </script>
 @endpush
 
