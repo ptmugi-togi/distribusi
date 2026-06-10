@@ -335,6 +335,11 @@
             <i class="bi bi-circle"></i><span>Delivery Note (DN)</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('maintenance_contract.index') }}">
+            <i class="bi bi-circle"></i><span>Mantenance Contract (MC)</span>
+            </a>
+          </li>
           {{-- <li class="nav-item">
               <a class="nav-link collapsed" data-bs-target="#subTeknik-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-file-earmark-text"></i><span>Reports</span>
