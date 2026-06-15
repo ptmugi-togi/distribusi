@@ -50,7 +50,7 @@ use App\Http\Controllers\AgingArByInvoiceController;
 use App\Http\Controllers\CustTransHistoryController;
 use App\Http\Controllers\DeliveryNoteController;
 use App\Http\Controllers\MaintenanceContractController;
-
+use App\Http\Controllers\ServiceInvoiceReleaseController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -404,3 +404,12 @@ Route::get('/maintenance-contract/detail/{mcid}', [MaintenanceContractController
 Route::get('/maintenance-contract/edit/{mcid}', [MaintenanceContractController::class, 'edit'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.edit');
 Route::put('/maintenance-contract/update/{mcid}', [MaintenanceContractController::class, 'update'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.update');
 Route::patch('/maintenance-contract/cancel/{mcid}', [MaintenanceContractController::class, 'cancel'])->where('mcid', '.*')->middleware('auth')->name('maintenance_contract.cancel');
+
+Route::get('/service-invoice-release/index', [ServiceInvoiceReleaseController::class,'index'])->middleware('auth')->name('service_invoice_release.index');
+Route::get('/service-invoice-release/create', [ServiceInvoiceReleaseController::class,'create'])->middleware('auth')->name('service_invoice_release.create');
+Route::get('/generate-invno', [ServiceInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('service_invoice_release.generate-invno');
+Route::get('/search-dn', [ServiceInvoiceReleaseController::class,'searchDn' ])->middleware('auth')->name('service_invoice_release.search-dn');
+Route::get('/get-dn/{dnid}', [ServiceInvoiceReleaseController::class,'getDn' ])->middleware('auth')->name('service_invoice_release.get-dn');
+Route::get('/get-dn-detail/{dnid}', [ServiceInvoiceReleaseController::class,'getDnDetail' ])->middleware('auth')->name('service_invoice_release.get-dn');
+Route::post('/service-invoice-release/store', [ServiceInvoiceReleaseController::class,'store'])->middleware('auth')->name('service_invoice_release.store');
+Route::get('/service-invoice-release/preview/{id}', [ServiceInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('service_invoice_release.preview');

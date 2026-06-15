@@ -340,6 +340,16 @@
             <i class="bi bi-circle"></i><span>Mantenance Contract (MC)</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('service_invoice_release.index') }}">
+            <i class="bi bi-circle"></i><span>Sevice Invoice Release (SD)</span>
+            </a>
+          </li>
+          <li>
+            <a href="">
+            <i class="bi bi-circle"></i><span>Maintenance Contract Invoice Release (SD)</span>
+            </a>
+          </li>
           {{-- <li class="nav-item">
               <a class="nav-link collapsed" data-bs-target="#subTeknik-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-file-earmark-text"></i><span>Reports</span>
