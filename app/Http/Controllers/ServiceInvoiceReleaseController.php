@@ -19,6 +19,7 @@ class ServiceInvoiceReleaseController extends Controller
         
         $sir = DB::table('tinmas')
             ->where('braco', $userBraco)
+            ->where('dorfc', 'DN')
             ->get();
 
         $latestPeriod = DB::table('tperiode')
