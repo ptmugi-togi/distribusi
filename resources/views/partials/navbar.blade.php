@@ -346,7 +346,7 @@
             </a>
           </li>
           <li>
-            <a href="">
+            <a href="{{ route('mc_invoice_release.index') }}">
             <i class="bi bi-circle"></i><span>Maintenance Contract Invoice Release (SD)</span>
             </a>
           </li>

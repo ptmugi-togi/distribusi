@@ -51,6 +51,7 @@ use App\Http\Controllers\CustTransHistoryController;
 use App\Http\Controllers\DeliveryNoteController;
 use App\Http\Controllers\MaintenanceContractController;
 use App\Http\Controllers\ServiceInvoiceReleaseController;
+use App\Http\Controllers\McInvoiceReleaseController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -413,3 +414,13 @@ Route::get('/get-dn/{dnid}', [ServiceInvoiceReleaseController::class,'getDn' ])-
 Route::get('/get-dn-detail/{dnid}', [ServiceInvoiceReleaseController::class,'getDnDetail' ])->middleware('auth')->name('service_invoice_release.get-dn');
 Route::post('/service-invoice-release/store', [ServiceInvoiceReleaseController::class,'store'])->middleware('auth')->name('service_invoice_release.store');
 Route::get('/service-invoice-release/preview/{id}', [ServiceInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('service_invoice_release.preview');
+
+Route::get('/mc-invoice-release/index', [McInvoiceReleaseController::class,'index'])->middleware('auth')->name('mc_invoice_release.index');
+Route::get('/mc-invoice-release/create', [McInvoiceReleaseController::class,'create'])->middleware('auth')->name('mc_invoice_release.create');
+Route::get('/generate-invno', [McInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('mc_invoice_release.generate-invno');
+Route::get('/search-mc', [McInvoiceReleaseController::class,'searchMc' ])->middleware('auth')->name('mc_invoice_release.search-mc');
+Route::get('/get-mc/{mcid}', [McInvoiceReleaseController::class,'getMc' ])->where('mcid', '.*')->middleware('auth')->name('mc_invoice_release.get-mc');
+Route::get('/get-mc-product/{mcid}',[McInvoiceReleaseController::class,'getMcProduct'])->where('mcid', '.*')->middleware('auth')->name('get-mc-product');
+Route::get('/get-mc-detail/{mcid}', [McInvoiceReleaseController::class,'getMcDetail'])->where('mcid', '.*')->middleware('auth')->name('get-mc-detail');
+Route::post('/mc-invoice-release/store', [McInvoiceReleaseController::class,'store'])->middleware('auth')->name('mc_invoice_release.store');
+Route::get('/mc-invoice-release/preview/{id}', [McInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('mc_invoice_release.preview');
