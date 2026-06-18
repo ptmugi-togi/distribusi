@@ -54,7 +54,7 @@
                           <td class="text-center">{{ $s->dorfc ?? '-' }} {{ $s->donom ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
-                              <a href="{{ route('service_invoice_release.preview', $s->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
+                              {{-- <a href="{{ route('service_invoice_release.preview', $s->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                               {{-- print --}}
                               @if (!$periodClosed && $s->braco == auth()->user()->cabang)
