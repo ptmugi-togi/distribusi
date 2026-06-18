@@ -185,6 +185,7 @@ class McInvoiceReleaseController extends Controller
         $mc = DB::table('tmch')
             ->where('braco', Auth::user()->cabang)
             ->where('refno','like','%'.$request->search.'%')
+            ->orderBy('refno','desc')
             ->limit(20)
             ->get();
 

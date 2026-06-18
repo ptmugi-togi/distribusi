@@ -408,7 +408,7 @@ Route::patch('/maintenance-contract/cancel/{mcid}', [MaintenanceContractControll
 
 Route::get('/service-invoice-release/index', [ServiceInvoiceReleaseController::class,'index'])->middleware('auth')->name('service_invoice_release.index');
 Route::get('/service-invoice-release/create', [ServiceInvoiceReleaseController::class,'create'])->middleware('auth')->name('service_invoice_release.create');
-Route::get('/generate-invno', [ServiceInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('service_invoice_release.generate-invno');
+Route::get('/generate-invno-service-invoice-release', [ServiceInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('service_invoice_release.generate-invno');
 Route::get('/search-dn', [ServiceInvoiceReleaseController::class,'searchDn' ])->middleware('auth')->name('service_invoice_release.search-dn');
 Route::get('/get-dn/{dnid}', [ServiceInvoiceReleaseController::class,'getDn' ])->middleware('auth')->name('service_invoice_release.get-dn');
 Route::get('/get-dn-detail/{dnid}', [ServiceInvoiceReleaseController::class,'getDnDetail' ])->middleware('auth')->name('service_invoice_release.get-dn');
@@ -417,7 +417,7 @@ Route::get('/service-invoice-release/preview/{id}', [ServiceInvoiceReleaseContro
 
 Route::get('/mc-invoice-release/index', [McInvoiceReleaseController::class,'index'])->middleware('auth')->name('mc_invoice_release.index');
 Route::get('/mc-invoice-release/create', [McInvoiceReleaseController::class,'create'])->middleware('auth')->name('mc_invoice_release.create');
-Route::get('/generate-invno', [McInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('mc_invoice_release.generate-invno');
+Route::get('/generate-invno-mc-invoice-release', [McInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('mc_invoice_release.generate-invno');
 Route::get('/search-mc', [McInvoiceReleaseController::class,'searchMc' ])->middleware('auth')->name('mc_invoice_release.search-mc');
 Route::get('/get-mc/{mcid}', [McInvoiceReleaseController::class,'getMc' ])->where('mcid', '.*')->middleware('auth')->name('mc_invoice_release.get-mc');
 Route::get('/get-mc-product/{mcid}',[McInvoiceReleaseController::class,'getMcProduct'])->where('mcid', '.*')->middleware('auth')->name('get-mc-product');

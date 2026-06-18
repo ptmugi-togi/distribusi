@@ -12,7 +12,7 @@
                 <nav>
                     <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('maintenance_contract.index') }}">List Service Invoice Releaes</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('service_invoice_release.index') }}">List Service Invoice Releaes</a></li>
                     <li class="breadcrumb-item active">Service Invoice Releaes Create</li>
                     </ol>
                 </nav>

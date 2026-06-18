@@ -12,7 +12,7 @@
                 <nav>
                     <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('maintenance_contract.index') }}">List MC Invoice Releaes</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('mc_invoice_release.index') }}">List MC Invoice Releaes</a></li>
                     <li class="breadcrumb-item active">MC Invoice Releaes Create</li>
                     </ol>
                 </nav>
