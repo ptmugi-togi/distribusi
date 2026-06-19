@@ -414,6 +414,7 @@ Route::get('/get-dn/{dnid}', [ServiceInvoiceReleaseController::class,'getDn' ])-
 Route::get('/get-dn-detail/{dnid}', [ServiceInvoiceReleaseController::class,'getDnDetail' ])->middleware('auth')->name('service_invoice_release.get-dn');
 Route::post('/service-invoice-release/store', [ServiceInvoiceReleaseController::class,'store'])->middleware('auth')->name('service_invoice_release.store');
 Route::get('/service-invoice-release/preview/{id}', [ServiceInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('service_invoice_release.preview');
+Route::get('/service-invoice-release/print/{id}', [ServiceInvoiceReleaseController::class, 'print'])->middleware('auth')->name('service_invoice_release.print');
 
 Route::get('/mc-invoice-release/index', [McInvoiceReleaseController::class,'index'])->middleware('auth')->name('mc_invoice_release.index');
 Route::get('/mc-invoice-release/create', [McInvoiceReleaseController::class,'create'])->middleware('auth')->name('mc_invoice_release.create');
@@ -424,3 +425,4 @@ Route::get('/get-mc-product/{mcid}',[McInvoiceReleaseController::class,'getMcPro
 Route::get('/get-mc-detail/{mcid}', [McInvoiceReleaseController::class,'getMcDetail'])->where('mcid', '.*')->middleware('auth')->name('get-mc-detail');
 Route::post('/mc-invoice-release/store', [McInvoiceReleaseController::class,'store'])->middleware('auth')->name('mc_invoice_release.store');
 Route::get('/mc-invoice-release/preview/{id}', [McInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('mc_invoice_release.preview');
+Route::get('/mc-invoice-release/print/{id}', [McInvoiceReleaseController::class, 'print'])->middleware('auth')->name('mc_invoice_release.print');

@@ -94,6 +94,7 @@ class ServiceInvoiceReleaseController extends Controller
                 'blamt' => $request->blamt ?? 0,
                 'vatax' => $request->vatax ?? 0,
                 'itext' => $request->noteh,
+                'divco' => $request->divco,
                 'created_at'=>now(),
                 'created_by'=>Auth::user()->name,
                 'updated_at'=>now(),
@@ -103,6 +104,7 @@ class ServiceInvoiceReleaseController extends Controller
             if($request->tdna_dnlin){
                 foreach($request->tdna_dnlin as $i=>$dnlin){
                     DB::table('tinta')->insert([
+                        'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
                         'invno'=>$request->invno,
@@ -123,6 +125,7 @@ class ServiceInvoiceReleaseController extends Controller
             if($request->tdnb_dnlin){
                 foreach($request->tdnb_dnlin as $i=>$dnlin){
                     DB::table('tintb')->insert([
+                        'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
                         'invno'=>$request->invno,
@@ -140,6 +143,7 @@ class ServiceInvoiceReleaseController extends Controller
             if($request->tdnc_opron){
                 foreach($request->tdnc_opron as $i=>$opron){
                     DB::table('tintc')->insert([
+                        'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
                         'invno'=>$request->invno,
@@ -154,6 +158,15 @@ class ServiceInvoiceReleaseController extends Controller
                     ]);
                 }
             }
+
+            DB::table('tdnh')
+                ->where('formc', $request->dorfc)
+                ->where('dnnum', $request->donom)
+                ->where('depo', $request->divco)
+                ->update([
+                    'invfc' => $request->formc,
+                    'invno' => $request->invno,
+                ]);
 
             DB::commit();
 
@@ -197,6 +210,7 @@ class ServiceInvoiceReleaseController extends Controller
         $dn = DB::table('tdnh')
             ->where('braco', Auth::user()->cabang)
             ->where('dnnum','like','%'.$request->search.'%')
+            ->where('invno' ,'=',null)
             ->limit(20)
             ->get();
 
@@ -252,5 +266,198 @@ class ServiceInvoiceReleaseController extends Controller
             'tdnb' => $tdnb,
             'tdnc' => $tdnc
         ]);
+    }
+
+    public function preview($id)
+    {
+        $tinmas = DB::table('tinmas')
+            ->leftJoin('mbranches','mbranches.braco','=','tinmas.braco')
+            ->leftJoin('mformcode_tbl','mformcode_tbl.formc','=','tinmas.formc')
+            ->where('tinmas.invid',$id)
+            ->select(
+                'tinmas.*',
+                'mbranches.bank_acc',
+                'mbranches.bank_address',
+                'mbranches.email',
+                'mformcode_tbl.pos4',
+                'mformcode_tbl.name4',
+                'mformcode_tbl.docd1',
+                'mformcode_tbl.docd2'
+            )
+            ->first();
+
+        $products = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->where('tinta.invid',$tinmas->invid)
+            ->select(
+                'tinta.*',
+                'mpromas.prona'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $customer = DB::table('mcusmas')
+            ->where('cusno',$tinmas->cusno)
+            ->first();
+
+        $services = DB::table('tinta')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tinta.opron')
+            ->where('tinta.invid', $id)
+            ->select('tinta.*', 'mpromas.prona')
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $serviceFees = DB::table('tintb')
+            ->where('invid', $id)
+            ->orderBy('invln')
+            ->get()
+            ->groupBy('invln');
+
+        $spareparts = DB::table('tintc')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tintc.opron')
+            ->where('tintc.invid', $id)
+            ->select('tintc.*', 'mpromas.prona')
+            ->get();
+
+        if($tinmas->delto == 0){
+            $shipto = $customer;
+        }else{
+            $shipto = DB::table('mstmas')
+                ->where('cusno',$tinmas->cusno)
+                ->where('shpto',$tinmas->delto)
+                ->first();
+        }
+
+        $html = view('teknik.service_invoice_release.service_invoice_release_print', compact(
+            'tinmas',
+            'products',
+            'customer',
+            'services',
+            'serviceFees',
+            'spareparts',
+            'shipto'
+        ))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format'=>'A4',
+            'margin_top'=>8,
+            'margin_bottom'=>45,
+            'margin_left'=>8,
+            'margin_right'=>8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+
+    public function print($id)
+    {
+        $tinmas = DB::table('tinmas')
+            ->leftJoin('mbranches','mbranches.braco','=','tinmas.braco')
+            ->leftJoin('mformcode_tbl','mformcode_tbl.formc','=','tinmas.formc')
+            ->where('tinmas.invid',$id)
+            ->select(
+                'tinmas.*',
+                'mbranches.bank_acc',
+                'mbranches.bank_address',
+                'mbranches.email',
+                'mformcode_tbl.pos4',
+                'mformcode_tbl.name4',
+                'mformcode_tbl.docd1',
+                'mformcode_tbl.docd2'
+            )
+            ->first();
+
+        DB::table('tinmas')
+            ->where('invid',$id)
+            ->update([
+                'prctr'=>DB::raw('COALESCE(prctr,0)+1')
+            ]);
+
+        $products = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->where('tinta.invid',$tinmas->invid)
+            ->select(
+                'tinta.*',
+                'mpromas.prona'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $customer = DB::table('mcusmas')
+            ->where('cusno',$tinmas->cusno)
+            ->first();
+
+        $services = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->where('tinta.invid',$id)
+            ->select(
+                'tinta.*',
+                'mpromas.prona'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $serviceFees = DB::table('tintb')
+            ->where('invid',$id)
+            ->orderBy('invln')
+            ->get()
+            ->groupBy('invln');
+
+        $spareparts = DB::table('tintc')
+            ->leftJoin('mpromas','mpromas.opron','=','tintc.opron')
+            ->where('tintc.invid',$id)
+            ->select(
+                'tintc.*',
+                'mpromas.prona'
+            )
+            ->get();
+
+        if($tinmas->delto == 0){
+            $shipto = $customer;
+        }else{
+            $shipto = DB::table('mstmas')
+                ->where('cusno',$tinmas->cusno)
+                ->where('shpto',$tinmas->delto)
+                ->first();
+        }
+
+        $html = view(
+            'teknik.service_invoice_release.service_invoice_release_print',
+            compact(
+                'tinmas',
+                'products',
+                'customer',
+                'services',
+                'serviceFees',
+                'spareparts',
+                'shipto'
+            )
+        )->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format'=>'A4',
+            'margin_top'=>8,
+            'margin_bottom'=>45,
+            'margin_left'=>8,
+            'margin_right'=>8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $pdfContent = $mpdf->Output(
+            "{$tinmas->invid}.pdf",
+            "S"
+        );
+
+        return response($pdfContent)
+            ->header(
+                'Content-Type',
+                'application/pdf'
+            )
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="'.$tinmas->invid.'.pdf"'
+            );
     }
 }

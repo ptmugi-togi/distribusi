@@ -8,12 +8,12 @@
     <main id="main" class="main">
         <div class="d-flex justify-content-between align-items-center">
             <div class="pagetitle">
-                <h1>Tambah Data Service Invoice Releaes</h1>
+                <h1>Tambah Data Service Invoice Release</h1>
                 <nav>
                     <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('service_invoice_release.index') }}">List Service Invoice Releaes</a></li>
-                    <li class="breadcrumb-item active">Service Invoice Releaes Create</li>
+                    <li class="breadcrumb-item"><a href="{{ route('service_invoice_release.index') }}">List Service Invoice Release</a></li>
+                    <li class="breadcrumb-item active">Service Invoice Release Create</li>
                     </ol>
                 </nav>
             </div>
@@ -53,6 +53,8 @@
                         </select>
                         <input type="hidden" class="form-control" name="dorfc" id="dorfc" value="{{ old('dorfc') }}" required>
                         <input type="hidden" class="form-control" name="donom" id="donom" value="{{ old('donom') }}" required>
+                        <input type="hidden" class="form-control" name="dndat" id="dndat" value="{{ old('dndat') }}" required>
+                        <input type="hidden" class="form-control" name="divco" id="divco" value="{{ old('divco') }}" required>
                     </div>
                     
                     <div class="col-md-6 mt-3">
@@ -192,7 +194,7 @@
                                     results:data.map(function(item){
                                         return {
                                             id:item.dnid, // tetap simpan id asli
-                                            text:item.formc + ' - ' + item.dnnum
+                                            text:item.formc + ' - ' + item.depo + ' - ' + item.dnnum
                                         }
                                     })
                                 };
@@ -238,6 +240,8 @@
 
                         $('#dorfc').val(dn.formc);
                         $('#donom').val(dn.dnnum);
+                        $('#dndat').val(dn.dndat);
+                        $('#divco').val(dn.depo);
 
                         $('#cust').val(dn.cusna);
                         $('#cusno').val(dn.cusno);
