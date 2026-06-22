@@ -106,6 +106,8 @@
 
                     <div id="product-container" class="product-container"></div>
 
+                    <input type="hidden" class="form-control" name="toppc" id="toppc" value="{{ old('toppc') }}">
+
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Gross Amount</label>
                         <input type="text" id="gramt_display" class="form-control total-display" readonly style="background-color:#e9ecef">
@@ -388,6 +390,7 @@
                 $('#ntamt').val(row.data('ntamt'));
                 $('#txamt').val(row.data('txamt'));
                 $('#blamt').val(row.data('blamt'));
+                $('#toppc').val(row.data('toppc'));
                 $('#gramt_display').val(formatNumber(row.data('gramt')));
                 $('#odisa_display').val(formatNumber(row.data('odisa')));
                 $('#ntamt_display').val(formatNumber(row.data('ntamt')));

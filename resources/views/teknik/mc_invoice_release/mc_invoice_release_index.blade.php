@@ -54,11 +54,11 @@
                             <td class="text-center">{{ $s->dorfc ?? '-' }} {{ $s->donom ?? '-' }}</td>
                             <td class="text-center">
                                 {{-- preview --}}
-                                <a href="{{ route('mc_invoice_release.preview', $s->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
+                                {{-- <a href="{{ route('mc_invoice_release.preview', $s->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                                 {{-- print --}}
                                 @if (!$periodClosed && $s->braco == auth()->user()->cabang)
-                                  {{-- <a href="{{ route('maintenance_contract.print', $s->invic) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                                  <a href="{{ route('mc_invoice_release.print', $s->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                 @endif
                             </td>
                             <td class="text-center" data-order="{{ \Carbon\Carbon::parse($s->created_at)->format('Y-m-d H:i:s') }}">

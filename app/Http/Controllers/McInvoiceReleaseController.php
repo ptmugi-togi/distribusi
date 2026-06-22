@@ -91,6 +91,7 @@ class McInvoiceReleaseController extends Controller
                 'cuspo' => $request->cuspo,
                 'curco' => $request->curco,
                 'crate' => $request->crate,
+                'toppc' => $request->toppc,
                 'gramt' => $request->gramt ?? 0,
                 'ntamt' => $request->ntamt ?? 0,
                 'dpamt' => $request->dpamt ?? 0,
@@ -251,5 +252,193 @@ class McInvoiceReleaseController extends Controller
         return response()->json([
             'detail' => $detail
         ]);
+    }
+
+    public function preview($id)
+    {
+        $tinmas = DB::table('tinmas')
+            ->leftJoin('mbranches','mbranches.braco','=','tinmas.braco')
+            ->leftJoin('mformcode_tbl','mformcode_tbl.formc','=','tinmas.formc')
+            ->where('tinmas.invid',$id)
+            ->select(
+                'tinmas.*',
+                'mbranches.bank_acc',
+                'mbranches.bank_address',
+                'mbranches.email',
+                'mformcode_tbl.pos4',
+                'mformcode_tbl.name4',
+                'mformcode_tbl.docd1',
+                'mformcode_tbl.docd2'
+            )
+            ->first();
+
+        $products = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->where('tinta.invid',$tinmas->invid)
+            ->select(
+                'tinta.*',
+                'mpromas.prona'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $customer = DB::table('mcusmas')
+            ->where('cusno',$tinmas->cusno)
+            ->first();
+
+        $services = DB::table('tinta')
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tinta.opron')
+            ->leftJoin('tmcd', 'tmcd.opron', '=', 'tinta.opron')
+            ->where('tinta.invid', $id)
+            ->select(
+                'tinta.*',
+                'mpromas.prona',
+                'mpromas.stdqu',
+                'tmcd.price'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $services = $services->map(function($item) use ($tinmas){
+            $price = $item->price ?? 0;
+            $item->calc_price = $price * ($tinmas->toppc / 100);
+
+            return $item;
+        });
+
+        if($tinmas->delto == 0){
+            $shipto = $customer;
+        }else{
+            $shipto = DB::table('mstmas')
+                ->where('cusno',$tinmas->cusno)
+                ->where('shpto',$tinmas->delto)
+                ->first();
+        }
+
+        $html = view('teknik.mc_invoice_release.mc_invoice_release_print', compact(
+            'tinmas',
+            'products',
+            'customer',
+            'services',
+            'shipto'
+        ))->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format'=>'A4',
+            'margin_top'=>8,
+            'margin_bottom'=>45,
+            'margin_left'=>8,
+            'margin_right'=>8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+
+    public function print($id)
+    {
+        $tinmas = DB::table('tinmas')
+            ->leftJoin('mbranches','mbranches.braco','=','tinmas.braco')
+            ->leftJoin('mformcode_tbl','mformcode_tbl.formc','=','tinmas.formc')
+            ->where('tinmas.invid',$id)
+            ->select(
+                'tinmas.*',
+                'mbranches.bank_acc',
+                'mbranches.bank_address',
+                'mbranches.email',
+                'mformcode_tbl.pos4',
+                'mformcode_tbl.name4',
+                'mformcode_tbl.docd1',
+                'mformcode_tbl.docd2'
+            )
+            ->first();
+
+        DB::table('tinmas')
+            ->where('invid',$id)
+            ->update([
+                'prctr'=>DB::raw('COALESCE(prctr,0)+1')
+            ]);
+
+        $products = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->where('tinta.invid',$tinmas->invid)
+            ->select(
+                'tinta.*',
+                'mpromas.prona'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+        $customer = DB::table('mcusmas')
+            ->where('cusno',$tinmas->cusno)
+            ->first();
+
+        $services = DB::table('tinta')
+            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
+            ->leftJoin('tmcd', 'tmcd.opron', '=', 'tinta.opron')
+            ->where('tinta.invid',$id)
+            ->select(
+                'tinta.*',
+                'mpromas.prona',
+                'mpromas.stdqu',
+                'tmcd.price'
+            )
+            ->orderBy('tinta.invln')
+            ->get();
+
+
+        $services = $services->map(function($item) use ($tinmas){
+
+            $price = $item->price ?? 0;
+
+            $item->calc_price = $price * ($tinmas->toppc / 100);
+
+            return $item;
+        });
+
+        if($tinmas->delto == 0){
+            $shipto = $customer;
+        }else{
+            $shipto = DB::table('mstmas')
+                ->where('cusno',$tinmas->cusno)
+                ->where('shpto',$tinmas->delto)
+                ->first();
+        }
+
+        $html = view(
+            'teknik.mc_invoice_release.mc_invoice_release_print',
+            compact(
+                'tinmas',
+                'products',
+                'customer',
+                'services',
+                'shipto'
+            )
+        )->render();
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format'=>'A4',
+            'margin_top'=>8,
+            'margin_bottom'=>45,
+            'margin_left'=>8,
+            'margin_right'=>8,
+        ]);
+
+        $mpdf->WriteHTML($html);
+
+        $pdfContent = $mpdf->Output(
+            "{$tinmas->invid}.pdf",
+            "S"
+        );
+
+        return response($pdfContent)
+            ->header(
+                'Content-Type',
+                'application/pdf'
+            )
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="'.$tinmas->invid.'.pdf"'
+            );
     }
 }

@@ -123,7 +123,7 @@
 
                 <td style="width:33%;">
                     DIVISI : {{ $tinmas->divco ?? '-' }}<br>
-                    WORK ORDER : -<br>
+                    MAINTENANCE : {{ $tinmas->dorfc ?? '-' }} {{ $tinmas->donom }}<br>
                     CUSTOMER PO : {{ $tinmas->cuspo ?? '-' }}<br>
                     {{-- QUOTATION : {{ $tinmas->quote ?? '-' }} --}}
                 </td>
@@ -132,21 +132,17 @@
                     NO. FAKTUR<br>
                     TGL. FAKTUR<br>
                     TGL. JATUH TEMPO<br>
-                    NO. DELIVERY NOTE<br>
-                    TGL. DELIVERY NOTE<br>
                     MATA UANG
                 </td>
 
                 <td style="width:2%;">
-                    :<br>:<br>:<br>:<br>:<br>:<br>
+                    :<br>:<br>:<br>:<br>
                 </td>
 
                 <td style="width:15%;">
                     {{ $tinmas->formc }} {{ $tinmas->invno }}/{{ $tinmas->braco }}<br>
                     {{ \Carbon\Carbon::parse($tinmas->invdt)->format('d-m-Y') }}<br>
                     {{ \Carbon\Carbon::parse($tinmas->duedt)->format('d-m-Y') }}<br>
-                    {{ $tinmas->dorfc }} {{ $tinmas->donom ?? '-' }}/{{ $tinmas->braco }}<br>
-                    {{ \Carbon\Carbon::parse($tinmas->dndat)->format('d-m-Y') }}<br>
                     {{ $tinmas->curco ?? '-' }}
                 </td>
             </tr>
@@ -167,21 +163,19 @@
             <tbody>
                 @php $no = 1; @endphp
 
+                <tr>
+                    <td></td>
+                    <td colspan="3" style="font-size:12px;">
+                        {{ $tinmas->itext ?? '' }}
+                    </td>
+                </tr>
                 @foreach($services as $service)
                     <tr>
                         <td class="center">{{ $no++ }}</td>
 
                         <td>
-                            <b>SERVICE : {{ $service->prona ?? $service->opron }}</b><br>
+                            <b>{{ $service->opron ?? '' }} - {{ $service->prona ?? '' }}</b><br>
                             S/N : {{ $service->lotno ?? '-' }}
-
-                            @foreach(($serviceFees[$service->invln] ?? []) as $fee)
-                                <br>
-                                &nbsp;&nbsp;- {{ $fee->descr ?? $fee->tofee }}
-                                <span style="float:right;">
-                                    @ {{ formatNumberOnly($fee->gramt ?? 0, $tinmas->curco) }}
-                                </span>
-                            @endforeach
                         </td>
 
                         <td class="center">
@@ -190,44 +184,10 @@
                         </td>
 
                         <td class="right">
-                            {{ formatNumberOnly($service->gramt ?? 0, $tinmas->curco) }}
+                            {{ formatNumberOnly($service->calc_price ?? 0, $tinmas->curco) }}
                         </td>
                     </tr>
                 @endforeach
-
-                @if($spareparts->count() > 0)
-                    <tr>
-                        <td class="center">{{ $no++ }}</td>
-
-                        <td>
-                            <b>SPAREPARTS:</b>
-
-                            @foreach($spareparts as $sp)
-                                <br>
-                                &nbsp;&nbsp;- {{ $sp->opron }}
-                                {{ $sp->prona ?? '' }}
-
-                                <span style="float:right;">
-                                    @ {{ formatNumberOnly($sp->gramt ?? 0, $tinmas->curco) }}
-                                </span>
-                            @endforeach
-                        </td>
-
-                        <td class="center">
-                            <br>
-                            @foreach($spareparts as $sp)
-                                <div>
-                                    {{ number_format($sp->trqty ?? 0, 0, ',', '.') }}
-                                    {{ $sp->qunit ?? '' }}
-                                </div>
-                            @endforeach
-                        </td>
-
-                        <td class="right">
-                            {{ formatNumberOnly($spareparts->sum('gramt'), $tinmas->curco) }}
-                        </td>
-                    </tr>
-                @endif
             </tbody>
         </table>
 
