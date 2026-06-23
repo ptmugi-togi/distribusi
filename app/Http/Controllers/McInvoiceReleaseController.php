@@ -102,6 +102,7 @@ class McInvoiceReleaseController extends Controller
                 'vatax' => $request->vatax ?? 0,
                 'itext' => $request->noteh,
                 'divco' => $request->divco,
+                'phase' => $request->phase,
                 'created_at'=>now(),
                 'created_by'=>Auth::user()->name,
                 'updated_at'=>now(),

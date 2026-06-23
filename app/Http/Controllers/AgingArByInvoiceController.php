@@ -21,6 +21,7 @@ class AgingArByInvoiceController extends Controller
         return view('fna.reports.aging_ar_by_invoice.aging_ar_by_invoice_create' , compact('braco', 'customers'));
     }
 
+
     public function getData(Request $req)
     {
         $braco = Auth::user()->cabang;
@@ -38,7 +39,7 @@ class AgingArByInvoiceController extends Controller
             ->when($req->cusno, function ($q) use ($req) {
                 $q->where('h.cusno', $req->cusno);
             })
-            ->whereRaw('(h.blamt - h.caval - h.recwo - h.cramt) > 0')
+            ->whereRaw('(COALESCE(h.blamt,0)- COALESCE(h.caval,0)- COALESCE(h.recwo,0)- COALESCE(h.cramt,0)) > 0')
 
             ->select([
                 'h.cusno',
@@ -50,7 +51,7 @@ class AgingArByInvoiceController extends Controller
                 'h.sreno',
                 'h.curco',
                 'h.crate',
-                DB::raw('(h.blamt - h.caval - h.recwo - h.cramt) * h.crate as osamt'),
+                DB::raw('COALESCE((COALESCE(h.blamt,0) - COALESCE(h.caval,0) - COALESCE(h.recwo,0) - COALESCE(h.cramt,0)) * COALESCE(h.crate,1),0) as osamt'),
                 DB::raw("DATEDIFF('$asper', h.duedt) as overdays")
             ])
 
