@@ -111,6 +111,7 @@ class McInvoiceReleaseController extends Controller
             if($request->product_opron){
                 foreach($request->product_opron as $i=>$opron){
                     DB::table('tinta')->insert([
+                        'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
                         'invno'=>$request->invno,
@@ -134,6 +135,7 @@ class McInvoiceReleaseController extends Controller
                 ->where('braco', $request->braco)
                 ->where('formc', $request->dorfc)
                 ->where('refno', $request->donom)
+                ->where('phase', $request->phase)
                 ->update([
                     'invfc' => $request->formc,
                     'invno' => $request->invno,
@@ -141,6 +143,7 @@ class McInvoiceReleaseController extends Controller
                     'winvdt' => $request->invdt,
                     'wduedt' => $request->duedt,
                     'wpriod' => $request->priod,
+                    'sts01'  => 'I',
                     'witext' => $request->noteh
                 ]);
 

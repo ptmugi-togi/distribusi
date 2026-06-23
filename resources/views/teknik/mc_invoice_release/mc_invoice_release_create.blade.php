@@ -87,6 +87,7 @@
                     <div class="col-md-12 mt-3" id="phase-container" style="display:none">
                         <label class="form-label">Select Phase</label>
 
+                        <input type="hidden" name="phase" id="phase" value="{{ old('phase') }}">
                         <table class="table table-bordered table-striped" id="phase-table">
                             <thead>
                                 <tr>
@@ -98,6 +99,7 @@
                                     <th>Net</th>
                                     <th>VAT</th>
                                     <th>Billing</th>
+                                    <th>No Invoice</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -308,22 +310,33 @@
                     }
                 );
 
-                $.get(
-                    "{{ url('/get-mc-detail') }}/"+mcid,
-                    function(res){
+                $.get("{{ url('/get-mc-detail') }}/"+mcid, function(res){
                         let html = '';
+                        let firstAvailable = true;
 
                         $.each(res.detail,function(i,item){
-                            let checked = i === 0 ? 'checked' : '';
+
+                            let disabled = '';
+                            let checked = '';
+
+                            if(item.sts01 === 'I'){
+                                disabled = 'disabled';
+                            }else if(firstAvailable){
+                                checked = 'checked';
+                                firstAvailable = false;
+                            }
+
                             html += `
                             <tr>
                                 <td>
                                     <input 
                                     type="radio"
                                     class="phase-select"
-                                    name="phase"
+                                    name="phase_select"
                                     value="${item.phase}"
                                     ${checked}
+                                    ${disabled}
+                                    data-phase="${item.phase}"
                                     data-toppc="${item.toppc}"
                                     data-gramt="${item.gramt}"
                                     data-odisa="${item.odisa}"
@@ -339,10 +352,10 @@
                                 <td>${formatNumber(item.ntamt)}</td>
                                 <td>${formatNumber(item.txamt)}</td>
                                 <td>${formatNumber(item.blamt)}</td>
+                                <td>${item.invfc ?? '-'} - ${item.invno ?? '-'}</td>
                             </tr>
                             `;
                         });
-
 
                         $('#phase-table tbody').html(html);
 
@@ -384,7 +397,11 @@
             });
 
             $(document).on('change','.phase-select',function(){
+                if($(this).is(':disabled')){
+                    return false;
+                }
                 let row = $(this);
+                $('#phase').val(row.data('phase'));
                 $('#gramt').val(row.data('gramt'));
                 $('#odisa').val(row.data('odisa'));
                 $('#ntamt').val(row.data('ntamt'));
