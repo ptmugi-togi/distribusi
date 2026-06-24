@@ -55,6 +55,7 @@ class AgingArByInvoiceController extends Controller
                 DB::raw("DATEDIFF('$asper', h.duedt) as overdays")
             ])
 
+            ->orderBy('h.formc')
             ->orderBy('h.cusno')
             ->orderBy('h.duedt')
             ->get();
