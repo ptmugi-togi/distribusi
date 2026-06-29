@@ -44,12 +44,12 @@
                     @foreach ($bbmhdr as $b)
                     <tr>
                         <td class="text-center">{{ $b->warco ?? '-' }}</td>
-                        <td class="">({{ $b->mformcode->desc_c ?? '-' }})</td>
+                        <td class="">({{ $b->mformcode->descr ?? '-' }})</td>
                         <td class="text-center">{{ $b->formc }} {{ substr($b->bbmid, -6) }}</td>
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                         </td>
-                        @if ($b->formc == 'IB' || $b->formc == 'IL' || $b->formc == 'IK' || $b->formc == 'ID' || $b->formc == 'IE' || $b->formc == 'IJ')
+                        @if ($b->formc == 'IB' || $b->formc == 'IL' || $b->formc == 'IK' || $b->formc == 'ID' || $b->formc == 'IE' || $b->formc == 'IJ' || $b->formc == 'IF' || $b->formc == 'IN')
                           <td class="">{{ $b->reffc }} {{ $b->refno }}</td>
                         @else
                           <td class="">{{ $b->refno ?? '-' }}</td>
@@ -63,16 +63,18 @@
                               <a href="{{ route('bbm.printBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                               
                               <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                              @if ($b->formc != 'IL')
+                              @if ($b->formc != 'IL' && $b->formc != 'IN')
                                 <a href="/bbm/{{ $b->bbmid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
                               @endif
-                              <form id="delete-inv-{{ $b->bbmid }}" action="{{ url('/bbm/'.$b->bbmid.'/delete') }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <a class="badge bg-danger btn-delete-inv" data-bbmid="{{ $b->bbmid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
-                                      <i class="bi bi-trash"></i>
-                                </a>
-                              </form>
+                              @if ($b->formc != 'IN')
+                                <form id="delete-inv-{{ $b->bbmid }}" action="{{ url('/bbm/'.$b->bbmid.'/delete') }}" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <a class="badge bg-danger btn-delete-inv" data-bbmid="{{ $b->bbmid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                        <i class="bi bi-trash"></i>
+                                  </a>
+                                </form>
+                              @endif
                             @endif
                         </td>
                         <td class="text-center">{{ $b->braco ?? '-' }}</td>

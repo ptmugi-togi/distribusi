@@ -424,6 +424,61 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
+    public function getDo(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->join('mcusmas as m', 'tn.cusno', '=', 'm.cusno')
+            ->where('tn.formc', 'DO')
+            ->where('tn.braco', $userBranch)
+            ->whereNull('tn.ref02')
+            ->whereNull('tn.resta')
+            ->select(
+                'tn.formc',
+                'tn.trano',
+                DB::raw('MAX(t.warco) as warco'),
+                'tn.cusno',
+                'm.cusna'
+            )
+            ->groupBy(
+                'tn.formc',
+                'tn.trano',
+                'tn.cusno',
+                'm.cusna'
+            )
+            ->orderByDesc('tn.trano')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByDo(Request $request)
+    {
+        $prefix = $request->braco . $request->formc . $request->trano;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('t.bbkid', 'like', $prefix . '%')
+            ->where('t.formc', $request->formc)
+            ->where('t.trano', $request->trano)
+            ->where('t.warco', $request->warco)
+            ->whereColumn('t.trqty', '>', 't.retqty')
+            ->select(
+                't.opron',
+                DB::raw('t.trqty - t.retqty AS trqty'),
+                't.qunit',
+                't.lotno',
+                't.locco',
+                'm.prona',
+                't.noted'
+            )
+            ->get();
+
+        return response()->json($data);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -494,6 +549,7 @@ class BbmController extends Controller
                 'refno' => $request->refno,
                 'tnfcd' => $request->tnfcd,
                 'tnnum' => $request->tnnum,
+                'cusno' => $request->cusno,
                 'supno' => $request->supno ?? '',
                 'blnum' => $request->blnum,
                 'vesel' => $request->vesel,
@@ -624,6 +680,17 @@ class BbmController extends Controller
                         ->where('pono', $usePono)
                         ->where('opron', $useOpron)
                         ->update(['rcqty' => DB::raw("rcqty + $trqty")]);
+                }
+
+                if ($request->formc_store === 'IN') {
+                    DB::table('tsisnh')
+                        ->where('braco', $request->braco)
+                        ->where('formc', $request->reffc)
+                        ->where('trano', $request->refno)
+                        ->update([
+                            'resta' => 'C',
+                            'ref02' => 'CANCEL'
+                        ]);
                 }
             }
 

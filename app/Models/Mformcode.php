@@ -13,7 +13,7 @@ class Mformcode extends Model
 
     protected $fillable = [
         'formc',
-        'desc',
+        'descr',
         'pos1',
         'name1',
         'pos2',

@@ -44,6 +44,7 @@
             <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
             <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
+            <option value="IN" {{ old('formc') == 'IN' ? 'selected' : '' }}>IN (BBM - CANCELATION DO)</option>
             {{-- FormC lain nanti --}}
           </select>
           <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
@@ -118,6 +119,10 @@
 
       <div id="section-ij" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_ij')
+      </div>
+
+      <div id="section-in" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_in')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -479,6 +484,22 @@
                 $('#section-ie').remove();
                 $('#section-ij').fadeIn();
                 $('#section-ij').find('[data-req="ij"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+              }
+              else if(formc === 'IN'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-if').remove();
+                $('#section-il').remove();
+                $('#section-ik').remove();
+                $('#section-im').remove();
+                $('#section-ig').remove();
+                $('#section-id').remove();
+                $('#section-ie').remove();
+                $('#section-ij').remove();
+                $('#section-in').fadeIn();
+                $('#section-in').find('[data-req="in"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
               }

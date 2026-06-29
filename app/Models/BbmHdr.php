@@ -29,6 +29,7 @@ class BbmHdr extends Model
         'refno',
         'tnfcd',
         'tnnum',
+        'cusno',
         'supno',
         'blnum',
         'vesel',

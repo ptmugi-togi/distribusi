@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Formc</label>
-                    <input type="text" class="form-control" value="{{ $bbm->formc }} ({{ $bbm->mformcode->desc_c }})" disabled>
+                    <input type="text" class="form-control" value="{{ $bbm->formc }} ({{ $bbm->mformcode->descr }})" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">
