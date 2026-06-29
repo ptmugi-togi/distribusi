@@ -440,13 +440,17 @@ class BbmController extends Controller
                 'tn.trano',
                 DB::raw('MAX(t.warco) as warco'),
                 'tn.cusno',
-                'm.cusna'
+                'm.cusna',
+                'tn.rfc01',
+                'tn.ref01'
             )
             ->groupBy(
                 'tn.formc',
                 'tn.trano',
                 'tn.cusno',
-                'm.cusna'
+                'm.cusna',
+                'tn.rfc01',
+                'tn.ref01'
             )
             ->orderByDesc('tn.trano')
             ->get();
@@ -691,6 +695,26 @@ class BbmController extends Controller
                             'resta' => 'C',
                             'ref02' => 'CANCEL'
                         ]);
+                    
+                    if ($request->rfc01 === 'SA') {
+                        DB::table('tcored')
+                            ->where('braco', $request->braco)
+                            ->where('sorno', $request->ref01)
+                            ->where('opron', $useOpron)
+                            ->update([
+                                'qtydo' => DB::raw("qtydo - $trqty")
+                            ]);
+                    }
+                    
+                    if ($request->rfc01 === 'SB') {
+                        DB::table('tprojc')
+                            ->where('braco', $request->braco)
+                            ->where('sorno', $request->ref01)
+                            ->where('opron', $useOpron)
+                            ->update([
+                                'delqt' => DB::raw("delqt - $trqty")
+                            ]);
+                    }
                 }
             }
 

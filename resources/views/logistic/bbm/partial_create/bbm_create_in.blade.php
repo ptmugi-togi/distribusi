@@ -7,6 +7,8 @@
         </select>
         <input type="hidden" name="reffc" id="reffc-store">
         <input type="hidden" name="refno" id="refno-store">
+        <input type="hidden" name="rfc01" id="rfc01-store">
+        <input type="hidden" name="ref01" id="ref01-store">
     </div>
     
     <div class="col-md-6 mt-3">
@@ -98,7 +100,9 @@
                             data-refno="${item.trano}"
                             data-warco="${item.warco}"
                             data-cust="${item.cusno} - ${item.cusna}"
-                            data-cusno="${item.cusno}">
+                            data-cusno="${item.cusno}"
+                            data-rfc01="${item.rfc01}"
+                            data-ref01="${item.ref01}">
                             ${item.formc} - ${item.trano}
                         </option>
                     `);
@@ -206,6 +210,8 @@
             const $selected = $('#refcno').find(':selected');
             $('#reffc-store').val($selected.data('reffc'));
             $('#refno-store').val($selected.data('refno'));
+            $('#rfc01-store').val($selected.data('rfc01'));
+            $('#ref01-store').val($selected.data('ref01'));
             $('#do_warco').val($selected.data('warco'));
             $('#cusno').val($selected.data('cusno'));
             $('#cust').val($selected.data('cust'));
