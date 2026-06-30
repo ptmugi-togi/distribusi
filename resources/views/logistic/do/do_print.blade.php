@@ -157,7 +157,7 @@
                         {{ $i->mpromas->prona ?? '-' }}
                         <br>
                         @if(!empty($i->noted))
-                           C/W :{{ $i->noted }}
+                           {{ $i->noted }}
                            <br>
                         @endif
                         @if(!empty($i->lotno_merged))

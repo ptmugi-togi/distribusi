@@ -47,7 +47,7 @@
                               {{ \Carbon\Carbon::parse($d->tradt)->format('d/m/Y') }}
                           </td>
                           <td class="text-center">{{ $d->rfc01 }} {{ $d->ref01 ?? '-' }}</td>
-                          <td class="text-center">{{ $d->mcusmas->cusna ?? '-' }}</td>
+                          <td class="">{{ $d->mcusmas->cusna ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
                               {{-- <a href="{{ route('do.previewDo', $d->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
