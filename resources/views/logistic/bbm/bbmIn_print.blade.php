@@ -151,7 +151,7 @@
             @foreach($bbmdtls as $i)
                 <tr>
                     <td class="center">{{ $loop->index + 1 }}.</td>
-                    <td class="center">{{ $i->opron ?? '-' }} - {{ $i->mpromas->prona ?? '-' }}</td>
+                    <td class="">{{ $i->opron ?? '-' }} - {{ $i->mpromas->prona ?? '-' }}</td>
                     <td class="center">{{ $i->trqty }} {{ $i->qunit }}</td>
                     <td class="center">{{ $i->lotno ?? '-' }}</td>
                     <td class="center">{{ $i->locco }}</td>
