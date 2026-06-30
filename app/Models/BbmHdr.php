@@ -96,4 +96,9 @@ class BbmHdr extends Model
     {
         return $this->belongsTo(WoDtl::class, 'refno', 'wonum');
     }
+
+    public function mcusmas()
+    {
+        return $this->belongsTo(Mcusmas::class, 'cusno', 'cusno');
+    }
 }

@@ -57,10 +57,16 @@
                         <td class="text-center">
                             {{-- preview --}}
                             {{-- <a href="{{ route('bbm.previewBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+                            {{-- <a href="{{ route('bbm.previewBbmIn', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                             {{-- print --}}
                             @if (!$periodClosed && $b->braco == auth()->user()->cabang)
+                            
+                            @if ($b->formc == 'IN')
+                              <a href="{{ route('bbm.printBbmIn', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                            @else
                               <a href="{{ route('bbm.printBbm', $b->bbmid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                            @endif
                               
                               <a href="/bbm/{{ $b->bbmid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                               @if ($b->formc != 'IL' && $b->formc != 'IN')

@@ -198,6 +198,8 @@ Route::put('/bbm/{bbmid}', [BbmController::class,'update'])->middleware('auth')-
 Route::delete('/bbm/{id}/delete', [BbmController::class,'destroy'])->middleware('auth')->name('bbm.delete');
 Route::get('/bbm/previewBbm/{id}', [PdfController::class, 'previewBbm'])->name('bbm.previewBbm');
 Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.printBbm');
+Route::get('/bbm/previewBbmIn/{id}', [PdfController::class, 'previewBbmIn'])->name('bbm.previewBbmIn');
+Route::get('/bbm/printBbmIn/{id}', [PdfController::class, 'printBbmIn'])->name('bbm.printBbmIn');
 
 Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
