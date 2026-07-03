@@ -34,17 +34,18 @@
           <label for="formc" class="form-label">BBM</label><span class="text-danger"> *</span>
           <select class="form-control select2" id="formc" name="formc" required>
             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih BBM</option>
-            <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (BBM - LOCAL PURCHASE)</option>
-            <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (BBM - IMPORT)</option>
-            <option value="ID" {{ old('formc') == 'ID' ? 'selected' : '' }}>ID (BBM - EX PINJAMAN)</option>
-            <option value="IE" {{ old('formc') == 'IE' ? 'selected' : '' }}>IE (BBM - WARRANTY CLAIM)</option>
-            <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (BBM - ADJUSTMENT)</option>
-            <option value="IG" {{ old('formc') == 'IG' ? 'selected' : '' }}>IG (BBM - OFFICE USED)</option>
-            <option value="IJ" {{ old('formc') == 'IJ' ? 'selected' : '' }}>IJ (BBM - EX WORK ORDER)</option>
-            <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (BBM - EX MODIFIKASI)</option>
-            <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (BBM - EX OTHER BRANCH)</option>
-            <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (BBM - EX PRODUCTION)</option>
-            <option value="IN" {{ old('formc') == 'IN' ? 'selected' : '' }}>IN (BBM - CANCELATION DO)</option>
+            <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (LOCAL PURCHASE)</option>
+            <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (IMPORT)</option>
+            <option value="ID" {{ old('formc') == 'ID' ? 'selected' : '' }}>ID (EX PINJAMAN)</option>
+            <option value="IE" {{ old('formc') == 'IE' ? 'selected' : '' }}>IE (WARRANTY CLAIM)</option>
+            <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (ADJUSTMENT)</option>
+            <option value="IG" {{ old('formc') == 'IG' ? 'selected' : '' }}>IG (OFFICE USED)</option>
+            <option value="IJ" {{ old('formc') == 'IJ' ? 'selected' : '' }}>IJ (EX WORK ORDER)</option>
+            <option value="IK" {{ old('formc') == 'IK' ? 'selected' : '' }}>IK (EX MODIFIKASI)</option>
+            <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (EX OTHER BRANCH)</option>
+            <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (EX PRODUCTION)</option>
+            <option value="IN" {{ old('formc') == 'IN' ? 'selected' : '' }}>IN (CANCELATION DO)</option>
+            <option value="IC" {{ old('formc') == 'IC' ? 'selected' : '' }}>IC (EX RETURN GOODS)</option>
             {{-- FormC lain nanti --}}
           </select>
           <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
@@ -123,6 +124,10 @@
 
       <div id="section-in" style="display:none;">
         @include('logistic.bbm.partial_create.bbm_create_in')
+      </div>
+
+      <div id="section-ic" style="display:none;">
+        @include('logistic.bbm.partial_create.bbm_create_ic')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -339,13 +344,15 @@
 
               if(formc === 'IA'){
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-local').fadeIn();
                 $('#section-local').find('[data-req="ia"]').prop('required', true);
@@ -353,13 +360,15 @@
               }
               else if(formc === 'IB'){
                 $('#section-local').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-import').fadeIn();
                 $('#section-import').find('[data-req="ib"]').prop('required', true);
@@ -367,12 +376,14 @@
               else if(formc === 'IF'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-if').fadeIn();
                 $('#section-if').find('[data-req="if"]').prop('required', true);
@@ -384,12 +395,14 @@
               else if(formc === 'IL'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-il').fadeIn();
                 $('#section-il').find('[data-req="il"]').prop('required', true);
@@ -399,12 +412,14 @@
               else if(formc === 'IK'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-ik').fadeIn();
                 $('#section-ik').find('[data-req="ik"]').prop('required', true);
@@ -416,12 +431,14 @@
               else if(formc === 'IM'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-im').fadeIn();
                 $('#section-im').find('[data-req="im"]').prop('required', true);
@@ -431,12 +448,14 @@
               else if(formc === 'IG'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-ig').fadeIn();
                 $('#section-ig').find('[data-req="ig"]').prop('required', true);
@@ -445,12 +464,14 @@
               else if(formc === 'ID'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-id').fadeIn();
                 $('#section-id').find('[data-req="id"]').prop('required', true);
@@ -460,12 +481,14 @@
               else if(formc === 'IE'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').remove();
                 $('#section-ie').fadeIn();
                 $('#section-ie').find('[data-req="ie"]').prop('required', true);
@@ -475,13 +498,15 @@
               else if(formc === 'IJ'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-in').remove();
+                $('#section-ic').remove();
                 $('#section-ij').fadeIn();
                 $('#section-ij').find('[data-req="ij"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
@@ -490,16 +515,34 @@
               else if(formc === 'IN'){
                 $('#section-local').remove();
                 $('#section-import').remove();
-                $('#section-if').remove();
-                $('#section-il').remove();
-                $('#section-ik').remove();
-                $('#section-im').remove();
-                $('#section-ig').remove();
                 $('#section-id').remove();
                 $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
                 $('#section-ij').remove();
+                $('#section-ic').remove();
                 $('#section-in').fadeIn();
                 $('#section-in').find('[data-req="in"]').prop('required', true);
+                $('#noPoInv').prop('checked', true).prop('disabled', true);
+                isNoPoInv = true;
+              }
+              else if(formc === 'IC'){
+                $('#section-local').remove();
+                $('#section-import').remove();
+                $('#section-id').remove();
+                $('#section-ie').remove();
+                $('#section-if').remove();
+                $('#section-ig').remove();
+                $('#section-ik').remove();
+                $('#section-il').remove();
+                $('#section-im').remove();
+                $('#section-ij').remove();
+                $('#section-in').remove();
+                $('#section-ic').fadeIn();
+                $('#section-ic').find('[data-req="in"]').prop('required', true);
                 $('#noPoInv').prop('checked', true).prop('disabled', true);
                 isNoPoInv = true;
               }

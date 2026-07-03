@@ -424,7 +424,7 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
-    public function getDo(Request $request)
+    public function getDoIn(Request $request)
     {
         $userBranch = auth()->user()->cabang;
 
@@ -458,7 +458,73 @@ class BbmController extends Controller
         return response()->json($data);
     }
 
-    public function getOpronByDo(Request $request)
+    public function getOpronByDoIn(Request $request)
+    {
+        $prefix = $request->braco . $request->formc . $request->trano;
+
+        $data = DB::table('toutg as t')
+            ->leftJoin('mpromas as m', 't.opron', '=', 'm.opron')
+            ->where('t.bbkid', 'like', $prefix . '%')
+            ->where('t.formc', $request->formc)
+            ->where('t.trano', $request->trano)
+            ->where('t.warco', $request->warco)
+            ->whereColumn('t.trqty', '>', 't.retqty')
+            ->select(
+                't.opron',
+                DB::raw('t.trqty - t.retqty AS trqty'),
+                't.qunit',
+                't.lotno',
+                't.locco',
+                'm.prona',
+                't.noted'
+            )
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getDoIc(Request $request)
+    {
+        $userBranch = auth()->user()->cabang;
+
+        $data = DB::table('tsisnh as tn')
+            ->join('toutg as t', 'tn.trano', '=', 't.trano')
+            ->join('mcusmas as m', 'tn.cusno', '=', 'm.cusno')
+            ->where('tn.rfc01', 'SA')
+            ->where('tn.formc', 'DO')
+            ->where('tn.braco', $userBranch)
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('tcored as tc')
+                    ->whereColumn('tc.formc', 'tn.rfc01')
+                    ->whereColumn('tc.sorno', 'tn.ref01')
+                    ->whereColumn('tc.braco', 'tn.braco')
+                    ->where('tc.qtydo', '>', 0);
+            })
+            ->select(
+                'tn.formc',
+                'tn.trano',
+                DB::raw('MAX(t.warco) as warco'),
+                'tn.cusno',
+                'm.cusna',
+                'tn.rfc01',
+                'tn.ref01'
+            )
+            ->groupBy(
+                'tn.formc',
+                'tn.trano',
+                'tn.cusno',
+                'm.cusna',
+                'tn.rfc01',
+                'tn.ref01'
+            )
+            ->orderByDesc('tn.trano')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOpronByDoIc(Request $request)
     {
         $prefix = $request->braco . $request->formc . $request->trano;
 
@@ -532,6 +598,7 @@ class BbmController extends Controller
      */
     public function store(Request $request)
     {
+
         DB::beginTransaction();
 
         try {
@@ -715,6 +782,25 @@ class BbmController extends Controller
                                 'delqt' => DB::raw("delqt - $trqty")
                             ]);
                     }
+                }
+
+                if ($request->formc_store === 'IC') {
+                    DB::table('tsisnh')
+                        ->where('braco', $request->braco)
+                        ->where('formc', $request->reffc)
+                        ->where('trano', $request->refno)
+                        ->update([
+                            'resta' => 'C',
+                            'ref02' => 'CANCEL'
+                        ]);
+                    
+                    DB::table('tcored')
+                        ->where('braco', $request->braco)
+                        ->where('sorno', $request->ref01)
+                        ->where('opron', $useOpron)
+                        ->update([
+                            'qtydo' => DB::raw("qtydo - $trqty")
+                        ]);
                 }
             }
 

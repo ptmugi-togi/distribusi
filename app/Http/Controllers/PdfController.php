@@ -283,7 +283,7 @@ class PdfController extends Controller
                 ->header('Content-Disposition', 'attachment; filename="'.$filename.'"');
     }
 
-    public function previewBbmIn($id)
+    public function previewBbm2($id)
     {
         $bbmhdr = \App\Models\BbmHdr::with([
             'bbmdtls.mpromas',
@@ -327,7 +327,7 @@ class PdfController extends Controller
             return $first;
         });
 
-        $html = view('logistic.bbm.bbmIn_print', [
+        $html = view('logistic.bbm.bbm_print2', [
             'bbmhdr' => $bbmhdr,
             'bbmdtls' => $bbmdtls,
             'tahdr' => $tahdr
@@ -352,7 +352,7 @@ class PdfController extends Controller
         $mpdf->Output(); 
     }
 
-    public function printBbmIn($id)
+    public function printBbm2($id)
     {
         $bbmhdr = \App\Models\BbmHdr::with([
             'bbmdtls.mpromas',
@@ -402,7 +402,7 @@ class PdfController extends Controller
             return $first;
         });
 
-        $html = view('logistic.bbm.bbmIn_print', [
+        $html = view('logistic.bbm.bbm_print2', [
             'bbmhdr' => $bbmhdr,
             'bbmdtls' => $bbmdtls,
             'tahdr' => $tahdr

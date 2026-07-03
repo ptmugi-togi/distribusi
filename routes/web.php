@@ -189,8 +189,10 @@ Route::get('/get-oe', [BbmController::class, 'getOe'])->name('get.oe');
 Route::get('/get-opron-by-oe', [BbmController::class, 'getOpronByOe'])->name('get.opron.by.oe');
 Route::get('/get-wo', [BbmController::class, 'getWo'])->name('get.wo');
 Route::get('/get-opron-by-wo', [BbmController::class, 'getOpronByWo'])->name('get.opron.by.wo');
-Route::get('/get-do-bbm', [BbmController::class, 'getDo'])->name('get.do.bbm');
-Route::get('/get-opron-by-do-bbm', [BbmController::class, 'getOpronByDo'])->name('get.opron.by.do.bbm');
+Route::get('/get-do-bbm-in', [BbmController::class, 'getDoIn'])->name('get.do.bbmIn');
+Route::get('/get-opron-by-do-bbm-in', [BbmController::class, 'getOpronByDoIn'])->name('get.opron.by.do.bbmIn');
+Route::get('/get-do-bbm-ic', [BbmController::class, 'getDoIc'])->name('get.do.bbmIc');
+Route::get('/get-opron-by-do-bbm-ic', [BbmController::class, 'getOpronByDoIc'])->name('get.opron.by.do.bbmIc');
 Route::post('/bbm/store', [BbmController::class,'store'])->middleware('auth')->name('bbm.store');
 Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::get('/bbm/{id}/edit', [BbmController::class,'edit'])->middleware('auth')->name('bbm.edit');
@@ -198,8 +200,8 @@ Route::put('/bbm/{bbmid}', [BbmController::class,'update'])->middleware('auth')-
 Route::delete('/bbm/{id}/delete', [BbmController::class,'destroy'])->middleware('auth')->name('bbm.delete');
 Route::get('/bbm/previewBbm/{id}', [PdfController::class, 'previewBbm'])->name('bbm.previewBbm');
 Route::get('/bbm/printBbm/{id}', [PdfController::class, 'printBbm'])->name('bbm.printBbm');
-Route::get('/bbm/previewBbmIn/{id}', [PdfController::class, 'previewBbmIn'])->name('bbm.previewBbmIn');
-Route::get('/bbm/printBbmIn/{id}', [PdfController::class, 'printBbmIn'])->name('bbm.printBbmIn');
+Route::get('/bbm/previewBbm2/{id}', [PdfController::class, 'previewBbm2'])->name('bbm.previewBbm2');
+Route::get('/bbm/printBbm2/{id}', [PdfController::class, 'printBbm2'])->name('bbm.printBbm2');
 
 Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
