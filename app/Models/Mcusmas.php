@@ -22,4 +22,17 @@ class Mcusmas extends Model
     // {
     //     //return $this->hasOne(McusmasDet::class);
     // }
+
+    public function industry()
+    {
+        return $this->belongsTo(Mcindu::class, 'cindu', 'cindu');
+    }
+    public function prov()
+    {
+        return $this->belongsTo(Provinsi::class, 'province', 'id_prov');
+    }
+    public function kabkota()
+    {
+        return $this->belongsTo(KabKot::class, 'kabupaten', 'id');
+    }
 }

@@ -115,6 +115,7 @@ Route::get('/mcusmas/customer',[CusmasController::class,'customer'])->middleware
 Route::get('/mcusmas/getDepo/{id}',[CusmasController::class,'getDepo'])->middleware('auth');
 Route::get('/mcusmas/getSite/{id}',[CusmasController::class,'getSite'])->middleware('auth');
 Route::get('/mcusmas/getMesin/{id}',[CusmasController::class,'getMesin'])->middleware('auth');
+Route::get('/mcusmas/getKabKota',[Cusmas::class,'getKabKota'])->middleware('auth')->name('cusmas.getKabKota');Route::get('/bbm/{id}/detail', [BbmController::class,'show'])->middleware('auth')->name('bbm.detail');
 Route::resource('/mcusmas', CusmasController::class)->middleware('auth');
 Route::resource('/mcusmascab', CusmasCabController::class)->middleware('auth');
 
@@ -123,6 +124,10 @@ Route::get('/cusmas/cinduCusmas',[Cusmas::class,'cinduCusmas'])->middleware('aut
 Route::get('/cusmas/czoneCusmas',[Cusmas::class,'czoneCusmas'])->middleware('auth');
 Route::get('/cusmas/careaCusmas',[Cusmas::class,'careaCusmas'])->middleware('auth');
 Route::resource('/cusmas', Cusmas::class)->middleware('auth');
+Route::get('/cust/{id}/detail', [Cusmas::class,'show'])->middleware('auth')->name('cust.detail');
+Route::get('/cust/{id}/edit', [Cusmas::class,'edit'])->middleware('auth')->name('cust.edit');
+Route::put('/cust/{id}', [Cusmas::class,'update'])->middleware('auth')->name('cust.update');
+Route::delete('/cust/{id}/delete', [Cusmas::class,'destroy'])->middleware('auth')->name('cust.delete');
 
 Route::get('/mdepo/branche',[DepoController::class,'branche'])->middleware('auth');
 Route::resource('/mdepo',DepoController::class)->middleware('auth');

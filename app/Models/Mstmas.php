@@ -13,5 +13,17 @@ class Mstmas extends Model
     protected $keyType = 'integer';
     public $incrementing = true;
     public $timestamps = false;
-    protected $fillable = ['braco','cusno','shpto','shpnm','deliveryaddress','phone','fax','contp','province','kabupaten'];
+    protected $fillable = [
+        'braco',
+        'cusno',
+        'shpto',
+        'shpnm',
+        'deliveryaddress',
+        'phone',
+        'fax',
+        'contp',
+        'nitku',
+        'province',
+        'kabupaten'
+    ];
 }
