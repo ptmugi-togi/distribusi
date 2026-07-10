@@ -73,19 +73,14 @@
                     <input type="text" class="form-control" value="{{ $cust->pkp }}" disabled>
                 </div>
 
-                <div class="col-md-4 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Provinsi</label>
                     <input type="text" class="form-control" value="{{ $cust->prov->provinsi }}" disabled>
                 </div>
 
-                <div class="col-md-4 mt-3">
+                <div class="col-md-6 mt-3">
                     <label class="form-label">Kabupaten Kota</label>
                     <input type="text" class="form-control" value="{{ $cust->kabkota->kabupaten }}" disabled>
-                </div>
-
-                <div class="col-md-4 mt-3">
-                    <label class="form-label">Kota</label>
-                    <input type="text" class="form-control" value="{{ $cust->offcy }}" disabled>
                 </div>
 
                 <div class="col-md-6 mt-3">

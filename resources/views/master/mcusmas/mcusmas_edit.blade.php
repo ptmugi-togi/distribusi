@@ -93,7 +93,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4 mt-3">
+                    <div class="col-md-6 mt-3">
                         <label class="form-label">Provinsi</label>
                         <select class="form-control select2" id="provinsiCusmas" name="province">
                             <option value="" disabled>Pilih Provinsi</option>
@@ -106,16 +106,11 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4 mt-3">
+                    <div class="col-md-6 mt-3">
                         <label class="form-label">Kabupaten / Kota</label>
                         <select class="form-control select2" id="kabKotaCusmas" name="kabupaten">
                             <option value="">Pilih Kabupaten/Kota</option>
                         </select>
-                    </div>
-
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">Kota</label>
-                        <input type="text" class="form-control" id="kotaCusmas" name="offcy" value="{{ $cust->offcy }}">
                     </div>
 
                     <div class="col-md-6 mt-3">

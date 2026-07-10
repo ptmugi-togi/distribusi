@@ -86,7 +86,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Provinsi</label><span class="text-danger"> *</span>
                         <select name="province" id="provinsiCusmas" required class="form-control select2">
                             <option value="" disabled selected>Silahkan Pilih Provinsi</option>
@@ -96,16 +96,11 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Kabupaten</label><span class="text-danger"> *</span>
                         <select name="kabupaten" id="kabKotaCusmas" required class="form-control select2">
                             <option value="" disabled selected>Silahkan Pilih Kabupaten / Kota</option>
                         </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Kota</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="offcy" id="offcyCusmas" maxlength="50" required>
                     </div>
 
                     <div class="col-md-6">
