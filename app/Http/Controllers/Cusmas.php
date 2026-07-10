@@ -71,7 +71,7 @@ class Cusmas extends Controller
         ]);
 
         foreach ($validasi as $key => $value) {
-            if (is_string($value) && $key !== 'email') {
+            if (is_string($value) && $key !== 'email' && $key !== 'address') {
                 $validasi[$key] = mb_strtoupper($value, 'UTF-8');
             }
         }
@@ -146,7 +146,7 @@ class Cusmas extends Controller
             ]);
 
             foreach ($validasi as $key => $value) {
-                if (is_string($value) && $key !== 'email') {
+                if (is_string($value) && $key !== 'email' && $key !== 'address') {
                     $validasi[$key] = mb_strtoupper($value, 'UTF-8');
                 }
             }
