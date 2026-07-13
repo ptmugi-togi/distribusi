@@ -294,12 +294,7 @@ class ProjectInvRelController extends Controller
             'name' => $data->cusna ?? '',
             'attn' => $data->ofcon ?? '',
             'phone' => $data->offph ?? '',
-            'address' => collect([
-                $data->offad,
-                $data->offad2,
-                $data->offad3,
-                $data->offad4
-            ])
+            'address' => $data->address
         ]);
     }
 

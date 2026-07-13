@@ -91,11 +91,8 @@
                         @if($retailinvrelhdr->delto == '0')
                             <td>
                                 {{ $retailinvrelhdr->mcusmas->cusna }}<br>
-                                {{ $retailinvrelhdr->mcusmas->offad }}
-                                {{ $retailinvrelhdr->mcusmas->offad2 }}<br>
-                                {{ $retailinvrelhdr->mcusmas->offad3 }}
-                                {{ $retailinvrelhdr->mcusmas->offad4 }}<br>
-                                {{ $retailinvrelhdr->mcusmas->offcy }}<br>
+                                {{ $retailinvrelhdr->mcusmas->address }}<br>
+                                {{ $retailinvrelhdr->mcusmas->opost }}<br>
                                 Telp : {{ $retailinvrelhdr->mcusmas->offph }}<br>
                                 Fax : {{ $retailinvrelhdr->mcusmas->offax }}<br>
                                 ATTN. {{ $retailinvrelhdr->mcusmas->ofcon }}

@@ -302,11 +302,8 @@ class DeliveryNoteController extends Controller
             ->first();
 
         $billAddress = collect([
-            $customer_detail->offad ?? null,
-            $customer_detail->offad2 ?? null,
-            $customer_detail->offad3 ?? null,
-            $customer_detail->offad4 ?? null,
-            $customer_detail->offcy ?? null,
+            $customer_detail->address ?? null,
+            $customer_detail->opost ?? null,
         ])
         ->filter()
         ->implode("\n");
@@ -651,11 +648,8 @@ class DeliveryNoteController extends Controller
             ->get();
 
         $billAddress = collect([
-            $customer->offad ?? '',
-            $customer->offad2 ?? '',
-            $customer->offad3 ?? '',
-            $customer->offad4 ?? '',
-            $customer->offcy ?? '',
+            $customer->address ?? '',
+            $customer->opost ?? '',
         ])->filter()->implode(', ');
 
         return response()->json([

@@ -88,16 +88,8 @@
                     <tr>
                         <td>
                             {{ $bbmhdr->mcusmas->cusna }},<br>
-                            {{ $bbmhdr->mcusmas->offad }}<br>
-                            @if ($bbmhdr->mcusmas->offad2 != null)
-                                {{ $bbmhdr->mcusmas->offad2 }}<br>
-                            @endif
-                            @if ($bbmhdr->mcusmas->offad3 != null)
-                                {{ $bbmhdr->mcusmas->offad3 }}<br>
-                            @endif
-                            @if ($bbmhdr->mcusmas->offad4 != null)
-                                {{ $bbmhdr->mcusmas->offad4 }}<br>
-                            @endif
+                            {{ $bbmhdr->mcusmas->address }}<br>
+                            {{ $bbmhdr->mcusmas->opost }}<br>
                         </td>
                     </tr>
                 </table>

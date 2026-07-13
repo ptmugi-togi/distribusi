@@ -409,21 +409,11 @@ class MaintenanceContractController extends Controller
             ->where('cusno', $request->cusno)
             ->get();
 
-        $address = collect([
-            $customer->offad ?? '',
-            $customer->offad2 ?? '',
-            $customer->offad3 ?? '',
-            $customer->offad4 ?? '',
-            $customer->offcy ?? '',
-        ])->filter()->implode(', ');
+        $address = $customer->address ?? '';
 
         return response()->json([
             'cusna' => $customer->cusna,
             'address' => $address,
-            'offad' => $customer->offad ?? '',
-            'offad2' => $customer->offad2 ?? '',
-            'offad3' => $customer->offad3 ?? '',
-            'offad4' => $customer->offad4 ?? '',
             'offcy' => $customer->offcy ?? '',
             'offph' => $customer->offph ?? '',
             'billcon' => $customer->contp ?? '',

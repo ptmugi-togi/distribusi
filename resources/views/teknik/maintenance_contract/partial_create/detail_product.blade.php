@@ -57,11 +57,7 @@
 
                         <div class="col-md-6 mt-3">
                             <label for="deladr" class="form-label">Site Address</label><span class="text-danger"> *</label>
-                            <textarea class="form-control" name="deladr[]" id="deladr_0" rows="2" required readonly style="background-color:#e9ecef">{{ old('deladd.0') }}</textarea>
-                            <input type="hidden" name="add01[]" id="add01_0" value="{{ old('add01.0') }}">
-                            <input type="hidden" name="add02[]" id="add02_0" value="{{ old('add02.0') }}">
-                            <input type="hidden" name="add03[]" id="add03_0" value="{{ old('add03.0') }}">
-                            <input type="hidden" name="city[]" id="city_0" value="{{ old('city.0') }}">
+                            <textarea class="form-control" name="deladr[]" id="deladr_0" rows="2" required readonly style="background-color:#e9ecef">{{ old('deladr.0') }}</textarea>
                         </div>
 
                         <div class="col-md-6 mt-3">
@@ -215,11 +211,6 @@
             let row = $(this).closest('.accordion-item');
 
             row.find('textarea[name="deladr[]"]').val(selected.data('address') || '');
-
-            row.find('input[name="add01[]"]').val(customerAddress.offad || '');
-            row.find('input[name="add02[]"]').val(customerAddress.offad2 || '');
-            row.find('input[name="add03[]"]').val(customerAddress.offad3 || '');
-            row.find('input[name="city[]"]').val(customerAddress.offcy || '');
 
             row.find('input[name="delcon[]"]').val(selected.data('contact') || '');
             row.find('input[name="phone[]"]').val(selected.data('phone') || '');
@@ -402,10 +393,6 @@
                             <div class="col-md-6 mt-3">
                                 <label for="deladr" class="form-label">Site Address</label><span class="text-danger"> *</label>
                                 <textarea class="form-control" name="deladr[]" id="deladr_${detailIndex}" rows="2" required readonly style="background-color:#e9ecef"></textarea>
-                                <input type="hidden" name="add01[]" id="add01_${detailIndex}">
-                                <input type="hidden" name="add02[]" id="add02_${detailIndex}">
-                                <input type="hidden" name="add03[]" id="add03_${detailIndex}">
-                                <input type="hidden" name="city[]" id="city_${detailIndex}">
                             </div>
 
                             <div class="col-md-6 mt-3">

@@ -101,9 +101,8 @@
                     PELANGGAN : <br>
                     {{ $dn->mcusmas->cusna ?? '-' }}<br><br>
                     ALAMAT PENGIRIMAN :<br>
-                    {{ $dn->mcusmas->offad ?? '' }} {{ $dn->mcusmas->offad2 ?? '' }}<br>
-                    {{ $dn->mcusmas->offad3 ?? '' }} {{ $dn->mcusmas->offad4 ?? '' }}<br>
-                    {{ $dn->mcusmas->offcy ?? '' }}<br><br>
+                    {{ $dn->mcusmas->address ?? '' }}<br>
+                    {{ $dn->mcusmas->opost ?? '' }}<br><br>
                     ATTN. {{ $dn->mcusmas->ofcon ?? '-' }}
                 </td>
 

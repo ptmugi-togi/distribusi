@@ -91,20 +91,8 @@
                     <tr>
                         <td>
                             {{ $ochdr->mcusmas->title }} {{ $ochdr->mcusmas->cusna }} <br>
-                            {{ $ochdr->mcusmas->offad }} <br>
-                            @if (!empty($ochdr->mcusmas->offad2))
-                                {{ $ochdr->mcusmas->offad2 }} <br>
-                            @endif
-                            @if (!empty($ochdr->mcusmas->offad3))
-                                {{ $ochdr->mcusmas->offcy }} <br>
-                            @endif
-                            @if (!empty($ochdr->mcusmas->offad3))
-                                {{ $ochdr->mcusmas->offad3 }} <br>
-                            @endif
-                            @if (!empty($ochdr->mcusmas->opost))
-                                {{ $ochdr->mcusmas->opost }} <br>
-                            @endif
-                            <br>
+                            {{ $ochdr->mcusmas->address }} <br>
+                            {{ $ochdr->mcusmas->opost }} <br>
                             Telp: {{ $ochdr->mcusmas->offph }} <br>
                             Attn. {{ $ochdr->mcusmas->ofcon }}
                         </td>

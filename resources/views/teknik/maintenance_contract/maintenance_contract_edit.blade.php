@@ -299,19 +299,13 @@
                 let row = select.closest('.accordion-item');
 
                 let address = [
-                    customerAddress.offad,
-                    customerAddress.offad2,
-                    customerAddress.offad3,
-                    customerAddress.offad4
+                    customerAddress.address,
+                    customerAddress.opost,
                 ]
                 .filter(x => x && x.trim() !== '')
                 .join('\n');
 
                 row.find('textarea[name="deladr[]"]').val(address);
-
-                row.find('input[name="add01[]"]').val(customerAddress.offad || '');
-                row.find('input[name="add02[]"]').val(customerAddress.offad2 || '');
-                row.find('input[name="add03[]"]').val(customerAddress.offad3 || '');
 
                 row.find('input[name="delcon[]"]').val(selected.data('contact') || '');
                 row.find('input[name="phone[]"]').val(selected.data('phone') || '');

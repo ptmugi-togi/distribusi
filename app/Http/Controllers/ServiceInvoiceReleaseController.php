@@ -225,10 +225,7 @@ class ServiceInvoiceReleaseController extends Controller
             ->select(
                 'tdnh.*',
                 'mcusmas.cusna',
-                'mcusmas.offad',
-                'mcusmas.offad2',
-                'mcusmas.offad3',
-                'mcusmas.offad4'
+                'mcusmas.address',
             )
             ->first();
 

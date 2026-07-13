@@ -103,13 +103,8 @@
                 <br><br>
                 ALAMAT PENGIRIMAN :<br>
                 @if($tinmas->delto == 0)
-                    {{ $shipto->offad ?? '' }}
-                    {{ $shipto->offad2 ?? '' }}
-                    <br>
-                    {{ $shipto->offad3 ?? '' }}
-                    {{ $shipto->offad4 ?? '' }}
-                    <br>
-                    {{ $shipto->offcy ?? '' }}
+                    {{ $shipto->address ?? '' }}
+                    {{ $shipto->opost ?? '' }}
                     <br><br>
                     ATTN.
                     {{ $shipto->ofcon ?? '-' }}

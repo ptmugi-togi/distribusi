@@ -90,23 +90,8 @@
             </td>
             <td class="left" style="width:40%; vertical-align:top">
                 {{ $ocsbhdr->mcusmas->title }} {{ $ocsbhdr->mcusmas->cusna }} <br>
-                {{ $ocsbhdr->mcusmas->offad }} <br>
-                @if (!empty($ocsbhdr->mcusmas->offad2))
-                    {{ $ocsbhdr->mcusmas->offad2 }} <br>
-                @endif
-                @if (!empty($ocsbhdr->mcusmas->offad3))
-                    {{ $ocsbhdr->mcusmas->offcy }} <br>
-                @endif
-                @if (!empty($ocsbhdr->mcusmas->offad3))
-                    {{ $ocsbhdr->mcusmas->offad3 }} <br>
-                @endif
-                @if (!empty($ocsbhdr->mcusmas->offad4))
-                    {{ $ocsbhdr->mcusmas->offad4 }} <br>
-                @endif
-                @if (!empty($ocsbhdr->mcusmas->opost))
-                    {{ $ocsbhdr->mcusmas->opost }} <br>
-                @endif
-                <br>
+                {{ $ocsbhdr->mcusmas->address }} <br>
+                {{ $ocsbhdr->mcusmas->opost }} <br>
                 <b>Telp:</b> {{ $ocsbhdr->mcusmas->offph }} <br>
                 <b>Attn.</b> {{ $ocsbhdr->mcusmas->ofcon }} <br>
                 <b>NPWP.</b> {{ $ocsbhdr->mcusmas->taxrn }} <br>

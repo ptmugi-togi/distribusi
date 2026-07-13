@@ -268,10 +268,8 @@
                         $('#vat_label').text('VAT (' + mc.vatax + '%)');
 
                         mcusAddress = [
-                            mc.offad,
-                            mc.offad2,
-                            mc.offad3,
-                            mc.offad4
+                            mc.address,
+                            mc.opost
                         ]
                         .filter(Boolean)
                         .join(' ');

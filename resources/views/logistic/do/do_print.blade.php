@@ -90,10 +90,8 @@
                         <tr>
                             <td>
                                 {{ $dohdr->mcusmas->title }} {{ $dohdr->mcusmas->cusna }} <br>
-                                {{ $dohdr->mcusmas->offad }} <br>
-                                {{ $dohdr->mcusmas->offad2 }}
-                                {{ $dohdr->mcusmas->offad3 }}
-                                {{ $dohdr->mcusmas->offad4 }}<br>
+                                {{ $dohdr->mcusmas->address }} <br>
+                                {{ $dohdr->mcusmas->opost }}<br>
                                 Attn. {{ $dohdr->mcusmas->ofcon }}
                             </td>
                         </tr>
