@@ -105,7 +105,7 @@
       });
     </script>
 
-    {{-- modal delete data invoice --}}
+    {{-- modal delete data cusmas --}}
     <script>
       document.addEventListener('DOMContentLoaded', function () {
           // Event delegation untuk semua tombol hapus
