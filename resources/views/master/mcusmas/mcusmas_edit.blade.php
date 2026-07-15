@@ -163,7 +163,7 @@
                 </div>
                 <div class="mt-4 d-flex justify-content-between">
                     <a href="{{ route('cusmas.index') }}" class="btn btn-secondary">Kembali</a>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>
@@ -226,8 +226,8 @@
                 }
 
                 Swal.fire({
-                    title: 'Konfirmasi Simpan',
-                    text: 'Apakah Anda yakin ingin mengubah data ini?',
+                    title: 'Konfirmasi Update',
+                    text: 'Apakah Anda yakin ingin mengubah data Customer ini?',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
