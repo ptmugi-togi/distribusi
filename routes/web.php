@@ -95,9 +95,15 @@ Route::resource('/mcls',ClsController::class)->middleware('auth');
 // Route::post('/mpromas',[PromasController::class,'store']);
 // Route::put('/mpromas/{mproma}',[PromasController::class,'update']);
 // Route::delete('/mpromas/{mproma}',[PromasController::class,'destroy']);
+Route::get('/mpromas/data',[PromasController::class,'data'])->middleware('auth')->name('mpromas.data');
 Route::resource('/mpromas',PromasController::class)->middleware('auth');
-Route::post('/mpromas/cekOpron',[PromasController::class,'cekOpron'])->middleware('auth');
-Route::get('/mpromas/listJson',[PromasController::class,'listJson'])->middleware('auth');
+Route::get('/mpromas/detail/{opron}', [PromasController::class,'show'])->middleware('auth')->name('mpromas.detail')->where('opron', '.*');
+Route::get('/mpromas/edit/{opron}', [PromasController::class,'edit'])->middleware('auth')->name('mpromas.edit')->where('opron', '.*');
+Route::put('/mpromas/{opron}', [PromasController::class,'update'])->middleware('auth')->name('mpromas.update')->where('opron', '.*');
+Route::delete('/mpromas/delete/{opron}', [PromasController::class,'destroy'])->middleware('auth')->name('mpromas.delete')->where('opron', '.*');
+
+// Route::post('/mpromas/cekOpron',[PromasController::class,'cekOpron'])->middleware('auth');
+// Route::get('/mpromas/listJson',[PromasController::class,'listJson'])->middleware('auth');
 Route::resource('/msreno',SrenoController::class)->middleware('auth');
 Route::resource('/mcindu',CinduController::class)->middleware('auth');
 
