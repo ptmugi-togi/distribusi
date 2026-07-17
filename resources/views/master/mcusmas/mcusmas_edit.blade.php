@@ -8,12 +8,12 @@
 <main id="main" class="main">
     <div class="d-flex justify-content-between align-items-center">
         <div class="pagetitle">
-            <h1>Detail Customer</h1>
+            <h1>Edit Customer</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('cusmas.index') }}">List Customer</a></li>
-                    <li class="breadcrumb-item active">Detail Customer</li>
+                    <li class="breadcrumb-item active">Edit Customer</li>
                 </ol>
             </nav>
         </div>
@@ -25,15 +25,15 @@
                 @csrf
                 @method('PUT')
                 <div class="row">
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-4 mt-3">
                         <label class="form-label">Branch</label>
                         <input type="text" class="form-control" id="bracoCusmas" value="{{ $cust->braco }}" disabled>
                         <input type="hidden" class="form-control" name="braco" value="{{ $cust->braco }}">
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Join Date</label>
-                        <input type="text" class="form-control" id="dopenCusmas" value="{{ \Carbon\Carbon::parse($cust->dopen)->format('d/m/Y') }}" disabled>
+                    <div class="col-md-4 mt-3">
+                        <label class="form-label">Join Date (mm/dd/yyyy)</label>
+                        <input type="text" class="form-control" id="dopenCusmas" value="{{ \Carbon\Carbon::parse($cust->dopen)->format('m/d/Y') }}" disabled>
                         <input type="hidden" class="form-control" id="dopenCusmas" name="dopen" value="{{ $cust->dopen }}">
                     </div>
 
@@ -43,32 +43,7 @@
                         <input type="hidden" class="form-control" name="cusno" value="{{ $cust->cusno }}">
                     </div>
 
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" id="cusnaCusmas" name="cusna" value="{{ $cust->cusna }}">
-                    </div>
-
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">Bill Name</label>
-                        <input type="text" class="form-control" id="billnCusmas" name="billn" value="{{ $cust->billn }}">
-                    </div>
-
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">Email</label>
-                        <input type="text" class="form-control" id="emailCusmas" name="email" value="{{ $cust->email }}">
-                    </div>
-
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">NPWP / NIK</label>
-                        <input type="text" class="form-control" id="taxrnCusmas" name="taxrn" value="{{ $cust->taxrn }}">
-                    </div>
-
-                    <div class="col-md-4 mt-3">
-                        <label class="form-label">NITKU</label>
-                        <input type="text" class="form-control" id="nitkuCusmas" name="nitku" value="{{ $cust->nitku }}">
-                    </div>
-
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-2 mt-3">
                         <label class="form-label">Title</label>
                         <select class="form-control select2 text-uppercase" name="title" id="titleCusmas" required>
                             <option value="" disabled>Silahkan Pilih Title</option>
@@ -84,13 +59,33 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-3">
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="cusnaCusmas" name="cusna" value="{{ $cust->cusna }}">
+                    </div>
+
+                    <div class="col-md-5 mt-3">
+                        <label class="form-label">Bill Name</label>
+                        <input type="text" class="form-control" id="billnCusmas" name="billn" value="{{ $cust->billn }}">
+                    </div>
+                    
+                    <div class="col-md-4 mt-3">
                         <label class="form-label">PKP</label>
                         <select name="pkp" id="pkpCusmas" class="form-control select2">
                             <option value="" disabled>Silahkan Pilih PKP</option>
                             <option value="Y" {{ $cust->pkp == 'Y' ? 'selected' : '' }}>YA</option>
                             <option value="N" {{ $cust->pkp == 'N' ? 'selected' : '' }}>TIDAK</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label class="form-label">NPWP / NIK</label>
+                        <input type="text" class="form-control" id="taxrnCusmas" name="taxrn" value="{{ $cust->taxrn }}">
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label class="form-label">NITKU</label>
+                        <input type="text" class="form-control" id="nitkuCusmas" name="nitku" value="{{ $cust->nitku }}">
                     </div>
 
                     <div class="col-md-6 mt-3">
@@ -114,13 +109,13 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Kode Pos</label>
-                        <input type="text" class="form-control" id="postCusmas" name="opost" value="{{ $cust->opost }}">
+                        <label class="form-label">Alamat</label>
+                        <textarea class="form-control" id="alamatCusmas" name="address" rows="2">{{ $cust->address }}</textarea>
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea class="form-control" id="alamatCusmas" name="address" rows="2">{{ $cust->address }}</textarea>
+                        <label class="form-label">Kode Pos</label>
+                        <input type="text" class="form-control" id="postCusmas" name="opost" value="{{ $cust->opost }}">
                     </div>
 
                     <div class="col-md-4 mt-3">
@@ -136,6 +131,11 @@
                     <div class="col-md-4 mt-3">
                         <label class="form-label">Contact</label>
                         <input type="text" class="form-control" id="contactCusmas" name="ofcon" value="{{ $cust->ofcon }}">
+                    </div>
+                    
+                    <div class="col-md-4 mt-3">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" id="emailCusmas" name="email" value="{{ $cust->email }}">
                     </div>
 
                     <div class="col-md-4 mt-3">

@@ -23,14 +23,14 @@
         <div class="card p-3 shacustw-sm">
             {{-- Header --}}
             <div class="row">
-                <div class="col-md-6 mt-3">
+                <div class="col-md-4 mt-3">
                     <label class="form-label">Branch</label>
                     <input type="text" class="form-control" value="{{ $cust->braco }}" disabled>
                 </div>
 
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Join Date</label>
-                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($cust->dopen)->format('d/m/Y') }}" disabled>
+                <div class="col-md-4 mt-3">
+                    <label class="form-label">Join Date (mm/dd/yyyy)</label>
+                    <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($cust->dopen)->format('m/d/Y') }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">
@@ -38,19 +38,24 @@
                     <input type="text" class="form-control" value="{{ $cust->cusno }}" disabled>
                 </div>
 
-                <div class="col-md-4 mt-3">
+                <div class="col-md-2 mt-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" value="{{ $cust->title }}" disabled>
+                </div>
+
+                <div class="col-md-5 mt-3">
                     <label class="form-label">Customer Name</label>
                     <input type="text" class="form-control" value="{{ $cust->cusna }}" disabled>
                 </div>
 
-                <div class="col-md-4 mt-3">
+                <div class="col-md-5 mt-3">
                     <label class="form-label">Bill Name</label>
                     <input type="text" class="form-control" value="{{ $cust->cusna }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">
-                    <label class="form-label">Email</label>
-                    <input type="text" class="form-control" value="{{ $cust->email }}" disabled>
+                    <label class="form-label">PKP</label>
+                    <input type="text" class="form-control" value="{{ $cust->pkp }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">
@@ -64,16 +69,6 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-control" value="{{ $cust->title }}" disabled>
-                </div>
-
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">PKP</label>
-                    <input type="text" class="form-control" value="{{ $cust->pkp }}" disabled>
-                </div>
-
-                <div class="col-md-6 mt-3">
                     <label class="form-label">Provinsi</label>
                     <input type="text" class="form-control" value="{{ $cust->prov->provinsi ?? '-' }}" disabled>
                 </div>
@@ -84,13 +79,13 @@
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Kode Pos</label>
-                    <input type="text" class="form-control" value="{{ $cust->opost }}" disabled>
+                    <label class="form-label">Alamat</label>
+                    <textarea class="form-control" rows="2" disabled>{{ $cust->address }}</textarea>
                 </div>
 
                 <div class="col-md-6 mt-3">
-                    <label class="form-label">Alamat</label>
-                    <textarea class="form-control" rows="2" disabled>{{ $cust->address }}</textarea>
+                    <label class="form-label">Kode Pos</label>
+                    <input type="text" class="form-control" value="{{ $cust->opost }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">
@@ -106,6 +101,11 @@
                 <div class="col-md-4 mt-3">
                     <label class="form-label">Contact</label>
                     <input type="text" class="form-control" value="{{ $cust->ofcon }}" disabled>
+                </div>
+                
+                <div class="col-md-4 mt-3">
+                    <label class="form-label">Email</label>
+                    <input type="text" class="form-control" value="{{ $cust->email }}" disabled>
                 </div>
 
                 <div class="col-md-4 mt-3">

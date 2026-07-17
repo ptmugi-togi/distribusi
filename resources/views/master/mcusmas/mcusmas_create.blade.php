@@ -21,12 +21,12 @@
                 <form method="POST" id="form-cusmas" action="{{ route('cusmas.store') }}" class="row g-3">
                     @csrf
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Branch</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control text-uppercase" id="bracoCusmas" name="braco" value="{{ auth()->user()->cabang }}" required readonly style="background-color:#e9ecef">
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Join Date (mm/dd/yyyy)</label><span class="text-danger"> *</span>
                         <input type="date" class="form-control" id="dopenCusmas" name="dopen" value="{{ date('Y-m-d') }}" required readonly style="background-color:#e9ecef">
                     </div>
@@ -36,32 +36,7 @@
                         <input type="text" class="form-control text-uppercase" id="cusnoCusmas" name="cusno" required>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Customer Name</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="cusnaCusmas" name="cusna" maxlength="200" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Bill Name</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="billnCusmas" name="billn" maxlength="100" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Email</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="emailCusmas" name="email" maxlength="100" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">NPWP / NIK</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="taxrnCusmas" name="taxrn" maxlength="100" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">NITKU</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="nitkuCusmas" name="nitku" maxlength="100" required>
-                    </div>
-
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <label class="form-label">Title</label><span class="text-danger"> *</span>
                         <select class="form-control select2 text-uppercase" name="title" id="titleCusmas" maxlength="5" required>
                             <option value="" disabled selected>Silahkan Pilih Title</option>
@@ -77,13 +52,33 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-5">
+                        <label class="form-label">Customer Name</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control text-uppercase" id="cusnaCusmas" name="cusna" maxlength="200" required>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label class="form-label">Bill Name</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control text-uppercase" id="billnCusmas" name="billn" maxlength="100" required>
+                    </div>
+                    
+                    <div class="col-md-4">
                         <label class="form-label">PKP</label>
                         <select name="pkp" id="pkp" class="form-control select2">
                             <option value="" disabled selected>Silahkan Pilih PKP</option>
                             <option value="Y">YA</option>
                             <option value="N">TIDAK</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">NPWP / NIK</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control text-uppercase" id="taxrnCusmas" name="taxrn" maxlength="100" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">NITKU</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control text-uppercase" id="nitkuCusmas" name="nitku" maxlength="100" required>
                     </div>
 
                     <div class="col-md-6">
@@ -104,13 +99,13 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Kode Pos</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="opost" id="opostCusmas" maxlength="5" required>
-                    </div>
-
-                    <div class="col-md-6">
                         <label class="form-label">Alamat</label><span class="text-danger"> *</span>
                         <textarea class="form-control" name="address" id="addressCusmas" style="height: 100px;" required></textarea>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Kode Pos</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control text-uppercase" name="opost" id="opostCusmas" maxlength="5" required>
                     </div>
 
                     <div class="col-md-4">
@@ -126,6 +121,11 @@
                     <div class="col-md-4">
                         <label class="form-label">Contact</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control text-uppercase" name="ofcon" id="ofconCusmas" maxlength="40" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Email</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control" id="emailCusmas" name="email" maxlength="100" required>
                     </div>
 
                     <div class="col-md-4">
