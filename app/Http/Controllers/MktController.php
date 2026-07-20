@@ -292,8 +292,8 @@ class MktController extends Controller
             ->join('tcored as d','h.ocid','=','d.ocid')
             ->leftJoin('mcusmas as c','h.cusno','=','c.cusno')
             ->leftJoin('mpromas as p','d.opron','=','p.opron')
-            ->leftJoin('msgrup as g','p.sgrup_id','=','g.sgrup')
-            ->leftJoin('mssgrup as sg','p.ssgrup_id','=','sg.ssgrup')
+            ->leftJoin('msgrup as g','p.sgrup_id','=','g.sgrup_id')
+            ->leftJoin('mssgrup as sg','p.ssgrup_id','=','sg.ssgrup_id')
             ->where(function($q) use ($braco){
                 $q->where('h.braco',$braco)
                 ->orWhere('h.sqtbr',$braco);
@@ -336,8 +336,8 @@ class MktController extends Controller
         ";
 
         $sa = $sa->select(
-            DB::raw("COALESCE(g.descr,'INDUSTRY LAIN-LAIN') as msgrup_name"),
-            DB::raw("COALESCE(sg.descr,'-') as mssgrup_name"),
+            DB::raw("COALESCE(g.descr_sgrup,'INDUSTRY LAIN-LAIN') as msgrup_name"),
+            DB::raw("COALESCE(sg.descr_ssgrup,'-') as mssgrup_name"),
             DB::raw("
             CASE 
                 WHEN h.sqper != 0 AND h.sqtbr = '$braco'
@@ -369,8 +369,8 @@ class MktController extends Controller
             ->join('tprojb as d','h.ocsbid','=','d.ocsbid')
             ->leftJoin('mcusmas as c','h.cusno','=','c.cusno')
             ->leftJoin('mpromas as p','d.opron','=','p.opron')
-            ->leftJoin('msgrup as g','p.sgrup_id','=','g.sgrup')
-            ->leftJoin('mssgrup as sg','p.ssgrup_id','=','sg.ssgrup')
+            ->leftJoin('msgrup as g','p.sgrup_id','=','g.sgrup_id')
+            ->leftJoin('mssgrup as sg','p.ssgrup_id','=','sg.ssgrup_id')
             ->where(function($q) use ($braco) {
                 $q->where('h.braco',$braco)
                 ->orWhereExists(function($sub) use ($braco){
@@ -430,8 +430,8 @@ class MktController extends Controller
         ";
 
         $sb = $sb->select(
-            DB::raw("COALESCE(g.descr,'INDUSTRY LAIN-LAIN') as msgrup_name"),
-            DB::raw("COALESCE(sg.descr,'-') as mssgrup_name"),
+            DB::raw("COALESCE(g.descr_sgrup,'INDUSTRY LAIN-LAIN') as msgrup_name"),
+            DB::raw("COALESCE(sg.descr_ssgrup,'-') as mssgrup_name"),
             DB::raw("
             (
                 SELECT 
