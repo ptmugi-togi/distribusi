@@ -35,7 +35,7 @@ class TpoHdr extends Model
         'prctr',
         'supno',
         'user_id',
-        'created_a',
+        'created_at',
         'created_by',
         'updated_at',
         'updated_by',
