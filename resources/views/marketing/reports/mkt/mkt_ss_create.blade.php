@@ -55,10 +55,10 @@
                 <div class="col-md-6 mt-3">
                     <label for="msgrup" class="form-label">Sub Group</label>
                     <select name="msgrup" id="msgrup" class="form-control select2">
-                        <option value="" disabled {{ old('sgrup') ? '' : 'selected' }}>Silahkan Pilih Sub Group</option>
+                        <option value="" disabled {{ old('msgrup') ? '' : 'selected' }}>Silahkan Pilih Sub Group</option>
                         @foreach ($msgrup as $ms)
-                            <option value="{{ $ms->sgrup }}" {{ old('sgrup') == $ms->sgrup ? 'selected' : '' }}>
-                                {{ $ms->sgrup }} - {{ $ms->descr }}
+                            <option value="{{ $ms->sgrup_id }}" {{ old('msgrup') == $ms->sgrup_id ? 'selected' : '' }}>
+                                {{ $ms->sgrup_id }} - {{ $ms->descr_sgrup }}
                             </option>
                         @endforeach
                     </select>
@@ -67,10 +67,10 @@
                 <div class="col-md-6 mt-3">
                     <label for="mssgrup" class="form-label">Sub Sub Group</label>
                     <select name="mssgrup" id="mssgrup" class="form-control select2">
-                        <option value="" disabled {{ old('ssgrup') ? '' : 'selected' }}>Silahkan Pilih Sub Sub Group</option>
+                        <option value="" disabled {{ old('mssgrup') ? '' : 'selected' }}>Silahkan Pilih Sub Sub Group</option>
                         @foreach ($mssgrup as $mss)
-                            <option value="{{ $mss->ssgrup }}" {{ old('ssgrup') == $mss->ssgrup ? 'selected' : '' }}>
-                                {{ $mss->ssgrup }} - {{ $mss->descr }}
+                            <option value="{{ $mss->ssgrup_id }}" {{ old('mssgrup') == $mss->ssgrup_id ? 'selected' : '' }}>
+                                {{ $mss->ssgrup_id }} - {{ $mss->descr_ssgrup }}
                             </option>
                         @endforeach
                     </select>
