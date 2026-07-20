@@ -297,8 +297,8 @@ body::-webkit-scrollbar-thumb:hover {
   }
 
   .accordion-button:not(.collapsed) {
-    color: #012970;
-    background-color: #f6f9ff;
+    background-color: #0277bd;
+    color: white;
   }
 
   .accordion-flush .accordion-button {
