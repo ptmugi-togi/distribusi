@@ -107,8 +107,13 @@ Route::delete('/mpromas/delete/{opron}', [PromasController::class,'destroy'])->m
 Route::resource('/msreno',SrenoController::class)->middleware('auth');
 Route::resource('/mcindu',CinduController::class)->middleware('auth');
 
+Route::get('/mstmas/data',[StmasController::class,'data'])->middleware('auth')->name('mstmas.data');
 Route::get('/mstmas/provinsii',[StmasController::class,'provinsii'])->middleware('auth');
 Route::resource('/mstmas',StmasController::class)->middleware('auth');
+Route::get('/mstmas/detail/{braco}/{cusno}', [StmasController::class,'show'])->middleware('auth')->name('mstmas.detail');
+Route::get('/mstmas/edit/{braco}/{cusno}', [StmasController::class,'edit'])->middleware('auth')->name('mstmas.edit');
+Route::put('/mstmas/{braco}/{cusno}', [StmasController::class,'update'])->middleware('auth')->name('mstmas.update');
+Route::delete('/mstmas/delete/{braco}/{cusno}', [StmasController::class,'destroy'])->middleware('auth')->name('mstmas.delete');
 Route::get('/mstmas/kabkot/{id}',[StmasController::class,'kabkot'])->middleware('auth');
 Route::get('/mstmas/getProvinsi/{id}',[StmasController::class,'getProvinsi'])->middleware('auth');
 Route::get('/mstmas/getKabKot/{id}',[StmasController::class,'getKabKot'])->middleware('auth');

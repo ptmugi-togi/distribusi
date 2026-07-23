@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Mstmas;
 use App\Models\Provinsi;
 use App\Models\KabKot;
@@ -10,38 +13,132 @@ use Yajra\DataTables\DataTables;
 
 class StmasController extends Controller
 {
+    public function data()
+    {
+        $query = DB::table('mcusmas')
+            ->select(
+                'braco',
+                'cusno',
+                DB::raw("CONCAT(cusno, ' - ', cusna) as customer"),
+                'taxrn as npwp'
+            );
+
+        return datatables()
+            ->of($query)
+            ->filterColumn('customer', function ($query, $keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('mcusmas.cusno', 'like', "%{$keyword}%")
+                    ->orWhere('mcusmas.cusna', 'like', "%{$keyword}%");
+                });
+            })
+            ->addColumn('action', function ($row) {
+                return view('master.mstmas.mstmas_action', compact('row'));
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
 
     public function index()
     {
-        if (request()->ajax()) {
-            if(auth()->user()->cabang=="PST"){
-                $mas=Mstmas::all();
-            }else{
-                $mas=Mstmas::where('braco',auth()->user()->cabang);
-            }
-            return DataTables::of($mas)
-            ->addIndexColumn()
-            ->addColumn('action', function ($item) {
-                $btn = '';
-                $button =   '<a data-bs-toggle="modal" data-bs-target="#mLMstmas" id="call_mLMstmas" class="badge bg-info"  i_d="'. $item->id .'" braco="'. $item->braco .'" cusno="'. $item->cusno .'" shpto="'. $item->shpto .'" shpnm="'. $item->shpnm .'" deliveryaddress="'. $item->deliveryaddress .'" phone="'. $item->phone .'" fax="'. $item->fax .'" contp="'. $item->contp .'" province="'. $item->province .'" kabupaten="'. $item->kabupaten .'">Ubah</a>';
-                $btn .= $button;
+        return view('master.mstmas.mstmas_index');
+    }
 
-                if(auth()->user()->level=="MANAGER" or auth()->user()->level=="IT"){
-                $deleteButton = '<form class="d-inline" action=/msreno/' . $item->id . '
-                       method="POST">
-                       <input type="hidden" name="_token" value=' . csrf_token() . '>
-                       <input type="hidden" name="_method" value="delete">
-                       <button type="submit" id="btn-delete" class="btn btn-block badge bg-danger"><i class="fa-solid fa-trash-can"></i> Hapus</button>';
-                $btn .= $deleteButton;
-                }
-                return $btn;
-            })
-            ->make();
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
+    }
+
+    public function show($braco, $cusno)
+    {
+        $shiptos = Mstmas::with('cusmas','prov', 'kabkota')
+            ->where('braco', $braco)
+            ->where('cusno', $cusno)
+            ->orderBy('shpto')
+            ->get();
+
+        if ($shiptos->isEmpty()) {
+            abort(404);
         }
-        return view ('master.mstmas', [
-           //'mstmases'=> Mstmas::orderBy('id','desc')->limit(100)->get(),
-           'province'=> Provinsi::all()
-        ]);
+
+        return view('master.mstmas.mstmas_detail', compact('shiptos'));
+    }
+
+    public function edit($braco, $cusno)
+    {
+        $shiptos = Mstmas::with('prov', 'kabkota', 'cusmas')
+            ->where('braco', $braco)
+            ->where('cusno', $cusno)
+            ->orderBy('shpto')
+            ->get();
+        $prov = DB::table('provinsi')->get();
+
+        abort_if($shiptos->isEmpty(), 404);
+
+        return view('master.mstmas.mstmas_edit', compact('shiptos', 'prov'));
+    }
+
+    public function update(Request $request, $braco, $cusno)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $shptoForm = $request->shpto ?? [];
+
+            DB::table('mstmas')
+                ->where('braco', $braco)
+                ->where('cusno', $cusno)
+                ->whereNotIn('shpto', $shptoForm)
+                ->delete();
+
+            foreach ($shptoForm as $i => $shpto) {
+                DB::table('mstmas')->updateOrInsert(
+                    [
+                        'braco' => $braco,
+                        'cusno' => $cusno,
+                        'shpto' => $shpto,
+                    ],
+                    [
+                        'shpnm'             => strtoupper($request->shpnm[$i]) ?? null,
+                        'deliveryaddress'   => strtoupper($request->deliveryaddress[$i]) ?? null,
+                        'phone'             => $request->phone[$i] ?? null,
+                        'fax'               => $request->fax[$i] ?? null,
+                        'contp'             => strtoupper($request->contp[$i]) ?? null,
+                        'nitku'             => $request->nitku[$i] ?? null,
+                        'province'          => $request->province[$i] ?? null,
+                        'kabupaten'         => $request->kabupaten[$i] ?? null,
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('mstmas.index')
+                ->with('success', "Shipto \"$cusno\" berhasil diupdate.");
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            \Log::error('Gagal update data mtmas:', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
+    }
+    public function destroy(Mstmas $mstma)
+    {
+        Mstmas::destroy($mstma->id);
+        return redirect('/mstmas')->with('success','Shipto '.$mstma->cusno.' berhasil dihapus');
     }
 
     public function provinsii(){
@@ -65,63 +162,5 @@ class StmasController extends Controller
         $getProv=Provinsi::select('provinsi')->where('id_prov', $id)->first(); ?>
             <option value="<?php echo $id ?>"><?php echo $getProv->provinsi ?></option>
         <?php
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        $validasi= $request->validate([
-            'braco'=>'required|max:3',
-            'cusno'=>'required|max:200',
-            'shpto'=>'required|max:200',
-            'shpnm'=>'required|max:200',
-            'deliveryaddress'=>'required',
-            'phone'=>'required|max:200',
-            'fax'=>'required|max:200',
-            'contp'=>'required|max:200',
-            'province'=>'required|max:200',
-            'kabupaten'=>'required|max:200',
-        ]);
-        Mstmas::create($validasi);
-        return redirect('/mstmas')->with('success','MSTMAS berhasil disimpan');
-    }
-
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, Mstmas $mstma)
-    {
-        $validasi= $request->validate([
-            'braco'=>'required|max:3',
-            'cusno'=>'required|max:200',
-            'shpto'=>'required|max:200',
-            'shpnm'=>'required|max:200',
-            'deliveryaddress'=>'required',
-            'phone'=>'required|max:200',
-            'fax'=>'required|max:200',
-            'contp'=>'required|max:200',
-            'province'=>'required|max:200',
-            'kabupaten'=>'required|max:200',
-        ]);
-        Mstmas::where('id',$mstma->id)
-                ->update($validasi);
-        return redirect('/mstmas')->with('success','MSTMAS berhasil diubah');
-    }
-
-    public function destroy(Mstmas $mstma)
-    {
-        Mstmas::destroy($mstma->id);
-        return redirect('/mstmas')->with('success','MSTMAS berhasil dihapus');
     }
 }

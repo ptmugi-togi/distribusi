@@ -26,4 +26,19 @@ class Mstmas extends Model
         'province',
         'kabupaten'
     ];
+
+    public function cusmas()
+    {
+        return $this->belongsTo(Mcusmas::class, 'cusno', 'cusno');
+    }
+
+    public function prov()
+    {
+        return $this->belongsTo(Provinsi::class, 'province', 'id_prov');
+    }
+    
+    public function kabkota()
+    {
+        return $this->belongsTo(KabKot::class, 'kabupaten', 'id');
+    }
 }
