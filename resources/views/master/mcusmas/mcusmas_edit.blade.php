@@ -91,7 +91,7 @@
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Provinsi</label>
                         <select class="form-control select2" id="provinsiCusmas" name="province">
-                            <option value="" disabled>Pilih Provinsi</option>
+                            <option value="" disabled selected>Pilih Provinsi</option>
                             @foreach($prov as $p)
                                 <option value="{{ $p->id_prov }}"
                                     {{ $cust->province == $p->id_prov ? 'selected' : '' }}>
