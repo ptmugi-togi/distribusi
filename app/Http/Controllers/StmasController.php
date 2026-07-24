@@ -19,7 +19,7 @@ class StmasController extends Controller
             ->select(
                 'braco',
                 'cusno',
-                DB::raw("CONCAT(cusno, ' - ', cusna) as customer"),
+                'cusna',
                 'taxrn as npwp'
             )
             ->where('braco', Auth::user()->cabang);

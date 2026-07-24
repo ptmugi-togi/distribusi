@@ -34,7 +34,8 @@
                     <thead>
                           <tr>
                             <th>Branch</th>
-                            <th>Customer</th>
+                            <th>Customer No</th>
+                            <th>Customer Name</th>
                             <th class="text-left">NPWP</th>
                             <th class="text-center">Action</th>
                           </tr>
@@ -54,7 +55,7 @@
       $(function () {
         var table = $('#myTable').DataTable({
           destroy: true,
-          order: [[0, 'asc']],
+          order: [[2, 'asc']],
           stateSave: false,
           responsive: true,
           processing: true,
@@ -62,7 +63,8 @@
             ajax: "{{ route('mstmas.data') }}",
             columns: [
                 { data: 'braco', name: 'braco', searchable: false },
-                { data: 'customer', name: 'customer' },
+                { data: 'cusno', name: 'cusno' },
+                { data: 'cusna', name: 'cusna' },
                 { data: 'npwp', name: 'npwp', searchable: false, className: 'text-start' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' },
             ]
