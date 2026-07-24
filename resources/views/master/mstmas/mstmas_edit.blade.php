@@ -65,13 +65,13 @@
                                 <div class="row">
                                     <input type="hidden" name="shpto[]" value="{{ $shipto->shpto }}">
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Ship Name</label>
-                                        <input class="form-control text-uppercase" id="shpnm" name="shpnm[]" value="{{ $shipto->shpnm }}">
+                                        <label class="form-label">Ship Name</label><span class="text-danger"> *</span>
+                                        <input class="form-control text-uppercase" id="shpnm" name="shpnm[]" value="{{ $shipto->shpnm }}" required>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
-                                        <label class="form-label">Address</label>
-                                        <textarea class="form-control text-uppercase" name="deliveryaddress[]">{{ $shipto->deliveryaddress }}</textarea>
+                                        <label class="form-label">Address</label><span class="text-danger"> *</span>
+                                        <textarea class="form-control text-uppercase" name="deliveryaddress[]" required>{{ $shipto->deliveryaddress }}</textarea>
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -239,13 +239,13 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">Ship Name</label>
-                                    <input class="form-control text-uppercase" name="shpnm[]" value="${cusna}">
+                                    <label class="form-label">Ship Name</label><span class="text-danger"> *</span>
+                                    <input class="form-control text-uppercase" name="shpnm[]" value="${cusna}" required>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label class="form-label">Address</label>
-                                    <textarea class="form-control text-uppercase" name="deliveryaddress[]"></textarea>
+                                    <label class="form-label">Address</label><span class="text-danger"> *</span>
+                                    <textarea class="form-control text-uppercase" name="deliveryaddress[]" required></textarea>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
