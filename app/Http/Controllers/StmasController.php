@@ -21,7 +21,8 @@ class StmasController extends Controller
                 'cusno',
                 DB::raw("CONCAT(cusno, ' - ', cusna) as customer"),
                 'taxrn as npwp'
-            );
+            )
+            ->where('braco', Auth::user()->cabang);
 
         return datatables()
             ->of($query)

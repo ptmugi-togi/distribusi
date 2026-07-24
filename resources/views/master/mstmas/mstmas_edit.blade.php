@@ -45,6 +45,7 @@
 
                 <input type="text" name="braco" value="{{ $header->braco }}" hidden>
                 <input type="text" name="cusno" value="{{ $header->cusno }}" hidden>
+                <input type="text" id="cusna" name="cusna" value="{{ $header->cusmas->cusna }}" hidden>
 
                 <div class="accordion mt-3" id="accordionShipto">
                     @foreach($shiptos as $i => $shipto)
@@ -65,7 +66,7 @@
                                     <input type="hidden" name="shpto[]" value="{{ $shipto->shpto }}">
                                     <div class="col-md-6 mt-3">
                                         <label class="form-label">Ship Name</label>
-                                        <input class="form-control text-uppercase" name="shpnm[]" value="{{ $shipto->shpnm }}">
+                                        <input class="form-control text-uppercase" id="shpnm" name="shpnm[]" value="{{ $shipto->shpnm }}">
                                     </div>
 
                                     <div class="col-md-6 mt-3">
@@ -214,7 +215,7 @@
 
         function addShipto(){
                 let next = getNextShipto();
-
+                let cusna = $('#cusna').val();
                 let index=$('.accordion-item').length;
 
                 let html=`
@@ -239,7 +240,7 @@
 
                                 <div class="col-md-6">
                                     <label class="form-label">Ship Name</label>
-                                    <input class="form-control text-uppercase" name="shpnm[]">
+                                    <input class="form-control text-uppercase" name="shpnm[]" value="${cusna}">
                                 </div>
 
                                 <div class="col-md-6 mt-3">
