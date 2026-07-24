@@ -22,13 +22,13 @@
                     @csrf
 
                     <div class="col-md-4">
-                        <label class="form-label">Branch</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="bracoCusmas" name="braco" value="{{ auth()->user()->cabang }}" required readonly style="background-color:#e9ecef">
+                        <label class="form-label">Branch</label>
+                        <input type="text" class="form-control text-uppercase" id="bracoCusmas" name="braco" value="{{ auth()->user()->cabang }}" readonly style="background-color:#e9ecef">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Join Date (mm/dd/yyyy)</label><span class="text-danger"> *</span>
-                        <input type="date" class="form-control" id="dopenCusmas" name="dopen" value="{{ date('Y-m-d') }}" required readonly style="background-color:#e9ecef">
+                        <label class="form-label">Join Date (mm/dd/yyyy)</label>
+                        <input type="date" class="form-control" id="dopenCusmas" name="dopen" value="{{ date('Y-m-d') }}" readonly style="background-color:#e9ecef">
                     </div>
 
                     <div class="col-md-4">
@@ -37,8 +37,8 @@
                     </div>
 
                     <div class="col-md-2">
-                        <label class="form-label">Title</label><span class="text-danger"> *</span>
-                        <select class="form-control select2 text-uppercase" name="title" id="titleCusmas" maxlength="5" required>
+                        <label class="form-label">Title</label>
+                        <select class="form-control select2 text-uppercase" name="title" id="titleCusmas" maxlength="5">
                             <option value="" disabled selected>Silahkan Pilih Title</option>
                             <option value="PT.">PT.</option>
                             <option value="CV.">CV.</option>
@@ -58,8 +58,8 @@
                     </div>
 
                     <div class="col-md-5">
-                        <label class="form-label">Bill Name</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="billnCusmas" name="billn" maxlength="100" required>
+                        <label class="form-label">Bill Name</label>
+                        <input type="text" class="form-control text-uppercase" id="billnCusmas" name="billn" maxlength="100">
                     </div>
                     
                     <div class="col-md-4">
@@ -72,18 +72,18 @@
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">NPWP / NIK</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="taxrnCusmas" name="taxrn" maxlength="100" required>
+                        <label class="form-label">NPWP / NIK</label>
+                        <input type="text" class="form-control text-uppercase" id="taxrnCusmas" name="taxrn" maxlength="100">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">NITKU</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="nitkuCusmas" name="nitku" maxlength="100" required>
+                        <label class="form-label">NITKU</label>
+                        <input type="text" class="form-control text-uppercase" id="nitkuCusmas" name="nitku" maxlength="100">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Provinsi</label><span class="text-danger"> *</span>
-                        <select name="province" id="provinsiCusmas" required class="form-control select2">
+                        <label class="form-label">Provinsi</label>
+                        <select name="province" id="provinsiCusmas" class="form-control select2">
                             <option value="" disabled selected>Silahkan Pilih Provinsi</option>
                             @foreach ($provinsi as $prov)
                                 <option value="{{ $prov->id_prov }}">{{ $prov->provinsi }}</option>
@@ -92,8 +92,8 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Kabupaten</label><span class="text-danger"> *</span>
-                        <select name="kabupaten" id="kabKotaCusmas" required class="form-control select2">
+                        <label class="form-label">Kabupaten</label>
+                        <select name="kabupaten" id="kabKotaCusmas" class="form-control select2">
                             <option value="" disabled selected>Silahkan Pilih Kabupaten / Kota</option>
                         </select>
                     </div>
@@ -104,38 +104,38 @@
                     </div>
                     
                     <div class="col-md-6">
-                        <label class="form-label">Kode Pos</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="opost" id="opostCusmas" maxlength="5" required>
+                        <label class="form-label">Kode Pos</label>
+                        <input type="text" class="form-control text-uppercase" name="opost" id="opostCusmas" maxlength="5">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Phone</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="offph" id="offphCusmas" maxlength="40" required>
+                        <label class="form-label">Phone</label>
+                        <input type="text" class="form-control text-uppercase" name="offph" id="offphCusmas" maxlength="40">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Fax</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="offax" id="offaxCusmas" maxlength="40" required>
+                        <label class="form-label">Fax</label>
+                        <input type="text" class="form-control text-uppercase" name="offax" id="offaxCusmas" maxlength="40">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Contact</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" name="ofcon" id="ofconCusmas" maxlength="40" required>
+                        <label class="form-label">Contact</label>
+                        <input type="text" class="form-control text-uppercase" name="ofcon" id="ofconCusmas" maxlength="40">
                     </div>
                     
                     <div class="col-md-4">
-                        <label class="form-label">Email</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="emailCusmas" name="email" maxlength="100" required>
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" id="emailCusmas" name="email" maxlength="100">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">TOP</label><span class="text-danger"> *</span>
-                        <input type="number" class="form-control text-uppercase" name="topay" id="topayCusmas" maxlength="3" required>
+                        <label class="form-label">TOP</label>
+                        <input type="number" class="form-control text-uppercase" name="topay" id="topayCusmas" maxlength="3">
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Industry</label><span class="text-danger"> *</span>
-                        <select class="form-control select2 text-uppercase" name="cindu" id="cinduCusmas" maxlength="3" required>
+                        <label class="form-label">Industry</label>
+                        <select class="form-control select2 text-uppercase" name="cindu" id="cinduCusmas" maxlength="3">
                             <option value="-" disabled selected>Silahkan Pilih Industry</option>
                             @foreach ($cindus as $cindu)
                                 <option value="{{ $cindu->cindu }}">{{ $cindu->cindu }} - {{ $cindu->descr_cindu }}</option>
@@ -148,7 +148,7 @@
                         <input type="text" class="form-control text-uppercase" value="{{ auth()->user()->username }}" name="lauid" id="lauidCusmas" maxlength="50" readonly style="background-color: #e9ecef">
                     </div>
 
-                    <input type="hidden" value="{{ date("Y-m-d H:i:s") }}" class="form-control text-uppercase" name="ladup" id="ladupCusmas" required>
+                    <input type="hidden" value="{{ date("Y-m-d H:i:s") }}" class="form-control text-uppercase" name="ladup" id="ladupCusmas">
 
                     <div class="d-flex justify-content-between mt-3">
                         <a href="{{ route('cusmas.index') }}" class="btn btn-secondary">Kembali</a>

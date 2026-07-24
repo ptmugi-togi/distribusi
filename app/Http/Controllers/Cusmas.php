@@ -42,62 +42,59 @@ class Cusmas extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
+
         try {
-        $validasi = $request->validate([
-            'braco'     => 'required',
-            'dopen'     => 'required|date',
-            'cusno'     => 'required|unique:mcusmas,cusno',
-            'cusna'     => 'required|max:200',
-            'billn'     => 'required|max:200',
-            'email'     => 'required|email|max:100',
-            'taxrn'     => 'required|max:100',
-            'nitku'     => 'required|max:100',
-            'title'     => 'required',
-            'pkp'       => 'required',
-            'province'  => 'required|max:100',
-            'kabupaten' => 'required|max:100',
-            'address'   => 'required',
-            'opost'     => 'required|max:15',
-            'offph'     => 'required|max:100',
-            'offax'     => 'required|max:100',
-            'ofcon'     => 'required|max:100',
-            'topay'     => 'required|numeric',
-            'cindu'     => 'required',
-            'lauid'     => 'required',
-            'ladup'     => 'required',
-        ],
-        [
-            'cusno.unique' => 'Kode Customer sudah digunakan.',
-        ]);
 
-        foreach ($validasi as $key => $value) {
-            if (is_string($value) && $key !== 'email' && $key !== 'address') {
-                $validasi[$key] = mb_strtoupper($value, 'UTF-8');
+            $request->validate([
+                'cusno'   => 'required|unique:mcusmas,cusno',
+                'cusna'   => 'required|max:255',
+                'address' => 'required',
+            ], [
+                'cusno.unique' => 'Kode Customer sudah digunakan.',
+            ]);
+
+            $data = $request->except(['_token']);
+
+            foreach ($data as $key => $value) {
+                if (
+                    is_string($value) &&
+                    !in_array($key, ['email', 'address'])
+                ) {
+                    $data[$key] = mb_strtoupper(trim($value), 'UTF-8');
+                }
             }
-        }
 
-        Mcusmas::create($validasi);
+            Mcusmas::create($data);
 
-        Mstmas::create([
-            'braco' => $request->braco,
-            'cusno' => $request->cusno,
-            'shpto' => '1',
-            'shpnm' => $request->cusna,
-            'deliveryaddress' => $request->address,
-            'phone' => $request->offph,
-            'fax' => $request->offax,
-            'contp' => $request->ofcon,
-            'nitku' => $request->nitku,
-            'province' => $request->province,
-            'kabupaten' => $request->kabupaten,
-        ]);
+            Mstmas::create([
+                'braco'             => $data['braco'] ?? null,
+                'cusno'             => $data['cusno'],
+                'shpto'             => '1',
+                'shpnm'             => $data['cusna'],
+                'deliveryaddress'   => $data['address'],
+                'phone'             => $data['offph'] ?? null,
+                'fax'               => $data['offax'] ?? null,
+                'contp'             => $data['ofcon'] ?? null,
+                'nitku'             => $data['nitku'] ?? null,
+                'province'          => $data['province'] ?? null,
+                'kabupaten'         => $data['kabupaten'] ?? null,
+            ]);
 
-        DB::commit();
-            return redirect()->route('cusmas.index')->with('success', "Data Customer \"$request->cusno\" berhasil disimpan.");
+            DB::commit();
+
+            return redirect()->route('cusmas.index')
+                ->with('success', "Data Customer \"$request->cusno\" berhasil disimpan.");
+
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Gagal simpan data customer:', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
+
+            \Log::error('Gagal simpan data customer:', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menyimpan: '.$e->getMessage());
         }
     }
 
@@ -122,67 +119,51 @@ class Cusmas extends Controller
 
         try {
 
-            $validasi = $request->validate([
-                'braco'     => 'required',
-                'dopen'     => 'required|date',
-                'cusno'     => 'required',
-                'cusna'     => 'required|max:200',
-                'billn'     => 'required|max:200',
-                'email'     => 'required|email|max:100',
-                'taxrn'     => 'required|max:100',
-                'nitku'     => 'required|max:100',
-                'title'     => 'required',
-                'pkp'       => 'required',
-                'province'  => 'required|max:100',
-                'kabupaten' => 'required|max:100',
-                'address'   => 'required',
-                'opost'     => 'required|max:15',
-                'offph'     => 'required|max:100',
-                'offax'     => 'required|max:100',
-                'ofcon'     => 'required|max:100',
-                'topay'     => 'required|numeric',
-                'cindu'     => 'required',
-                'lauid'     => 'required',
+            $request->validate([
+                'cusno'   => 'required',
+                'cusna'   => 'required|max:255',
+                'address' => 'required',
             ]);
 
-            foreach ($validasi as $key => $value) {
-                if (is_string($value) && $key !== 'email' && $key !== 'address') {
-                    $validasi[$key] = mb_strtoupper($value, 'UTF-8');
+            $data = $request->except(['_token', '_method']);
+
+            foreach ($data as $key => $value) {
+                if (
+                    is_string($value) &&
+                    !in_array($key, ['email', 'address'])
+                ) {
+                    $data[$key] = mb_strtoupper(trim($value), 'UTF-8');
                 }
             }
 
-            Mcusmas::where('cusno', $id)->update($validasi);
+            Mcusmas::where('cusno', $id)->update($data);
 
             Mstmas::where('cusno', $id)
                 ->where('shpto', '1')
                 ->update([
-                    'braco'             => $request->braco,
-                    'cusno'             => $request->cusno,
-                    'shpnm'             => $request->cusna,
-                    'deliveryaddress'   => $request->address,
-                    'phone'             => $request->offph,
-                    'fax'               => $request->offax,
-                    'contp'             => $request->ofcon,
-                    'nitku'             => $request->nitku,
-                    'province'          => $request->province,
-                    'kabupaten'         => $request->kabupaten,
+                    'braco'           => $data['braco'],
+                    'cusno'           => $data['cusno'],
+                    'shpnm'           => $data['cusna'],
+                    'deliveryaddress' => $data['address'],
+                    'phone'           => $data['offph'] ?? null,
+                    'fax'             => $data['offax'] ?? null,
+                    'contp'           => $data['ofcon'] ?? null,
+                    'nitku'           => $data['nitku'] ?? null,
+                    'province'        => $data['province'] ?? null,
+                    'kabupaten'       => $data['kabupaten'] ?? null,
                 ]);
 
             DB::commit();
 
             return redirect()->route('cusmas.index')
-                ->with('success', "Data Customer \"$request->cusno\" berhasil diubah.");
+                ->with('success', "Data Customer \"{$request->cusno}\" berhasil diubah.");
 
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('Gagal update data customer:', [
-                'error' => $e->getMessage()
-            ]);
-
             return back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan saat mengubah data: '.$e->getMessage());
+                ->with('error', 'Terjadi kesalahan: '.$e->getMessage());
         }
     }
 

@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="col-md-4 mt-3">
-                        <label class="form-label">Customer No.</label>
+                        <label class="form-label">Customer No.</label><span class="text-danger"> *</span>
                         <input type="text" class="form-control" value="{{ $cust->cusno }}" disabled>
                         <input type="hidden" class="form-control" name="cusno" value="{{ $cust->cusno }}">
                     </div>
@@ -60,8 +60,8 @@
                     </div>
 
                     <div class="col-md-5 mt-3">
-                        <label class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" id="cusnaCusmas" name="cusna" value="{{ $cust->cusna }}">
+                        <label class="form-label">Customer Name</label><span class="text-danger"> *</span>
+                        <input type="text" class="form-control" id="cusnaCusmas" name="cusna" value="{{ $cust->cusna }}" required>
                     </div>
 
                     <div class="col-md-5 mt-3">
@@ -109,8 +109,8 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea class="form-control" id="alamatCusmas" name="address" rows="2">{{ $cust->address }}</textarea>
+                        <label class="form-label">Alamat</label><span class="text-danger"> *</span>
+                        <textarea class="form-control" id="alamatCusmas" name="address" rows="2" required>{{ $cust->address }}</textarea>
                     </div>
 
                     <div class="col-md-6 mt-3">
