@@ -128,8 +128,8 @@
             </a>
           </li>
           <li>
-            <a href="{{ route('retail_inv_rel.index') }}">
-            <i class="bi bi-circle"></i><span>Retail Invoice Release</span>
+            <a href="{{ route('invoice_payment.index') }}">
+            <i class="bi bi-circle"></i><span>Invoice Payment</span>
             </a>
           </li>
           <li>
@@ -138,8 +138,8 @@
             </a>
           </li>
           <li>
-            <a href="{{ route('invoice_payment.index') }}">
-            <i class="bi bi-circle"></i><span>Invoice Payment</span>
+            <a href="{{ route('retail_inv_rel.index') }}">
+            <i class="bi bi-circle"></i><span>Retail Invoice Release</span>
             </a>
           </li>
           <li>
