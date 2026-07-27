@@ -36,6 +36,7 @@
             <option value="" disabled {{ old('formc') ? '' : 'selected' }}>Silahkan Pilih BBM</option>
             <option value="IA" {{ old('formc') == 'IA' ? 'selected' : '' }}>IA (LOCAL PURCHASE)</option>
             <option value="IB" {{ old('formc') == 'IB' ? 'selected' : '' }}>IB (IMPORT)</option>
+            <option value="IC" {{ old('formc') == 'IC' ? 'selected' : '' }}>IC (EX RETURN GOODS)</option>
             <option value="ID" {{ old('formc') == 'ID' ? 'selected' : '' }}>ID (EX PINJAMAN)</option>
             <option value="IE" {{ old('formc') == 'IE' ? 'selected' : '' }}>IE (WARRANTY CLAIM)</option>
             <option value="IF" {{ old('formc') == 'IF' ? 'selected' : '' }}>IF (ADJUSTMENT)</option>
@@ -45,7 +46,6 @@
             <option value="IL" {{ old('formc') == 'IL' ? 'selected' : '' }}>IL (EX OTHER BRANCH)</option>
             <option value="IM" {{ old('formc') == 'IM' ? 'selected' : '' }}>IM (EX PRODUCTION)</option>
             <option value="IN" {{ old('formc') == 'IN' ? 'selected' : '' }}>IN (CANCELATION DO)</option>
-            <option value="IC" {{ old('formc') == 'IC' ? 'selected' : '' }}>IC (EX RETURN GOODS)</option>
             {{-- FormC lain nanti --}}
           </select>
           <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
