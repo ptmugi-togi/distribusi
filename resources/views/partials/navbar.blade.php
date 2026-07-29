@@ -123,6 +123,11 @@
         </a>
         <ul id="fna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="{{ route('cn_retail.index') }}">
+            <i class="bi bi-circle"></i><span>CN Retail</span>
+            </a>
+          </li>
+          <li>
             <a href="{{ route('dp_inv_rel.index') }}">
             <i class="bi bi-circle"></i><span>DP Invoice Release</span>
             </a>
