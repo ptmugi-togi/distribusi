@@ -37,31 +37,31 @@
                           <th class="text-center">CREDIT NOTE DATE</th>
                           <th class="text-center">CUSTOMER</th>
                           <th class="text-center">INVOICE NO</th>
-                          <th class="text-center">Action</th>
+                          {{-- <th class="text-center">Action</th> --}}
                       </tr>
                     </thead>
                     <tbody>
                       @foreach ($cnhdr as $c)
                         <tr>
-                            <td class="text-center">{{ $c->braco }}</td>
-                            <td class="text-center">{{ $c->formc }}</td>
-                            <td class="text-center">{{ $c->crnno }}</td>
-                            <td class="text-center" data-order="{{ \Carbon\Carbon::parse($c->crndt)->format('Y-m-d') }}">
-                                {{ \Carbon\Carbon::parse($c->crndt)->format('d/m/Y') }}
-                            </td>
-                           <td class="text-left">
-                                {{ Str::limit($c->customer->cusna ?? '-', 30, '...') }}
-                            </td>
-                            <td class="text-center">{{ $c->invfc }} {{ $c->invno ?? '-' }}</td>
-                        <td class="text-center">
-                          {{-- preview --}}
-                          {{-- <a href="{{ route('dp_inv_rel.preview', $c->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
-                      
-                            {{-- print --}}
-                            {{-- <a href="{{ route('dp_inv_rel.print', $c->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a> --}}
+                          <td class="text-center">{{ $c->braco }}</td>
+                          <td class="text-center">{{ $c->formc }}</td>
+                          <td class="text-center">{{ $c->crnno }}</td>
+                          <td class="text-center" data-order="{{ \Carbon\Carbon::parse($c->crndt)->format('Y-m-d') }}">
+                              {{ \Carbon\Carbon::parse($c->crndt)->format('d/m/Y') }}
+                          </td>
+                          <td class="text-left">
+                              {{ Str::limit($c->customer->cusna ?? '-', 30, '...') }}
+                          </td>
+                          <td class="text-center">{{ $c->invfc }} {{ $c->invno ?? '-' }}</td>
+                          {{-- <td class="text-center">
+                            preview
+                            <a href="{{ route('dp_inv_rel.preview', $c->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a>
+                        
+                            print
+                            <a href="{{ route('dp_inv_rel.print', $c->invid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                             <a href="/cn-retail/detail/{{ $c->cnid }}" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                             <a href="/cn-retail/edit/{{ $c->cnid }}" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                        </td>
+                          </td> --}}
                         </tr>
                       @endforeach
                     </tbody>
