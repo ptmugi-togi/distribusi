@@ -163,7 +163,7 @@
                 listic.prop('disabled', true);
                 listic.empty().append('<option disabled selected>Memuat data IC...</option>');
 
-                $.get("{{ route('get-listic') }}", function(data){
+                $.get("{{ route('get-listic-cn-retail') }}", function(data){
                     listic.empty();
 
                     if(!data.length){
@@ -195,7 +195,7 @@
                 let crndt = $('#crndt').val();
 
                 if(formc && crndt){
-                    $.get("{{ route('generate-crnno') }}", {formc, crndt}, function(res){
+                    $.get("{{ route('generate-crnno-retail') }}", {formc, crndt}, function(res){
 
                         let display = formc + '-' + res;
 
@@ -220,7 +220,7 @@
                 $('#dorfc').val(dorfc);
                 $('#donom').val(donom);
 
-                $.get("{{ route('get-listsc') }}", { dorfc, donom }, function(res){
+                $.get("{{ route('get-listsc-cn-retail') }}", { dorfc, donom }, function(res){
                     if(!res.length){
                         $('#invno').val('');
                         return;
@@ -274,7 +274,7 @@
                     $('#cramt_raw').val(blamt);
 
                     // get detail by sc
-                    $.get("{{ route('get-detail-by-sc') }}", { sorno: item.invno }, function(res){
+                    $.get("{{ route('get-detail-by-sc-cn-retail') }}", { sorno: item.invno }, function(res){
                         let container = $('#table_detail');
                         container.empty();
                         

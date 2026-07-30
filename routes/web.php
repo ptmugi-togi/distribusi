@@ -39,6 +39,7 @@ use App\Http\Controllers\OcSbController;
 use App\Http\Controllers\MktController;
 use App\Http\Controllers\DoController;
 use App\Http\Controllers\ScController;
+use App\Http\Controllers\CnDpProjectController;
 use App\Http\Controllers\CnRetailController;
 use App\Http\Controllers\DpInvRelController;
 use App\Http\Controllers\ProjectInvRelController;
@@ -342,10 +343,10 @@ Route::get('/sc/preview', [ScController::class, 'preview'])->name('sc.preview');
 
 Route::get('/cn-retail/index', [CnRetailController::class,'index'])->middleware('auth')->name('cn_retail.index');
 Route::get('/cn-retail/create', [CnRetailController::class,'create'])->middleware('auth')->name('cn_retail.create');
-Route::get('/generate-crnno', [CnRetailController::class,'generateCrnno'])->name('generate-crnno');
-Route::get('/get-listic', [CnRetailController::class,'getIC'])->name('get-listic');
-Route::get('/get-listsc', [CnRetailController::class,'getSC'])->name('get-listsc');
-Route::get('/get-detail-sc', [CnRetailController::class,'getDetailSc'])->name('get-detail-by-sc');
+Route::get('/generate-crnno-retail', [CnRetailController::class,'generateCrnno'])->name('generate-crnno-retail');
+Route::get('/get-listic-cn-retail', [CnRetailController::class,'getIC'])->name('get-listic-cn-retail');
+Route::get('/get-listsc-cn-retail', [CnRetailController::class,'getSC'])->name('get-listsc-cn-retail');
+Route::get('/get-detail-sc-cn-retail', [CnRetailController::class,'getDetailSc'])->name('get-detail-by-sc-cn-retail');
 Route::post('/cn-retail/store', [CnRetailController::class,'store'])->middleware('auth')->name('cn_retail.store');
 
 Route::get('/dp-inv-rel/index', [DpInvRelController::class,'index'])->middleware('auth')->name('dp_inv_rel.index');
