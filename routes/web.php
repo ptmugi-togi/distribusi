@@ -341,6 +341,14 @@ Route::get('/do/printDo/{id}', [DoController::class, 'printDo'])->name('do.print
 Route::get('/sc/create', [ScController::class,'create'])->middleware('auth')->name('sc.create');
 Route::get('/sc/preview', [ScController::class, 'preview'])->name('sc.preview');
 
+Route::get('/cn-dp-project/index', [CnDpProjectController::class,'index'])->middleware('auth')->name('cn_dp_project.index');
+Route::get('/cn-dp-project/create', [CnDpProjectController::class,'create'])->middleware('auth')->name('cn_dp_project.create');
+Route::get('/generate-crnno-dp-project', [CnDpProjectController::class,'generateCrnno'])->name('generate-crnno-dp-project');
+Route::get('/get-listic-cn-dp-project', [CnDpProjectController::class,'getIC'])->name('get-listic-cn-dp-project');
+Route::get('/get-listsc-cn-dp-project', [CnDpProjectController::class,'getSC'])->name('get-listsc-cn-dp-project');
+Route::get('/get-detail-sc-cn-dp-project', [CnDpProjectController::class,'getDetailSc'])->name('get-detail-by-sc-cn-dp-project');
+Route::post('/cn-dp-project/store', [CnDpProjectController::class,'store'])->middleware('auth')->name('cn_dp_project.store');
+
 Route::get('/cn-retail/index', [CnRetailController::class,'index'])->middleware('auth')->name('cn_retail.index');
 Route::get('/cn-retail/create', [CnRetailController::class,'create'])->middleware('auth')->name('cn_retail.create');
 Route::get('/generate-crnno-retail', [CnRetailController::class,'generateCrnno'])->name('generate-crnno-retail');

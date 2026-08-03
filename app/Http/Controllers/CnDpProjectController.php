@@ -11,18 +11,26 @@ use Carbon\Carbon;
 use App\Models\CnHdr;
 use App\Models\CnDtl;
 
-class CnRetailController extends Controller
+class CnDpProjectController extends Controller
 {
     public function index()
     {
         $userBraco = Auth::user()->cabang;
 
         $cnhdr = CnHdr::with('cndtls', 'customer')
-                        ->where('braco', $userBraco)
-                        ->where('invfc', 'SC')
-                        ->get();
+            ->join('tinmas', function ($join) {
+                $join->on('tcnh.invfc', '=', 'tinmas.formc')
+                    ->on('tcnh.invno', '=', 'tinmas.invno')
+                    ->on('tcnh.braco', '=', 'tinmas.braco');
+            })
+            ->where('tcnh.braco', $userBraco)
+            ->where('tcnh.invfc', 'SC')
+            ->whereIn('tinmas.sorfc', ['SA', 'SB'])
+            ->where('tinmas.invtp', 1)
+            ->select('tcnh.*')
+            ->get();
 
-        return view('fna.cn_retail.cn_retail_index', compact('cnhdr', 'userBraco'));
+        return view('fna.cn_dp_project.cn_dp_project_index', compact('cnhdr', 'userBraco'));
     }
 
     public function create()
@@ -44,7 +52,7 @@ class CnRetailController extends Controller
             $minDate = "$year-$month-01";
         }
 
-        return view('fna.cn_retail.cn_retail_create', compact('minDate'));
+        return view('fna.cn_dp_project.cn_dp_project_create', compact('minDate'));
     }
 
     public function store(Request $request)
@@ -54,9 +62,28 @@ class CnRetailController extends Controller
         // dd($request->all());
 
         try {
-            $cnid = $request->braco .  $request->formc . $request->crnno;
+            $braco = Auth::user()->cabang;
+            $formc = $request->formc;
+            $year = Carbon::parse($request->crndt)->format('y');
 
-            $bracoformc = $request->braco . $request->formc;
+            $last = DB::table('tcnh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(crnno,2) = ?", [$year])
+                ->orderByDesc('crnno')
+                ->lockForUpdate()
+                ->value('crnno');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $crnno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $cnid = $braco . $formc . $crnno;
+            $bracoformc = $braco . $formc;
 
             CnHdr::create([
                 'cnid'      => $cnid,
@@ -64,13 +91,13 @@ class CnRetailController extends Controller
                 'braco'      => $request->braco,
                 'warco'      => '-',
                 'formc'      => $request->formc,
-                'crnno'      => $request->crnno,
+                'crnno'      => $crnno,
                 'crndt'      => $request->crndt,
                 'priod'      => $request->priod,
                 'notar'      => $request->notar ?? '-',
                 'cusno'      => $request->cusno,
-                'invfc'      => $request->sorfc,
-                'invno'      => $request->sorno,
+                'invfc'      => 'SC',
+                'invno'      => $request->invno,
                 'ortyp'      => $request->ortyp,
                 'vatax'      => $request->vatax,
                 'curco'      => $request->curco,
@@ -82,9 +109,10 @@ class CnRetailController extends Controller
                 'txamt'      => $request->txamt_hdr,
                 'cramt'      => $request->cramt_hdr,
                 'lauid'      => Auth::user()->name,
+                'notar'      => $request->notar,
                 'reaso'      => $request->reaso,
-                'srnfc'      => $request->icfc,
-                'srnno'      => $request->icno,
+                'srnfc'      => null,
+                'srnno'      => null,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
@@ -108,7 +136,7 @@ class CnRetailController extends Controller
                     'bracoformc'    => $bracoformc,
                     'braco'         => $request->braco,
                     'formc'         => $request->formc,
-                    'crnno'         => $request->crnno,
+                    'crnno'         => $crnno,
                     'opron'         => $opron,
                     'prona'         => $prona,
                     'stdqu'         => $stdqu,
@@ -132,7 +160,7 @@ class CnRetailController extends Controller
                 ]);
 
             DB::commit();
-            return redirect()->route('cn_retail.index')->with('success', "data CN Retail \"$cnid\" berhasil disimpan.");
+            return redirect()->route('cn_dp_project.index')->with('success', "data CN Retail \"$cnid\" berhasil disimpan.");
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -141,63 +169,27 @@ class CnRetailController extends Controller
         }
     }
 
-    public function generateCrnno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $crndt = $request->crndt;
-        
-        $year = Carbon::parse($crndt)->format('y');
-
-        $last = DB::table('tcnh')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(crnno,2) = ?", [$year])
-            ->orderBy('crnno','desc')
-            ->value('crnno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
-    }
-
-    public function getIC()
-    {
-        $userBraco = Auth::user()->cabang;
-
-        $listic = DB::table('tstorh')
-            ->join('mcusmas', 'mcusmas.cusno', '=', 'tstorh.cusno')
-            ->where('tstorh.braco', $userBraco)
-            ->where('tstorh.formc', 'IC')
-            ->orderBy('tstorh.trano', 'asc')
-            ->select(
-                'tstorh.*',
-                DB::raw("CONCAT(mcusmas.cusno, ' - ', mcusmas.cusna) as customer")
-            )
-            ->get();
-
-        return response()->json($listic);
-    }
-
-    public function getSC(Request $request)
+    public function getSC()
     {
         $userBraco = Auth::user()->cabang;
 
         $listsc = DB::table('tinmas')
-                ->where('braco', $userBraco)
-                ->where('formc', 'SC')
-                ->where('dorfc', $request->dorfc)
-                ->where('donom', $request->donom)
-                ->orderBy('invno', 'asc')
-                ->get();
+            ->join('mcusmas', function($join){
+                $join->on('mcusmas.cusno','=','tinmas.cusno');
+            })
+            ->where('tinmas.braco', $userBraco)
+            ->where('tinmas.formc', 'SC')
+            ->whereIn('tinmas.sorfc', ['SA','SB'])
+            ->where('tinmas.invtp', 1)
+            ->select(
+                'tinmas.*',
+                'mcusmas.cusna as customer'
+            )
+            ->orderBy('tinmas.invno')
+            ->get();
 
         return response()->json($listsc);
     }
-
     public function getDetailSc(Request $request)
     {
         $userBraco = Auth::user()->cabang;
