@@ -80,6 +80,40 @@
   {{-- Link Sweetalert --}}
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    
+   {{-- enter -> tab button --}}
+    <script>
+        function focusNext(current) {
+            const fields = $("input, select, textarea")
+                .filter(function () {
+                    return $(this).is(":visible") &&
+                        !$(this).prop("disabled") &&
+                        !$(this).prop("readonly");
+                });
+
+            const index = fields.index(current);
+
+            if (index >= 0 && index < fields.length - 1) {
+                const next = fields.eq(index + 1);
+
+                if (next.hasClass("select2-hidden-accessible")) {
+                    next.select2("open");
+                } else {
+                    next.focus().select();
+                }
+            }
+        }
+
+        $(document).on("keydown", "input, select, textarea", function (e) {
+            if (e.key !== "Enter") return;
+
+            e.preventDefault();
+            focusNext(this);
+        });
+        
+        $(document).on("select2:select", "select", function () {
+            focusNext(this);
+        });
+    </script>
     {{-- stack scripts --}}
         @stack('scripts')
     {{-- end stack scripts --}}
