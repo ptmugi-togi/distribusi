@@ -20,6 +20,7 @@ class CnRetailController extends Controller
         $cnhdr = CnHdr::with('cndtls', 'customer')
                         ->where('braco', $userBraco)
                         ->where('invfc', 'SC')
+                        ->where('srnfc', 'IC')
                         ->get();
 
         return view('fna.cn_retail.cn_retail_index', compact('cnhdr', 'userBraco'));
@@ -54,9 +55,28 @@ class CnRetailController extends Controller
         // dd($request->all());
 
         try {
-            $cnid = $request->braco .  $request->formc . $request->crnno;
+            $braco = Auth::user()->cabang;
+            $formc = $request->formc;
+            $year = Carbon::parse($request->crndt)->format('y');
 
-            $bracoformc = $request->braco . $request->formc;
+            $last = DB::table('tcnh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(crnno,2) = ?", [$year])
+                ->orderByDesc('crnno')
+                ->lockForUpdate()
+                ->value('crnno');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $crnno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $cnid = $braco . $formc . $crnno;
+            $bracoformc = $braco . $formc;
 
             CnHdr::create([
                 'cnid'      => $cnid,
@@ -64,7 +84,7 @@ class CnRetailController extends Controller
                 'braco'      => $request->braco,
                 'warco'      => '-',
                 'formc'      => $request->formc,
-                'crnno'      => $request->crnno,
+                'crnno'      => $crnno,
                 'crndt'      => $request->crndt,
                 'priod'      => $request->priod,
                 'notar'      => $request->notar ?? '-',
@@ -108,7 +128,7 @@ class CnRetailController extends Controller
                     'bracoformc'    => $bracoformc,
                     'braco'         => $request->braco,
                     'formc'         => $request->formc,
-                    'crnno'         => $request->crnno,
+                    'crnno'         => $crnno,
                     'opron'         => $opron,
                     'prona'         => $prona,
                     'stdqu'         => $stdqu,
@@ -139,30 +159,6 @@ class CnRetailController extends Controller
             \Log::error('Gagal simpan CN Retail:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    public function generateCrnno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $crndt = $request->crndt;
-        
-        $year = Carbon::parse($crndt)->format('y');
-
-        $last = DB::table('tcnh')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(crnno,2) = ?", [$year])
-            ->orderBy('crnno','desc')
-            ->value('crnno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
     public function getIC()

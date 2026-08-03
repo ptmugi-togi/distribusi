@@ -30,12 +30,6 @@
       <input type="text" class="form-control" id="formc" name="formc" id="formc-store" value="CN" hidden>
 
       <div class="row">
-        <div class="col-md-6 mt-3">
-          <label for="crnno" class="form-label">Credit Note No.</label><span class="text-danger"> *</span>
-          <input type="text" id="crnno" class="form-control" readonly style="background-color: #E9ECEF;">
-          <input type="hidden" name="crnno" id="crnno_raw" value="{{ old('crnno') }}">
-        </div>
-
         <input type="text" name="priod" id="priod" value="{{ old('priod') }}" hidden>
 
         <div class="col-md-6 mt-3">
@@ -119,6 +113,11 @@
           <label for="cramt" class="form-label">CN Amount</label>
           <input type="text" class="form-control price-input" id="cramt" value="{{ old('cramt') }}" readonly style="background-color: #E9ECEF">
           <input type="hidden" name="cramt_hdr" id="cramt_raw">
+        </div>
+        
+        <div class="col-md-6 mt-3">
+          <label for="notar" class="form-label">Nota Retur</label>
+          <input type="text" class="form-control" name="notar" id="notar" value="{{ old('notar') }}">
         </div>
         
         <div class="col-md-12 mt-3">
