@@ -42,13 +42,14 @@
           <select name="listsc" id="listsc" class="form-control select2" required>
             <option value="" disabled selected>Loading data EX Invoice...</option>
           </select>
-          <input type="hidden" name="invfc" id="invfc">
           <input type="hidden" name="invno" id="invno">
         </div>
-
+        
         <div class="col-md-6 mt-3">
           <label for="oc" class="form-label">OC#</label>
           <input type="text" id="oc" class="form-control" readonly style="background-color: #E9ECEF;">
+          <input type="hidden" name="sorfc" id="sorfc">
+          <input type="hidden" name="sorno" id="sorno">
         </div>
         
         <div class="col-md-6 mt-3">
@@ -202,6 +203,8 @@
               $('#oc').val(selected.data('sorfc') + ' - ' + selected.data('sorno'));
               $('#cust').val(selected.data('cusno') + ' - ' + selected.data('customer'));
               $('#cusno').val(selected.data('cusno'));
+              $('#sorfc').val(selected.data('sorfc'));
+              $('#sorno').val(selected.data('sorno'));
               $('#invno').val(selected.val());
 
               $('#curco').val(selected.data('curco'));
@@ -238,10 +241,6 @@
               $('#ortyp').val(selected.data('ortyp'));
 
               $('#tax').text('(' + selected.data('vatax') + '%)');
-
-              // hidden untuk disimpan
-              $('#sorfc').val('SC');
-              $('#sorno').val(selected.val());
 
               // ambil detail
               $.get("{{ route('get-detail-by-sc-cn-dp-project') }}", { sorno: $('#invno').val() }, function(res){
