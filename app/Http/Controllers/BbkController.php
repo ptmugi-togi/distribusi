@@ -25,7 +25,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA', 'OE'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA', 'OE', 'TA'])
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -123,7 +123,10 @@ class BbkController extends Controller
             ->select('tsupih_tbl.*', 'mvendor_tbl.supna', 'tbolh.blnum', 'tbolh.vesel')
             ->get();
 
-        return view('logistic.bbk.bbk_create', compact('bbkhdr','vendors','priod','minDate','periodeAktif','tsupih'));
+        $mbranch = DB::table('mbranches')->get();
+        $mexped = DB::table('mexped')->get();
+
+        return view('logistic.bbk.bbk_create', compact('bbkhdr','vendors','priod','minDate','periodeAktif','tsupih', 'mbranch', 'mexped'));
     }
 
     // get barang untuk OF
@@ -238,7 +241,7 @@ class BbkController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
+        // dd($request->all());
         try {
             $braco = auth()->user()->cabang;
             $warco = $request->warco;
@@ -316,6 +319,7 @@ class BbkController extends Controller
                         'bbkid' => $bbkid,
                         'formc' => $formc,
                         'trano' => $trano,
+                        'warco' => $request->warco,
                         'opron' => $useOpron,
                         'lotno' => $lotno ?? '-',
                         'reffc' => $request->rfc01,
@@ -406,7 +410,7 @@ class BbkController extends Controller
         $bbk = DB::table('tsisnh as h')
             ->leftJoin('mvendor_tbl as v', 'h.supno', '=', 'v.supno')
             ->leftJoin('mformcode_tbl as f', 'h.formc', '=', 'f.formc')
-            ->select('h.*', 'v.supna', 'f.desc_c')
+            ->select('h.*', 'v.supna', 'f.descr')
             ->where('h.bbkid', $id)
             ->first();
 
@@ -510,6 +514,7 @@ class BbkController extends Controller
                         'formc' => $bbk->formc,
                         'trano' => $bbk->trano,
                         'opron' => $opron,
+                        'warco' => $bbk->warco,
                         'lotno' => $lotno ?? '-',
                         'trqty' => ($lotno === '-' ? $trqty : 1),
                         'qunit' => $qunit,

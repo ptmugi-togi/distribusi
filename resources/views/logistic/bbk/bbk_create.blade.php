@@ -42,7 +42,7 @@
             <option value="OE" {{ old('formc') == 'OE' ? 'selected' : '' }}>OE (WARRANTY CLAIM)</option>
             <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ADJUSTMENT)</option>
             <option value="OG" {{ old('formc') == 'OG' ? 'selected' : '' }}>OG (OFFICE USED)</option>
-            {{-- <option value="TA" {{ old('formc') == 'TA' ? 'selected' : '' }}>TA (TRANSFER NOTE)</option> --}}
+            <option value="TA" {{ old('formc') == 'TA' ? 'selected' : '' }}>TA (TRANSFER NOTE)</option>
             {{-- FormC lain nanti --}}
           </select>
           <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
@@ -55,7 +55,7 @@
           </select>
         </div>
 
-        <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
+        <input type="hidden" name="priod" id="priod" value="{{ old('priod' ?? '') }}">
       </div>
 
       <div id="section-of" style="display:none;">
@@ -84,6 +84,10 @@
 
       <div id="section-oe" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_oe')
+      </div>
+
+      <div id="section-ta" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_ta')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -264,6 +268,17 @@
                 $('#section-og').remove();
                 $('#section-oa').remove();
                 $('#section-oe').find('[data-req="oe"]').prop('required', true);
+              }
+              else if(formc === 'TA'){
+                $('#section-ta').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').remove();
+                $('#section-od').remove();
+                $('#section-og').remove();
+                $('#section-oa').remove();
+                $('#section-oe').remove();
+                $('#section-ta').find('[data-req="ta"]').prop('required', true);
               }
               else{
                 $('#section-of').fadeOut();
