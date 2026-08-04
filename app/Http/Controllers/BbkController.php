@@ -78,32 +78,6 @@ class BbkController extends Controller
         return $lotList;
     }
 
-    // generate trano sesuai warco, braco, formc
-    public function generateTrano(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $warco = $request->warco;
-        $formc = $request->formc;
-        $tradt = $request->tradt;
-        $year = Carbon::parse($tradt)->format('y');
-
-        $last = DB::table('tsisnh')
-            ->where('braco', $braco)
-            ->where('warco', $warco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(trano,2) = ?", [$year])
-            ->orderBy('trano','desc')
-            ->value('trano');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
-    }
-
     public function getWarco(Request $request)
     {
         $query = DB::table('mwarco_tbl');
@@ -266,9 +240,30 @@ class BbkController extends Controller
         DB::beginTransaction();
 
         try {
-            $bbkid = $request->braco . $request->warco . $request->formc_store . $request->trano;
+            $braco = auth()->user()->cabang;
+            $warco = $request->warco;
+            $formc = $request->formc_store;
+            $year = Carbon::parse($request->tradt)->format('y');
 
-            $bracoformc = $request->braco . $request->formc_store;
+            $last = DB::table('tsisnh')
+                ->where('braco', $braco)
+                ->where('warco', $warco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(trano,2) = ?", [$year])
+                ->lockForUpdate() // mencegah nomor ganda
+                ->orderByDesc('trano')
+                ->value('trano');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $trano = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $bbkid = $request->braco . $request->warco . $formc . $trano;
+            $bracoformc = $request->braco . $formc;
 
             // Simpan header
             BbkHdr::create([
@@ -276,8 +271,8 @@ class BbkController extends Controller
                 'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'warco' => $request->warco,
-                'formc' => $request->formc_store,
-                'trano' => $request->trano,
+                'formc' => $formc,
+                'trano' => $trano,
                 'priod' => $request->priod,
                 'tradt' => $request->tradt,
                 'reffc' => $request->reffc,
@@ -319,8 +314,8 @@ class BbkController extends Controller
                 foreach ($lotList as $lotno) {
                     DB::table('toutg')->insert([
                         'bbkid' => $bbkid,
-                        'formc' => $request->formc_store,
-                        'trano' => $request->trano,
+                        'formc' => $formc,
+                        'trano' => $trano,
                         'opron' => $useOpron,
                         'lotno' => $lotno ?? '-',
                         'reffc' => $request->rfc01,

@@ -182,32 +182,6 @@ class BbmController extends Controller
         return $lotList;
     }
 
-    // generate trano sesuai warco, braco, formc
-    public function generateTrano(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $warco = $request->warco;
-        $formc = $request->formc;
-        $tradt = $request->tradt;
-        $year = Carbon::parse($tradt)->format('y');
-
-        $last = DB::table('tstorh')
-            ->where('braco', $braco)
-            ->where('warco', $warco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(trano,2) = ?", [$year])
-            ->orderBy('trano','desc')
-            ->value('trano');
-        
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
-    }
-
     public function getTa(Request $request)
     {
         $refno = $request->refno;
@@ -602,18 +576,35 @@ class BbmController extends Controller
         DB::beginTransaction();
 
         try {
-            $bbmid = $request->braco . $request->warco . $request->formc_store . $request->trano;
+            $braco = $request->braco;
+            $warco = $request->warco;
+            $formc = $request->formc_store;
+            $year = Carbon::parse($request->tradt)->format('y');
 
-            $bracoformc = $request->braco . $request->formc_store;
+            $last = DB::table('tstorh')
+                ->where('braco', $braco)
+                ->where('warco', $warco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(trano,2) = ?", [$year])
+                ->lockForUpdate()
+                ->orderByDesc('trano')
+                ->value('trano');
+
+            $number = $last ? ((int) substr($last, 2) + 1) : 1;
+
+            $trano = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $bbmid = $braco . $warco . $formc . $trano;
+            $bracoformc = $braco . $formc;
 
             // Simpan header
             BbmHdr::create([
                 'bbmid' => $bbmid,
                 'bracoformc' => $bracoformc,
-                'braco' => $request->braco,
-                'warco' => $request->warco,
-                'formc' => $request->formc_store,
-                'trano' => $request->trano,
+                'braco' => $braco,
+                'warco' => $warco,
+                'formc' => $formc,
+                'trano' => $trano,
                 'priod' => $request->priod,
                 'tradt' => $request->tradt,
                 'reffc' => $request->reffc,
@@ -656,7 +647,7 @@ class BbmController extends Controller
                 foreach ($lotList as $lotno) {
                     DB::table('tstord')->insert([
                         'bbmid' => $bbmid,
-                        'trano' => $request->trano,
+                        'trano' => $trano,
                         'invno' => $useInvno ?? '-',
                         'opron' => $useOpron,
                         'lotno' => $lotno,
@@ -673,8 +664,8 @@ class BbmController extends Controller
                 // Update atau insert stok by barang (stobw_tbl)
                 DB::table('stobw_tbl')->updateOrInsert(
                     [
-                        'warco' => $request->warco,
-                        'braco' => $request->braco,
+                        'warco' => $warco,
+                        'braco' => $braco,
                         'opron' => $useOpron
                     ],
                     [
@@ -686,8 +677,8 @@ class BbmController extends Controller
                 foreach ($lotList as $lotno) {
                     DB::table('stobl_tbl')->updateOrInsert(
                         [
-                            'braco' => $request->braco,
-                            'warco' => $request->warco,
+                            'braco' => $braco,
+                            'warco' => $warco,
                             'opron' => $useOpron,
                             'lotno' => $lotno,
                             'qunit' => $request->stdqt[$i],
@@ -699,9 +690,9 @@ class BbmController extends Controller
                     );
                 }
                 // Update progress Stock Requisition (tsreqd)
-                if ($request->formc_store === 'IL') {
+                if ($formc === 'IL') {
                     DB::table('tsreqd')
-                        ->where('braco', $request->braco)
+                        ->where('braco', $braco)
                         ->where('formc', $request->reffc)
                         ->where('reqno', $request->refno)
                         ->where('opron', $useOpron)
@@ -733,8 +724,8 @@ class BbmController extends Controller
                             ->decrement('qtyit', $trqty);
                     }
                 }
-                if ($request->formc_store === 'ID') {
-                    $prefix = $request->braco . $request->warco;
+                if ($formc === 'ID') {
+                    $prefix = $braco . $warco;
 
                     DB::table('toutg')
                         ->where('bbkid', 'like', $prefix . '%')
@@ -753,9 +744,9 @@ class BbmController extends Controller
                         ->update(['rcqty' => DB::raw("rcqty + $trqty")]);
                 }
 
-                if ($request->formc_store === 'IN') {
+                if ($formc === 'IN') {
                     DB::table('tsisnh')
-                        ->where('braco', $request->braco)
+                        ->where('braco', $braco)
                         ->where('formc', $request->reffc)
                         ->where('trano', $request->refno)
                         ->update([
@@ -765,7 +756,7 @@ class BbmController extends Controller
                     
                     if ($request->rfc01 === 'SA') {
                         DB::table('tcored')
-                            ->where('braco', $request->braco)
+                            ->where('braco', $braco)
                             ->where('sorno', $request->ref01)
                             ->where('opron', $useOpron)
                             ->update([
@@ -775,7 +766,7 @@ class BbmController extends Controller
                     
                     if ($request->rfc01 === 'SB') {
                         DB::table('tprojc')
-                            ->where('braco', $request->braco)
+                            ->where('braco', $braco)
                             ->where('sorno', $request->ref01)
                             ->where('opron', $useOpron)
                             ->update([
@@ -784,9 +775,9 @@ class BbmController extends Controller
                     }
                 }
 
-                if ($request->formc_store === 'IC') {
+                if ($formc === 'IC') {
                     DB::table('tsisnh')
-                        ->where('braco', $request->braco)
+                        ->where('braco', $braco)
                         ->where('formc', $request->reffc)
                         ->where('trano', $request->refno)
                         ->update([
@@ -795,7 +786,7 @@ class BbmController extends Controller
                         ]);
                     
                     DB::table('tcored')
-                        ->where('braco', $request->braco)
+                        ->where('braco', $braco)
                         ->where('sorno', $request->ref01)
                         ->where('opron', $useOpron)
                         ->update([

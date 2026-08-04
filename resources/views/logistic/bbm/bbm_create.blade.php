@@ -58,11 +58,6 @@
           </select>
         </div>
 
-        <div class="col-md-6 mt-3">
-          <label for="trano" class="form-label">Stock Receipt No.</label><span class="text-danger"> *</span>
-          <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color:#e9ecef">
-        </div>
-
         <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
 
         <div class="col-md-6 mt-3">
@@ -215,19 +210,6 @@
               if(oldFormc){ 
                 $('#formc').val(oldFormc).trigger('change'); 
                 lockFormc();
-              }
-          });
-
-          // generate trano
-          $('#formc, #warco, #tradt').on('change', function(){
-              let warco = $('#warco').val();
-              let formc = $('#formc').val();
-              let tradt = $('#tradt').val();
-
-              if(warco && formc && tradt){
-                  $.get("{{ route('generate-trano-bbm') }}", {formc, warco, tradt}, function(res){
-                      $('#trano').val(res);
-                  });
               }
           });
 

@@ -1,11 +1,6 @@
 {{-- OB (LOCAL PURCHASE) --}}
 <div class="row mt-4">
     <div class="col-md-6 mt-3">
-        <label for="trano" class="form-label">Stock Issue Note No.</label><span class="text-danger"> *</span>
-        <input type="text" class="form-control" name="trano" id="trano" value="{{ old('trano', $trano ?? '') }}" required readonly style="background-color:#e9ecef">
-    </div>
-
-    <div class="col-md-6 mt-3">
         <label for="tradt" class="form-label">Stock Issue Date</label><span class="text-danger"> *</span>
         <input type="date" class="form-control" name="tradt" id="tradt" value="{{ old('tradt') }}" required min="{{ $minDate }}">
     </div>
