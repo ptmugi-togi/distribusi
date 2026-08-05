@@ -187,22 +187,6 @@
                 listic.prop('disabled', false);
                 });
             });
-            
-            // generate crnno
-            $('#crndt').on('change', function(){
-                let formc = $('#formc').val();
-                let crndt = $('#crndt').val();
-
-                if(formc && crndt){
-                    $.get("{{ route('generate-crnno-retail') }}", {formc, crndt}, function(res){
-
-                        let display = formc + '-' + res;
-
-                        $('#crnno').val(display);
-                        $('#crnno_raw').val(res);
-                    });
-                }
-            });
 
             $('#listic').on('change', function() {
                 const selected = $(this).find(':selected');

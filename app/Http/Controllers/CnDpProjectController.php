@@ -160,11 +160,11 @@ class CnDpProjectController extends Controller
                 ]);
 
             DB::commit();
-            return redirect()->route('cn_dp_project.index')->with('success', "data CN Retail \"$cnid\" berhasil disimpan.");
+            return redirect()->route('cn_dp_project.index')->with('success', "data CN DP / Project \"$cnid\" berhasil disimpan.");
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Gagal simpan CN Retail:', ['error' => $e->getMessage()]);
+            \Log::error('Gagal simpan CN DP / Project:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
