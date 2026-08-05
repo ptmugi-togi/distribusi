@@ -133,6 +133,11 @@
             </a>
           </li>
           <li>
+            <a href="{{ route('cn_teknik.index') }}">
+            <i class="bi bi-circle"></i><span>CN Teknik</span>
+            </a>
+          </li>
+          <li>
             <a href="{{ route('dp_inv_rel.index') }}">
             <i class="bi bi-circle"></i><span>DP Invoice Release</span>
             </a>
@@ -213,11 +218,6 @@
           <li>
             <a href="{{ route('bpb.index') }}">
               <i class="bi bi-circle"></i><span>BPB (Bon Permintaan Barang)</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('ta.index') }}">
-              <i class="bi bi-circle"></i><span>TA (Transfer Note)</span>
             </a>
           </li>
           <li>
