@@ -111,7 +111,7 @@
             </td>
 
             <td class="left" style="width: 25%; vertical-align:top">
-                DELIVERY ORDER : {{ $retailinvrelhdr->formc }} {{ $retailinvrelhdr->invno }}<br><br>
+                DELIVERY ORDER : {{ $retailinvrelhdr->dorfc }} {{ $retailinvrelhdr->donom }}<br><br>
                 TELP: {{ $retailinvrelhdr->mcusmas_do?->offph }}
                 ATTN. {{ $retailinvrelhdr->mcusmas_do?->ofcon }}
             </td>
@@ -137,9 +137,9 @@
             </td>
     
             <td class="left" style="width:12%; vertical-align:top">
-                {{ $retailinvrelhdr->formc }} {{ $retailinvrelhdr->sorno }}/{{ $retailinvrelhdr->braco }}<br>
+                {{ $retailinvrelhdr->formc }} {{ $retailinvrelhdr->invno }}/{{ $retailinvrelhdr->braco }}<br>
                 {{ \Carbon\Carbon::parse($retailinvrelhdr->invdt)->format('d-m-Y') }}<br>
-                {{ $retailinvrelhdr->topay }}<br>
+                {{ $retailinvrelhdr->topay }} Hari<br>
                 {{ \Carbon\Carbon::parse($retailinvrelhdr->duedt)->format('d-m-Y') }}<br>
                 {{ $retailinvrelhdr->sreno }}<br>
                 {{ $retailinvrelhdr->sorfc }}-{{ $retailinvrelhdr->sorno }}<br>
@@ -196,7 +196,7 @@
                 <tr>
                     <td class="center">{{ $loop->iteration }}</td>
                     <td class="center">{{ $opron }}</td>
-                    <td class="center">{{ $first->mpromas->brand_name ?? '-' }}</td>
+                    <td class="center">{{ $first->mpromas->brand ?? '-' }}</td>
                     <td>{{ $first->prona ?? '-' }}</td>
                     <td class="center">{{ $qty }} {{ $first->stdqu ?? '-' }}</td>
                     <td class="right">{{ formatNumberOnly($first->price, $retailinvrelhdr->curco) }}</td>
