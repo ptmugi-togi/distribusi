@@ -123,7 +123,7 @@
 
       <div class="mt-3 d-flex justify-content-between">
         <a href="{{ route('cn_teknik.index') }}" class="btn btn-secondary">Kembali</a>
-        <button type="submit" class="btn btn-primary">Simpan Data</button>
+        <button id="btn-submit" type="submit" class="btn btn-primary">Simpan Data</button>
       </div>
     </form>
   </section>
@@ -191,181 +191,200 @@
             });
             
             $('#listsd').on('change', function(){
-              let selected = $(this).find(':selected');
+                let selected = $(this).find(':selected');
 
-              $('#cust').val(selected.data('cusno') + ' - ' + selected.data('customer'));
-              $('#cusno').val(selected.data('cusno'));
-              $('#invfc').val(selected.data('invfc'));
-              $('#invno').val(selected.val());
+                $('#cust').val(selected.data('cusno') + ' - ' + selected.data('customer'));
+                $('#cusno').val(selected.data('cusno'));
+                $('#invfc').val(selected.data('invfc'));
+                $('#invno').val(selected.val());
 
-              $('#curco').val(selected.data('curco'));
+                $('#curco').val(selected.data('curco'));
 
-              toggleCrateField(
-                  selected.data('curco'),
-                  selected.data('crate')
-              );
+                toggleCrateField(
+                    selected.data('curco'),
+                    selected.data('crate')
+                );
 
-              let curco = selected.data('curco');
+                let curco = selected.data('curco');
 
-              $('#gross').val(formatCurrency(selected.data('gross'), selected.data('curco')));
-              $('#gross_raw').val(selected.data('gross'));
+                $('#gross').val(formatCurrency(selected.data('gross'), selected.data('curco')));
+                $('#gross_raw').val(selected.data('gross'));
 
-              $('#odisa').val(formatCurrency(selected.data('odisa'), selected.data('curco')));
-              $('#odisa_raw').val(selected.data('odisa'));
+                $('#odisa').val(formatCurrency(selected.data('odisa'), selected.data('curco')));
+                $('#odisa_raw').val(selected.data('odisa'));
 
-              $('#dpper').val(selected.data('dpper'));
-              $('#dpper_raw').val(selected.data('dpper'));
+                $('#dpper').val(selected.data('dpper'));
+                $('#dpper_raw').val(selected.data('dpper'));
 
-              $('#dpamt').val(formatCurrency(selected.data('dpamt'), selected.data('curco')));
-              $('#dpamt_raw').val(selected.data('dpamt'));
+                $('#dpamt').val(formatCurrency(selected.data('dpamt'), selected.data('curco')));
+                $('#dpamt_raw').val(selected.data('dpamt'));
 
-              $('#ntamt').val(formatCurrency(selected.data('ntamt'), selected.data('curco')));
-              $('#ntamt_raw').val(selected.data('ntamt'));
+                $('#ntamt').val(formatCurrency(selected.data('ntamt'), selected.data('curco')));
+                $('#ntamt_raw').val(selected.data('ntamt'));
 
-              $('#txamt').val(formatCurrency(selected.data('txamt'), selected.data('curco')));
-              $('#txamt_raw').val(selected.data('txamt'));
+                $('#txamt').val(formatCurrency(selected.data('txamt'), selected.data('curco')));
+                $('#txamt_raw').val(selected.data('txamt'));
 
-              $('#cramt').val(formatCurrency(selected.data('cramt'), selected.data('curco')));
-              $('#cramt_raw').val(selected.data('cramt'));
+                $('#cramt').val(formatCurrency(selected.data('cramt'), selected.data('curco')));
+                $('#cramt_raw').val(selected.data('cramt'));
 
-              $('#vatax').val(selected.data('vatax'));
-              $('#ortyp').val(selected.data('ortyp'));
+                $('#vatax').val(selected.data('vatax'));
+                $('#ortyp').val(selected.data('ortyp'));
 
-              $('#tax').text('(' + selected.data('vatax') + '%)');
+                $('#tax').text('(' + selected.data('vatax') + '%)');
 
-              // ambil detail
-              $.get("{{ route('get-detail-by-sd-cn-teknik') }}", {
-                  sorno: $('#invno').val()
-              }, function(res){
-                let tableBarang = $('#table_barang');
-                let tableService = $('#table_service');
-                let tableSparepart = $('#table_sparepart');
+                // get detail by sd
+                $.get("{{ route('get-detail-by-sd-cn-teknik') }}", {
+                    sorno: $('#invno').val()
+                }, function(res){
+                    let tableBarang = $('#table_barang');
+                    let tableService = $('#table_service');
+                    let tableSparepart = $('#table_sparepart');
 
-                tableBarang.empty();
-                tableService.empty();
-                tableSparepart.empty();
+                    tableBarang.empty();
+                    tableService.empty();
+                    tableSparepart.empty();
 
-                $('#section_barang').hide();
-                $('#section_service').hide();
-                $('#section_sparepart').hide();
-                $('#no_detail').hide();
+                    $('#section_barang').hide();
+                    $('#section_service').hide();
+                    $('#section_sparepart').hide();
+                    $('#no_detail').hide();
 
-                const hasBarang = res.barang.length > 0;
-                const hasService = res.service.length > 0;
-                const hasSparepart = res.sparepart.length > 0;
+                    const hasBarang = res.barang.length > 0;
+                    const hasService = res.service.length > 0;
+                    const hasSparepart = res.sparepart.length > 0;
 
-                $('.section-detail').show();
+                    $('.section-detail').show();
 
-                if (!hasBarang && !hasService && !hasSparepart) {
-                    $('#no_detail').show();
-                    return;
-                }
+                    if (!hasBarang && !hasService && !hasSparepart) {
+                        $('#no_detail').show();
+                        return;
+                    }
 
-                if (hasBarang) {
-                  $('#section_barang').show();
-                  res.barang.forEach(function(item){
-                      tableBarang.append(`
-                          <tr>
-                              <td>
-                                  ${item.opron} - ${item.prona}
-                                  <input type="hidden" name="tdna_dnlin[]" value="${item.invln}">
-                                  <input type="hidden" name="tdna_opron[]" value="${item.opron}">
-                                  <input type="hidden" name="tdna_tofee[]" value="${item.tofee}">
-                                  <input type="hidden" name="tdna_descr[]" value="${item.descr}">
-                              </td>
+                    if (hasBarang) {
+                    $('#section_barang').show();
+                    res.barang.forEach(function(item){
+                        tableBarang.append(`
+                            <tr>
+                                <td>
+                                    ${item.opron} - ${item.prona}
+                                    <input type="hidden" name="tdna_dnlin[]" value="${item.invln}">
+                                    <input type="hidden" name="tdna_opron[]" value="${item.opron}">
+                                    <input type="hidden" name="tdna_tofee[]" value="${item.tofee}">
+                                    <input type="hidden" name="tdna_descr[]" value="${item.descr}">
+                                </td>
 
-                              <td>
-                                  ${item.trqty} ${item.stdqu}
-                                  <input type="hidden" name="tdna_trqty[]" value="${item.trqty}">
-                              </td>
+                                <td>
+                                    ${item.trqty} ${item.stdqu}
+                                    <input type="hidden" name="tdna_trqty[]" value="${item.trqty}">
+                                </td>
 
-                              <td>
-                                  ${item.lotno ?? '-'}
-                                  <input type="hidden" name="tdna_lotno[]" value="${item.lotno ?? ''}">
-                              </td>
+                                <td>
+                                    ${item.lotno ?? '-'}
+                                    <input type="hidden" name="tdna_lotno[]" value="${item.lotno ?? ''}">
+                                </td>
 
-                              <input type="hidden" name="tdna_gramt[]" value="${item.gramt}">
-                              <input type="hidden" name="tdna_odisa[]" value="${item.odisa}">
-                              <input type="hidden" name="tdna_odisp[]" value="${item.odisp}">
-                              <input type="hidden" name="tdna_ntamt[]" value="${item.netbe}">
-                          </tr>
-                      `);
-                  });
-                }
+                                <input type="hidden" name="tdna_gramt[]" value="${item.gramt}">
+                                <input type="hidden" name="tdna_odisa[]" value="${item.odisa}">
+                                <input type="hidden" name="tdna_odisp[]" value="${item.odisp}">
+                                <input type="hidden" name="tdna_ntamt[]" value="${item.netbe}">
+                            </tr>
+                        `);
+                    });
+                    }
 
-                if (hasService) {
-                  $('#section_service').show();
-                  res.service.forEach(function(item){
-                      tableService.append(`
-                          <tr>
-                              <td>
-                                  ${item.tofee}
-                                  <input type="hidden" name="tdnb_dnlin[]" value="${item.invln}">
-                                  <input type="hidden" name="tdnb_serty[]" value="${item.serty}">
-                                  <input type="hidden" name="tdnb_tofee[]" value="${item.tofee}">
-                              </td>
+                    if (hasService) {
+                    $('#section_service').show();
+                    res.service.forEach(function(item){
+                        tableService.append(`
+                            <tr>
+                                <td>
+                                    ${item.tofee}
+                                    <input type="hidden" name="tdnb_dnlin[]" value="${item.invln}">
+                                    <input type="hidden" name="tdnb_serty[]" value="${item.serty}">
+                                    <input type="hidden" name="tdnb_tofee[]" value="${item.tofee}">
+                                </td>
 
-                              <td>
-                                  ${formatCurrency(item.gramt, curco)}
-                                  <input type="hidden" name="tdnb_gramt[]" value="${item.gramt}">
-                              </td>
+                                <td>
+                                    ${formatCurrency(item.gramt, curco)}
+                                    <input type="hidden" name="tdnb_gramt[]" value="${item.gramt}">
+                                </td>
 
-                              <td class="text-end">
-                                  ${formatCurrency(item.odisa, curco)}
-                                  <input type="hidden" name="tdnb_odisa[]" value="${item.odisa}">
-                                  <input type="hidden" name="tdnb_odisp[]" value="${item.odisp}">
-                              </td>
+                                <td class="text-end">
+                                    ${formatCurrency(item.odisa, curco)}
+                                    <input type="hidden" name="tdnb_odisa[]" value="${item.odisa}">
+                                    <input type="hidden" name="tdnb_odisp[]" value="${item.odisp}">
+                                </td>
 
-                              <td class="text-end">
-                                  ${formatCurrency(item.netbe, curco)}
-                                  <input type="hidden" name="tdnb_ntamt[]" value="${item.netbe}">
-                              </td>
-                          </tr>
-                      `);
-                  });
-                }
+                                <td class="text-end">
+                                    ${formatCurrency(item.netbe, curco)}
+                                    <input type="hidden" name="tdnb_ntamt[]" value="${item.netbe}">
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    }
 
-                if (hasSparepart) {
-                  $('#section_sparepart').show();
-                  res.sparepart.forEach(function(item){
-                      tableSparepart.append(`
-                          <tr>
-                              <td>
-                                  ${item.opron} - ${item.prona}
-                                  <input type="hidden" name="tdnc_opron[]" value="${item.opron}">
-                              </td>
-  
-                              <td>
-                                  ${item.trqty} ${item.stdqu}
-                                  <input type="hidden" name="tdnc_trqty[]" value="${item.trqty}">
-                              </td>
-  
-                              <td>
-                                  ${item.lotno ?? '-'}
-                                  <input type="hidden" name="tdnc_lotno[]" value="${item.lotno ?? ''}">
-                              </td>
-  
-                              <td class="text-end">
-                                  ${formatCurrency(item.price, curco)}
-                                  <input type="hidden" name="tdnc_price[]" value="${item.price}">
-                              </td>
-  
-                              <td class="text-end">
-                                  ${formatCurrency(item.odisa, curco)}
-                                  <input type="hidden" name="tdnc_odisa[]" value="${item.odisa}">
-                                  <input type="hidden" name="tdnc_odisp[]" value="${item.odisp}">
-                              </td>
-  
-                              <td class="text-end">
-                                  ${formatCurrency(item.netbe, curco)}
-                                  <input type="hidden" name="tdnc_gramt[]" value="${item.gramt}">
-                                  <input type="hidden" name="tdnc_ntamt[]" value="${item.netbe}">
-                              </td>
-                          </tr>
-                      `);
-                  });
-                }
-              });
+                    if (hasSparepart) {
+                    $('#section_sparepart').show();
+                    res.sparepart.forEach(function(item){
+                        tableSparepart.append(`
+                            <tr>
+                                <td>
+                                    ${item.opron} - ${item.prona}
+                                    <input type="hidden" name="tdnc_opron[]" value="${item.opron}">
+                                </td>
+    
+                                <td>
+                                    ${item.trqty} ${item.stdqu}
+                                    <input type="hidden" name="tdnc_trqty[]" value="${item.trqty}">
+                                </td>
+    
+                                <td>
+                                    ${item.lotno ?? '-'}
+                                    <input type="hidden" name="tdnc_lotno[]" value="${item.lotno ?? ''}">
+                                </td>
+    
+                                <td class="text-end">
+                                    ${formatCurrency(item.price, curco)}
+                                    <input type="hidden" name="tdnc_price[]" value="${item.price}">
+                                </td>
+    
+                                <td class="text-end">
+                                    ${formatCurrency(item.odisa, curco)}
+                                    <input type="hidden" name="tdnc_odisa[]" value="${item.odisa}">
+                                    <input type="hidden" name="tdnc_odisp[]" value="${item.odisp}">
+                                </td>
+    
+                                <td class="text-end">
+                                    ${formatCurrency(item.netbe, curco)}
+                                    <input type="hidden" name="tdnc_gramt[]" value="${item.gramt}">
+                                    <input type="hidden" name="tdnc_ntamt[]" value="${item.netbe}">
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    }
+                });
+
+                $.get("{{ route('check-invoice-cn-teknik') }}", {
+                    invno: $('#invno').val()
+                }, function(res){
+
+                    if (res.is_paid) {
+                        $('#btn-submit').prop('disabled', true).text('Invoice Sudah Dibayar');
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Invoice Sudah Dibayar',
+                            text: 'Invoice ini telah dibayar sehingga tidak dapat dibuat Credit Note.',
+                            confirmButtonText: 'OK'
+                        });
+
+                        return;
+                    }
+                    $('#btn-submit').prop('disabled', false).text('Simpan Data');
+                });
             });
 
             // crate change

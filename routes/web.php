@@ -347,12 +347,14 @@ Route::get('/cn-dp-project/create', [CnDpProjectController::class,'create'])->mi
 Route::get('/get-listic-cn-dp-project', [CnDpProjectController::class,'getIC'])->name('get-listic-cn-dp-project');
 Route::get('/get-listsc-cn-dp-project', [CnDpProjectController::class,'getSC'])->name('get-listsc-cn-dp-project');
 Route::get('/get-detail-sc-cn-dp-project', [CnDpProjectController::class,'getDetailSc'])->name('get-detail-by-sc-cn-dp-project');
+Route::get('/check-invoice-cn-dp-project', [CnDpProjectController::class,'checkInvoice'])->name('check-invoice-cn-dp-project');
 Route::post('/cn-dp-project/store', [CnDpProjectController::class,'store'])->middleware('auth')->name('cn_dp_project.store');
 
 Route::get('/cn-retail/index', [CnRetailController::class,'index'])->middleware('auth')->name('cn_retail.index');
 Route::get('/cn-retail/create', [CnRetailController::class,'create'])->middleware('auth')->name('cn_retail.create');
 Route::get('/get-listic-cn-retail', [CnRetailController::class,'getIC'])->name('get-listic-cn-retail');
 Route::get('/get-listsc-cn-retail', [CnRetailController::class,'getSC'])->name('get-listsc-cn-retail');
+Route::get('/check-invoice-cn-retail', [CnRetailController::class,'checkInvoice'])->name('check-invoice-cn-retail');
 Route::get('/get-detail-sc-cn-retail', [CnRetailController::class,'getDetailSc'])->name('get-detail-by-sc-cn-retail');
 Route::post('/cn-retail/store', [CnRetailController::class,'store'])->middleware('auth')->name('cn_retail.store');
 
@@ -360,6 +362,7 @@ Route::get('/cn-teknik/index', [CnTeknikController::class,'index'])->middleware(
 Route::get('/cn-teknik/create', [CnTeknikController::class,'create'])->middleware('auth')->name('cn_teknik.create');
 Route::get('/get-listsc-cn-teknik', [CnTeknikController::class,'getSD'])->name('get-listsd-cn-teknik');
 Route::get('/get-detail-sd-cn-teknik', [CnTeknikController::class,'getDetailSd'])->name('get-detail-by-sd-cn-teknik');
+Route::get('/check-invoice-cn-teknik', [CnTeknikController::class,'checkInvoice'])->name('check-invoice-cn-teknik');
 Route::post('/cn-teknik/store', [CnTeknikController::class,'store'])->middleware('auth')->name('cn_teknik.store');
 
 Route::get('/dp-inv-rel/index', [DpInvRelController::class,'index'])->middleware('auth')->name('dp_inv_rel.index');

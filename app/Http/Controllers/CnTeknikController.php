@@ -255,4 +255,26 @@ class CnTeknikController extends Controller
             'sparepart' => $sparepart,
         ]);
     }
+
+    public function checkInvoice(Request $request)
+    {
+        $userBraco = Auth::user()->cabang;
+
+        $invoice = DB::table('tinmas')
+            ->where('braco', $userBraco)
+            ->where('formc', 'SD')
+            ->where('invno', $request->invno)
+            ->first();
+
+        $isPaid = false;
+
+        if ($invoice) {
+            $isPaid = !is_null($invoice->cramt) || !is_null($invoice->caval);
+        }
+
+        return response()->json([
+            'invoice' => $invoice,
+            'is_paid' => $isPaid,
+        ]);
+    }
 }

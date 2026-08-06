@@ -132,7 +132,7 @@
 
       <div class="mt-3 d-flex justify-content-between">
         <a href="{{ route('cn_retail.index') }}" class="btn btn-secondary">Kembali</a>
-        <button type="submit" class="btn btn-primary">Simpan Data</button>
+        <button id="btn-submit" type="submit" class="btn btn-primary">Simpan Data</button>
       </div>
     </form>
   </section>
@@ -256,66 +256,88 @@
                     $('#cramt').val(formatCurrency(blamt, curco));
                     $('#cramt_raw').val(blamt);
 
-                    // get detail by sc
-                    $.get("{{ route('get-detail-by-sc-cn-retail') }}", { sorno: item.invno }, function(res){
-                        let container = $('#table_detail');
-                        container.empty();
-                        
-                        if(!res.length){
+                    $.get("{{ route('check-invoice-cn-retail') }}", {
+                        sorno: $('#sorno').val()
+                    }, function(res){
+
+                        if (res.is_paid) {
+                            $('#btn-submit').prop('disabled', true).text('Invoice Sudah Dibayar');
+
+                            $('#table_detail').empty();
                             $('.section-detail').hide();
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Invoice Sudah Dibayar',
+                                text: 'Invoice ini telah dibayar sehingga tidak dapat dibuat Credit Note.',
+                                confirmButtonText: 'OK'
+                            });
+
                             return;
                         }
+                        $('#btn-submit').prop('disabled', false).text('Simpan Data');
 
-                        $('.section-detail').show();
-
-                        if(!res.length){
-                            container.html('<p class="text-muted">Tidak ada detail</p>');
-                            return;
-                        }
-
-                        res.forEach((item, i) => {
-                            let html = `
-                            <tr>
-                                <td>
-                                    ${item.opron} - ${item.prona}
-                                    <input type="hidden" name="opron[]" value="${item.opron}">
-                                    <input type="hidden" name="prona[]" value="${item.prona}">
-                                </td>
-
-                                <td>
-                                    ${item.qtyin} ${item.stdqu}
-                                    <input type="hidden" name="qtycn[]" value="${item.qtyin}">
-                                    <input type="hidden" name="stdqu[]" value="${item.stdqu}">
-                                </td>
-
-                                <td style="text-align: right";>
-                                    ${formatCurrency(item.price, curco)}
-                                    <input type="hidden" name="price_dtl[]" value="${item.price}">
-                                    <input type="hidden" name="gramt_dtl[]" value="${item.gramt}">
-                                </td>
-
-                                <td style="text-align: right";>
-                                    ${formatCurrency(item.odisa, curco)}
-                                    <input type="hidden" name="odisa_dtl[]" value="${item.odisa}">
-                                </td>
-
-                                <td style="text-align: right";>
-                                    ${formatCurrency(item.dpamt, curco)}
-                                    <input type="hidden" name="dpamt_dtl[]" value="${item.dpamt}">
-                                </td>
-                                    
-                                <td style="text-align: right";>
-                                    ${formatCurrency(item.netbe, curco)}
-                                    <input type="hidden" name="ntamt_dtl[]" value="${item.netbe}">
-                                </td>
-
-                                <td>
-                                    <input type="text" class="form-control" name="noted[]">
-                                </td>
-                            </tr>
-                            `;
-
-                            container.append(html);
+                        // get detail by sc
+                        $.get("{{ route('get-detail-by-sc-cn-retail') }}", { sorno: item.invno }, function(res){
+                            let container = $('#table_detail');
+                            container.empty();
+                            
+                            if(!res.length){
+                                $('.section-detail').hide();
+                                return;
+                            }
+    
+                            $('.section-detail').show();
+    
+                            if(!res.length){
+                                container.html('<p class="text-muted">Tidak ada detail</p>');
+                                return;
+                            }
+    
+                            res.forEach((item, i) => {
+                                let html = `
+                                <tr>
+                                    <td>
+                                        ${item.opron} - ${item.prona}
+                                        <input type="hidden" name="opron[]" value="${item.opron}">
+                                        <input type="hidden" name="prona[]" value="${item.prona}">
+                                    </td>
+    
+                                    <td>
+                                        ${item.qtyin} ${item.stdqu}
+                                        <input type="hidden" name="qtycn[]" value="${item.qtyin}">
+                                        <input type="hidden" name="stdqu[]" value="${item.stdqu}">
+                                    </td>
+    
+                                    <td style="text-align: right";>
+                                        ${formatCurrency(item.price, curco)}
+                                        <input type="hidden" name="price_dtl[]" value="${item.price}">
+                                        <input type="hidden" name="gramt_dtl[]" value="${item.gramt}">
+                                    </td>
+    
+                                    <td style="text-align: right";>
+                                        ${formatCurrency(item.odisa, curco)}
+                                        <input type="hidden" name="odisa_dtl[]" value="${item.odisa}">
+                                    </td>
+    
+                                    <td style="text-align: right";>
+                                        ${formatCurrency(item.dpamt, curco)}
+                                        <input type="hidden" name="dpamt_dtl[]" value="${item.dpamt}">
+                                    </td>
+                                        
+                                    <td style="text-align: right";>
+                                        ${formatCurrency(item.netbe, curco)}
+                                        <input type="hidden" name="ntamt_dtl[]" value="${item.netbe}">
+                                    </td>
+    
+                                    <td>
+                                        <input type="text" class="form-control" name="noted[]">
+                                    </td>
+                                </tr>
+                                `;
+    
+                                container.append(html);
+                            });
                         });
                     });
                 });

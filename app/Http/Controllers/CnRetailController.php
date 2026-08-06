@@ -206,4 +206,26 @@ class CnRetailController extends Controller
 
         return response()->json($detailsc);
     }
+
+    public function checkInvoice(Request $request)
+    {
+        $userBraco = Auth::user()->cabang;
+
+        $invoice = DB::table('tinmas')
+            ->where('braco', $userBraco)
+            ->where('formc', 'SC')
+            ->where('invno', $request->sorno)
+            ->first();
+
+        $isPaid = false;
+
+        if ($invoice) {
+            $isPaid = !is_null($invoice->cramt) || !is_null($invoice->caval);
+        }
+
+        return response()->json([
+            'invoice' => $invoice,
+            'is_paid' => $isPaid,
+        ]);
+    }
 }

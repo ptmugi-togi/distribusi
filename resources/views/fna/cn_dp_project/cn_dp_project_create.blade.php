@@ -129,7 +129,7 @@
 
       <div class="mt-3 d-flex justify-content-between">
         <a href="{{ route('cn_dp_project.index') }}" class="btn btn-secondary">Kembali</a>
-        <button type="submit" class="btn btn-primary">Simpan Data</button>
+        <button id="btn-submit" type="submit" class="btn btn-primary">Simpan Data</button>
       </div>
     </form>
   </section>
@@ -241,6 +241,26 @@
               $('#ortyp').val(selected.data('ortyp'));
 
               $('#tax').text('(' + selected.data('vatax') + '%)');
+
+              $.get("{{ route('check-invoice-cn-dp-project') }}", {
+                sorfc: $('#sorfc').val(),
+                  sorno: $('#sorno').val()
+              }, function(res){
+
+                  if (res.is_paid) {
+                      $('#btn-submit').prop('disabled', true).text('Invoice Sudah Dibayar');
+
+                      Swal.fire({
+                          icon: 'warning',
+                          title: 'Invoice Sudah Dibayar',
+                          text: 'Invoice ini telah dibayar sehingga tidak dapat dibuat Credit Note.',
+                          confirmButtonText: 'OK'
+                      });
+
+                      return;
+                  }
+                  $('#btn-submit').prop('disabled', false).text('Simpan Data');
+              });
 
               // ambil detail
               $.get("{{ route('get-detail-by-sc-cn-dp-project') }}", { sorno: $('#invno').val() }, function(res){

@@ -202,4 +202,26 @@ class CnDpProjectController extends Controller
 
         return response()->json($detailsc);
     }
+
+    public function checkInvoice(Request $request)
+    {
+        $userBraco = Auth::user()->cabang;
+
+        $invoice = DB::table('tinmas')
+            ->where('braco', $userBraco)
+            ->where('sorfc', $request->sorfc)
+            ->where('sorno', $request->sorno)
+            ->first();
+
+        $isPaid = false;
+
+        if ($invoice) {
+            $isPaid = !is_null($invoice->cramt) || !is_null($invoice->caval);
+        }
+
+        return response()->json([
+            'invoice' => $invoice,
+            'is_paid' => $isPaid,
+        ]);
+    }
 }
