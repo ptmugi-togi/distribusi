@@ -81,7 +81,7 @@
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    
    {{-- enter -> tab button --}}
-    <script>
+    {{-- <script>
         function focusNext(current) {
             const fields = $("input, select, textarea")
                 .filter(function () {
@@ -113,7 +113,7 @@
         $(document).on("select2:select", "select", function () {
             focusNext(this);
         });
-    </script>
+    </script> --}}
     {{-- stack scripts --}}
         @stack('scripts')
     {{-- end stack scripts --}}
