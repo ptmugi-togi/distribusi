@@ -41,8 +41,8 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="invtype" class="form-label">Inventory Type</label>
-                        <select class="form-control select2" name="invtype" id="invtype">
+                        <label for="itype" class="form-label">Inventory Type</label>
+                        <select class="form-control select2" name="itype" id="itype">
                             <option value="" disabled selected>Pilih Inventory Type</option>
                             @foreach ($mitype as $mt )
                                 <option value="{{ $mt->itype_id }}" {{ old('itype_id') == $mt->itype_id ? 'selected' : '' }}>
@@ -53,8 +53,8 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="subgroup" class="form-label">Product Sub-Group</label>
-                        <select class="form-control select2" name="subgroup" id="subgroup">
+                        <label for="sgrup" class="form-label">Product Sub-Group</label>
+                        <select class="form-control select2" name="sgrup" id="sgrup">
                             <option value="" disabled selected>Pilih Product Sub-Group</option>
                             @foreach ($msgrup as $ms )
                                 <option value="{{ $ms->sgrup_id }}" {{ old('sgrup_id') == $ms->sgrup_id ? 'selected' : '' }}>
@@ -65,12 +65,12 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="subsubgroup" class="form-label">Product Sub Sub Group</label>
-                        <select class="form-control select2" name="subsubgroup" id="subsubgroup">
+                        <label for="ssgrup" class="form-label">Product Sub Sub Group</label>
+                        <select class="form-control select2" name="ssgrup" id="ssgrup">
                             <option value="" disabled selected>Pilih Product Sub Sub Group</option>
                             @foreach ($mssgrup as $mss )
                                 <option value="{{ $mss->ssgrup_id }}" {{ old('ssgrup_id') == $mss->ssgrup_id ? 'selected' : '' }}>
-                                    {{ $mss->descr_ssgrup }}
+                                    {{ $mss->ssgrup_id }} - {{ $mss->descr_ssgrup }}
                                 </option>
                             @endforeach
                         </select>
@@ -80,9 +80,9 @@
                         <label for="sort" class="form-label">Sort By</label>
                         <select class="form-control select2" name="sort" id="sort">
                             <option value="" disabled selected>Pilih Sort By</option>
-                            <option value="">Product No.</option>
-                            <option value="">Product Name</option>
-                            <option value="">Brand</option>
+                            <option value="opron">Product No.</option>
+                            <option value="prona">Product Name</option>
+                            <option value="brand">Brand</option>
                         </select>
                     </div>
                 </div>
@@ -101,9 +101,9 @@
                 // ambil elemen input
                 const warco = document.getElementById('warco').value.trim();
                 const asof = document.getElementById('asof').value.trim();
-                const invtype = document.getElementById('invtype').value.trim();
-                const subgroup = document.getElementById('subgroup').value.trim();
-                const subsubgroup = document.getElementById('subsubgroup').value.trim();
+                const itype = document.getElementById('itype').value.trim();
+                const sgrup = document.getElementById('sgrup').value.trim();
+                const ssgrup = document.getElementById('ssgrup').value.trim();
                 const sort = document.getElementById('sort').value.trim();
 
                 // cek required field
@@ -132,9 +132,9 @@
                 let params = new URLSearchParams({
                     warco: warco,
                     asof: asof,
-                    invtype: invtype,
-                    subgroup: subgroup,
-                    subsubgroup: subsubgroup,
+                    itype: itype,
+                    sgrup: sgrup,
+                    ssgrup: ssgrup,
                     sort: sort,
                 });
 

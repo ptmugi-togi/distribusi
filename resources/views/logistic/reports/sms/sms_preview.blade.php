@@ -42,32 +42,35 @@
 
 {{-- Header dokumen --}}
 <htmlpageheader name="docHeader">
-    <table class="no-border" style="margin-bottom:5px; font-size:8pt;">
+    <table class="no-border" style="margin-bottom:5px; font-size:7pt;">
         <tr>
-            <td style="width:20%; vertical-align:top;">
+            <td style="width:22%; vertical-align:top;">
                 PT. MUGI PUSAT <br>
                 WAREHOUSE <br>
                 INVENTORY TYPE <br>
                 PRODUCT SUB-GROUP <br>
+                PRODUCT SUB - SUBGROUP <br>
             </td>
             <td style="width: 1%; vertical-align:top;">
                 &nbsp;<br>
                 :<br>
                 :<br>
+                :<br>
                 :
             </td>
-            <td style="width: 12%; vertical-align:top;">
+            <td style="width: 18%; vertical-align:top;">
                 &nbsp;<br>
                 {{ $warco }}<br>
-                {{ $invtype ?? '-' }}<br>
-                {{ $subgroup ?? '-' }}
+                {{ $itype ?? '-' }}<br>
+                {{ $sgrup ?? '-' }}<br>
+                {{ $ssgrup ?? '-' }}
             </td>
             <td style="width:33%; text-align:center; vertical-align:top;">
                 STOCK MOVEMENT SUMMARY <br>
                 --------------------------------------------- <br>
                 AS OF : {{ \Carbon\Carbon::parse($asof)->format('d-m-Y') }}
             </td>
-            <td style="width: 13%"></td>
+            <td style="width: 5%"></td>
             <td style="width:8%; vertical-align:top;">
                 DATE <br>
                 TIME <br>
@@ -105,40 +108,71 @@
     </thead>
     <tbody>
         @php
-            $totalAwal = 0;
-            $totalMasuk = 0;
-            $totalKeluar = 0;
-            $totalAkhir = 0;
+            $group = $items->groupBy('descr_itype');
+
+            $grandAwal = 0;
+            $grandMasuk = 0;
+            $grandKeluar = 0;
+            $grandAkhir = 0;
         @endphp
 
-        @foreach($items as $i)
-        <tr>
-            <td>{{ $i->opron }}</td>
-            <td>{{ $i->prona }}</td>
-            <td>{{ $i->stdqu }}</td>
-            <td class="right">{{ number_format($i->awal,0) }}</td>
-            <td class="right">{{ number_format($i->masuk,0) }}</td>
-            <td class="right">{{ number_format($i->keluar,0) }}</td>
-            <td class="right">{{ number_format($i->akhir,0) }}</td>
-        </tr>
+        @foreach($group as $namaGroup => $rows)
+            <tr>
+                <td colspan="7">
+                    <strong>Inventory Type : {{ $namaGroup }}</strong>
+                </td>
+            </tr>
 
-        @php
-            $totalAwal += $i->awal;
-            $totalMasuk += $i->masuk;
-            $totalKeluar += $i->keluar;
-            $totalAkhir += $i->akhir;
-        @endphp
+            @php
+            $subAwal = 0;
+            $subMasuk = 0;
+            $subKeluar = 0;
+            $subAkhir = 0;
+            @endphp
 
+            @foreach($rows as $i)
+
+                <tr>
+                    <td>{{ $i->opron }}</td>
+                    <td>{{ $i->prona }}</td>
+                    <td>{{ $i->stdqu }}</td>
+                    <td class="right">{{ number_format($i->awal) }}</td>
+                    <td class="right">{{ number_format($i->masuk) }}</td>
+                    <td class="right">{{ number_format($i->keluar) }}</td>
+                    <td class="right">{{ number_format($i->akhir) }}</td>
+                </tr>
+
+                @php
+                    $subAwal += $i->awal;
+                    $subMasuk += $i->masuk;
+                    $subKeluar += $i->keluar;
+                    $subAkhir += $i->akhir;
+
+                    $grandAwal += $i->awal;
+                    $grandMasuk += $i->masuk;
+                    $grandKeluar += $i->keluar;
+                    $grandAkhir += $i->akhir;
+                @endphp
+
+            @endforeach
+
+            <tr style="font-weight:bold">
+                <td colspan="3">TOTAL {{ $namaGroup }}</td>
+                <td class="right">{{ number_format($subAwal) }}</td>
+                <td class="right">{{ number_format($subMasuk) }}</td>
+                <td class="right">{{ number_format($subKeluar) }}</td>
+                <td class="right">{{ number_format($subAkhir) }}</td>
+            </tr>
         @endforeach
     </tbody>
 
     <tfoot>
         <tr>
-            <th colspan="3" class="left">TOTAL:</th>
-            <th class="right">{{ number_format($totalAwal,0) }}</th>
-            <th class="right">{{ number_format($totalMasuk,0) }}</th>
-            <th class="right">{{ number_format($totalKeluar,0) }}</th>
-            <th class="right">{{ number_format($totalAkhir,0) }}</th>
+            <th colspan="3">GRAND TOTAL</th>
+            <th class="right">{{ number_format($grandAwal) }}</th>
+            <th class="right">{{ number_format($grandMasuk) }}</th>
+            <th class="right">{{ number_format($grandKeluar) }}</th>
+            <th class="right">{{ number_format($grandAkhir) }}</th>
         </tr>
     </tfoot>
 </table>

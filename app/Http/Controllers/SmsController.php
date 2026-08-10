@@ -41,8 +41,12 @@ class SmsController extends Controller
 
     public function getData(Request $req)
     {
-        $warco = $req->warco;
-        $asof  = $req->asof;
+        $warco  = $req->warco;
+        $asof   = $req->asof;
+        $itype  = $req->itype;
+        $sgrup  = $req->sgrup;
+        $ssgrup = $req->ssgrup;
+        $sort   = $req->sort;
 
         // Cari periode open terakhir di tperiode
         $lastOpen = DB::table('tperiode')
@@ -106,6 +110,9 @@ class SmsController extends Controller
         $periodList = "'" . implode("','", $periods) . "'";
 
         $data = DB::table('mpromas as p')
+            ->leftJoin('mitype_tbl as it', 'it.itype_id', '=', 'p.itype_id')
+            ->leftJoin('msgrup as sg', 'sg.sgrup_id', '=', 'p.sgrup_id')
+            ->leftJoin('mssgrup as ssg', 'ssg.ssgrup_id', '=', 'p.ssgrup_id')
             ->whereIn('p.opron', $oprons)
 
             ->leftJoin(DB::raw("
@@ -140,16 +147,39 @@ class SmsController extends Controller
                 ) AS tk
             "), "tk.opron", "=", "p.opron")
 
+            ->when($itype, function ($q) use ($itype) {
+                $q->where('p.itype_id', $itype);
+            })
+            ->when($sgrup, function ($q) use ($sgrup) {
+                $q->where('p.sgrup_id', $sgrup);
+            })
+            ->when($ssgrup, function ($q) use ($ssgrup) {
+                $q->where('p.ssgrup_id', $ssgrup);
+            })
+
             ->select(
                 'p.opron',
                 'p.prona',
                 'p.stdqu',
-                DB::raw("COALESCE(sa.awal,0) AS awal"),
-                DB::raw("COALESCE(tm.masuk,0) AS masuk"),
-                DB::raw("COALESCE(tk.keluar,0) AS keluar"),
-                DB::raw("(COALESCE(sa.awal,0) + COALESCE(tm.masuk,0) - COALESCE(tk.keluar,0)) AS akhir")
+                'it.descr_itype',
+                'sg.sgrup_id',
+                'sg.descr_sgrup',
+                'ssg.ssgrup_id',
+                'ssg.descr_ssgrup',
+                DB::raw("COALESCE(sa.awal,0) awal"),
+                DB::raw("COALESCE(tm.masuk,0) masuk"),
+                DB::raw("COALESCE(tk.keluar,0) keluar"),
+                DB::raw("(COALESCE(sa.awal,0)+COALESCE(tm.masuk,0)-COALESCE(tk.keluar,0)) akhir")
             )
-            ->orderBy('p.opron')
+                        
+            ->when($sort == 'opron', fn($q) => $q->orderBy('p.opron'))
+            ->when($sort == 'prona', fn($q) => $q->orderBy('p.prona'))
+            ->when($sort == 'brand', fn($q) => $q->orderBy('p.brand'))
+            ->when(!$sort, function ($q) {
+                $q->orderBy('it.descr_itype')
+                ->orderBy('ssg.descr_ssgrup')
+                ->orderBy('p.opron');
+            })
             ->get();
 
         return $data;
@@ -163,13 +193,25 @@ class SmsController extends Controller
             return "<h3>{$data['error']}</h3>";
         }
 
+        $itype = DB::table('mitype_tbl')
+            ->where('itype_id', $req->itype)
+            ->value('descr_itype');
+
+        $sgrup = DB::table('msgrup')
+            ->where('sgrup_id', $req->sgrup)
+            ->value('descr_sgrup');
+
+        $ssgrup = DB::table('mssgrup')
+            ->where('ssgrup_id', $req->ssgrup)
+            ->value('descr_ssgrup');
+
         $html = view('logistic.reports.sms.sms_preview', [
             'items' => $data,
             'asof' => $req->asof,
             'warco' => $req->warco,
-            'invtype' => $req->invtype,
-            'subgroup' => $req->subgroup,
-            'subsubgroup' => $req->subsubgroup
+            'itype' => $itype,
+            'sgrup' => $sgrup,
+            'ssgrup' => $ssgrup
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([
@@ -177,13 +219,6 @@ class SmsController extends Controller
             'margin_top' => 30,
             'margin_bottom' => 35,
         ]);
-
-        
-        $html = view('logistic.reports.sms.sms_preview', [
-            'items' => $data,
-            'asof' => $req->asof,
-            'warco' => $req->warco
-            ])->render();
 
         $mpdf->WriteHTML($html);
         
