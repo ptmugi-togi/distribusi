@@ -62,30 +62,27 @@
                 
                 <!-- Modal Detail Lot -->
                 <div class="modal fade" id="lotModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Detail Lot</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Lot No</th>
-                                    <th>Total Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody id="lotTableBody">
-                            </tbody>
-                        </table>
-
-                    </div>
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detail Lot</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body modal-scrollable">
+                            <table id="lotTable" class="table table-bordered table-striped w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Lot No</th>
+                                        <th>Total Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lotTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-
               </div>
             </div>
           </div>
@@ -96,7 +93,6 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-
             $(document).on('click', '.clickable-row', function() {
                 let opron = $(this).data('opron');
                 let warco = $(this).data('warco');
@@ -114,7 +110,7 @@
                             rows = `<tr><td colspan="2" class="text-center">Tidak ada data lot</td></tr>`;
                         } else {
                             data.forEach(item => {
-                                if (item.toqoh !== 0) {
+                                if (item.toqoh != 0) {
                                     rows += `
                                         <tr>
                                             <td>${item.lotno}</td>
@@ -127,12 +123,28 @@
 
                         $("#lotTableBody").html(rows);
 
+                        // Destroy DataTable jika sudah pernah dibuat
                         var modal = new bootstrap.Modal(document.getElementById('lotModal'));
                         modal.show();
+
+                        $('#lotModal').one('shown.bs.modal', function () {
+
+                            if ($.fn.DataTable.isDataTable('#lotTable')) {
+                                $('#lotTable').DataTable().clear().destroy();
+                            }
+
+                            let table = $('#lotTable').DataTable({
+                                destroy: true,
+                                responsive: true,
+                                autoWidth: false,
+                                pageLength: 10
+                            });
+
+                            table.columns.adjust().draw();
+                        });
                     }
                 });
             });
-
         });
     </script>
 @endpush
