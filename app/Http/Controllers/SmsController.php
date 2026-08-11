@@ -14,7 +14,9 @@ class SmsController extends Controller
      */
     public function create()
     {
-        $mwarco = DB::table('mwarco_tbl')->get();
+        $mwarco = DB::table('mwarco_tbl')
+                ->where('braco', Auth::user()->cabang)
+                ->get();
 
         $mitype = DB::table('mitype_tbl')->get();
 
