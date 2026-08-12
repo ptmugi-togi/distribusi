@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Mformcode extends Model
 {
     protected $table = 'mformcode_tbl';
-    protected $primaryKey = 'formc';
+    protected $primaryKey = 'bracoformc';
     protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
+        'bracoformc',
+        'braco',
         'formc',
         'descr',
         'pos1',
@@ -22,6 +24,7 @@ class Mformcode extends Model
         'name3',
         'pos4',
         'name4',
-        'docd', 
+        'docd1', 
+        'docd2', 
     ];
 }

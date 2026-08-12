@@ -5,6 +5,7 @@ use App\Http\Controllers\ClsController;
 use App\Http\Controllers\DepoController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CinduController;
+use App\Http\Controllers\FormCodeController;
 use App\Http\Controllers\ItypeController;
 use App\Http\Controllers\PgrupController;
 use App\Http\Controllers\MsgrupController;
@@ -93,6 +94,14 @@ Route::resource('/mpgrup',PgrupController::class)->middleware('auth');
 Route::resource('/mbrand',BrandController::class)->middleware('auth');
 Route::resource('/mitype',ItypeController::class)->middleware('auth');
 Route::resource('/mcls',ClsController::class)->middleware('auth');
+
+Route::get('/formc', [FormCodeController::class,'index'])->middleware('auth')->name('formc.index');
+Route::get('/formc/create', [FormCodeController::class,'create'])->middleware('auth')->name('formc.create');
+Route::post('/formc/store', [FormCodeController::class,'store'])->middleware('auth')->name('formc.store');
+Route::get('/formc/detail/{id}', [FormCodeController::class,'show'])->middleware('auth')->name('formc.show');
+Route::get('/formc/edit/{id}', [FormCodeController::class,'edit'])->middleware('auth')->name('formc.edit');
+Route::put('/formc/update/{id}', [FormCodeController::class,'update'])->middleware('auth')->name('formc.update');
+Route::delete('/formc/delete/{id}', [FormCodeController::class,'destroy'])->middleware('auth')->name('formc.delete');
 
 // Route::get('/mpromas',[PromasController::class,'index']);
 // Route::post('/mpromas',[PromasController::class,'store']);

@@ -14,78 +14,83 @@
           <i class="bi bi-menu-button-wide"></i><span>Master</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-            <?php if(auth()->user()->level=="IT"){ ?>
+          <li>
+              <a href="/mbrand">
+              <i class="bi bi-circle"></i><span>Brand</span>
+              </a>
+          </li>  
+          <li>
+              <a href="/mbranch">
+              <i class="bi bi-circle"></i><span>Branch</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mcls">
+              <i class="bi bi-circle"></i><span>Class</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mcindu">
+              <i class="bi bi-circle"></i><span>Customer Industry</span>
+              </a>
+          </li>
+          <li>
+              <a href="/cusmas">
+              <i class="bi bi-circle"></i><span>Customer Master</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mdepo">
+              <i class="bi bi-circle"></i><span>Depo</span>
+              </a>
+          </li>
+          <li>
+              <a href="{{ route('formc.index') }}">
+              <i class="bi bi-circle"></i><span>Form Code</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mitype">
+              <i class="bi bi-circle"></i><span>Inventory Type</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mpromas">
+              <i class="bi bi-circle"></i><span>Product</span>
+              </a>
+          </li>
+          <li>
+              <a href="/mpgrup">
+              <i class="bi bi-circle"></i><span>Product Group</span>
+              </a>
+          </li>
+          <?php if(auth()->user()->level=="IT"){ ?>
             <li class="{{ request()->is('register') ? 'active' : '' }}">
                 <a href="/register">
                 <i class="bi bi-circle"></i><span>REGISTER</span>
                 </a>
+            </li>
+          <?php } ?>
+          <li>
+              <a href="/msreno">
+              <i class="bi bi-circle"></i><span>Sales Rep</span>
+              </a>
           </li>
-            <?php } ?>
-            <li>
-                <a href="/ssgrup">
-                <i class="bi bi-circle"></i><span>SubSubGroup</span>
-                </a>
-            </li>
-            <li>
-                <a href="/msgrup">
-                <i class="bi bi-circle"></i><span>SubGroup</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mpgrup">
-                <i class="bi bi-circle"></i><span>Product Group</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mbrand">
-                <i class="bi bi-circle"></i><span>Brand</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mitype">
-                <i class="bi bi-circle"></i><span>Inventory Type</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mcls">
-                <i class="bi bi-circle"></i><span>Class</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mpromas">
-                <i class="bi bi-circle"></i><span>Product</span>
-                </a>
-            </li>
-            <li>
-                <a href="/msreno">
-                <i class="bi bi-circle"></i><span>Sales Rep</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mcindu">
-                <i class="bi bi-circle"></i><span>Customer Industry</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mstmas">
-                <i class="bi bi-circle"></i><span>Shipment</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mbranch">
-                <i class="bi bi-circle"></i><span>Branch</span>
-                </a>
-            </li>
-            <li>
-                <a href="/mdepo">
-                <i class="bi bi-circle"></i><span>Depo</span>
-                </a>
-            </li>
-            <li>
-                <a href="/cusmas">
-                <i class="bi bi-circle"></i><span>Customer Master</span>
-                </a>
-            </li>
+          <li>
+              <a href="/mstmas">
+              <i class="bi bi-circle"></i><span>Shipment</span>
+              </a>
+          </li>
+          <li>
+              <a href="/msgrup">
+              <i class="bi bi-circle"></i><span>SubGroup</span>
+              </a>
+          </li>
+          <li>
+              <a href="/ssgrup">
+              <i class="bi bi-circle"></i><span>SubSubGroup</span>
+              </a>
+          </li>
         </ul>
       </li>
 
