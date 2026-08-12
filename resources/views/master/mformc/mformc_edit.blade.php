@@ -39,7 +39,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Form Code</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control text-uppercase" id="formc" name="formc" value="{{ $formc->formc }}" required>
+                        <input type="text" class="form-control text-uppercase" id="formc" name="formc" value="{{ $formc->formc }}" required readonly style="background-color:#e9ecef">
                     </div>
 
                     <div class="col-md-6">
