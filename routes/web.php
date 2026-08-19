@@ -48,6 +48,7 @@ use App\Http\Controllers\ProjectInvRelController;
 use App\Http\Controllers\RetailInvRelController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Http\Controllers\WoffController;
+use App\Http\Controllers\BukuPenjualanController;
 use App\Http\Controllers\PaymentListController;
 use App\Http\Controllers\ArWoffListController;
 use App\Http\Controllers\AgingArByInvoiceController;
@@ -428,6 +429,9 @@ Route::put('/writeoff-ar/update/{id}', [WoffController::class,'update'])->middle
 
 Route::get('/payment-list/create', [PaymentListController::class,'create'])->middleware('auth')->name('payment_list.create');
 Route::get('/payment-list/preview', [PaymentListController::class, 'previewPaymentList'])->middleware('auth')->name('payment_list.preview');
+
+Route::get('/buku-penjualan/create', [BukuPenjualanController::class,'create'])->middleware('auth')->name('buku_penjualan.create');
+Route::get('/buku-penjualan/preview', [BukuPenjualanController::class,'previewBukuPenjualan'])->middleware('auth')->name('buku_penjualan.preview');
 
 Route::get('/ar-woff-list/create', [ArWoffListController::class,'create'])->middleware('auth')->name('ar_woff_list.create');
 Route::get('/ar-woff-list/preview', [ArWoffListController::class, 'previewArWoffList'])->middleware('auth')->name('ar_woff_list.preview');

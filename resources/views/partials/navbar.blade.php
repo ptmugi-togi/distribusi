@@ -174,8 +174,8 @@
               </a>
               <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
                 <li>
-                  <a href="{{ route('payment_list.create') }}">
-                  <i class="bi bi-circle"></i><span>Payment List</span>
+                  <a href="{{ route('aging_ar_by_invoice.create') }}">
+                  <i class="bi bi-circle"></i><span>Aging Ar By Invoice List</span>
                   </a>
                 </li>
               </ul>
@@ -188,8 +188,8 @@
               </ul>
               <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
                 <li>
-                  <a href="{{ route('aging_ar_by_invoice.create') }}">
-                  <i class="bi bi-circle"></i><span>Aging Ar By Invoice List</span>
+                  <a href="{{ route('buku_penjualan.create') }}">
+                  <i class="bi bi-circle"></i><span>Buku Penjualan</span>
                   </a>
                 </li>
               </ul>
@@ -197,6 +197,13 @@
                 <li>
                   <a href="{{ route('cust_trans_history.create') }}">
                   <i class="bi bi-circle"></i><span>Customer Transaction History</span>
+                  </a>
+                </li>
+              </ul>
+              <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
+                <li>
+                  <a href="{{ route('payment_list.create') }}">
+                  <i class="bi bi-circle"></i><span>Payment List</span>
                   </a>
                 </li>
               </ul>
