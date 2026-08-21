@@ -54,7 +54,7 @@ class BukuPenjualanController extends Controller
                 'h.invid',
                 'h.invno',
                 'h.invdt',
-                'h.gramt',
+                'h.gramt as header_gramt',
                 'h.odisa',
                 'h.dpamt',
                 'h.instf',
@@ -64,6 +64,7 @@ class BukuPenjualanController extends Controller
                 'h.curco',
                 'h.sorfc',
                 'h.sorno',
+                'h.invtp',
 
                 // CUSTOMER
                 'c.cusna',
@@ -98,7 +99,7 @@ class BukuPenjualanController extends Controller
                 'h.invid',
                 'h.invno',
                 'h.invdt',
-                'h.gramt',
+                'h.gramt as header_gramt',
                 'h.odisa',
                 'h.dpamt',
                 'h.instf',
@@ -110,6 +111,7 @@ class BukuPenjualanController extends Controller
                 'h.donom',
                 'h.sorfc',
                 'h.sorno',
+                'h.invtp',
 
                 // CUSTOMER
                 'c.cusna',

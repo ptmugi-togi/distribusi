@@ -195,8 +195,8 @@
                             $ppn        = $header->txamt;
                             $piutang    = $uangMuka + $ppn;
                             $instalasi  = $header->instf;
-                            $uangMukaSA = $header->gramt;
-                            $uangMukaSB = $header->gramt;
+                            $uangMukaSA = ($header->sorfc === 'SA' && $header->invtp == 1) ? $header->header_gramt : 0;
+                            $uangMukaSB = ($header->sorfc === 'SB') ? $header->header_gramt : 0;
 
                             // subtotal
                             $subtotal['gross']      += $grossSales;
@@ -255,10 +255,14 @@
                                 {{ $instalasi ? number_format($instalasi, 0, ',', '.') : '' }}
                             </td>
                             <td class="right">
-                                {{ $uangMukaSA ? number_format($uangMukaSA, 0, ',', '.') : '' }}
+                                @if ($header->sorfc === 'SA' && $header->invtp === 1)
+                                    {{ $uangMukaSA ? number_format($uangMukaSA, 0, ',', '.') : '' }}
+                                @endif
                             </td>
                             <td class="right">
-                                {{ $uangMukaSB ? number_format($uangMukaSB, 0, ',', '.') : '' }}
+                                @if ($header->sorfc === 'SB')
+                                    {{ $uangMukaSB ? number_format($uangMukaSB, 0, ',', '.') : '' }}
+                                @endif
                             </td>
                             <td class="center">
                                 {{ $header->group ?? '' }}
