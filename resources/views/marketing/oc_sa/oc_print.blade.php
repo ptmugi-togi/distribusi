@@ -363,8 +363,8 @@
 <htmlpagefooter name="myFooter">
     <hr>
 
-    <div style="font-size: 10px">{{ $ochdr->mformcode->docd1 }}</div>
-    <div style="font-size: 10px">{{ $ochdr->mformcode->docd2 }}</div>
+    <div style="font-size: 10px">{{ $ochdr->mformcode->docd1 ?? '' }}</div>
+    <div style="font-size: 10px">{{ $ochdr->mformcode->docd2 ?? '' }}</div>
     <div style="font-size: 10px">{{ $ochdr->created_by }} / {{ date('d-m-Y') }} / {{ date('H:i:s') }} / {{ $ochdr->prctr }}</div>
     <div style="text-align: right; font-size: 9pt;">
         {PAGENO}/{nbpg}
