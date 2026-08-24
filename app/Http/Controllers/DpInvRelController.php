@@ -72,25 +72,43 @@ class DpInvRelController extends Controller
     {
         DB::beginTransaction();
 
-        // dd($request->all());
-
         try {
-            $invid = $request->braco .  $request->formc . $request->invno;
-
-            $bracoformc = $request->braco . $request->formc;
-
+            $braco = auth()->user()->cabang;
+            $formc = $request->formc;
             $invdt = Carbon::parse($request->invdt);
-            $topay = (int) $request->topay;
 
+            // Generate Invoice Number
+            $year = $invdt->format('y');
+
+            $last = DB::table('tinmas')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(invno, 2) = ?", [$year])
+                ->orderBy('invno', 'desc')
+                ->value('invno');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $invno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            // Generate ID
+            $invid = $braco . $formc . $invno;
+            $bracoformc = $braco . $formc;
+
+            $topay = (int) $request->topay;
             $duedt = $invdt->copy()->addDays($topay);
 
             DpInvRelHdr::create([
                 'invid'      => $invid,
                 'bracoformc' => $bracoformc,
-                'braco'      => $request->braco,
+                'braco'      => $braco,
                 'warco'      => '-',
-                'formc'      => $request->formc,
-                'invno'      => $request->invno,
+                'formc'      => $formc,
+                'invno'      => $invno,
                 'invdt'      => $request->invdt,
                 'priod'      => $request->priod,
                 'duedt'      => $duedt,
@@ -119,40 +137,38 @@ class DpInvRelController extends Controller
             ]);
 
             foreach ($request->opron as $i => $opron) {
-
                 $prona = $request->prona[$i];
                 $qty   = (int) $request->rqqty[$i];
-                $stdqu  = $request->stdqu[$i];
+                $stdqu = $request->stdqu[$i];
                 $price = $request->price[$i] ?? 0;
-                $odisa = $request->odisa[$i] ?? 0;
+                $odisa = $request->odisa_dtl[$i] ?? 0;
 
                 $net = $price - $odisa;
-
                 $netbe = $request->gross_dtl[$i] - $request->odisa_dtl[$i];
 
                 DpInvRelDtl::create([
-                    'invid' => $invid,
-                    'braco' => $request->braco,
-                    'formc' => $request->formc,
-                    'invno' => $request->invno,
-                    'sorfc' => $request->sorfc,
-                    'sorno' => $request->sorno,
-                    'opron' => $opron,
-                    'prona' => $prona,
-                    'stdqu' => $stdqu,
-                    'qtyin' => $qty,
-                    'price' => $price,
-                    'gramt' => $request->gross_dtl[$i],
-                    'odisa' => $request->odisa_dtl[$i],
+                    'invid'  => $invid,
+                    'braco'  => $braco,
+                    'formc'  => $formc,
+                    'invno'  => $invno,
+                    'sorfc'  => $request->sorfc,
+                    'sorno'  => $request->sorno,
+                    'opron'  => $opron,
+                    'prona'  => $prona,
+                    'stdqu'  => $stdqu,
+                    'qtyin'  => $qty,
+                    'price'  => $price,
+                    'gramt'  => $request->gross_dtl[$i],
+                    'odisa'  => $request->odisa_dtl[$i],
                     'netamt' => $net,
-                    'dpper' => $request->dpper,
-                    'dpamt' => $request->dpamt,
-                    'netbe' => $netbe,
+                    'dpper'  => 0,
+                    'dpamt'  => 0,
+                    'netbe'  => $netbe,
                 ]);
             }
 
             DB::table('tcoreh')
-                ->where('braco', $request->braco)
+                ->where('braco', $braco)
                 ->where('formc', $request->sorfc)
                 ->where('sorno', $request->sorno)
                 ->update([
@@ -160,37 +176,26 @@ class DpInvRelController extends Controller
                 ]);
 
             DB::commit();
-            return redirect()->route('dp_inv_rel.index')->with('success', "data DP Invoice Relelase \"$invid\" berhasil disimpan.");
 
-        } catch (\Exception $e) {
+            return redirect()
+                ->route('dp_inv_rel.index')
+                ->with(
+                    'success',
+                    "data DP Invoice Relelase \"$invid\" berhasil disimpan."
+                );
+
+        } catch (Exception $e) {
             DB::rollBack();
-            \Log::error('Gagal simpan DP Inv Rel:', ['error' => $e->getMessage()]);
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            Log::error('Gagal simpan DP Inv Rel:', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with(
+                'error',
+                'Terjadi kesalahan: ' . $e->getMessage()
+            );
         }
-    }
-
-    public function generateInvno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $invdt = $request->invdt;
-        
-        $year = Carbon::parse($invdt)->format('y');
-
-        $last = DB::table('tinmas')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(invno,2) = ?", [$year])
-            ->orderBy('invno','desc')
-            ->value('invno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
     
     public function getOcSa()

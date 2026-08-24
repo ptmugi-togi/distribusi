@@ -31,12 +31,6 @@
       <input type="text" class="form-control" id="formc" name="formc" id="formc-store" value="SC" hidden>
 
       <div class="row">
-        <div class="col-md-6 mt-3">
-          <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-          <input type="text" id="invno" class="form-control" readonly style="background-color: #E9ECEF;">
-          <input type="hidden" name="invno" id="invno_raw" value="{{ old('invno') }}">
-        </div>
-
         <input type="text" name="priod" id="priod" value="{{ old('priod') }}" hidden>
 
         <div class="col-md-6 mt-3">
@@ -260,22 +254,6 @@
                         });
                       ocno.prop('disabled', false);
                     });
-            });
-
-            // generate invno
-            $('#invdt').on('change', function(){
-                let formc = $('#formc').val();
-                let invdt = $('#invdt').val();
-
-                if(formc && invdt){
-                    $.get("{{ route('generate-invno-sc-dp') }}", {formc, invdt}, function(res){
-
-                        let display = formc + '-' + res;
-
-                        $('#invno').val(display);
-                        $('#invno_raw').val(res);
-                    });
-                }
             });
 
             $('#ocno').on('change', function(){
