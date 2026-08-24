@@ -18,8 +18,9 @@ class ServiceInvoiceReleaseController extends Controller
         $userBraco = Auth::user()->cabang;
         
         $sir = DB::table('tinmas')
-            ->where('braco', $userBraco)
-            ->where('dorfc', 'DN')
+            ->leftJoin('mcusmas', 'tinmas.cusno', '=', 'mcusmas.cusno')
+            ->where('tinmas.braco', $userBraco)
+            ->where('tinmas.dorfc', 'DN')
             ->get();
 
         $latestPeriod = DB::table('tperiode')
