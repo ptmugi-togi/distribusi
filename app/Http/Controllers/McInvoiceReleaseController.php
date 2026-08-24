@@ -18,8 +18,9 @@ class McInvoiceReleaseController extends Controller
         $userBraco = Auth::user()->cabang;
         
         $sir = DB::table('tinmas')
-            ->where('braco', $userBraco)
-            ->where('dorfc', 'MC')
+            ->leftJoin('mcusmas', 'tinmas.cusno', '=', 'mcusmas.cusno')
+            ->where('tinmas.braco', $userBraco)
+            ->where('tinmas.dorfc', 'MC')
             ->get();
 
         $latestPeriod = DB::table('tperiode')

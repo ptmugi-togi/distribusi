@@ -32,6 +32,7 @@
                     <tr>
                         <th class="text-center">Branch</th>
                         <th class="text-center">Invoice No.</th>
+                        <th class="text-center">Customer</th>
                         <th class="text-center">Invoice Date</th>
                         <th class="text-center">Due Date</th>
                         <th class="text-center">Reference</th>
@@ -45,6 +46,7 @@
                         <tr>
                             <td class="text-center">{{ $s->braco ?? '-' }}</td>
                             <td class="text-center">{{ $s->invno ?? '-' }}</td>
+                            <td>{{ $s->cusna ?? '-' }}</td>
                             <td class="text-center" data-order="{{ \Carbon\Carbon::parse($s->invdt)->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($s->invdt)->format('d/m/Y') }}
                             </td>
