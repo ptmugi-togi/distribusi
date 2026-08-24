@@ -48,7 +48,7 @@
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($d->tradt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($d->tradt)->format('d/m/Y') }}
                           </td>
-                          <td class="text-center">{{ $d->mcusmas->cusna ?? '-' }}</td>
+                          <td>{{ $d->mcusmas->cusna ?? '-' }}</td>
                           <td class="text-center">{{ $d->cuspo ?? '-' }}</td>
                           <td class="text-center">
                               {{-- preview --}}
