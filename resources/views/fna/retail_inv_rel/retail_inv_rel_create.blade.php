@@ -32,12 +32,6 @@
 
       <div class="row">
         <div class="col-md-6 mt-3">
-          <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-          <input type="text" id="invno" class="form-control" readonly style="background-color: #E9ECEF;">
-          <input type="hidden" name="invno" id="invno_raw" value="{{ old('invno') }}">
-        </div>
-
-        <div class="col-md-6 mt-3">
           <label for="dono" class="form-label">DO No.</label><span class="text-danger"> *</span>
           <select name="dono" id="dono" class="form-control select2" required>
             <option value="" disabled selected>Loading data DO...</option>
@@ -215,7 +209,6 @@
                 let formc = $('#formc').val();
 
                 if(invdt && formc){
-                    generateInv(invdt, formc);
                     generatePriod(invdt);
                 }
 
@@ -265,16 +258,6 @@
                 });
         });
 
-        function generateInv(invdt, formc){
-            $.get("{{ route('generate-invno-sc-retail') }}", {formc, invdt}, function(res){
-
-                let display = formc + '-' + res;
-
-                $('#invno').val(display);
-                $('#invno_raw').val(res);
-            });
-        }
-
         function generatePriod(invdt){
             if(!invdt) return;
 
@@ -291,7 +274,6 @@
             let formc = $('#formc').val();
 
             if(invdt && formc){
-                generateInv(invdt, formc);
                 generatePriod(invdt);
             }
         });
