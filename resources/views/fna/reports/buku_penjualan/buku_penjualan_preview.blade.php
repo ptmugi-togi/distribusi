@@ -139,7 +139,7 @@
                     <th>NO</th>
                     <th>DATE</th>
                     <th>FAKTUR</th>
-                    <th>FAKTUR PAJAK</th>
+                    <th width="9%">FAKTUR PAJAK</th>
                     <th>NAMA CUSTOMER</th>
                     <th>NO REF.</th>
                     <th>GROSS SALES</th>
@@ -151,7 +151,7 @@
                     <th>INSTALASI</th>
                     <th>UANG MUKA SA</th>
                     <th>UANG MUKA SB</th>
-                    <th width="3%">GRP</th>
+                    <th>GRP</th>
                 </tr>
             </thead>
 
@@ -191,9 +191,9 @@
                             $grossSales = $rows->sum('gramt');
                             $discount   = $header->odisa == 0 ? null : $header->odisa;
                             $uangMuka   = $header->dpamt == 0 ? null : $header->dpamt;
-                            $dpp        = $header->dpamt == 0 ? null : $header->dpamt;
+                            $dpp        = $header->netbe - $header->dpamt == 0 ? null : $header->netbe - $header->dpamt;
                             $ppn        = $header->txamt;
-                            $piutang    = $uangMuka + $ppn;
+                            $piutang    = $dpp + $ppn;
                             $instalasi  = $header->instf;
                             $uangMukaSA = ($header->sorfc === 'SA' && $header->invtp == 1) ? $header->header_gramt : 0;
                             $uangMukaSB = ($header->sorfc === 'SB') ? $header->header_gramt : 0;
@@ -265,7 +265,11 @@
                                 @endif
                             </td>
                             <td class="center">
-                                {{ $header->group ?? '' }}
+                                @if ($header->formc === 'SD')
+                                    {{ $header->tofee ?? '' }}
+                                @else
+                                    {{ $header->group ?? '' }}
+                                @endif
                             </td>
                         </tr>
                     @endforeach

@@ -64,6 +64,7 @@ class BukuPenjualanController extends Controller
                 'h.curco',
                 'h.sorfc',
                 'h.sorno',
+                'h.fpnum',
                 'h.invtp',
 
                 // CUSTOMER
@@ -111,6 +112,7 @@ class BukuPenjualanController extends Controller
                 'h.donom',
                 'h.sorfc',
                 'h.sorno',
+                'h.fpnum',
                 'h.invtp',
 
                 // CUSTOMER
