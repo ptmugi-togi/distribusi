@@ -83,11 +83,11 @@
       $(function () {
         var table = $('#myTable').DataTable({
           destroy: true,
-          order: [[6, 'desc']],
+          order: [[7, 'desc']],
           stateSave: false,
           responsive: true,
           columnDefs: [
-            { targets: [6], visible: false }
+            { targets: [7], visible: false }
           ]
         });
 
