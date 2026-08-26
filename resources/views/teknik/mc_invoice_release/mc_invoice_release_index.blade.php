@@ -45,7 +45,7 @@
                       @if ($s->formc === 'SD')
                         <tr>
                             <td class="text-center">{{ $s->braco ?? '-' }}</td>
-                            <td class="text-center">{{ $s->invno ?? '-' }}</td>
+                            <td class="text-center">SD {{ $s->invno ?? '-' }}</td>
                             <td>{{ $s->cusna ?? '-' }}</td>
                             <td class="text-center" data-order="{{ \Carbon\Carbon::parse($s->invdt)->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($s->invdt)->format('d/m/Y') }}
