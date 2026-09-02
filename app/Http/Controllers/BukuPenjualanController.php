@@ -43,13 +43,10 @@ class BukuPenjualanController extends Controller
             ->join('tindet as d', 'h.invid', '=', 'd.invid')
             ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
             ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
-
             ->where('h.braco', $braco)
             ->where('h.formc', 'SC')
             ->whereBetween('h.invdt', [$start, $end])
-
             ->select([
-                // HEADER
                 'h.formc',
                 'h.invid',
                 'h.invno',
@@ -67,15 +64,13 @@ class BukuPenjualanController extends Controller
                 'h.fpnum',
                 'h.invtp',
 
-                // CUSTOMER
                 'c.cusna',
 
-                // DETAIL
                 'd.*',
 
-                'p.sgrup_id as group',
+                // GROUP SC
+                'p.acgrup as group',
             ])
-
             ->orderBy('h.invdt')
             ->orderBy('h.invno')
             ->get();
@@ -87,15 +82,11 @@ class BukuPenjualanController extends Controller
                     ->on('d.invno', '=', 'h.invno')
                     ->on('d.braco', '=', 'h.braco');
             })
-            ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
             ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
-
             ->where('h.braco', $braco)
             ->where('h.formc', 'SD')
             ->whereBetween('h.invdt', [$start, $end])
-
             ->select([
-                // HEADER
                 'h.formc',
                 'h.invid',
                 'h.invno',
@@ -115,15 +106,13 @@ class BukuPenjualanController extends Controller
                 'h.fpnum',
                 'h.invtp',
 
-                // CUSTOMER
                 'c.cusna',
 
-                // DETAIL
                 'd.*',
 
-                'p.sgrup_id as group',
+                // GROUP SD
+                'd.tofee as group',
             ])
-
             ->orderBy('h.invdt')
             ->orderBy('h.invno')
             ->get();
