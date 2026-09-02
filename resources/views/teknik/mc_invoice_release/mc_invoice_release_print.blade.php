@@ -179,7 +179,7 @@
                         </td>
 
                         <td class="right">
-                            {{ formatNumberOnly($service->calc_price ?? 0, $tinmas->curco) }}
+                            {{ formatNumberOnly($service->gramt ?? 0, $tinmas->curco) }}
                         </td>
                     </tr>
                 @endforeach

@@ -290,13 +290,11 @@ class McInvoiceReleaseController extends Controller
 
         $services = DB::table('tinta')
             ->leftJoin('mpromas', 'mpromas.opron', '=', 'tinta.opron')
-            ->leftJoin('tmcd', 'tmcd.opron', '=', 'tinta.opron')
             ->where('tinta.invid', $id)
             ->select(
                 'tinta.*',
                 'mpromas.prona',
-                'mpromas.stdqu',
-                'tmcd.price'
+                'mpromas.stdqu'
             )
             ->orderBy('tinta.invln')
             ->get();
@@ -376,23 +374,18 @@ class McInvoiceReleaseController extends Controller
             ->first();
 
         $services = DB::table('tinta')
-            ->leftJoin('mpromas','mpromas.opron','=','tinta.opron')
-            ->leftJoin('tmcd', 'tmcd.opron', '=', 'tinta.opron')
-            ->where('tinta.invid',$id)
+            ->leftJoin('mpromas', 'mpromas.opron', '=', 'tinta.opron')
+            ->where('tinta.invid', $id)
             ->select(
                 'tinta.*',
                 'mpromas.prona',
-                'mpromas.stdqu',
-                'tmcd.price'
+                'mpromas.stdqu'
             )
             ->orderBy('tinta.invln')
             ->get();
 
-
         $services = $services->map(function($item) use ($tinmas){
-
             $price = $item->price ?? 0;
-
             $item->calc_price = $price * ($tinmas->toppc / 100);
 
             return $item;
