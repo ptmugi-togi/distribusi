@@ -33,6 +33,36 @@ class BukuPenjualanController extends Controller
         return view('fna.reports.buku_penjualan.buku_penjualan_create' , compact('braco', 'bdate_s', 'bdate_e'));
     }
 
+    private function getMstAcc()
+    {
+        $listAccNo = [
+            '021.001', '431.001', '441.001', '442.001', '443.001', '444.001',
+            '701.001', '701.002', '701.003', '701.004', '701.005', '701.006', '701.007',
+            '703.001', '704.001', '704.003',
+            '721.001', '721.002', '721.003', '721.004', '721.005', '721.006', '721.007',
+            '723.001', '724.001', '724.003'
+        ];
+
+        return DB::table('mstacc')
+            ->select('accno', 'accdesc')
+            ->whereIn('accno', $listAccNo)
+            ->get()
+            ->keyBy('accno');
+    }
+
+    public function cetakBukuPenjualan(Request $req)
+    {
+        $start  = $req->bdate_s;
+        $end    = $req->bdate_e;
+        $branch = Mbranch::where('braco', Auth::user()->cabang)->first();
+        $brana  = $branch->brana ?? Auth::user()->cabang;
+
+        $items  = $this->queryBukuPenjualan($req);
+        $mstacc = $this->getMstAcc();
+
+        return view('fna.reports.buku_penjualan.buku_penjualan_preview', compact('items', 'start', 'end', 'brana', 'mstacc'));
+    }
+
     private function queryBukuPenjualan(Request $req)
     {
         $braco = Auth::user()->cabang;
@@ -52,7 +82,6 @@ class BukuPenjualanController extends Controller
                 'h.invno',
                 'h.invdt',
                 'h.gramt as header_gramt',
-                'h.odisa',
                 'h.dpamt',
                 'h.instf',
                 'h.txamt',
@@ -92,7 +121,6 @@ class BukuPenjualanController extends Controller
                 'h.invno',
                 'h.invdt',
                 'h.gramt as header_gramt',
-                'h.odisa',
                 'h.dpamt',
                 'h.instf',
                 'h.txamt',
@@ -137,6 +165,7 @@ class BukuPenjualanController extends Controller
     public function previewBukuPenjualan(Request $req)
     {
         $data = $this->queryBukuPenjualan($req);
+        $mstacc = $this->getMstAcc();
 
         $branch = Mbranch::where(
             'braco',
@@ -147,13 +176,11 @@ class BukuPenjualanController extends Controller
             'fna.reports.buku_penjualan.buku_penjualan_preview',
             [
                 'items' => $data,
-
                 'start' => $req->bdate_s,
                 'end'   => $req->bdate_e,
-
                 'braco' => Auth::user()->cabang,
-
                 'brana' => $branch->brana ?? '',
+                'mstacc' => $mstacc
             ]
         )->render();
 
