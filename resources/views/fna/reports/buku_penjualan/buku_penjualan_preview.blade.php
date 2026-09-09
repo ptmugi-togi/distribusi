@@ -414,7 +414,7 @@
                     $groupGrandUangMukaSA = 0;
                     $groupGrandUangMukaSB = 0;
 
-                    // Penampung rekap data group untuk perhitungan Jurnal
+                    // Penampung rekap data group khusus Penjualan & Disc Reguler (Bukan SA/SB)
                     $groupDataList = [];
                 @endphp
 
@@ -451,6 +451,10 @@
                                 $groupUangMukaSA = 0;
                                 $groupUangMukaSB = 0;
 
+                                // Variabel khusus Penjualan & Discount Reguler (Bukan Uang Muka SA/SB)
+                                $salesRegular = 0;
+                                $discRegular  = 0;
+
                                 foreach ($groupInvoices as $invoiceRows) {
                                     $header    = $invoiceRows->first();
                                     $gGross    = (float) $invoiceRows->sum('gramt');
@@ -470,6 +474,12 @@
                                     $groupPiutang   += $piutang;
                                     $groupInstalasi += $instalasi;
 
+                                    // FILTER SIMPEL: Jika BUKAN Uang Muka (invtp != 1)
+                                    if ((int)$header->invtp !== 1) {
+                                        $salesRegular += $gGross;
+                                        $discRegular  += $discount;
+                                    }
+
                                     if ($header->sorfc === 'SA' && (int) $header->invtp === 1) {
                                         $groupUangMukaSA += (float) ($header->header_gramt ?? 0);
                                     }
@@ -478,6 +488,12 @@
                                         $groupUangMukaSB += (float) ($header->header_gramt ?? 0);
                                     }
                                 }
+
+                                // Simpan data reguler untuk dibaca Jurnal
+                                $groupDataList[strtoupper(trim($groupName))] = [
+                                    'gross'    => $salesRegular,
+                                    'discount' => $discRegular,
+                                ];
 
                                 $groupGrandGross      += $groupGross;
                                 $groupGrandDisc       += $groupDiscount;
@@ -488,13 +504,6 @@
                                 $groupGrandInstalasi  += $groupInstalasi;
                                 $groupGrandUangMukaSA += $groupUangMukaSA;
                                 $groupGrandUangMukaSB += $groupUangMukaSB;
-
-                                // Simpan ke array penampung
-                                $groupDataList[strtoupper(trim($groupName))] = [
-                                    'gross'    => $groupGross,
-                                    'discount' => $groupDiscount,
-                                    'uangMuka' => $groupUangMuka,
-                                ];
                             @endphp
 
                             <tr>
@@ -635,7 +644,7 @@
                 <br>
 
                 @php
-                    // Group ACSLS & AccNo
+                    // Pemetaan standar Group ACSLS ke AccNo
                     $acslsMapping = [
                         'AVERY'                => ['sales' => '701.001', 'disc' => '721.001'],
                         'ZHONGHANG'            => ['sales' => '701.002', 'disc' => '721.002'],
@@ -646,17 +655,24 @@
                         'RADWAG'               => ['sales' => '701.006', 'disc' => '721.006'],
                         'OTHERS'               => ['sales' => '701.007', 'disc' => '721.007'],
                         'LAINNYA'              => ['sales' => '701.007', 'disc' => '721.007'],
+                        'LAIN NYA'             => ['sales' => '701.007', 'disc' => '721.007'],
                         'SPAREPART'            => ['sales' => '703.001', 'disc' => '723.001'],
                         'SERVICE'              => ['sales' => '704.001', 'disc' => '724.001'],
                         'REPAIR'               => ['sales' => '704.001', 'disc' => '724.001'],
                         'MAINTENANCE CONTRACT' => ['sales' => '443.001', 'disc' => '444.001'],
                     ];
 
-                    // Hitung Discount Uang Muka (dari sorfc SA / SB)
+                    // HITUNG DISCOUNT UANG MUKA PENJUALAN (442.001)
+                    // Disum dari transaksi yang invtp == 1
                     $discUangMuka = 0;
-                    foreach ($items as $row) {
-                        if (in_array($row->sorfc, ['SA', 'SB'])) {
-                            $discUangMuka += (float) ($row->odisa ?? 0);
+                    $groupedForUM = $items->groupBy(function ($row) {
+                        return $row->formc . '|' . $row->invno;
+                    });
+
+                    foreach ($groupedForUM as $invRows) {
+                        $hdr = $invRows->first();
+                        if ((int)$hdr->invtp === 1) {
+                            $discUangMuka += (float) $invRows->sum('odisa');
                         }
                     }
 
@@ -664,7 +680,7 @@
                     $debetJournal  = [];
                     $kreditJournal = [];
 
-                    // Helper buat ambil accdesc dari database $mstacc
+                    // Helper untuk membaca accdesc dari $mstacc
                     $getAccDesc = function($accNo, $fallback) use ($mstacc) {
                         return isset($mstacc[$accNo]) ? $mstacc[$accNo]->accdesc : $fallback;
                     };
@@ -678,7 +694,7 @@
                         ];
                     }
 
-                    // DEBET: Discount Uang Muka Penjualan (442.001)
+                    // DEBET: Discount Uang Muka Penjualan (442.001) -> (Hasil filter invtp == 1)
                     if ($discUangMuka > 0) {
                         $debetJournal['442.001'] = [
                             'accno'   => '442.001',
@@ -696,13 +712,13 @@
                         ];
                     }
 
-                    // KREDIT: Uang Muka Penjualan (441.001) -> (UM SA + UM SB) - UANG MUKA
-                    $kreditUM = ($groupGrandUangMukaSA + $groupGrandUangMukaSB) - $groupGrandUangMuka;
-                    if ($kreditUM > 0) {
+                    // KREDIT: Uang Muka Penjualan (441.001) -> Total SA + SB
+                    $totalUangMukaSASB = $groupGrandUangMukaSA + $groupGrandUangMukaSB;
+                    if ($totalUangMukaSASB > 0) {
                         $kreditJournal['441.001'] = [
                             'accno'   => '441.001',
                             'accdesc' => $getAccDesc('441.001', 'UANG MUKA PENJUALAN'),
-                            'amount'  => $kreditUM
+                            'amount'  => $totalUangMukaSASB
                         ];
                     }
 
@@ -715,13 +731,13 @@
                         ];
                     }
 
-                    // DEBET & KREDIT berdasarkan Rekap Group (Penjualan & Discount)
+                    // DEBET & KREDIT per Group (Penjualan & Discount dari Transaksi invtp != 1)
                     foreach ($groupDataList as $gName => $gVal) {
                         $name = strtoupper(trim($gName));
                         $sAcc = $acslsMapping[$name]['sales'] ?? '701.007';
                         $dAcc = $acslsMapping[$name]['disc']  ?? '721.007';
 
-                        // Penjualan (Kredit) -> Nilai Gross Group
+                        // Penjualan Brg per Group (Kredit)
                         $salesVal = (float) ($gVal['gross'] ?? 0);
                         if ($salesVal > 0) {
                             if (!isset($kreditJournal[$sAcc])) {
@@ -734,7 +750,7 @@
                             $kreditJournal[$sAcc]['amount'] += $salesVal;
                         }
 
-                        // Discount (Debet)
+                        // Discount per Group (Debet)
                         $discVal = (float) ($gVal['discount'] ?? 0);
                         if ($discVal > 0) {
                             if (!isset($debetJournal[$dAcc])) {
@@ -748,6 +764,7 @@
                         }
                     }
 
+                    // Totaling Debet & Kredit
                     $totalDebet  = array_sum(array_column($debetJournal, 'amount'));
                     $totalKredit = array_sum(array_column($kreditJournal, 'amount'));
                 @endphp
