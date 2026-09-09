@@ -713,7 +713,7 @@
                     }
 
                     // KREDIT: Uang Muka Penjualan (441.001) -> Total SA + SB
-                    $totalUangMukaSASB = $groupGrandUangMukaSA + $groupGrandUangMukaSB;
+                    $totalUangMukaSASB = $groupGrandUangMukaSA + $groupGrandUangMukaSB - $groupGrandUangMuka;
                     if ($totalUangMukaSASB > 0) {
                         $kreditJournal['441.001'] = [
                             'accno'   => '441.001',
