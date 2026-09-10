@@ -104,8 +104,7 @@ class BukuPenjualanController extends Controller
             ->orderBy('h.invno')
             ->get();
 
-
-        $sd = DB::table('tinmas as h')
+        $sdTinta = DB::table('tinmas as h')
             ->join('tinta as d', function ($join) {
                 $join->on('d.formc', '=', 'h.formc')
                     ->on('d.invno', '=', 'h.invno')
@@ -138,16 +137,57 @@ class BukuPenjualanController extends Controller
 
                 'd.*',
 
-                // GROUP SD
+                // GROUP SD TINTA
                 'd.tofee as group',
             ])
             ->orderBy('h.invdt')
             ->orderBy('h.invno')
             ->get();
 
-        return $sc->concat($sd)
+        $sdTintc = DB::table('tinmas as h')
+            ->join('tintc as d', function ($join) {
+                $join->on('d.formc', '=', 'h.formc')
+                    ->on('d.invno', '=', 'h.invno')
+                    ->on('d.braco', '=', 'h.braco');
+            })
+            ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
+            ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
+            ->where('h.braco', $braco)
+            ->where('h.formc', 'SD')
+            ->whereBetween('h.invdt', [$start, $end])
+            ->select([
+                'h.formc',
+                'h.invid',
+                'h.invno',
+                'h.invdt',
+                'h.gramt as header_gramt',
+                'h.dpamt',
+                'h.instf',
+                'h.txamt',
+                'h.braco',
+                'h.cusno',
+                'h.curco',
+                'h.dorfc',
+                'h.donom',
+                'h.sorfc',
+                'h.sorno',
+                'h.fpnum',
+                'h.invtp',
+
+                'c.cusna',
+
+                'd.*',
+
+                'p.acgrup as group',
+            ])
+            ->orderBy('h.invdt')
+            ->orderBy('h.invno')
+            ->get();
+
+        return $sc->concat($sdTinta)
+            ->concat($sdTintc)
             ->sortBy(function ($row) {
-                return $row->invdt . '-' . $row->invno;
+                return $row->invdt . '-' . sprintf('%010d', (int)$row->invno);
             })
             ->values();
     }

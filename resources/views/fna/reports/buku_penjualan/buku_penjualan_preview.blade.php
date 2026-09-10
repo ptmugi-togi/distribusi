@@ -217,20 +217,33 @@
             <sethtmlpageheader name="docHeader" value="on" show-this-page="1" />
 
             @php
-                $groupedItems = $items->groupBy(function ($row) {
-                    return $row->formc . '|' . $row->invno;
+                $invoiceTotals = [];
+                foreach ($items->groupBy(function($r){ return $r->formc.'|'.$r->invno; }) as $invKey => $invRows) {
+                    $invoiceTotals[$invKey] = (float) $invRows->sum('gramt');
+                }
+
+                $groupedItems = $items->sortBy(function ($row) {
+                    return (int) $row->invno;
+                })->groupBy(function ($row) {
+                    $g = trim($row->group ?? '');
+                    if (!$g && $row->formc === 'SD') {
+                        $g = trim($row->tofee ?? '');
+                    }
+                    $g = strtoupper($g) ?: 'OTHERS';
+
+                    return $row->formc . '|' . $row->invno . '|' . $g;
                 });
 
-                $grandGross = 0;
-                $grandDisc  = 0;
-                $grandUangMuka = 0;
-                $grandDpp = 0;
-                $grandPpn = 0;
-                $grandPiutang = 0;
-                $grandInstalasi = 0;
-                $grandUangMukaSA = 0;
-                $grandUangMukaSB = 0;
-                $no = 1;
+                $grandGross       = 0;
+                $grandDisc        = 0;
+                $grandUangMuka    = 0;
+                $grandDpp         = 0;
+                $grandPpn         = 0;
+                $grandPiutang     = 0;
+                $grandInstalasi   = 0;
+                $grandUangMukaSA  = 0;
+                $grandUangMukaSB  = 0;
+                $no               = 1;
             @endphp
 
             {{-- TABEL UTAMA BUKU PENJUALAN --}}
@@ -276,22 +289,38 @@
                             ];
                         @endphp
 
-                        @foreach($formItems as $invoice => $rows)
+                        @foreach($formItems as $groupKey => $rows)
                             @php
                                 $header = $rows->first();
+                                $invKey = $header->formc . '|' . $header->invno;
 
-                                $grossSales = $rows->sum('gramt');
-                                $discount   = $rows->sum('odisa');
-                                $discount   = $discount == 0 ? null : $discount;
-                                $uangMuka   = $header->dpamt == 0 ? null : $header->dpamt;
-                                $dpp        = ($header->netbe - $header->dpamt) == 0 ? null : ($header->netbe - $header->dpamt);
-                                $ppn        = $header->txamt;
-                                $piutang    = $dpp + $ppn;
-                                $instalasi  = $header->instf;
-                                $uangMukaSA = ($header->sorfc === 'SA' && $header->invtp == 1) ? $header->header_gramt : 0;
-                                $uangMukaSB = ($header->sorfc === 'SB') ? $header->header_gramt : 0;
+                                // Gross & Disc dari item detail baris/grup ini
+                                $grossSales = (float) $rows->sum('gramt');
+                                $discount   = (float) $rows->sum('odisa');
 
-                                // subtotal accumulation
+                                // Hitung rasio/proporsi terhadap total faktur
+                                $totInvGross = $invoiceTotals[$invKey] ?? 0;
+                                $ratio       = $totInvGross > 0 ? ($grossSales / $totInvGross) : 0;
+
+                                // Alokasi Nilai Header Proporsional
+                                $uangMuka  = ((float) ($header->dpamt ?? 0)) * $ratio;
+                                $ppn       = ((float) ($header->txamt ?? 0)) * $ratio;
+                                $instalasi = ((float) ($header->instf ?? 0)) * $ratio;
+
+                                $dpp     = $grossSales - $discount - $uangMuka;
+                                $piutang = $dpp + $ppn;
+
+                                $uangMukaSA = ($header->sorfc === 'SA' && (int)$header->invtp === 1) ? ((float)$header->header_gramt * $ratio) : 0;
+                                $uangMukaSB = ($header->sorfc === 'SB') ? ((float)$header->header_gramt * $ratio) : 0;
+
+                                // Ambil Nama Group untuk Kolom GRP
+                                $grpName = trim($header->group ?? '');
+                                if (!$grpName && $header->formc === 'SD') {
+                                    $grpName = trim($header->tofee ?? '');
+                                }
+                                $grpName = strtoupper($grpName) ?: 'OTHERS';
+
+                                // Accumulation Subtotal
                                 $subtotal['gross']      += $grossSales;
                                 $subtotal['discount']   += $discount;
                                 $subtotal['uangMuka']   += $uangMuka;
@@ -324,7 +353,7 @@
                                 <td class="right">{{ $piutang ? number_format($piutang, 0, ',', '.') : '' }}</td>
                                 <td class="right">{{ $instalasi ? number_format($instalasi, 0, ',', '.') : '' }}</td>
                                 <td class="right">
-                                    @if ($header->sorfc === 'SA' && $header->invtp === 1)
+                                    @if ($header->sorfc === 'SA' && (int)$header->invtp === 1)
                                         {{ $uangMukaSA ? number_format($uangMukaSA, 0, ',', '.') : '' }}
                                     @endif
                                 </td>
@@ -333,13 +362,7 @@
                                         {{ $uangMukaSB ? number_format($uangMukaSB, 0, ',', '.') : '' }}
                                     @endif
                                 </td>
-                                <td class="center">
-                                    @if ($header->formc === 'SD')
-                                        {{ $header->tofee ?? '' }}
-                                    @else
-                                        {{ $header->group ?? '' }}
-                                    @endif
-                                </td>
+                                <td class="center">{{ $grpName }}</td>
                             </tr>
                         @endforeach
 
@@ -401,7 +424,11 @@
                 <br>
                 @php
                     $groupedByGroup = $items->groupBy(function ($row) {
-                        return trim($row->group ?? '') ?: 'OTHERS';
+                        $g = trim($row->group ?? '');
+                        if (!$g && $row->formc === 'SD') {
+                            $g = trim($row->tofee ?? '');
+                        }
+                        return $g ?: 'OTHERS';
                     });
 
                     $groupGrandGross      = 0;
