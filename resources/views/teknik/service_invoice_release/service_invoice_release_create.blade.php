@@ -42,11 +42,6 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="invno" name="invno" id="invno" value="{{ old('invno') }}" readonly style="background-color:#e9ecef">
-                    </div>
-
-                    <div class="col-md-6 mt-3">
                         <label for="refno" class="form-label">DN No.</label><span class="text-danger"> *</span>
                         <select class="form-control select2" id="refno" name="refno">
                             <option value="" disabled {{ old('refno') ? '' : 'selected' }}>Silahkan Pilih DN</option>
@@ -210,23 +205,6 @@
                 toggleCrateField(curco, crate);
             });
 
-            $('#invdt').on('change', function(){
-                let invdt = $(this).val();
-
-                if(invdt){
-                    $.get(
-                        "{{ route('service_invoice_release.generate-invno') }}",
-                        {
-                            formc: 'SD',
-                            invdt: invdt
-                        },
-                        function(res){
-                            $('#invno').val(res);
-                        }
-                    );
-                }
-            });
-
             let mcusAddress = '';
             let deliveryAddress = '';
 
@@ -338,6 +316,7 @@
                                 <input type="hidden" name="tdna_lotno[]" value="${item.lotno}">
                                 <input type="hidden" name="tdna_gramt[]" value="${item.gramt}">
                                 <input type="hidden" name="tdna_odisp[]" value="${item.odisp}">
+                                <input type="hidden" name="tdna_odisa[]" value="${item.odisa}">
                                 <input type="hidden" name="tdna_netbe[]" value="${item.netbe}">
                             `;
                         });

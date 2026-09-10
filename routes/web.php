@@ -469,7 +469,6 @@ Route::patch('/maintenance-contract/cancel/{mcid}', [MaintenanceContractControll
 
 Route::get('/service-invoice-release/index', [ServiceInvoiceReleaseController::class,'index'])->middleware('auth')->name('service_invoice_release.index');
 Route::get('/service-invoice-release/create', [ServiceInvoiceReleaseController::class,'create'])->middleware('auth')->name('service_invoice_release.create');
-Route::get('/generate-invno-service-invoice-release', [ServiceInvoiceReleaseController::class,'generateInvno'])->middleware('auth')->name('service_invoice_release.generate-invno');
 Route::get('/search-dn', [ServiceInvoiceReleaseController::class,'searchDn' ])->middleware('auth')->name('service_invoice_release.search-dn');
 Route::get('/get-dn/{dnid}', [ServiceInvoiceReleaseController::class,'getDn' ])->middleware('auth')->name('service_invoice_release.get-dn');
 Route::get('/get-dn-detail/{dnid}', [ServiceInvoiceReleaseController::class,'getDnDetail' ])->middleware('auth')->name('service_invoice_release.get-dn');

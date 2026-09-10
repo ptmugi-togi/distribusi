@@ -65,8 +65,19 @@ class ServiceInvoiceReleaseController extends Controller
         DB::beginTransaction();
 
         try {
+            $year = Carbon::parse($request->invdt)->format('y');
 
-            $invid = $request->braco .  $request->formc . $request->invno;
+            $last = DB::table('tinmas')
+                ->where('braco', $request->braco)
+                ->where('formc', $request->formc)
+                ->whereRaw("LEFT(invno, 2) = ?", [$year])
+                ->orderBy('invno', 'desc')
+                ->value('invno');
+
+            $number = $last ? ((int) substr($last, 2) + 1) : 1;
+            $invno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $invid = $request->braco . $request->formc . $invno;
             $bracoformc = $request->braco . $request->formc;
 
             $tinmasId = DB::table('tinmas')->insertGetId([
@@ -75,7 +86,7 @@ class ServiceInvoiceReleaseController extends Controller
                 'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
-                'invno' => $request->invno,
+                'invno' => $invno,
                 'invdt' => $request->invdt,
                 'priod' => $request->priod,
                 'duedt' => $request->duedt,
@@ -108,7 +119,7 @@ class ServiceInvoiceReleaseController extends Controller
                         'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
-                        'invno'=>$request->invno,
+                        'invno'=>$invno,
                         'invln'=>$dnlin,
                         'tofee'=>$request->tdna_tofee[$i],
                         'descr'=>$request->tdna_descr[$i],
@@ -129,7 +140,7 @@ class ServiceInvoiceReleaseController extends Controller
                         'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
-                        'invno'=>$request->invno,
+                        'invno'=>$invno,
                         'invln'=>$dnlin,
                         'serty'=>$request->tdnb_serty[$i],
                         'tofee'=>$request->tdnb_tofee[$i],
@@ -147,7 +158,7 @@ class ServiceInvoiceReleaseController extends Controller
                         'invid'=>$invid,
                         'braco'=>$request->braco,
                         'formc'=>$request->formc,
-                        'invno'=>$request->invno,
+                        'invno'=>$invno,
                         'opron'=>$opron,
                         'price'=>$request->tdnc_price[$i],
                         'trqty'=>$request->tdnc_trqty[$i],
@@ -166,7 +177,7 @@ class ServiceInvoiceReleaseController extends Controller
                 ->where('depo', $request->divco)
                 ->update([
                     'invfc' => $request->formc,
-                    'invno' => $request->invno,
+                    'invno' => $invno,
                 ]);
 
             DB::commit();
@@ -180,30 +191,6 @@ class ServiceInvoiceReleaseController extends Controller
             \Log::error('Gagal simpan SD:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    public function generateInvno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $invdt = $request->invdt;
-        
-        $year = Carbon::parse($invdt)->format('y');
-
-        $last = DB::table('tinmas')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(invno,2) = ?", [$year])
-            ->orderBy('invno','desc')
-            ->value('invno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
     public function searchDn(Request $request)
