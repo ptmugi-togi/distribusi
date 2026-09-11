@@ -78,20 +78,32 @@ class DeliveryNoteController extends Controller
         DB::beginTransaction();
 
         try {
-            $dnid = $request->braco . $request->depo .  $request->formc . $request->dnnum;
+            $braco = $request->braco ?? auth()->user()->cabang;
+            $year = Carbon::parse($request->dndat)->format('y');
 
-            $bracoformc = $request->braco . $request->formc;
+            $last = DB::table('tdnh')
+                ->where('braco', $braco)
+                ->where('formc', $request->formc)
+                ->where('depo', $request->depo)
+                ->whereRaw("LEFT(dnnum, 2) = ?", [$year])
+                ->orderByDesc('dnnum')
+                ->value('dnnum');
 
+            $number = $last ? ((int) substr($last, 2, 4) + 1) : 1;
+            $dnnum = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $dnid = $braco . $request->depo . $request->formc . $dnnum;
+            $bracoformc = $braco . $request->formc;
             $gramt = $request->totalservice + $request->totalsparepart;
 
             DnHdr::create([
-                'dnid'      => $dnid,
+                'dnid'       => $dnid,
                 'bracoformc' => $bracoformc,
                 'braco'      => $request->braco,
                 'depo'       => $request->depo,
                 'formc'      => $request->formc,
                 'cusno'      => $request->cusno,
-                'dnnum'      => $request->dnnum,
+                'dnnum'      => $dnnum,
                 'dndat'      => $request->dndat,
                 'priod'      => $request->priod,
                 'delto'      => $request->shpto,
@@ -129,7 +141,7 @@ class DeliveryNoteController extends Controller
                     'dnid'      => $dnid,
                     'braco'     => $request->braco,
                     'formc'     => $request->formc,
-                    'dnnum'     => $request->dnnum,
+                    'dnnum'     => $dnnum,
                     'dnlin'     => $dnlin,
                     'tofee'     => 'SERVICE',
                     'opron'     => $opron,
@@ -149,7 +161,7 @@ class DeliveryNoteController extends Controller
                         DB::table('tdnb')->insert([
                             'dnid'  => $dnid,
                             'braco' => $request->braco,
-                            'dnnum' => $request->dnnum,
+                            'dnnum' => $dnnum,
                             'formc' => $request->formc,
                             'dnlin' => $dnlin,
 
@@ -187,7 +199,7 @@ class DeliveryNoteController extends Controller
                     DB::table('tdnc')->insert([
                         'dnid'   => $dnid,
                         'braco'  => $request->braco,
-                        'dnnum'  => $request->dnnum,
+                        'dnnum'  => $dnnum,
                         'formc'  => $request->formc,
                         'opron'  => $sparepart,
                         'lotno'  => $request->lotnos[$i] ?? null,
@@ -221,7 +233,7 @@ class DeliveryNoteController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('delivery_note.index')->with('success', "DN \"$request->dnnum\" berhasil disimpan.");
+            return redirect()->route('delivery_note.index')->with('success', "DN \"$dnnum\" berhasil disimpan.");
 
         } catch (\Exception $e) {
             DB::rollBack();

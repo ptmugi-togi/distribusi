@@ -447,7 +447,6 @@ Route::get('/cust-trans-history/preview', [CustTransHistoryController::class, 'p
 Route::get('/delivery-note/index', [DeliveryNoteController::class,'index'])->middleware('auth')->name('delivery_note.index');
 Route::get('/delivery-note/create', [DeliveryNoteController::class,'create'])->middleware('auth')->name('delivery_note.create');
 Route::post('/delivery-note/store', [DeliveryNoteController::class,'store'])->middleware('auth')->name('delivery_note.store');
-Route::get('/generate-dnnum', [DeliveryNoteController::class,'generateDnnum'])->middleware('auth')->name('generate-dnnum');
 Route::get('/get-bill-address-dn', [DeliveryNoteController::class,'getBillAddress'])->middleware('auth')->name('get-bill-address-dn');
 Route::get('/get-currency-rate-dn', [DeliveryNoteController::class,'getCrate'])->middleware('auth')->name('get-currency-rate-dn');
 Route::get('/get-lotno-dn', [DeliveryNoteController::class,'getLotnoSparepart'])->middleware('auth')->name('get-lotno-dn');

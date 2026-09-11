@@ -32,11 +32,6 @@
       <div class="row">
         <input type="text" class="form-control" id="formc" name="formc" id="formc-store" value="DN" hidden>
 
-        <div class="col-md-6 mt-3">
-          <label for="dnnum" class="form-label">D/N No.</label><span class="text-danger"> *</span>
-          <input type="text" class="form-control" name="dnnum" id="dnnum" value="{{ old('dnnum') }}" required readonly style="background-color:#e9ecef">
-        </div>
-
         <input type="hidden" name="priod" id="priod" value="{{ old('priod') }}">
 
         <div class="col-md-6 mt-3">
@@ -208,28 +203,6 @@
                 let crate = $('#crate_raw').val();
 
                 toggleCrateField(curco, crate);
-            });
-
-            // generate dnnum
-            function generateDnnum(){
-                let formc = $('#formc').val();
-                let depo = $('#depo').val();
-                let dndat = $('#dndat').val();
-
-                if(formc && depo && dndat){
-                    $.get("{{ route('generate-dnnum') }}", {
-                        formc,
-                        depo,
-                        dndat
-                    }, function(res){
-
-                        $('#dnnum').val(res);
-                    });
-                }
-            }
-
-            $('#formc, #depo, #dndat').on('change', function(){
-                generateDnnum();
             });
 
             $('#cusno').on('change', function(){
