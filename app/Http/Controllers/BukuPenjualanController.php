@@ -150,7 +150,6 @@ class BukuPenjualanController extends Controller
                     ->on('d.invno', '=', 'h.invno')
                     ->on('d.braco', '=', 'h.braco');
             })
-            ->leftJoin('mpromas as p', 'd.opron', '=', 'p.opron')
             ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
             ->where('h.braco', $braco)
             ->where('h.formc', 'SD')
@@ -178,7 +177,7 @@ class BukuPenjualanController extends Controller
 
                 'd.*',
 
-                'p.acgrup as group',
+                DB::raw("'SPAREPART' as `group`"),
             ])
             ->orderBy('h.invdt')
             ->orderBy('h.invno')

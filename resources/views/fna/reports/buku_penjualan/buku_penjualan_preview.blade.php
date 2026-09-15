@@ -222,16 +222,11 @@
                     $invoiceTotals[$invKey] = (float) $invRows->sum('gramt');
                 }
 
+                // GABUNGKAN FAKTUR YANG SAMA MENJADI 1 BARIS (HANYA BERDASARKAN FORMC & INVNO)
                 $groupedItems = $items->sortBy(function ($row) {
                     return (int) $row->invno;
                 })->groupBy(function ($row) {
-                    $g = trim($row->group ?? '');
-                    if (!$g && $row->formc === 'SD') {
-                        $g = trim($row->tofee ?? '');
-                    }
-                    $g = strtoupper($g) ?: 'OTHERS';
-
-                    return $row->formc . '|' . $row->invno . '|' . $g;
+                    return $row->formc . '|' . $row->invno;
                 });
 
                 $grandGross       = 0;
@@ -314,11 +309,15 @@
                                 $uangMukaSB = ($header->sorfc === 'SB') ? ((float)$header->header_gramt * $ratio) : 0;
 
                                 // Ambil Nama Group untuk Kolom GRP
-                                $grpName = trim($header->group ?? '');
-                                if (!$grpName && $header->formc === 'SD') {
-                                    $grpName = trim($header->tofee ?? '');
-                                }
-                                $grpName = strtoupper($grpName) ?: 'OTHERS';
+                                $grpNames = $rows->map(function($r) {
+                                    $g = trim($r->group ?? '');
+                                    if (!$g && $r->formc === 'SD') {
+                                        $g = trim($r->tofee ?? '');
+                                    }
+                                    return strtoupper($g);
+                                })->filter()->unique()->implode('+');
+
+                                $grpName = $grpNames ?: 'OTHERS';
 
                                 // Accumulation Subtotal
                                 $subtotal['gross']      += $grossSales;
@@ -424,11 +423,15 @@
                 <br>
                 @php
                     $groupedByGroup = $items->groupBy(function ($row) {
+                        if ($row->formc === 'SD' && empty($row->tofee)) {
+                            return 'SPAREPART';
+                        }
+
                         $g = trim($row->group ?? '');
                         if (!$g && $row->formc === 'SD') {
                             $g = trim($row->tofee ?? '');
                         }
-                        return $g ?: 'OTHERS';
+                        return strtoupper($g) ?: 'OTHERS';
                     });
 
                     $groupGrandGross      = 0;
