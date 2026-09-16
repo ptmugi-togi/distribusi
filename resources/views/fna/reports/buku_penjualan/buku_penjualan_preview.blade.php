@@ -422,11 +422,11 @@
                 </div>
                 <br>
                 @php
+                    // Kelompokkan item per Group
                     $groupedByGroup = $items->groupBy(function ($row) {
                         if ($row->formc === 'SD' && empty($row->tofee)) {
                             return 'SPAREPART';
                         }
-
                         $g = trim($row->group ?? '');
                         if (!$g && $row->formc === 'SD') {
                             $g = trim($row->tofee ?? '');
@@ -444,7 +444,6 @@
                     $groupGrandUangMukaSA = 0;
                     $groupGrandUangMukaSB = 0;
 
-                    // Penampung rekap data group khusus Penjualan & Disc Reguler (Bukan SA/SB)
                     $groupDataList = [];
                 @endphp
 
@@ -467,10 +466,6 @@
                     <tbody>
                         @foreach($groupedByGroup as $groupName => $groupRows)
                             @php
-                                $groupInvoices = $groupRows->groupBy(function ($row) {
-                                    return $row->formc . '|' . $row->invno;
-                                });
-
                                 $groupGross      = 0;
                                 $groupDiscount   = 0;
                                 $groupUangMuka   = 0;
@@ -481,41 +476,56 @@
                                 $groupUangMukaSA = 0;
                                 $groupUangMukaSB = 0;
 
-                                // Variabel khusus Penjualan & Discount Reguler (Bukan Uang Muka SA/SB)
                                 $salesRegular = 0;
                                 $discRegular  = 0;
 
-                                foreach ($groupInvoices as $invoiceRows) {
-                                    $header    = $invoiceRows->first();
-                                    $gGross    = (float) $invoiceRows->sum('gramt');
-                                    $discount  = (float) $invoiceRows->sum('odisa');
-                                    $uangMuka  = (float) ($header->dpamt ?? 0);
-                                    $netbe     = (float) ($header->netbe ?? 0);
-                                    $ppn       = (float) ($header->txamt ?? 0);
-                                    $instalasi = (float) ($header->instf ?? 0);
-                                    $dpp       = $netbe - $uangMuka;
-                                    $piutang   = $dpp + $ppn;
+                                // Iterasi per item detail menggunakan NETBE murni dari detail
+                                foreach ($groupRows as $row) {
+                                    $gGross    = (float) ($row->gramt ?? 0);
+                                    $discount  = (float) ($row->odisa ?? 0);
+                                    
+                                    // AMBIL LANGSUNG NETBE PER ITEM DETAIL
+                                    $dppDetail = (float) ($row->netbe ?? ($gGross - $discount));
 
-                                    $groupGross     += $gGross;
-                                    $groupDiscount  += $discount;
-                                    $groupUangMuka  += $uangMuka;
-                                    $groupDpp       += $dpp;
-                                    $groupPpn       += $ppn;
-                                    $groupPiutang   += $piutang;
-                                    $groupInstalasi += $instalasi;
+                                    // Hitung PPN detail = netbe_detail * vatax / 100
+                                    $vataxRate = (float) ($row->vatax ?? 0);
+                                    $ppnDetail = $dppDetail * ($vataxRate / 100);
 
-                                    // FILTER SIMPEL: Jika BUKAN Uang Muka (invtp != 1)
-                                    if ((int)$header->invtp !== 1) {
+                                    $groupGross    += $gGross;
+                                    $groupDiscount += $discount;
+                                    $groupDpp      += $dppDetail;
+                                    $groupPpn      += $ppnDetail;
+                                    $groupPiutang  += ($dppDetail + $ppnDetail);
+
+                                    if ((int)($row->invtp ?? 0) !== 1) {
                                         $salesRegular += $gGross;
                                         $discRegular  += $discount;
                                     }
+                                }
 
-                                    if ($header->sorfc === 'SA' && (int) $header->invtp === 1) {
-                                        $groupUangMukaSA += (float) ($header->header_gramt ?? 0);
+                                // Alokasi Uang Muka / Instalasi dari Header (Proporsional jika gabungan)
+                                foreach ($groupRows->groupBy(function($r){ return $r->formc.'|'.$r->invno; }) as $invRows) {
+                                    $hdr       = $invRows->first();
+                                    $uangMuka  = (float) ($hdr->dpamt ?? 0);
+                                    $instalasi = (float) ($hdr->instf ?? 0);
+
+                                    $totInvGross = $items->where('formc', $hdr->formc)->where('invno', $hdr->invno)->sum('gramt');
+                                    $subGross    = $invRows->sum('gramt');
+                                    $ratio       = $totInvGross > 0 ? ($subGross / $totInvGross) : 0;
+
+                                    $groupUangMuka  += ($uangMuka * $ratio);
+                                    $groupInstalasi += ($instalasi * $ratio);
+
+                                    // Potong Uang Muka dari DPP & Piutang Group
+                                    $groupDpp     -= ($uangMuka * $ratio);
+                                    $groupPiutang -= ($uangMuka * $ratio);
+
+                                    if ($hdr->sorfc === 'SA' && (int) $hdr->invtp === 1) {
+                                        $groupUangMukaSA += ((float) ($hdr->header_gramt ?? 0) * $ratio);
                                     }
 
-                                    if ($header->sorfc === 'SB') {
-                                        $groupUangMukaSB += (float) ($header->header_gramt ?? 0);
+                                    if ($hdr->sorfc === 'SB') {
+                                        $groupUangMukaSB += ((float) ($hdr->header_gramt ?? 0) * $ratio);
                                     }
                                 }
 
