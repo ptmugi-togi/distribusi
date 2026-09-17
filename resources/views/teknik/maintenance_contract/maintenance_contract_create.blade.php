@@ -93,7 +93,7 @@
 
         <div class="col-md-6 mt-3">
             <label class="form-label">Official Discount</label>
-            <input type="text" id="odisa_display" class="form-control total-display" readonly style="background-color:#e9ecef">
+            <input type="text" id="odisa_display" class="form-control total-display">
             <input type="hidden" name="odisa" id="odisa" class="price-raw">
         </div>
 
@@ -482,6 +482,15 @@
                 let value = $(this).val().replace(/[^\d]/g, '');
 
                 $('#dpamt').val(value);
+                $(this).val(formatNumber(value));
+
+                updateHeaderSummary();
+            });
+
+            $(document).on('input', '#odisa_display', function(){
+                let value = $(this).val().replace(/[^\d]/g, '');
+
+                $('#odisa').val(value);
                 $(this).val(formatNumber(value));
 
                 updateHeaderSummary();
