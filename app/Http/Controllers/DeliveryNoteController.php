@@ -84,7 +84,6 @@ class DeliveryNoteController extends Controller
             $last = DB::table('tdnh')
                 ->where('braco', $braco)
                 ->where('formc', $request->formc)
-                ->where('depo', $request->depo)
                 ->whereRaw("LEFT(dnnum, 2) = ?", [$year])
                 ->orderByDesc('dnnum')
                 ->value('dnnum');
@@ -92,7 +91,7 @@ class DeliveryNoteController extends Controller
             $number = $last ? ((int) substr($last, 2, 4) + 1) : 1;
             $dnnum = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
 
-            $dnid = $braco . $request->depo . $request->formc . $dnnum;
+            $dnid = $braco . $request->formc . $dnnum;
             $bracoformc = $braco . $request->formc;
             $gramt = $request->totalservice + $request->totalsparepart;
 
@@ -619,34 +618,6 @@ class DeliveryNoteController extends Controller
 
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    public function generateDnnum(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $depo = $request->depo;
-        $dndat = $request->dndat;
-
-        $year = Carbon::parse($dndat)->format('y');
-
-        $last = DB::table('tdnh')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->where('depo', $depo)
-            ->whereRaw("LEFT(dnnum,2) = ?", [$year])
-            ->orderByDesc('dnnum')
-            ->value('dnnum');
-
-        if ($last) {
-            $number = (int) substr($last, 2, 4) + 1;
-        } else {
-            $number = 1;
-        }
-
-        $running = str_pad($number, 4, '0', STR_PAD_LEFT);
-
-        return $year . $running;
     }
 
     public function getBillAddress(Request $request)

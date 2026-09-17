@@ -350,8 +350,8 @@
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Selling Price</label>
-                                <input type="text" class="form-control sparepart-price-display price-display" 
-                            <input type="hidden" name="price[]" id="price_${index}" class="sparepart-price-input price-raw">
+                                <input type="text" class="form-control sparepart-price-display price-display">
+                                <input type="hidden" name="price[]" id="price_${index}" class="sparepart-price-input price-raw">
                             </div>
 
                             <div class="col-md-6 mb-3">
