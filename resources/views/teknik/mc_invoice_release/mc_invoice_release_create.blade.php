@@ -42,11 +42,6 @@
                     </div>
 
                     <div class="col-md-6 mt-3">
-                        <label for="invno" class="form-label">Invoice No.</label><span class="text-danger"> *</span>
-                        <input type="text" class="form-control" id="invno" name="invno" id="invno" value="{{ old('invno') }}" readonly style="background-color:#e9ecef">
-                    </div>
-
-                    <div class="col-md-6 mt-3">
                         <label for="refno" class="form-label">MC No.</label><span class="text-danger"> *</span>
                         <select class="form-control select2" id="refno" name="refno">
                             <option value="" disabled {{ old('refno') ? '' : 'selected' }}>Silahkan Pilih MC</option>
@@ -363,54 +358,76 @@
                     }
                 );
 
-                $.get("{{ url('/get-mc-product') }}/"+mcid,function(res){
-                        let html = '';
+                function calculateProductPrices(toppcPercent) {
+                    let toppc = parseFloat(toppcPercent) || 0;
 
-                        $.each(res.product,function(i,item){
+                    $('.product-row').each(function() {
+                        let basePrice = parseFloat($(this).find('.product-base-price').val()) || 0;
+                        let calculatedPrice = basePrice * (toppc / 100);
 
-                            html += `
+                        $(this).find('.product-gramt-input').val(calculatedPrice);$(this).find('.product-gramt-display').val(formatNumber(calculatedPrice));
+                    });
+                }
 
-                            <div class="row">
-                                <div class="col-md-6 mt-3">
-                                    <label for="product_name" class="form-label">Product Name ${i + 1}</label>
-                                    <input type="text" class="form-control" value="${item.opron} - ${item.prona}" readonly style="background-color:#e9ecef">
-                                    <input type="hidden" class="form-control" name="product_opron[]" value="${item.opron}" readonly style="background-color:#e9ecef">
-                                </div>
+                $.get("{{ url('/get-mc-product') }}/" + mcid, function(res) {
+                    let html = '';
 
-                                <div class="col-md-6 mt-3">
-                                    <label for="product_lotno" class="form-label">Product lotno ${i + 1}</label>
-                                    <input type="text" class="form-control" name="product_lotno[]" value="${item.lotno}" readonly style="background-color:#e9ecef">
-                                </div>
-
-                                <input type="hidden" name="product_trqty[]" value="1">
+                    $.each(res.product, function(i, item) {
+                        html += `
+                        <div class="row product-row">
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Product Name ${i + 1}</label>
+                                <input type="text" class="form-control" value="${item.opron} - ${item.prona}" readonly style="background-color:#e9ecef">
+                                <input type="hidden" name="product_opron[]" value="${item.opron}">
+                                
+                                <input type="hidden" class="product-base-price" value="${item.price}">
+                                
+                                <input type="hidden" class="product-gramt-input" name="product_gramt[]" value="${item.price}">
+                                
+                                <input type="hidden" class="form-control mt-1 product-gramt-display" readonly style="background-color:#e9ecef">
                             </div>
-                            `;
-                        });
 
-                        $('#product-container').html(html);
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Product Lot No ${i + 1}</label>
+                                <input type="text" class="form-control" name="product_lotno[]" value="${item.lotno ?? ''}" readonly style="background-color:#e9ecef">
+                            </div>
 
-                        $('#product-container').show();
+                            <input type="hidden" name="product_trqty[]" value="1">
+                        </div>
+                        `;
+                    });
+
+                    $('#product-container').html(html).show();
+
+                    let selectedToppc = $('.phase-select:checked').data('toppc');
+                    if (selectedToppc) {
+                        calculateProductPrices(selectedToppc);
                     }
-                );
+                });
             });
 
-            $(document).on('change','.phase-select',function(){
-                if($(this).is(':disabled')){
+            $(document).on('change', '.phase-select', function() {
+                if ($(this).is(':disabled')) {
                     return false;
                 }
                 let row = $(this);
+                let toppc = row.data('toppc');
+
                 $('#phase').val(row.data('phase'));
                 $('#gramt').val(row.data('gramt'));
                 $('#odisa').val(row.data('odisa'));
                 $('#ntamt').val(row.data('ntamt'));
                 $('#txamt').val(row.data('txamt'));
                 $('#blamt').val(row.data('blamt'));
-                $('#toppc').val(row.data('toppc'));
+                $('#toppc').val(toppc);
+
                 $('#gramt_display').val(formatNumber(row.data('gramt')));
                 $('#odisa_display').val(formatNumber(row.data('odisa')));
                 $('#ntamt_display').val(formatNumber(row.data('ntamt')));
                 $('#txamt_display').val(formatNumber(row.data('txamt')));
                 $('#blamt_display').val(formatNumber(row.data('blamt')));
+
+                calculateProductPrices(toppc);
             });
 
             $('#address_source').on('change',function(){

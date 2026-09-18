@@ -3,7 +3,7 @@
 
 <div class="accordion" id="accordionProductDetail">
     @forelse ($mc->mcdtls as $i => $detail)
-        <div class="accordion-item mb-3">
+        <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button"
                     data-bs-toggle="collapse"

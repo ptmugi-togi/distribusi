@@ -65,12 +65,27 @@ class McInvoiceReleaseController extends Controller
         DB::beginTransaction();
 
         try {
+            $braco = $request->braco;
+            $formc = $request->formc;
+            $invdt = $request->invdt;
 
-            $invid = $request->braco .  $request->formc . $request->invno;
-            $bracoformc = $request->braco . $request->formc;
+            $year = Carbon::parse($invdt)->format('y');
+
+            $last = DB::table('tinmas')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(invno, 2) = ?", [$year])
+                ->orderBy('invno', 'desc')
+                ->value('invno');
+
+            $number = $last ? ((int)substr($last, 2) + 1) : 1;
+            $invno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $invid = $braco . $formc . $invno;
+            $bracoformc = $braco . $formc;
             $odisp = 0;
 
-            if($request->gramt > 0){
+            if ($request->gramt > 0) {
                 $odisp = ($request->odisa / $request->gramt) * 100;
             }
 
@@ -79,10 +94,10 @@ class McInvoiceReleaseController extends Controller
             $tinmasId = DB::table('tinmas')->insertGetId([
                 'invid' => $invid,
                 'bracoformc' => $bracoformc,
-                'braco' => $request->braco,
-                'formc' => $request->formc,
-                'invno' => $request->invno,
-                'invdt' => $request->invdt,
+                'braco' => $braco,
+                'formc' => $formc,
+                'invno' => $invno,
+                'invdt' => $invdt,
                 'priod' => $request->priod,
                 'duedt' => $request->duedt,
                 'delto' => $request->address_source,
@@ -100,49 +115,46 @@ class McInvoiceReleaseController extends Controller
                 'txamt' => $request->txamt ?? 0,
                 'odisa' => $request->odisa ?? 0,
                 'blamt' => $request->blamt ?? 0,
-                'vatax' => $request->vatax ?? 0,
                 'itext' => $request->noteh,
                 'divco' => $request->divco,
                 'phase' => $request->phase,
-                'created_at'=>now(),
-                'created_by'=>Auth::user()->name,
-                'updated_at'=>now(),
-                'updated_by'=>Auth::user()->name
+                'created_at' => now(),
+                'created_by' => Auth::user()->name,
+                'updated_at' => now(),
+                'updated_by' => Auth::user()->name
             ]);
 
-            if($request->product_opron){
-                foreach($request->product_opron as $i=>$opron){
+            if ($request->product_opron) {
+                foreach ($request->product_opron as $i => $opron) {
                     DB::table('tinta')->insert([
-                        'invid'=>$invid,
-                        'braco'=>$request->braco,
-                        'formc'=>$request->formc,
-                        'invno'=>$request->invno,
-                        'invln'=>$i+1,
-                        'tofee'=>'MC',
-                        'descr'=>null,
-                        'opron'=>$opron,
-                        'trqty'=>1,
-                        'lotno'=>$request->product_lotno[$i] ?? null,
-
-                        // dari phase
-                        'gramt'=>$request->gramt ?? 0,
-                        'odisa'=>$request->odisa ?? 0,
-                        'odisp'=>$odisp,
-                        'netbe'=>$request->ntamt ?? 0,
+                        'invid' => $invid,
+                        'braco' => $braco,
+                        'formc' => $formc,
+                        'invno' => $invno,
+                        'invln' => $i + 1,
+                        'tofee' => 'MC',
+                        'descr' => null,
+                        'opron' => $opron,
+                        'trqty' => 1,
+                        'lotno' => $request->product_lotno[$i] ?? null,
+                        'gramt' => $request->product_gramt[$i] ?? 0,
+                        'odisa' => $request->odisa ?? 0,
+                        'odisp' => $odisp,
+                        'netbe' => $request->ntamt ?? 0,
                     ]);
                 }
             }
 
             DB::table('tmcd2')
-                ->where('braco', $request->braco)
+                ->where('braco', $braco)
                 ->where('formc', $request->dorfc)
                 ->where('refno', $request->donom)
                 ->where('phase', $request->phase)
                 ->update([
-                    'invfc' => $request->formc,
-                    'invno' => $request->invno,
+                    'invfc' => $formc,
+                    'invno' => $invno,
                     'wdelto' => $request->address_source,
-                    'winvdt' => $request->invdt,
+                    'winvdt' => $invdt,
                     'wduedt' => $request->duedt,
                     'wpriod' => $request->priod,
                     'sts01'  => 'I',
@@ -153,37 +165,13 @@ class McInvoiceReleaseController extends Controller
 
             return redirect()
                 ->route('mc_invoice_release.index')
-                ->with('success',"Invoice \"$invid\" berhasil dibuat");
+                ->with('success', "Invoice \"$invid\" berhasil dibuat");
 
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal simpan SD:', ['error' => $e->getMessage()]);
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    public function generateInvno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $invdt = $request->invdt;
-        
-        $year = Carbon::parse($invdt)->format('y');
-
-        $last = DB::table('tinmas')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(invno,2) = ?", [$year])
-            ->orderBy('invno','desc')
-            ->value('invno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
     public function searchMc(Request $request)
@@ -234,7 +222,8 @@ class McInvoiceReleaseController extends Controller
             ->select(
                 'a.opron',
                 'a.lotno',
-                'b.prona'
+                'b.prona',
+                'a.price'
             )
             ->get();
 
