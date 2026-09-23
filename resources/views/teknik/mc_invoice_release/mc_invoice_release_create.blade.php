@@ -360,12 +360,31 @@
 
                 function calculateProductPrices(toppcPercent) {
                     let toppc = parseFloat(toppcPercent) || 0;
+                    let totalGramt = parseFloat($('#gramt').val()) || 0;
+                    let totalOdisa = parseFloat($('#odisa').val()) || 0;
 
-                    $('.product-row').each(function() {
+                    let rows = $('.product-row');
+                    let accumulatedOdisa = 0;
+
+                    rows.each(function(index) {
                         let basePrice = parseFloat($(this).find('.product-base-price').val()) || 0;
+                        
                         let calculatedPrice = basePrice * (toppc / 100);
+                        $(this).find('.product-gramt-input').val(calculatedPrice);
+                        $(this).find('.product-gramt-display').val(formatNumber(calculatedPrice));
 
-                        $(this).find('.product-gramt-input').val(calculatedPrice);$(this).find('.product-gramt-display').val(formatNumber(calculatedPrice));
+                        let productOdisa = 0;
+                        if (totalGramt > 0) {
+                            if (index === rows.length - 1) {
+                                productOdisa = totalOdisa - accumulatedOdisa;
+                            } else {
+                                productOdisa = Math.round((calculatedPrice / totalGramt) * totalOdisa);
+                                accumulatedOdisa += productOdisa;
+                            }
+                        }
+
+                        $(this).find('.product-odisa-input').val(productOdisa);
+                        $(this).find('.product-odisa-display').val(formatNumber(productOdisa));
                     });
                 }
 
@@ -382,9 +401,19 @@
                                 
                                 <input type="hidden" class="product-base-price" value="${item.price}">
                                 
-                                <input type="hidden" class="product-gramt-input" name="product_gramt[]" value="${item.price}">
+                                <input type="hidden" class="product-gramt-input" name="product_gramt[]" value="0">
+                                <input type="hidden" class="product-odisa-input" name="product_odisa[]" value="0">
                                 
-                                <input type="hidden" class="form-control mt-1 product-gramt-display" readonly style="background-color:#e9ecef">
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small class="text-muted">Gross Amount</small>
+                                        <input type="text" class="form-control form-control-sm product-gramt-display" readonly style="background-color:#e9ecef">
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Discount</small>
+                                        <input type="text" class="form-control form-control-sm product-odisa-display" readonly style="background-color:#e9ecef">
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-md-6 mt-3">
@@ -399,6 +428,7 @@
 
                     $('#product-container').html(html).show();
 
+                    // Trigger hitung jika phase sudah terpilih
                     let selectedToppc = $('.phase-select:checked').data('toppc');
                     if (selectedToppc) {
                         calculateProductPrices(selectedToppc);

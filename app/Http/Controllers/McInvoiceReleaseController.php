@@ -83,13 +83,6 @@ class McInvoiceReleaseController extends Controller
 
             $invid = $braco . $formc . $invno;
             $bracoformc = $braco . $formc;
-            $odisp = 0;
-
-            if ($request->gramt > 0) {
-                $odisp = ($request->odisa / $request->gramt) * 100;
-            }
-
-            $odisp = round($odisp, 2);
 
             $tinmasId = DB::table('tinmas')->insertGetId([
                 'invid' => $invid,
@@ -126,6 +119,16 @@ class McInvoiceReleaseController extends Controller
 
             if ($request->product_opron) {
                 foreach ($request->product_opron as $i => $opron) {
+                    $productGramt = floatval($request->product_gramt[$i] ?? 0);
+                    $productOdisa = floatval($request->product_odisa[$i] ?? 0);
+
+                    $productNetbe = $productGramt - $productOdisa;
+
+                    $productOdisp = 0;
+                    if ($productGramt > 0) {
+                        $productOdisp = round(($productOdisa / $productGramt) * 100, 2);
+                    }
+
                     DB::table('tinta')->insert([
                         'invid' => $invid,
                         'braco' => $braco,
@@ -137,10 +140,10 @@ class McInvoiceReleaseController extends Controller
                         'opron' => $opron,
                         'trqty' => 1,
                         'lotno' => $request->product_lotno[$i] ?? null,
-                        'gramt' => $request->product_gramt[$i] ?? 0,
-                        'odisa' => $request->odisa ?? 0,
-                        'odisp' => $odisp,
-                        'netbe' => $request->ntamt ?? 0,
+                        'gramt' => $productGramt,
+                        'odisa' => $productOdisa,
+                        'odisp' => $productOdisp,
+                        'netbe' => $productNetbe,
                     ]);
                 }
             }
