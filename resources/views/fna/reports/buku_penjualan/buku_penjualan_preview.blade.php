@@ -310,6 +310,11 @@
 
                                 // Ambil Nama Group untuk Kolom GRP
                                 $grpNames = $rows->map(function($r) {
+                                    $refCode = strtoupper(trim(($r->formc === 'SD' ? $r->dorfc : $r->sorfc) ?? ''));
+                                    if (substr($refCode, 0, 2) === 'MC') {
+                                        return 'MAINTENANCE CONTRACT';
+                                    }
+
                                     $g = trim($r->group ?? '');
                                     if (!$g && $r->formc === 'SD') {
                                         $g = trim($r->tofee ?? '');
@@ -422,8 +427,13 @@
                 </div>
                 <br>
                 @php
-                    // Kelompokkan item per Group
+                    // Grouping item berdasarkan kategori
                     $groupedByGroup = $items->groupBy(function ($row) {
+                        $refCode = strtoupper(trim(($row->formc === 'SD' ? $row->dorfc : $row->sorfc) ?? ''));
+                        if (substr($refCode, 0, 2) === 'MC') {
+                            return 'MAINTENANCE CONTRACT';
+                        }
+
                         if ($row->formc === 'SD' && empty($row->tofee)) {
                             return 'SPAREPART';
                         }
@@ -479,57 +489,51 @@
                                 $salesRegular = 0;
                                 $discRegular  = 0;
 
-                                // Iterasi per item detail menggunakan NETBE murni dari detail
-                                foreach ($groupRows as $row) {
-                                    $gGross    = (float) ($row->gramt ?? 0);
-                                    $discount  = (float) ($row->odisa ?? 0);
-                                    
-                                    // AMBIL LANGSUNG NETBE PER ITEM DETAIL
-                                    $dppDetail = (float) ($row->netbe ?? ($gGross - $discount));
+                                // Hitung per Faktur dalam Group ini secara Proporsional
+                                $invoicesInGroup = $groupRows->groupBy(function($r){ return $r->formc.'|'.$r->invno; });
 
-                                    // Hitung PPN detail = netbe_detail * vatax / 100
-                                    $vataxRate = (float) ($row->vatax ?? 0);
-                                    $ppnDetail = $dppDetail * ($vataxRate / 100);
+                                foreach ($invoicesInGroup as $invKey => $rowsInGroup) {
+                                    $header       = $rowsInGroup->first();
+                                    $totInvGross  = $invoiceTotals[$invKey] ?? 0;
 
-                                    $groupGross    += $gGross;
-                                    $groupDiscount += $discount;
-                                    $groupDpp      += $dppDetail;
-                                    $groupPpn      += $ppnDetail;
-                                    $groupPiutang  += ($dppDetail + $ppnDetail);
+                                    // Gross & Disc milik Group dalam Faktur ini
+                                    $subGross = (float) $rowsInGroup->sum('gramt');
+                                    $subDisc  = (float) $rowsInGroup->sum('odisa');
 
-                                    if ((int)($row->invtp ?? 0) !== 1) {
-                                        $salesRegular += $gGross;
-                                        $discRegular  += $discount;
+                                    // Hitung Rasio Proporsional Group terhadap Total Faktur
+                                    $ratio = $totInvGross > 0 ? ($subGross / $totInvGross) : 0;
+
+                                    // Alokasi nilai Header berdasarkan Rasio
+                                    $uangMuka  = ((float) ($header->dpamt ?? 0)) * $ratio;
+                                    $ppn       = ((float) ($header->txamt ?? 0)) * $ratio;
+                                    $instalasi = ((float) ($header->instf ?? 0)) * $ratio;
+
+                                    $dpp     = $subGross - $subDisc - $uangMuka;
+                                    $piutang = $dpp + $ppn;
+
+                                    $groupGross     += $subGross;
+                                    $groupDiscount  += $subDisc;
+                                    $groupUangMuka  += $uangMuka;
+                                    $groupDpp       += $dpp;
+                                    $groupPpn       += $ppn;
+                                    $groupPiutang   += $piutang;
+                                    $groupInstalasi += $instalasi;
+
+                                    if ((int)($header->invtp ?? 0) !== 1) {
+                                        $salesRegular += $subGross;
+                                        $discRegular  += $subDisc;
+                                    }
+
+                                    if ($header->sorfc === 'SA' && (int) $header->invtp === 1) {
+                                        $groupUangMukaSA += (((float) ($header->header_gramt ?? 0)) * $ratio);
+                                    }
+
+                                    if ($header->sorfc === 'SB') {
+                                        $groupUangMukaSB += (((float) ($header->header_gramt ?? 0)) * $ratio);
                                     }
                                 }
 
-                                // Alokasi Uang Muka / Instalasi dari Header (Proporsional jika gabungan)
-                                foreach ($groupRows->groupBy(function($r){ return $r->formc.'|'.$r->invno; }) as $invRows) {
-                                    $hdr       = $invRows->first();
-                                    $uangMuka  = (float) ($hdr->dpamt ?? 0);
-                                    $instalasi = (float) ($hdr->instf ?? 0);
-
-                                    $totInvGross = $items->where('formc', $hdr->formc)->where('invno', $hdr->invno)->sum('gramt');
-                                    $subGross    = $invRows->sum('gramt');
-                                    $ratio       = $totInvGross > 0 ? ($subGross / $totInvGross) : 0;
-
-                                    $groupUangMuka  += ($uangMuka * $ratio);
-                                    $groupInstalasi += ($instalasi * $ratio);
-
-                                    // Potong Uang Muka dari DPP & Piutang Group
-                                    $groupDpp     -= ($uangMuka * $ratio);
-                                    $groupPiutang -= ($uangMuka * $ratio);
-
-                                    if ($hdr->sorfc === 'SA' && (int) $hdr->invtp === 1) {
-                                        $groupUangMukaSA += ((float) ($hdr->header_gramt ?? 0) * $ratio);
-                                    }
-
-                                    if ($hdr->sorfc === 'SB') {
-                                        $groupUangMukaSB += ((float) ($hdr->header_gramt ?? 0) * $ratio);
-                                    }
-                                }
-
-                                // Simpan data reguler untuk dibaca Jurnal
+                                // Simpan data reguler untuk Jurnal
                                 $groupDataList[strtoupper(trim($groupName))] = [
                                     'gross'    => $salesRegular,
                                     'discount' => $discRegular,
@@ -703,7 +707,6 @@
                     ];
 
                     // HITUNG DISCOUNT UANG MUKA PENJUALAN (442.001)
-                    // Disum dari transaksi yang invtp == 1
                     $discUangMuka = 0;
                     $groupedForUM = $items->groupBy(function ($row) {
                         return $row->formc . '|' . $row->invno;
@@ -716,11 +719,9 @@
                         }
                     }
 
-                    // Penampung Baris Jurnal
                     $debetJournal  = [];
                     $kreditJournal = [];
 
-                    // Helper untuk membaca accdesc dari $mstacc
                     $getAccDesc = function($accNo, $fallback) use ($mstacc) {
                         return isset($mstacc[$accNo]) ? $mstacc[$accNo]->accdesc : $fallback;
                     };
@@ -734,7 +735,7 @@
                         ];
                     }
 
-                    // DEBET: Discount Uang Muka Penjualan (442.001) -> (Hasil filter invtp == 1)
+                    // DEBET: Discount Uang Muka Penjualan (442.001)
                     if ($discUangMuka > 0) {
                         $debetJournal['442.001'] = [
                             'accno'   => '442.001',
@@ -752,7 +753,7 @@
                         ];
                     }
 
-                    // KREDIT: Uang Muka Penjualan (441.001) -> Total SA + SB
+                    // KREDIT: Uang Muka Penjualan (441.001)
                     $totalUangMukaSASB = $groupGrandUangMukaSA + $groupGrandUangMukaSB - $groupGrandUangMuka;
                     if ($totalUangMukaSASB > 0) {
                         $kreditJournal['441.001'] = [
@@ -771,13 +772,12 @@
                         ];
                     }
 
-                    // DEBET & KREDIT per Group (Penjualan & Discount dari Transaksi invtp != 1)
+                    // DEBET & KREDIT per Group (Penjualan & Discount)
                     foreach ($groupDataList as $gName => $gVal) {
                         $name = strtoupper(trim($gName));
                         $sAcc = $acslsMapping[$name]['sales'] ?? '701.007';
                         $dAcc = $acslsMapping[$name]['disc']  ?? '721.007';
 
-                        // Penjualan Brg per Group (Kredit)
                         $salesVal = (float) ($gVal['gross'] ?? 0);
                         if ($salesVal > 0) {
                             if (!isset($kreditJournal[$sAcc])) {
@@ -790,7 +790,6 @@
                             $kreditJournal[$sAcc]['amount'] += $salesVal;
                         }
 
-                        // Discount per Group (Debet)
                         $discVal = (float) ($gVal['discount'] ?? 0);
                         if ($discVal > 0) {
                             if (!isset($debetJournal[$dAcc])) {
@@ -804,7 +803,6 @@
                         }
                     }
 
-                    // Totaling Debet & Kredit
                     $totalDebet  = array_sum(array_column($debetJournal, 'amount'));
                     $totalKredit = array_sum(array_column($kreditJournal, 'amount'));
                 @endphp
@@ -819,7 +817,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- BARIS DEBET (> 0) --}}
                         @foreach($debetJournal as $row)
                             <tr>
                                 <td>{{ $row['accdesc'] }}</td>
@@ -829,7 +826,6 @@
                             </tr>
                         @endforeach
 
-                        {{-- BARIS KREDIT (> 0) --}}
                         @foreach($kreditJournal as $row)
                             <tr>
                                 <td>{{ $row['accdesc'] }}</td>
