@@ -93,16 +93,10 @@ class BukuPenjualanController extends Controller
                 'h.sorno',
                 'h.fpnum',
                 'h.invtp',
-
                 'c.cusna',
-
                 'd.*',
-
-                // GROUP SC
                 'p.acgrup as group',
             ])
-            ->orderBy('h.invdt')
-            ->orderBy('h.invno')
             ->get();
 
         $sdTinta = DB::table('tinmas as h')
@@ -134,16 +128,10 @@ class BukuPenjualanController extends Controller
                 'h.sorno',
                 'h.fpnum',
                 'h.invtp',
-
                 'c.cusna',
-
                 'd.*',
-
-                // GROUP SD TINTA
                 'd.tofee as group',
             ])
-            ->orderBy('h.invdt')
-            ->orderBy('h.invno')
             ->get();
 
         $sdTintc = DB::table('tinmas as h')
@@ -169,27 +157,117 @@ class BukuPenjualanController extends Controller
                 'h.braco',
                 'h.cusno',
                 'h.curco',
-                'h.dorfc',
-                'h.donom',
                 'h.sorfc',
                 'h.sorno',
                 'h.fpnum',
                 'h.invtp',
-
                 'c.cusna',
-
                 'd.*',
-
                 DB::raw("'SPAREPART' as `group`"),
             ])
-            ->orderBy('h.invdt')
-            ->orderBy('h.invno')
+            ->get();
+
+        $cnTea = DB::table('tcnh as h')
+            ->join('tcnotea as d', function ($join) {
+                $join->on('d.crnno', '=', 'h.crnno')
+                    ->on('d.braco', '=', 'h.braco');
+            })
+            ->leftJoin('tinmas as ori', function ($join) {
+                $join->on('ori.formc', '=', 'h.invfc')
+                    ->on('ori.invno', '=', 'h.invno')
+                    ->on('ori.braco', '=', 'h.braco');
+            })
+            ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
+            ->where('h.braco', $braco)
+            ->whereBetween('h.crndt', [$start, $end])
+            ->select([
+                DB::raw("'CN' as formc"),
+                'h.cnid as invid',
+                'h.crnno as invno',
+                'h.crndt as invdt',
+                
+                DB::raw("(h.gramt * -1) as header_gramt"),
+                DB::raw("(h.dpamt * -1) as dpamt"),
+                DB::raw("0 as instf"),
+                'h.vatax',
+                DB::raw("(h.txamt * -1) as txamt"),
+                
+                'h.braco',
+                'h.cusno',
+                'h.curco',
+                'h.invfc as ori_formc',
+                'h.invno as ori_invno',
+                
+                DB::raw("NULL as sorfc"),
+                DB::raw("NULL as dorfc"),
+                
+                'ori.fpnum',
+                DB::raw("0 as invtp"),
+                'c.cusna',
+                
+                'd.crnno',
+                'd.braco',
+                'd.tofee',
+                DB::raw("(d.gramt * -1) as gramt"),
+                DB::raw("(d.odisa * -1) as odisa"),
+                
+                'd.tofee as group',
+            ])
+            ->get();
+
+        $cnTec = DB::table('tcnh as h')
+            ->join('tcnotec as d', function ($join) {
+                $join->on('d.crnno', '=', 'h.crnno')
+                    ->on('d.braco', '=', 'h.braco');
+            })
+            ->leftJoin('tinmas as ori', function ($join) {
+                $join->on('ori.formc', '=', 'h.invfc')
+                    ->on('ori.invno', '=', 'h.invno')
+                    ->on('ori.braco', '=', 'h.braco');
+            })
+            ->leftJoin('mcusmas as c', 'h.cusno', '=', 'c.cusno')
+            ->where('h.braco', $braco)
+            ->whereBetween('h.crndt', [$start, $end])
+            ->select([
+                DB::raw("'CN' as formc"),
+                'h.cnid as invid',
+                'h.crnno as invno',
+                'h.crndt as invdt',
+                
+                DB::raw("(h.gramt * -1) as header_gramt"),
+                DB::raw("(h.dpamt * -1) as dpamt"),
+                DB::raw("0 as instf"),
+                'h.vatax',
+                DB::raw("(h.txamt * -1) as txamt"),
+                
+                'h.braco',
+                'h.cusno',
+                'h.curco',
+                'h.invfc as ori_formc',
+                'h.invno as ori_invno',
+                
+                DB::raw("NULL as sorfc"),
+                DB::raw("NULL as dorfc"),
+                
+                'ori.fpnum',
+                DB::raw("0 as invtp"),
+                'c.cusna',
+                
+                'd.crnno',
+                'd.braco',
+                DB::raw("(d.gramt * -1) as gramt"),
+                DB::raw("(d.odisa * -1) as odisa"),
+                
+                DB::raw("'SPAREPART' as `group`"),
+            ])
             ->get();
 
         return $sc->concat($sdTinta)
             ->concat($sdTintc)
+            ->concat($cnTea)
+            ->concat($cnTec)
             ->sortBy(function ($row) {
-                return $row->invdt . '-' . sprintf('%010d', (int)$row->invno);
+                return $row->invdt . '-' . sprintf('\%010d', (int)$row->invno);
             })
             ->values();
     }

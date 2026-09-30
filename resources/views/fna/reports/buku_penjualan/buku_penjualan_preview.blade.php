@@ -222,7 +222,7 @@
                     $invoiceTotals[$invKey] = (float) $invRows->sum('gramt');
                 }
 
-                // GABUNGKAN FAKTUR YANG SAMA MENJADI 1 BARIS (HANYA BERDASARKAN FORMC & INVNO)
+                // GABUNGKAN FAKTUR YANG SAMA MENJADI 1 BARIS (BERDASARKAN FORMC & INVNO)
                 $groupedItems = $items->sortBy(function ($row) {
                     return (int) $row->invno;
                 })->groupBy(function ($row) {
@@ -265,7 +265,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach(['SC', 'SD'] as $formc)
+                    @foreach(['SC', 'SD', 'CN'] as $formc)
                         @php
                             $formItems = $groupedItems->filter(function ($rows) use ($formc) {
                                 return $rows->first()->formc === $formc;
@@ -295,11 +295,15 @@
 
                                 // Hitung rasio/proporsi terhadap total faktur
                                 $totInvGross = $invoiceTotals[$invKey] ?? 0;
-                                $ratio       = $totInvGross > 0 ? ($grossSales / $totInvGross) : 0;
+                                if ($header->formc === 'CN') {
+                                    $ratio = 1;
+                                } else {
+                                    $ratio = ($totInvGross != 0) ? ($grossSales / $totInvGross) : 1;
+                                }
 
                                 // Alokasi Nilai Header Proporsional
                                 $uangMuka  = ((float) ($header->dpamt ?? 0)) * $ratio;
-                                $ppn       = ((float) ($header->txamt ?? 0)) * $ratio;
+                                $ppn       = ((float) ($header->txamt ?? 0)) ;
                                 $instalasi = ((float) ($header->instf ?? 0)) * $ratio;
 
                                 $dpp     = $grossSales - $discount - $uangMuka;
@@ -309,14 +313,21 @@
                                 $uangMukaSB = ($header->sorfc === 'SB') ? ((float)$header->header_gramt * $ratio) : 0;
 
                                 // Ambil Nama Group untuk Kolom GRP
+                                // Deteksi Group
                                 $grpNames = $rows->map(function($r) {
-                                    $refCode = strtoupper(trim(($r->formc === 'SD' ? $r->dorfc : $r->sorfc) ?? ''));
-                                    if (substr($refCode, 0, 2) === 'MC') {
+                                    $refCode = '';
+                                    if ($r->formc === 'SD') {
+                                        $refCode = strtoupper(trim($r->dorfc ?? ''));
+                                    } elseif ($r->formc === 'SC') {
+                                        $refCode = strtoupper(trim($r->sorfc ?? ''));
+                                    }
+
+                                    if ($refCode && substr($refCode, 0, 2) === 'MC') {
                                         return 'MAINTENANCE CONTRACT';
                                     }
 
                                     $g = trim($r->group ?? '');
-                                    if (!$g && $r->formc === 'SD') {
+                                    if (!$g && in_array($r->formc, ['SD', 'CN'])) {
                                         $g = trim($r->tofee ?? '');
                                     }
                                     return strtoupper($g);
@@ -339,11 +350,17 @@
                             <tr>
                                 <td class="center">{{ $no++ }}</td>
                                 <td class="center">{{ $header->invdt ? date('d-m-Y', strtotime($header->invdt)) : '' }}</td>
+                                
                                 <td class="center">{{ $header->formc }} {{ $header->invno }}</td>
+                                
                                 <td class="center">{{ $header->fpnum ?? '' }}</td>
                                 <td>{{ $header->cusna ?? '' }}</td>
+                                
                                 <td class="center">
-                                    @if($header->formc === 'SD')
+                                    @if($header->formc === 'CN')
+                                        {{-- Jika CN, tampilkan Faktur Acuan asalnya (misal: SD 260085) --}}
+                                        {{ ($header->ori_formc ?? '') . ' ' . ($header->ori_invno ?? '') }}
+                                    @elseif($header->formc === 'SD')
                                         {{ ($header->dorfc ?? '') . ($header->donom ?? '') }}
                                     @else
                                         {{ ($header->sorfc ?? '') . ($header->sorno ?? '') }}
@@ -370,18 +387,18 @@
                             </tr>
                         @endforeach
 
-                        {{-- SUB TOTAL SC / SD --}}
+                        {{-- SUB TOTAL SC / SD / CN --}}
                         @if($formItems->count() > 0)
                             @php
-                                $grandGross      += $subtotal['gross'];
-                                $grandDisc       += $subtotal['discount'];
-                                $grandUangMuka   += $subtotal['uangMuka'];
-                                $grandDpp        += $subtotal['dpp'];
-                                $grandPpn        += $subtotal['ppn'];
-                                $grandPiutang    += $subtotal['piutang'];
-                                $grandInstalasi  += $subtotal['instalasi'];
-                                $grandUangMukaSA += $subtotal['uangMukaSA'];
-                                $grandUangMukaSB += $subtotal['uangMukaSB'];
+                                $grandGross       += $subtotal['gross'];
+                                $grandDisc        += $subtotal['discount'];
+                                $grandUangMuka    += $subtotal['uangMuka'];
+                                $grandDpp         += $subtotal['dpp'];
+                                $grandPpn         += $subtotal['ppn'];
+                                $grandPiutang     += $subtotal['piutang'];
+                                $grandInstalasi   += $subtotal['instalasi'];
+                                $grandUangMukaSA  += $subtotal['uangMukaSA'];
+                                $grandUangMukaSB  += $subtotal['uangMukaSB'];
                             @endphp
 
                             <tr>
@@ -429,16 +446,16 @@
                 @php
                     // Grouping item berdasarkan kategori
                     $groupedByGroup = $items->groupBy(function ($row) {
-                        $refCode = strtoupper(trim(($row->formc === 'SD' ? $row->dorfc : $row->sorfc) ?? ''));
+                        $refCode = strtoupper(trim(($row->formc === 'SC' ? $row->sorfc : ($row->dorfc ?? $row->sorfc)) ?? ''));
                         if (substr($refCode, 0, 2) === 'MC') {
                             return 'MAINTENANCE CONTRACT';
                         }
 
-                        if ($row->formc === 'SD' && empty($row->tofee)) {
+                        if (in_array($row->formc, ['SD', 'CN']) && empty($row->tofee)) {
                             return 'SPAREPART';
                         }
                         $g = trim($row->group ?? '');
-                        if (!$g && $row->formc === 'SD') {
+                        if (!$g && in_array($row->formc, ['SD', 'CN'])) {
                             $g = trim($row->tofee ?? '');
                         }
                         return strtoupper($g) ?: 'OTHERS';
