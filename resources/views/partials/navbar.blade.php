@@ -343,6 +343,19 @@
             <i class="bi bi-circle"></i><span>PO</span>
             </a>
           </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" data-bs-target="#subPurchasing-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul id="subPurchasing-nav" class="nav-content collapse" data-bs-parent="#purchasing-nav">
+                <li>
+                  <a href="{{ route('outstandingpo.create') }}">
+                  <i class="bi bi-circle"></i><span>Outstanding PO</span>
+                  </a>
+                </li>
+              </ul>
+          </li>
         </ul>
       </li>
 

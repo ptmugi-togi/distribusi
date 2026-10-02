@@ -57,6 +57,7 @@ use App\Http\Controllers\DeliveryNoteController;
 use App\Http\Controllers\MaintenanceContractController;
 use App\Http\Controllers\ServiceInvoiceReleaseController;
 use App\Http\Controllers\McInvoiceReleaseController;
+use App\Http\Controllers\ReportOutstandingPOController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -485,3 +486,6 @@ Route::get('/get-mc-detail/{mcid}', [McInvoiceReleaseController::class,'getMcDet
 Route::post('/mc-invoice-release/store', [McInvoiceReleaseController::class,'store'])->middleware('auth')->name('mc_invoice_release.store');
 Route::get('/mc-invoice-release/preview/{id}', [McInvoiceReleaseController::class, 'preview'])->middleware('auth')->name('mc_invoice_release.preview');
 Route::get('/mc-invoice-release/print/{id}', [McInvoiceReleaseController::class, 'print'])->middleware('auth')->name('mc_invoice_release.print');
+
+Route::get('/outstanding-po', [ReportOutstandingPOController::class, 'create'])->middleware('auth')->name('outstandingpo.create');
+Route::get('/outstanding-po/preview', [ReportOutstandingPOController::class, 'previewOutstandingPO'])->middleware('auth')->name('outstandingpo.preview');
