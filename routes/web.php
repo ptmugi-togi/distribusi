@@ -58,6 +58,7 @@ use App\Http\Controllers\MaintenanceContractController;
 use App\Http\Controllers\ServiceInvoiceReleaseController;
 use App\Http\Controllers\McInvoiceReleaseController;
 use App\Http\Controllers\ReportOutstandingPOController;
+use App\Http\Controllers\NationalStockPositionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -489,3 +490,6 @@ Route::get('/mc-invoice-release/print/{id}', [McInvoiceReleaseController::class,
 
 Route::get('/outstanding-po', [ReportOutstandingPOController::class, 'create'])->middleware('auth')->name('outstandingpo.create');
 Route::get('/outstanding-po/preview', [ReportOutstandingPOController::class, 'previewOutstandingPO'])->middleware('auth')->name('outstandingpo.preview');
+
+Route::get('/national-stock-position', [NationalStockPositionController::class, 'create'])->middleware('auth')->name('nsp.create');
+Route::get('/national-stock-position/preview', [NationalStockPositionController::class, 'preview'])->middleware('auth')->name('nsp.preview');

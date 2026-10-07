@@ -245,6 +245,12 @@
 
             <ul id="subLogistic-nav" class="nav-content collapse" data-bs-parent="#logistic-nav">
               <li>
+                <a href="{{ route('nsp.create') }}">
+                <i class="bi bi-circle"></i><span>National stock Position</span>
+                </a>
+              </li>
+              
+              <li>
                 <a href="{{ route('sms.create') }}">
                 <i class="bi bi-circle"></i><span>Stock Movement Summary</span>
                 </a>
