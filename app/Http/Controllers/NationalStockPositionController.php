@@ -72,24 +72,43 @@ class NationalStockPositionController extends Controller
             $opron = $item->opron;
 
             $productStocks = $allStocks->get($opron, collect());
-            $item->branch_stocks = $productStocks->pluck('toqoh', 'braco')->toArray();
-            $totalStockCabang = array_sum($item->branch_stocks);
+            
+            $branchStocksFormatted = [];
+            $totalStockCabang = 0;
+            $availD3 = 0;
 
-            $userStockObj = $productStocks->firstWhere('braco', $userCabang);
-            $item->avail_d3 = $userStockObj ? $userStockObj->toqoh : 0;
+            foreach ($productStocks as $st) {
+                $qty = (float) $st->toqoh;
 
+                if ($st->braco === $userCabang) {
+                    $availD3 = $qty;
+                }
+
+                if ($st->braco !== 'PST' && $qty > 0) {
+                    $branchStocksFormatted[$st->braco] = $qty;
+                    $totalStockCabang += $qty;
+                }
+            }
+
+            $item->branch_stocks = $branchStocksFormatted;
+            $item->avail_d3 = $availD3;
             $item->bop = 0;
             $item->rusak = 0;
 
             $indenCollection = $allInden->get($opron, collect());
-            $item->inden = $indenCollection->sum('qty');
+            $item->inden = (float) $indenCollection->sum('qty');
             $item->inden_breakdown = $indenCollection;
 
             $bpbCollection = $allBpb->get($opron, collect());
-            $item->bpb = $bpbCollection->sum('qty');
+            $item->bpb = (float) $bpbCollection->sum('qty');
             $item->bpb_breakdown = $bpbCollection;
 
-            return ($totalStockCabang > 0) || ($item->inden > 0) || ($item->bpb > 0);
+            $hasAvailD3      = $item->avail_d3 > 0;
+            $hasBranchStock  = $totalStockCabang > 0;
+            $hasInden        = $item->inden > 0;
+            $hasBpb          = $item->bpb > 0;
+
+            return $hasAvailD3 || $hasBranchStock || $hasInden || $hasBpb;
         });
 
         $groupedItems = $filteredProducts->groupBy('subgroup_name');
