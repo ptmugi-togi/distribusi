@@ -4,31 +4,30 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Mbranch;
 
 class NationalStockPositionController extends Controller
 {
     public function create()
     {
-        $braco = Auth::user()->cabang;
-        return view('logistic.reports.nsp.nsp_create', compact('braco'));
+        return view('logistic.reports.nsp.nsp_create');
     }
 
     public function preview(Request $req)
     {
         $itype = $req->get('itype', 'N');
         $sortBy = $req->get('sort_by', 'opron');
-        $userCabang = Auth::user()->cabang;
 
+        // 1. Ambil daftar cabang (Kecualikan 'PST' dan 'CKG')
         $branches = DB::table('mbranches')
             ->select('braco')
-            ->where('braco', '!=', 'PST')
+            ->whereNotIn('braco', ['PST', 'CKG'])
             ->orderBy('braco', 'ASC')
             ->get();
 
         $orderColumn = $sortBy === 'prona' ? 'p.prona' : 'p.opron';
 
+        // 2. Query Utama Produk
         $products = DB::table('mpromas as p')
             ->leftJoin('msgrup as sg', 'p.sgrup_id', '=', 'sg.sgrup_id')
             ->select(
@@ -48,6 +47,7 @@ class NationalStockPositionController extends Controller
 
         $oprons = $products->pluck('opron')->toArray();
 
+        // 3. Batch Query Data Pendukung
         $allStocks = DB::table('stobw_tbl')
             ->whereIn('opron', $oprons)
             ->where('toqoh', '>', 0)
@@ -68,25 +68,27 @@ class NationalStockPositionController extends Controller
             ->whereRaw('d.rqqty > d.rcqty')
             ->get()->groupBy('opron');
 
-        $filteredProducts = $products->filter(function ($item) use ($allStocks, $allInden, $allBpb, $userCabang) {
+        // 4. Filtering Produk Aktif
+        $filteredProducts = $products->filter(function ($item) use ($allStocks, $allInden, $allBpb) {
             $opron = $item->opron;
 
             $productStocks = $allStocks->get($opron, collect());
             
             $branchStocksFormatted = [];
-            $totalStockCabang = 0;
+            $totalStockCabangLain = 0;
             $availD3 = 0;
 
             foreach ($productStocks as $st) {
                 $qty = (float) $st->toqoh;
 
-                if ($st->braco === $userCabang) {
+                // AVAIL_D3 murni stok milik PST
+                if ($st->braco === 'PST') {
                     $availD3 = $qty;
-                }
-
-                if ($st->braco !== 'PST' && $qty > 0) {
+                } 
+                // Stok cabang-cabang lain (di luar PST & CKG)
+                elseif ($st->braco !== 'CKG' && $qty > 0) {
                     $branchStocksFormatted[$st->braco] = $qty;
-                    $totalStockCabang += $qty;
+                    $totalStockCabangLain += $qty;
                 }
             }
 
@@ -95,6 +97,7 @@ class NationalStockPositionController extends Controller
             $item->bop = 0;
             $item->rusak = 0;
 
+            // Inden & BPB Breakdown
             $indenCollection = $allInden->get($opron, collect());
             $item->inden = (float) $indenCollection->sum('qty');
             $item->inden_breakdown = $indenCollection;
@@ -103,17 +106,20 @@ class NationalStockPositionController extends Controller
             $item->bpb = (float) $bpbCollection->sum('qty');
             $item->bpb_breakdown = $bpbCollection;
 
-            $hasAvailD3      = $item->avail_d3 > 0;
-            $hasBranchStock  = $totalStockCabang > 0;
-            $hasInden        = $item->inden > 0;
-            $hasBpb          = $item->bpb > 0;
+            // Syarat Lolos Tampil
+            $hasAvailD3         = $item->avail_d3 > 0;
+            $hasBranchStockLain = $totalStockCabangLain > 0;
+            $hasInden           = $item->inden > 0;
+            $hasBpb             = $item->bpb > 0;
 
-            return $hasAvailD3 || $hasBranchStock || $hasInden || $hasBpb;
+            return $hasAvailD3 || $hasBranchStockLain || $hasInden || $hasBpb;
         });
 
         $groupedItems = $filteredProducts->groupBy('subgroup_name');
-        $branch = Mbranch::where('braco', $userCabang)->first();
-        $brana = $branch->brana ?? $userCabang;
+
+        // Ambil nama cabang PST untuk header PT (atau bisa set statis)
+        $branch = Mbranch::where('braco', 'PST')->first();
+        $brana = $branch->brana ?? 'PUSAT';
 
         ini_set('pcre.backtrack_limit', '20000000'); 
         ini_set('memory_limit', '1024M');
