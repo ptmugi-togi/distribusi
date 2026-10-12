@@ -361,6 +361,13 @@
                   </a>
                 </li>
               </ul>
+              <ul id="subPurchasing-nav" class="nav-content collapse" data-bs-parent="#purchasing-nav">
+                <li>
+                  <a href="{{ route('outstandingwo.create') }}">
+                  <i class="bi bi-circle"></i><span>Outstanding WO</span>
+                  </a>
+                </li>
+              </ul>
           </li>
         </ul>
       </li>

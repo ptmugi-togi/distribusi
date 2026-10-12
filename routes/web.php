@@ -58,6 +58,7 @@ use App\Http\Controllers\MaintenanceContractController;
 use App\Http\Controllers\ServiceInvoiceReleaseController;
 use App\Http\Controllers\McInvoiceReleaseController;
 use App\Http\Controllers\ReportOutstandingPOController;
+use App\Http\Controllers\ReportOutstandingWOController;
 use App\Http\Controllers\NationalStockPositionController;
 /*
 |--------------------------------------------------------------------------
@@ -493,3 +494,6 @@ Route::get('/outstanding-po/preview', [ReportOutstandingPOController::class, 'pr
 
 Route::get('/national-stock-position', [NationalStockPositionController::class, 'create'])->middleware('auth')->name('nsp.create');
 Route::get('/national-stock-position/preview', [NationalStockPositionController::class, 'preview'])->middleware('auth')->name('nsp.preview');
+
+Route::get('/outstanding-wo', [ReportOutstandingWOController::class, 'create'])->middleware('auth')->name('outstandingwo.create');
+Route::get('/outstanding-wo/preview', [ReportOutstandingWOController::class, 'preview'])->middleware('auth')->name('outstandingwo.preview');
