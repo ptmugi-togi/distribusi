@@ -90,6 +90,7 @@
                     <th width="18%">PRODUCT NAME</th>
                     <th width="6%">QTY ORDER</th>
                     <th width="6%">QTY REC.</th>
+                    <th width="6%">QTY<br>OUTSTANDING</th>
                     <th width="5%">STDQU</th>
                     <th width="5%">CCY</th>
                     <th width="8%">PRICE</th>
@@ -105,6 +106,11 @@
                         $totalAmount = $rows->sum('netpr');
                     @endphp
                     @foreach($rows as $index => $item)
+                        @php
+                            $poQty = (float) $item->poqty;
+                            $rcQty = (float) $item->rcqty;
+                            $qtyOutstanding = $poQty - $rcQty;
+                        @endphp
                         <tr>
                             @if($index === 0)
                                 <td rowspan="{{ $rowCount }}" class="bold">{{ $firstRow->pono }}</td>
@@ -114,8 +120,9 @@
 
                             {{-- Kolom Detail Item --}}
                             <td>{{ $item->prona }}</td>
-                            <td class="right">{{ number_format($item->poqty, 0, ',', '.') }}</td>
-                            <td class="right">{{ number_format($item->rcqty, 0, ',', '.') }}</td>
+                            <td class="right">{{ number_format($poQty, 0, ',', '.') }}</td>
+                            <td class="right">{{ number_format($rcQty, 0, ',', '.') }}</td>
+                            <td class="right">{{ number_format($qtyOutstanding, 0, ',', '.') }}</td>
                             <td class="center">{{ $item->stdqu ?? '-' }}</td>
                             <td class="center">{{ $item->curco ?? 'IDR' }}</td>
                             <td class="right">
