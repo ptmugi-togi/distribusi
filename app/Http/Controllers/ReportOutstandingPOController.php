@@ -50,7 +50,6 @@ class ReportOutstandingPOController extends Controller
                 'p.prona',
                 'd.poqty',
                 'd.rcqty',
-                'd.rcqty',
                 'd.stdqu',
                 'd.price',
                 'd.netpr',
