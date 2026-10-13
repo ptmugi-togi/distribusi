@@ -27,7 +27,7 @@ class ReportOutstandingWOController extends Controller
             $bdate_e = $date->copy()->endOfMonth()->format('Y-m-d');
         }
 
-        return view('purchasing.reports.outstanding_wo.outstanding_wo_create', compact('braco', 'bdate_s', 'bdate_e'));
+        return view('production.reports.outstanding_wo.outstanding_wo_create', compact('braco', 'bdate_s', 'bdate_e'));
     }
 
     private function queryOutstandingWO(Request $req)
@@ -71,7 +71,7 @@ class ReportOutstandingWOController extends Controller
         $branch = Mbranch::where('braco', Auth::user()->cabang)->first();
         $brana = $branch->brana ?? Auth::user()->cabang;
 
-        $html = view('purchasing.reports.outstanding_wo.outstanding_wo_preview', [
+        $html = view('production.reports.outstanding_wo.outstanding_wo_preview', [
             'items'     => $items,
             'start'     => $req->bdate_s,
             'end'       => $req->bdate_e,

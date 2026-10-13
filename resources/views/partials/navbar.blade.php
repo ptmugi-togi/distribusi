@@ -326,6 +326,19 @@
             <i class="bi bi-circle"></i><span>Work Order</span>
             </a>
           </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" data-bs-target="#subProduction-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-file-earmark-text"></i><span>Reports</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+              </a>
+              <ul id="subProduction-nav" class="nav-content collapse" data-bs-parent="#purchasing-nav">
+                <li>
+                  <a href="{{ route('outstandingwo.create') }}">
+                  <i class="bi bi-circle"></i><span>Outstanding WO</span>
+                  </a>
+                </li>
+              </ul>
+          </li>
         </ul>
       </li>
 
@@ -358,13 +371,6 @@
                 <li>
                   <a href="{{ route('outstandingpo.create') }}">
                   <i class="bi bi-circle"></i><span>Outstanding PO</span>
-                  </a>
-                </li>
-              </ul>
-              <ul id="subPurchasing-nav" class="nav-content collapse" data-bs-parent="#purchasing-nav">
-                <li>
-                  <a href="{{ route('outstandingwo.create') }}">
-                  <i class="bi bi-circle"></i><span>Outstanding WO</span>
                   </a>
                 </li>
               </ul>
