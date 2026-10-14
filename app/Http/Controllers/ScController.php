@@ -30,11 +30,16 @@ class ScController extends Controller
             $minDate = "$year-$month-01";
         }
 
-        return view('logistic.reports.stock_card.sc_create' , compact('minDate'));
+        return view('logistic.reports.stock_card.sc_create', compact('minDate'));
     }
 
     private function getStockAwal($braco, $opron, $dateStart)
     {
+        $bbqoh = DB::table('stobb_tbl')
+            ->where('braco', $braco)
+            ->where('opron', $opron)
+            ->value('bbqoh') ?? 0;
+
         $in = DB::table('tstord as d')
             ->join('tstorh as h', 'h.bbmid', '=', 'd.bbmid')
             ->where('h.braco', $braco)
@@ -49,7 +54,7 @@ class ScController extends Controller
             ->whereDate('h.tradt', '<', $dateStart)
             ->sum('d.trqty');
 
-        return $in - $out;
+        return $bbqoh + ($in - $out);
     }
 
     private function getTransaksi($braco, $opron, $start, $end)
@@ -103,8 +108,8 @@ class ScController extends Controller
 
         return DB::query()
             ->fromSub($in->unionAll($out), 'x')
-            ->orderBy('sorting')
             ->orderBy('date')
+            ->orderBy('sorting')
             ->orderBy('formc')
             ->orderBy('trano')
             ->get();
@@ -123,7 +128,7 @@ class ScController extends Controller
 
         $rows = $this->getTransaksi($braco, $opron, $start, $end);
 
-        $running = $stockAwal;
+        $currentStock = $stockAwal;
         foreach ($rows as $r) {
             $r->document = $r->formc . '-' . $r->trano;
 
@@ -136,6 +141,10 @@ class ScController extends Controller
             } else {
                 $r->description = $r->form_descr ?? $r->noteh ?? '-';
             }
+
+            $r->saldo_awal = $currentStock;
+            $currentStock = $currentStock + $r->qty_in - $r->qty_out;
+            $r->saldo_akhir = $currentStock;
         }
 
         $totalIn = $rows->sum('qty_in');
@@ -176,4 +185,3 @@ class ScController extends Controller
         $mpdf->Output();
     }
 }
-

@@ -43,8 +43,8 @@
             <td style="width:1%">&nbsp;<br>:<br>:<br></td>
             <td style="width:29%">
                 &nbsp;<br>
-                {{ $braco }} <br>
-                {{ $opron }} - {{ $prona }} <br>
+                {{ $braco }} - {{ $brana }}<br>
+                {{ $opron }} - {{ $prona }}<br>
             </td>
 
             <td style="width:40%" class="center">
@@ -90,17 +90,17 @@
     <tbody>
         @foreach($rows as $r)
         <tr>
-            <td>{{ \Carbon\Carbon::parse($r->date)->format('d-m-Y') }}</td>
+            <td class="center">{{ \Carbon\Carbon::parse($r->date)->format('d-m-Y') }}</td>
             <td class="center">{{ $r->document }}</td>
             <td>{{ $r->description }}</td>
-            <td></td>
+            <td class="right">{{ number_format($r->saldo_awal, 0) }}</td>
             <td class="right">
-                {{ $r->qty_in ? number_format($r->qty_in,0) : '' }}
+                {{ $r->qty_in ? number_format($r->qty_in, 0) : '' }}
             </td>
             <td class="right">
-                {{ $r->qty_out ? number_format($r->qty_out,0) : '' }}
+                {{ $r->qty_out ? number_format($r->qty_out, 0) : '' }}
             </td>
-            <td></td>
+            <td class="right">{{ number_format($r->saldo_akhir, 0) }}</td>
             <td class="left">
                 {{ $r->lotno ?? '' }}
             </td>
@@ -109,11 +109,11 @@
 
         <tr>
             <td colspan="3" class="right"><b>Total</b></td>
-            <td class="right"><b>{{ number_format($stockAwal ,0) }}</b></td>
-            <td class="right"><b>{{ number_format($totalIn ,0) }}</b></td>
-            <td class="right"><b>{{ number_format($totalOut ,0) }}</b></td>
-            <td class="right"><b>{{ number_format($stockAkhir ,0) }}</b></td>
-            <td class="right"></td>
+            <td class="right"><b>{{ number_format($stockAwal, 0) }}</b></td>
+            <td class="right"><b>{{ number_format($totalIn, 0) }}</b></td>
+            <td class="right"><b>{{ number_format($totalOut, 0) }}</b></td>
+            <td class="right"><b>{{ number_format($stockAkhir, 0) }}</b></td>
+            <td></td>
         </tr>
     </tbody>
 </table>
