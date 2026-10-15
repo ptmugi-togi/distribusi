@@ -10,6 +10,12 @@
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
+        <li class="nav-item me-3">
+          <span class="badge bg-light fs-6" style="color: black">
+            Periode: {{ $periode ?? '-' }}
+          </span>
+        </li>
+
         {{-- <li class="nav-item dropdown">
 
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
