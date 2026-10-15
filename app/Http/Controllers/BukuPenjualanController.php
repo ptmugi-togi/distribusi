@@ -16,6 +16,7 @@ class BukuPenjualanController extends Controller
     {
         $braco = Auth::user()->cabang;
         $periode = DB::table('tperiode')
+        ->where('braco', $braco)
         ->where('status', 'O')
         ->orderBy('periode', 'DESC')
         ->first();
