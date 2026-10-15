@@ -468,6 +468,19 @@
         </ul>
       </li> --}}
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#closing-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-calendar"></i><span>Closing</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="closing-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('close_period.create') }}">
+            <i class="bi bi-circle"></i><span>Close Period</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
     </ul>
 
   </aside>

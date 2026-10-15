@@ -60,6 +60,8 @@ use App\Http\Controllers\McInvoiceReleaseController;
 use App\Http\Controllers\ReportOutstandingPOController;
 use App\Http\Controllers\ReportOutstandingWOController;
 use App\Http\Controllers\NationalStockPositionController;
+use App\Http\Controllers\ClosePeriodController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -497,3 +499,6 @@ Route::get('/national-stock-position/preview', [NationalStockPositionController:
 
 Route::get('/outstanding-wo', [ReportOutstandingWOController::class, 'create'])->middleware('auth')->name('outstandingwo.create');
 Route::get('/outstanding-wo/preview', [ReportOutstandingWOController::class, 'preview'])->middleware('auth')->name('outstandingwo.preview');
+
+Route::get('/close-period', [ClosePeriodController::class, 'create'])->middleware('auth')->name('close_period.create');
+Route::post('/close-period-store', [ClosePeriodController::class, 'store'])->middleware('auth')->name('close_period.store');
