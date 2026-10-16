@@ -24,6 +24,7 @@ class BbkHdr extends Model
         'trano',
         'tradt',
         'priod',
+        'rqbrc',
         'rfc01',
         'ref01',
         'rfc02',

@@ -277,6 +277,7 @@ class BbkController extends Controller
                 'formc' => $formc,
                 'trano' => $trano,
                 'priod' => $request->priod,
+                'rqbrc' => $request->rqbrc,
                 'tradt' => $request->tradt,
                 'reffc' => $request->reffc,
                 'refno' => $request->refno,
