@@ -182,6 +182,22 @@ class BbmController extends Controller
         return $lotList;
     }
 
+    public function getRa(Request $request)
+    {
+        $warco = $request->warco;
+        $userBraco = auth()->user()->cabang;
+
+        $data = DB::table('tsreqh')
+            ->select('formc', 'reqno')
+            ->where('braco', $userBraco)
+            ->where('delco', $warco)
+            ->distinct()
+            ->orderByDesc('reqno')
+            ->get();
+
+        return response()->json($data);
+    }
+
     public function getTa(Request $request)
     {
         $refno = $request->refno;

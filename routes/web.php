@@ -212,6 +212,7 @@ Route::get('/get-supplier-items/{supno}', [BbmController::class, 'getSupplierIte
 Route::get('/get-locco/{warco}', [BbmController::class, 'getLocco'])->name('bbm.getLocco');
 Route::get('/get-po-list', [BbmController::class, 'getPoList'])->name('bbm.getPoList');
 Route::get('/get-po-supplier/{pono}', [BbmController::class, 'getPoSupplier'])->name('bbm.getPoSupplier');
+Route::get('/get-ra', [BbmController::class, 'getRa'])->name('get.ra');
 Route::get('/get-ta', [BbmController::class, 'getTa'])->name('get.ta');
 Route::get('/get-opron-ta', [BbmController::class, 'getOpronByTa'])->name('get.opron.by.ta');
 Route::get('/get-oc', [BbmController::class, 'getOc'])->name('get.oc');

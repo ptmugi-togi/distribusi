@@ -2,14 +2,8 @@
 <div class="row mt-4">
     <div class="col-md-6 mt-3">
         <label class="form-label">Stock Requisition No.</label><span class="text-danger"> *</span>
-        <select class="form-control select2" name="refcno" id="refcno">
-            <option value="" disabled selected>Pilih Stock Requisition No.</option>
-            @foreach ($tsreqh->sortByDesc('reqno') as $treq)
-                    <option value="{{ $treq->formc }}" {{ old('formc') == $treq->formc ? 'selected' : '' }}
-                        data-reffc="{{ $treq->formc }}" data-refno="{{ $treq->reqno }}">
-                        {{ $treq->formc }} - {{ $treq->reqno }}
-                    </option>
-            @endforeach
+        <select class="form-control select2" name="refcno" id="refcno" disabled required>
+            <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
         </select>
         <input type="text" name="reffc" id="reffc-store" hidden>
         <input type="text" name="refno" id="refno-store" hidden>
@@ -17,8 +11,8 @@
 
     <div class="col-md-6 mt-3">
         <label class="form-label">Transfer Note No.</label><span class="text-danger"> *</span>
-        <select class="form-control select2" name="tnfcdnum" id="tnfcdnum">
-            <option value="" disabled selected>Pilih Stock Requisition No. terlebih dahulu</option>
+        <select class="form-control select2" name="tnfcdnum" id="tnfcdnum" required >
+            <option value="" selected>Pilih Stock Requisition No. terlebih dahulu</option>
         </select>
         <input type="text" name="tnfcd" id="tnfcd-store" hidden>
         <input type="text" name="tnnum" id="tnnum-store" hidden>
@@ -116,56 +110,117 @@
     }
   });
 
-  $('#tnfcdnum').on('change', function(){
-    const tnfcd = $(this).find(':selected').data('tnfcd');
-    const tnnum = $(this).find(':selected').data('tnnum');
+  // Listener saat Warehouse (warco) dipilih
+  $(document).on('change', '#warco', function () {
+      const formc = $('#formc').val();
+      const warco = $(this).val();
+      const $ref =$('#refcno');
 
-    $('#tnfcd-store').val(tnfcd);
-    $('#tnnum-store').val(tnnum);
+      if (formc !== 'IL' || !warco) return;
+
+      $ref.prop('disabled', true)
+          .html('<option value="" disabled selected>Loading...</option>')
+          .trigger('change');
+
+      $.ajax({
+          url: "{{ route('get.ra') }}",
+          type: "GET",
+          data: { warco: warco },
+          success: function (response) {
+              $ref.empty();
+
+              if (!Array.isArray(response) || response.length === 0) {
+                  $ref.append('<option value="" disabled selected>Tidak ada data Stock Requisition</option>');
+              } else {
+                  $ref.append('<option value="" disabled selected>Pilih Stock Requisition No.</option>');
+                  response.forEach(item => {
+                      $ref.append(`
+                          <option value="${item.formc}" 
+                              data-reffc="${item.formc}" 
+                              data-refno="${item.reqno}">
+                              ${item.formc} - ${item.reqno}
+                          </option>
+                      `);
+                  });
+              }
+
+              $ref.prop('disabled', false);
+              
+              $ref.select2({
+                  width: '100%',
+                  theme: 'bootstrap-5'
+              }).trigger('change.select2');
+          },
+          error: function () {
+              $ref.html('<option value="" disabled selected>Gagal mengambil data</option>')
+                  .prop('disabled', false)
+                  .select2({ width: '100%', theme: 'bootstrap-5' })
+                  .trigger('change.select2');
+          }
+      });
   });
 
+  // Event saat Transfer Note dipilih
+  $(document).on('change', '#tnfcdnum', function () {
+      const $selected =$(this).find(':selected');
+      const tnfcd = $selected.data('tnfcd');
+      const tnnum = $selected.data('tnnum');
+
+      $('#tnfcd-store').val(tnfcd);
+      $('#tnnum-store').val(tnnum);
+
+      const trano = $(this).val();
+      if (trano) {
+          loadOpronByTA(trano);
+      }
+  });
+
+  // Event saat Stock Requisition (refcno) dipilih
   $(document).on('change', '#refcno', function() {
-      const reffc = $(this).find(':selected').data('reffc');
-      const refno = $(this).find(':selected').data('refno');
+      const $selected =$(this).find(':selected');
+      const reffc = $selected.data('reffc');
+      const refno = $selected.data('refno');
 
       $('#reffc-store').val(reffc);
       $('#refno-store').val(refno);
 
-      $('#tnfcdnum')
+      const $tnSelect =$('#tnfcdnum');
+
+      $tnSelect
           .prop('disabled', true)
-          .html('<option>Loading...</option>')
-          .trigger('change');
+          .html('<option value="" disabled selected>Loading Transfer Note...</option>')
+          .trigger('change.select2');
 
       $.ajax({
-        url: "{{ route('get.ta') }}",
-        type: "GET",
-        data: { refno: refno },
-        success: function(response) {
+          url: "{{ route('get.ta') }}",
+          type: "GET",
+          data: { refno: refno },
+          success: function(response) {
 
-            $('#tnfcdnum').empty();
+              $('#tnfcdnum').empty();
 
-            if (response.length === 0) {
-                $('#tnfcdnum')
-                    .append('<option value="" disabled selected>Tidak ada data Transfer Note</option>');
-            } else {
-                $('#tnfcdnum').append('<option value="" disabled selected>Pilih Transfer Note No.</option>');
-                response.forEach(function(item) {
-                    $('#tnfcdnum').append(`
-                        <option value="${item.trano}" data-tnfcd="${item.formc}" data-tnnum="${item.trano}">
-                            ${item.formc} - ${item.trano}
-                        </option>
-                    `);
-                });
-            }
+              if (response.length === 0) {
+                  $('#tnfcdnum')
+                      .append('<option value="" disabled selected>Tidak ada data Transfer Note</option>');
+              } else {
+                  $('#tnfcdnum').append('<option value="" disabled selected>Pilih Transfer Note No.</option>');
+                  response.forEach(function(item) {
+                      $('#tnfcdnum').append(`
+                          <option value="${item.trano}" data-tnfcd="${item.formc}" data-tnnum="${item.trano}">
+                              ${item.formc} - ${item.trano}
+                          </option>
+                      `);
+                  });
+              }
 
-            $('#tnfcdnum').prop('disabled', false).trigger('change');
-        },
+              $('#tnfcdnum').prop('disabled', false).trigger('change');
+          },
 
-        error: function() {
-            $('#tnfcdnum')
-                .html('<option value="" disabled selected>Gagal mengambil data</option>')
-                .prop('disabled', false);
-        }
+          error: function() {
+              $('#tnfcdnum')
+                  .html('<option value="" disabled selected>Gagal mengambil data</option>')
+                  .prop('disabled', false);
+          }
       });
   });
 
@@ -224,11 +279,6 @@
         }
     });
   }
-
-  $(document).on('change', '#tnfcdnum', function () {
-      const trano = $(this).val();
-      loadOpronByTA(trano);
-  });
 
   $(document).on('change', '.opron-il', function () {
       const $sel = $(this);
