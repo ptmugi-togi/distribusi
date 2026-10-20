@@ -5,8 +5,8 @@
         <select class="form-control select2" name="refcno" id="refcno" disabled required>
             <option value="" disabled selected>Pilih Warehouse terlebih dahulu</option>
         </select>
-        <input type="text" name="reffc" id="reffc-store" hidden>
-        <input type="text" name="refno" id="refno-store" hidden>
+        <input type="hidden" name="reffc" id="reffc-store">
+        <input type="hidden" name="refno" id="refno-store">
     </div>
 
     <div class="col-md-6 mt-3">
@@ -14,8 +14,8 @@
         <select class="form-control select2" name="tnfcdnum" id="tnfcdnum" required >
             <option value="" selected>Pilih Stock Requisition No. terlebih dahulu</option>
         </select>
-        <input type="text" name="tnfcd" id="tnfcd-store" hidden>
-        <input type="text" name="tnnum" id="tnnum-store" hidden>
+        <input type="hidden" name="tnfcd" id="tnfcd-store">
+        <input type="hidden" name="tnnum" id="tnnum-store">
     </div>
 
     <div class="col-md-12 mt-3">

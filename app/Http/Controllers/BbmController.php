@@ -215,6 +215,7 @@ class BbmController extends Controller
             ->where('tn.rfc01', $reffcValue)
             ->where('tn.ref01', $refno)
             ->where('tn.rqbrc', $userBranch)
+            ->whereNull('tn.isbbm')
             ->whereNull('td.opron')
             ->select('tn.formc', 'tn.trano')
             ->distinct()
@@ -715,14 +716,23 @@ class BbmController extends Controller
                         ->update([
                             'rcqty' => DB::raw("rcqty + $trqty")
                         ]);
-                    
-                    $taCode = DB::table('toutg')
+
+                        $taCode = DB::table('toutg')
                         ->where('opron', $useOpron)
                         ->where('lotno', $request->lotno[$i])
                         ->value('bbkid');
 
                     $actualBraco = substr($taCode, 0, 3);
                     $actualWarco = substr($taCode, 3, 4);
+
+                    DB::table('tsisnh')
+                        ->where('braco', $actualBraco)
+                        ->where('warco', $actualWarco)
+                        ->where('formc', $request->tnfcd)
+                        ->where('trano', $request->tnnum)
+                        ->update([
+                            'isbbm' => 'Y'
+                        ]);
 
                     DB::table('stobw_tbl')
                         ->where('braco', $actualBraco)
