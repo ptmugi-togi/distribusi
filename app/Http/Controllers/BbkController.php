@@ -339,23 +339,34 @@ class BbkController extends Controller
                     ->where('opron', $useOpron)
                     ->first();
 
+                $stobwData = [
+                    'toqoh' => DB::raw("toqoh - $trqty")
+                ];
+
+                if ($formc === 'TA') {
+                    $stobwData['qtyit'] = DB::raw("qtyit + $trqty");
+                }
+
                 if ($existW) {
                     DB::table('stobw_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
                         ->where('opron', $useOpron)
-                        ->update(['toqoh' => DB::raw("toqoh - $trqty")]);
+                        ->update($stobwData);
                 } else {
                     DB::table('stobw_tbl')->insert([
                         'braco' => $request->braco,
                         'warco' => $request->warco,
                         'opron' => $useOpron,
                         'toqoh' => 0 - $trqty, // langsung keluar
+                        'qtyit' => $formc === 'TA' ? $trqty : 0,
                     ]);
                 }
 
                 // UPDATE stok per LOT di tabel stobl_tbl
                 foreach ($lotList as $lotno) {
+                    $qtyToDeduct = $isNoLot ? $trqty : 1;
+
                     $existL = DB::table('stobl_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
@@ -363,13 +374,21 @@ class BbkController extends Controller
                         ->where('lotno', $lotno)
                         ->first();
 
+                    $stoblData = [
+                        'toqoh' => DB::raw("toqoh - $qtyToDeduct")
+                    ];
+
+                    if ($formc === 'TA') {
+                        $stoblData['qtyit'] = DB::raw("qtyit + $qtyToDeduct");
+                    }
+
                     if ($existL) {
                         DB::table('stobl_tbl')
                             ->where('warco', $request->warco)
                             ->where('braco', $request->braco)
                             ->where('opron', $useOpron)
                             ->where('lotno', $lotno)
-                            ->update(['toqoh' => DB::raw("toqoh - " . ($isNoLot ? $trqty : 1))]);
+                            ->update($stoblData);
                     } else {
                         DB::table('stobl_tbl')->insert([
                             'braco' => $request->braco,
@@ -378,7 +397,8 @@ class BbkController extends Controller
                             'qunit' => $request->stdqt[$i],
                             'locco' => $request->locco[$i],
                             'lotno' => $lotno ?? '-',
-                            'toqoh' => 0 - ($isNoLot ? $trqty : 1),
+                            'toqoh' => 0 - $qtyToDeduct,
+                            'qtyit' => $formc === 'TA' ? $qtyToDeduct : 0,
                         ]);
                     }
                 }
@@ -467,14 +487,22 @@ class BbkController extends Controller
             // Rollback stok lama
             foreach ($oldDetails as $old) {
 
-                // Rollback stobw
+                $stobwRollback = ['toqoh' => DB::raw("toqoh + {$old->trqty}")];
+                if ($bbk->formc === 'TA') {
+                    $stobwRollback['qtyit'] = DB::raw("qtyit - {$old->trqty}");
+                }
+
                 DB::table('stobw_tbl')
                     ->where('braco', $bbk->braco)
                     ->where('warco', $bbk->warco)
                     ->where('opron', $old->opron)
-                    ->increment('toqoh', $old->trqty);
+                    ->update($stobwRollback);
 
-                // Rollback stobl
+                $stoblRollback = ['toqoh' => DB::raw("toqoh + {$old->trqty}")];
+                if ($bbk->formc === 'TA') {
+                    $stoblRollback['qtyit'] = DB::raw("qtyit - {$old->trqty}");
+                }
+
                 DB::table('stobl_tbl')
                     ->where('braco', $bbk->braco)
                     ->where('warco', $bbk->warco)
@@ -482,17 +510,14 @@ class BbkController extends Controller
                     ->where('qunit', $old->qunit)
                     ->where('locco', $old->locco)
                     ->where('lotno', $old->lotno)
-                    ->increment('toqoh', $old->trqty);
+                    ->update($stoblRollback);
             }
 
-            // Bersihkan stok nol
-            DB::table('stobw_tbl')->where('toqoh', '<=', 0)->delete();
-            DB::table('stobl_tbl')->where('toqoh', '<=', 0)->delete();
+            DB::table('stobw_tbl')->where('toqoh', '<=', 0)->where('qtyit', '<=', 0)->delete();
+            DB::table('stobl_tbl')->where('toqoh', '<=', 0)->where('qtyit', '<=', 0)->delete();
 
-            // Hapus detail lama
             DB::table('toutg')->where('trano', $bbk->trano)->delete();
 
-            // Insert detail baru + kurangi stok baru
             foreach ($request->opron as $i => $opron) {
 
                 $lotStart = $request->lotno[$i] ?? '-';
@@ -501,7 +526,6 @@ class BbkController extends Controller
                 $locco    = $request->locco[$i] ?? '000001';
                 $noted    = $request->noted[$i] ?? null;
 
-                // Tentukan LOT LIST hanya sekali
                 if ($lotStart === '-' || $lotStart === '' || $lotStart === null) {
                     $lotList = ['-'];
                 } else {
@@ -519,12 +543,11 @@ class BbkController extends Controller
                         'lotno' => $lotno ?? '-',
                         'trqty' => ($lotno === '-' ? $trqty : 1),
                         'qunit' => $qunit,
-                        'locco' => $locco ?? '000001',
+                        'locco' => $locco,
                         'noted' => $noted,
                     ]);
                 }
 
-                // STOBW (global qty)
                 $stobw = DB::table('stobw_tbl')
                     ->where('braco', $bbk->braco)
                     ->where('warco', $bbk->warco)
@@ -537,20 +560,24 @@ class BbkController extends Controller
                         'warco' => $bbk->warco,
                         'opron' => $opron,
                         'toqoh' => 0,
+                        'qtyit' => 0,
                     ]);
+                }
+
+                $stobwUpdate = ['toqoh' => DB::raw("toqoh - $trqty")];
+                if ($bbk->formc === 'TA') {
+                    $stobwUpdate['qtyit'] = DB::raw("qtyit + $trqty");
                 }
 
                 DB::table('stobw_tbl')
                     ->where('braco', $bbk->braco)
                     ->where('warco', $bbk->warco)
                     ->where('opron', $opron)
-                    ->decrement('toqoh', $trqty);
+                    ->update($stobwUpdate);
 
-
-                // STOBL (lot qty)
                 foreach ($lotList as $lotno) {
 
-                    $qtyToDecrease = ($lotno === '-' ? $trqty : 1);
+                    $qtyToDeduct = ($lotno === '-' ? $trqty : 1);
 
                     $stobl = DB::table('stobl_tbl')
                         ->where('braco', $bbk->braco)
@@ -570,7 +597,13 @@ class BbkController extends Controller
                             'locco' => $locco,
                             'lotno' => $lotno,
                             'toqoh' => 0,
+                            'qtyit' => 0,
                         ]);
+                    }
+
+                    $stoblUpdate = ['toqoh' => DB::raw("toqoh - $qtyToDeduct")];
+                    if ($bbk->formc === 'TA') {
+                        $stoblUpdate['qtyit'] = DB::raw("qtyit + $qtyToDeduct");
                     }
 
                     DB::table('stobl_tbl')
@@ -580,7 +613,7 @@ class BbkController extends Controller
                         ->where('qunit', $qunit)
                         ->where('locco', $locco)
                         ->where('lotno', $lotno)
-                        ->decrement('toqoh', $qtyToDecrease);
+                        ->update($stoblUpdate);
                 }
             }
 
