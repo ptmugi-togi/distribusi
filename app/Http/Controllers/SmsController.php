@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class SmsController extends Controller
 {
@@ -15,13 +16,11 @@ class SmsController extends Controller
     public function create()
     {
         $mwarco = DB::table('mwarco_tbl')
-                ->where('braco', Auth::user()->cabang)
-                ->get();
+            ->where('braco', Auth::user()->cabang)
+            ->get();
 
         $mitype = DB::table('mitype_tbl')->get();
-
         $msgrup = DB::table('msgrup')->get();
-
         $mssgrup = DB::table('mssgrup')->get();
 
         $openPeriod = DB::table('tperiode')
@@ -38,7 +37,7 @@ class SmsController extends Controller
             $minDate = "$year-$month-01";
         }
 
-        return view('logistic.reports.sms.sms_create' , compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
+        return view('logistic.reports.sms.sms_create', compact('mwarco', 'mitype', 'msgrup', 'mssgrup', 'minDate'));
     }
 
     public function getData(Request $req)
@@ -50,17 +49,20 @@ class SmsController extends Controller
         $ssgrup = $req->ssgrup;
         $sort   = $req->sort;
 
-        // Cari periode open terakhir di tperiode
         $lastOpen = DB::table('tperiode')
             ->where('status', 'O')
-            ->orderByDesc('periode')
+            ->orderBy('periode', 'asc')
             ->value('periode');
 
         if (!$lastOpen) {
             return ['error' => 'Tidak ada periode OPEN di tperiode'];
         }
 
-        // Cari periode transaksi terbesar di tstorh & tsisnh
+        $minAllowedDate = Carbon::createFromFormat('Ym', $lastOpen)->startOfMonth()->format('Y-m-d');
+        if ($asof < $minAllowedDate) {
+            return ['error' => "Tanggal As Of tidak boleh kurang dari awal periode aktif ({$minAllowedDate})"];
+        }
+
         $maxStorh = DB::table('tstorh')
             ->where('warco', $warco)
             ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
@@ -71,23 +73,17 @@ class SmsController extends Controller
             ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
             ->max('priod');
 
-        $maxTransPeriod = max($maxStorh ?? 0, $maxSisnh ?? 0);
+        $maxTransPeriod = max($maxStorh ?? 0, $maxSisnh ?? 0, $lastOpen);
 
-        if (!$maxTransPeriod) {
-            return ['error' => 'Tidak ada transaksi sebelum Asof'];
-        }
-
-        // Bangun array periode mulai lastOpen sampai maxTransPeriod
         $periods = [];
-        $cursor = \Carbon\Carbon::createFromFormat('Ym', $lastOpen);
-        $end    = \Carbon\Carbon::createFromFormat('Ym', $maxTransPeriod);
+        $cursor = Carbon::createFromFormat('Ym', $lastOpen);
+        $end    = Carbon::createFromFormat('Ym', $maxTransPeriod);
 
         while ($cursor->lte($end)) {
             $periods[] = $cursor->format('Ym');
             $cursor->addMonth();
         }
 
-        // Ambil OPRON dari semua periode
         $opronMasuk = DB::table('tstord as d')
             ->join('tstorh as h', 'h.bbmid', '=', 'd.bbmid')
             ->where('h.warco', $warco)
@@ -102,13 +98,20 @@ class SmsController extends Controller
             ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
             ->pluck('d.opron');
 
-        $oprons = $opronMasuk->merge($opronKeluar)->unique()->values();
+        $opronSaldoAwal = DB::table('stobw_tbl')
+            ->where('bbqoh', '>', 0)
+            ->pluck('opron');
+
+        $oprons = $opronMasuk
+            ->merge($opronKeluar)
+            ->merge($opronSaldoAwal)
+            ->unique()
+            ->values();
 
         if ($oprons->isEmpty()) {
             return collect();
         }
 
-        // Siapkan list periode untuk di-embed di DB::raw
         $periodList = "'" . implode("','", $periods) . "'";
 
         $data = DB::table('mpromas as p')
@@ -159,6 +162,8 @@ class SmsController extends Controller
                 $q->where('p.ssgrup_id', $ssgrup);
             })
 
+            ->whereRaw("(COALESCE(sa.awal, 0) > 0 OR COALESCE(tm.masuk, 0) > 0 OR COALESCE(tk.keluar, 0) > 0)")
+
             ->select(
                 'p.opron',
                 'p.prona',
@@ -173,14 +178,14 @@ class SmsController extends Controller
                 DB::raw("COALESCE(tk.keluar,0) keluar"),
                 DB::raw("(COALESCE(sa.awal,0)+COALESCE(tm.masuk,0)-COALESCE(tk.keluar,0)) akhir")
             )
-                        
+
             ->when($sort == 'opron', fn($q) => $q->orderBy('p.opron'))
             ->when($sort == 'prona', fn($q) => $q->orderBy('p.prona'))
             ->when($sort == 'brand', fn($q) => $q->orderBy('p.brand'))
             ->when(!$sort, function ($q) {
                 $q->orderBy('it.descr_itype')
-                ->orderBy('ssg.descr_ssgrup')
-                ->orderBy('p.opron');
+                  ->orderBy('ssg.descr_ssgrup')
+                  ->orderBy('p.opron');
             })
             ->get();
 
@@ -208,11 +213,11 @@ class SmsController extends Controller
             ->value('descr_ssgrup');
 
         $html = view('logistic.reports.sms.sms_preview', [
-            'items' => $data,
-            'asof' => $req->asof,
-            'warco' => $req->warco,
-            'itype' => $itype,
-            'sgrup' => $sgrup,
+            'items'  => $data,
+            'asof'   => $req->asof,
+            'warco'  => $req->warco,
+            'itype'  => $itype,
+            'sgrup'  => $sgrup,
             'ssgrup' => $ssgrup
         ])->render();
 
@@ -223,7 +228,7 @@ class SmsController extends Controller
         ]);
 
         $mpdf->WriteHTML($html);
-        
+
         $mpdf->Output();
     }
 }
