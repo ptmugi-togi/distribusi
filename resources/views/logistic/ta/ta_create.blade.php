@@ -73,7 +73,7 @@
         </div>
 
         <div class="col-md-6 mt-3">
-          <label for="sano" class="form-label">Stock Requisitoin No.</label><span class="text-danger"> *</span>
+          <label for="sano" class="form-label">Stock Requisition No.</label><span class="text-danger"> *</span>
           <select name="sano" id="sano" class="form-control select2" required>
             <option value="" disabled selected>Pilih Request by Branch Terlebih Dahulu</option>
           </select>
