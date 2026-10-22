@@ -241,7 +241,6 @@ Route::get('/bbm/printBbm2/{id}', [PdfController::class, 'printBbm2'])->name('bb
 Route::get('/bbk', [BbkController::class,'index'])->middleware('auth')->name('bbk.index');
 Route::get('/bbk/create', [BbkController::class,'create'])->middleware('auth')->name('bbk.create');
 Route::get('/get-warco-bbk', [BbkController::class, 'getWarco'])->name('bbk.get-warco');
-Route::get('/generate-trano-bbk', [BbkController::class,'generateTrano'])->name('generate-trano-bbk');
 Route::get('/get-barang/{braco}/{warco}/{locco}', [BbkController::class, 'getBarangOF']); //get barang untuk OF
 Route::get('/get-stobl/{braco}/{warco}/{opron}', [BbkController::class, 'getStobl'])->where('opron', '.*');
 Route::get('/get-stobl-ob/{braco}/{warco}/{opron}', [BbkController::class, 'getStoblOb'])->where('opron', '.*');

@@ -297,25 +297,27 @@ class BbkController extends Controller
 
             // Loop tiap detail barang
             foreach ($request->opron as $i => $useOpron) {
-                $isNoLot = isset($request->nolot[$i]) && $request->nolot[$i] == 1 || $request->lotno[$i] == '-';
-                $lotStart = $request->lotno[$i] ?: '-';
-                $trqty = (int) $request->trqty[$i];
+                $lotStart = $request->lotno[$i] ?? '-';
+                $trqty    = (int) ($request->trqty[$i] ?? 1);
+
+                $isNoLot = (isset($request->nolot[$i]) && $request->nolot[$i] == 1) 
+                        || in_array($lotStart, ['-', '.', '']);
 
                 if ($isNoLot) {
-                    // Kalau tidak ada LOT, ambil dari stok LOT existing
                     $existingLot = DB::table('stobl_tbl')
                         ->where('warco', $request->warco)
                         ->where('braco', $request->braco)
                         ->where('opron', $useOpron)
                         ->value('lotno');
 
-                    $lotList = [$existingLot ?: $lotStart];
+                    $lotList = [$existingLot ?: '-'];
                 } else {
                     $lotList = $this->generateLotList($lotStart, $trqty);
                 }
 
-                // INSERT DETAIL KE TABEL toutg
                 foreach ($lotList as $lotno) {
+                    $qtyPerRecord = $isNoLot ? $trqty : 1;
+
                     DB::table('toutg')->insert([
                         'bbkid' => $bbkid,
                         'formc' => $formc,
@@ -325,24 +327,20 @@ class BbkController extends Controller
                         'lotno' => $lotno ?? '-',
                         'reffc' => $request->rfc01,
                         'refno' => $request->ref01,
-                        'trqty' => $isNoLot ? $trqty : 1,
-                        'qunit' => $request->stdqt[$i],
-                        'locco' => $request->locco[$i],
-                        'noted' => $request->noted[$i],
+                        'trqty' => $qtyPerRecord,
+                        'qunit' => $request->stdqt[$i] ?? '',
+                        'locco' => $request->locco[$i] ?? '',
+                        'noted' => $request->noted[$i] ?? '',
                     ]);
                 }
 
-                // UPDATE stok per barang di tabel stobw_tbl
                 $existW = DB::table('stobw_tbl')
                     ->where('warco', $request->warco)
                     ->where('braco', $request->braco)
                     ->where('opron', $useOpron)
                     ->first();
 
-                $stobwData = [
-                    'toqoh' => DB::raw("toqoh - $trqty")
-                ];
-
+                $stobwData = ['toqoh' => DB::raw("toqoh - $trqty")];
                 if ($formc === 'TA') {
                     $stobwData['qtyit'] = DB::raw("qtyit + $trqty");
                 }
@@ -358,12 +356,11 @@ class BbkController extends Controller
                         'braco' => $request->braco,
                         'warco' => $request->warco,
                         'opron' => $useOpron,
-                        'toqoh' => 0 - $trqty, // langsung keluar
+                        'toqoh' => 0 - $trqty,
                         'qtyit' => $formc === 'TA' ? $trqty : 0,
                     ]);
                 }
 
-                // UPDATE stok per LOT di tabel stobl_tbl
                 foreach ($lotList as $lotno) {
                     $qtyToDeduct = $isNoLot ? $trqty : 1;
 
@@ -374,10 +371,7 @@ class BbkController extends Controller
                         ->where('lotno', $lotno)
                         ->first();
 
-                    $stoblData = [
-                        'toqoh' => DB::raw("toqoh - $qtyToDeduct")
-                    ];
-
+                    $stoblData = ['toqoh' => DB::raw("toqoh - $qtyToDeduct")];
                     if ($formc === 'TA') {
                         $stoblData['qtyit'] = DB::raw("qtyit + $qtyToDeduct");
                     }
@@ -394,8 +388,8 @@ class BbkController extends Controller
                             'braco' => $request->braco,
                             'warco' => $request->warco,
                             'opron' => $useOpron,
-                            'qunit' => $request->stdqt[$i],
-                            'locco' => $request->locco[$i],
+                            'qunit' => $request->stdqt[$i] ?? '',
+                            'locco' => $request->locco[$i] ?? '',
                             'lotno' => $lotno ?? '-',
                             'toqoh' => 0 - $qtyToDeduct,
                             'qtyit' => $formc === 'TA' ? $qtyToDeduct : 0,
