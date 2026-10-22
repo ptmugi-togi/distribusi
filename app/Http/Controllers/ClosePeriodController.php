@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class ClosePeriodController extends Controller
@@ -26,6 +27,7 @@ class ClosePeriodController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'periode' => 'required',
             'close_period' => 'required|in:yes,no',
@@ -33,8 +35,14 @@ class ClosePeriodController extends Controller
 
         $user = Auth::user();
         $braco = $user->cabang;
-        $periode = $request->input('periode');
+        $rawPeriode = $request->input('periode');
         $closePeriod = $request->input('close_period');
+
+        if (str_contains($rawPeriode, '-')) {
+            $periode = Carbon::createFromFormat('m - Y', trim($rawPeriode))->format('Ym');
+        } else {
+            $periode = $rawPeriode;
+        }
 
         try {
             DB::transaction(function () use ($user, $braco, $periode, $closePeriod) {
@@ -160,6 +168,8 @@ class ClosePeriodController extends Controller
 
             return redirect()->back()->with('success', 'Closing period berhasil diproses dan periode baru telah dibuka!');
         } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Gagal Closing Periode:', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
