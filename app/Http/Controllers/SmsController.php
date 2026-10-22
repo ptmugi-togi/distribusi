@@ -24,6 +24,7 @@ class SmsController extends Controller
         $mssgrup = DB::table('mssgrup')->get();
 
         $openPeriod = DB::table('tperiode')
+            ->where('braco', Auth::user()->cabang)
             ->where('status', 'O')
             ->orderBy('periode', 'asc')
             ->first();
@@ -50,6 +51,7 @@ class SmsController extends Controller
         $sort   = $req->sort;
 
         $lastOpen = DB::table('tperiode')
+            ->where('braco', Auth::user()->cabang)
             ->where('status', 'O')
             ->orderBy('periode', 'asc')
             ->value('periode');
