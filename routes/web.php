@@ -254,7 +254,7 @@ Route::get('/bbk/previewBbk/{id}', [PdfController::class, 'previewBbk'])->name('
 Route::get('/bbk/printBbk/{id}', [PdfController::class, 'printBbk'])->name('bbk.printBbk');
 
 Route::get('/sms/create', [SmsController::class,'create'])->middleware('auth')->name('sms.create');
-Route::get('/stock/preview', [SmsController::class, 'preview'])->name('sms.preview');
+Route::get('/stock/preview', [SmsController::class, 'preview'])->middleware('auth')->name('sms.preview');
 
 Route::get('/bpb', [BpbController::class,'index'])->middleware('auth')->name('bpb.index');
 Route::get('/bpb/create', [BpbController::class,'create'])->middleware('auth')->name('bpb.create');

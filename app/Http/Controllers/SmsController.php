@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class SmsController extends Controller
@@ -43,6 +43,7 @@ class SmsController extends Controller
 
     public function getData(Request $req)
     {
+        $braco  = Auth::user()->cabang;
         $warco  = $req->warco;
         $asof   = $req->asof;
         $itype  = $req->itype;
@@ -51,7 +52,7 @@ class SmsController extends Controller
         $sort   = $req->sort;
 
         $lastOpen = DB::table('tperiode')
-            ->where('braco', Auth::user()->cabang)
+            ->where('braco', $braco)
             ->where('status', 'O')
             ->orderBy('periode', 'asc')
             ->value('periode');
@@ -66,11 +67,13 @@ class SmsController extends Controller
         }
 
         $maxStorh = DB::table('tstorh')
+            ->where('braco', $braco)
             ->where('warco', $warco)
             ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
             ->max('priod');
 
         $maxSisnh = DB::table('tsisnh')
+            ->where('braco', $braco)
             ->where('warco', $warco)
             ->whereRaw("CAST(tradt AS DATE) <= ?", [$asof])
             ->max('priod');
@@ -88,6 +91,7 @@ class SmsController extends Controller
 
         $opronMasuk = DB::table('tstord as d')
             ->join('tstorh as h', 'h.bbmid', '=', 'd.bbmid')
+            ->where('h.braco', $braco)
             ->where('h.warco', $warco)
             ->whereIn('h.priod', $periods)
             ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
@@ -95,12 +99,15 @@ class SmsController extends Controller
 
         $opronKeluar = DB::table('toutg as d')
             ->leftJoin('tsisnh as h', 'h.bbkid', '=', 'd.bbkid')
+            ->where('h.braco', $braco)
             ->where('d.warco', $warco)
             ->whereIn('h.priod', $periods)
             ->whereRaw("CAST(h.tradt AS DATE) <= ?", [$asof])
             ->pluck('d.opron');
 
         $opronSaldoAwal = DB::table('stobw_tbl')
+            ->where('braco', $braco)
+            ->where('warco', $warco)
             ->where('bbqoh', '>', 0)
             ->pluck('opron');
 
@@ -114,8 +121,6 @@ class SmsController extends Controller
             return collect();
         }
 
-        $periodList = "'" . implode("','", $periods) . "'";
-
         $data = DB::table('mpromas as p')
             ->leftJoin('mitype_tbl as it', 'it.itype_id', '=', 'p.itype_id')
             ->leftJoin('msgrup as sg', 'sg.sgrup_id', '=', 'p.sgrup_id')
@@ -126,6 +131,7 @@ class SmsController extends Controller
                 (
                     SELECT opron, SUM(bbqoh) AS awal
                     FROM stobw_tbl
+                    WHERE braco = '{$braco}' AND warco = '{$warco}'
                     GROUP BY opron
                 ) AS sa
             "), "sa.opron", "=", "p.opron")
@@ -136,7 +142,8 @@ class SmsController extends Controller
                     FROM tstord d
                     JOIN tstorh h ON h.bbmid = d.bbmid
                     WHERE h.warco = '{$warco}'
-                    AND h.priod IN ({$periodList})
+                    AND h.braco = '{$braco}'
+                    AND h.priod IN (" . implode(',', array_map(fn($p) => "'$p'", $periods)) . ")
                     AND CAST(h.tradt AS DATE) <= '{$asof}'
                     GROUP BY d.opron
                 ) AS tm
@@ -148,45 +155,42 @@ class SmsController extends Controller
                     FROM toutg d
                     JOIN tsisnh h ON h.bbkid = d.bbkid
                     WHERE d.warco = '{$warco}'
-                    AND h.priod IN ({$periodList})
+                    AND h.braco = '{$braco}'
+                    AND h.priod IN (" . implode(',', array_map(fn($p) => "'$p'", $periods)) . ")
                     AND CAST(h.tradt AS DATE) <= '{$asof}'
                     GROUP BY d.opron
                 ) AS tk
             "), "tk.opron", "=", "p.opron")
 
-            ->when($itype, function ($q) use ($itype) {
-                $q->where('p.itype_id', $itype);
-            })
-            ->when($sgrup, function ($q) use ($sgrup) {
-                $q->where('p.sgrup_id', $sgrup);
-            })
-            ->when($ssgrup, function ($q) use ($ssgrup) {
-                $q->where('p.ssgrup_id', $ssgrup);
-            })
+            ->when($itype, fn($q) => $q->where('p.itype_id', $itype))
+            ->when($sgrup, fn($q) => $q->where('p.sgrup_id', $sgrup))
+            ->when($ssgrup, fn($q) => $q->where('p.ssgrup_id', $ssgrup))
 
             ->whereRaw("(COALESCE(sa.awal, 0) > 0 OR COALESCE(tm.masuk, 0) > 0 OR COALESCE(tk.keluar, 0) > 0)")
 
+            ->groupBy('p.opron')
+
             ->select(
                 'p.opron',
-                'p.prona',
-                'p.stdqu',
-                'it.descr_itype',
-                'sg.sgrup_id',
-                'sg.descr_sgrup',
-                'ssg.ssgrup_id',
-                'ssg.descr_ssgrup',
-                DB::raw("COALESCE(sa.awal,0) awal"),
-                DB::raw("COALESCE(tm.masuk,0) masuk"),
-                DB::raw("COALESCE(tk.keluar,0) keluar"),
-                DB::raw("(COALESCE(sa.awal,0)+COALESCE(tm.masuk,0)-COALESCE(tk.keluar,0)) akhir")
+                DB::raw("MAX(p.prona) as prona"),
+                DB::raw("MAX(p.stdqu) as stdqu"),
+                DB::raw("MAX(it.descr_itype) as descr_itype"),
+                DB::raw("MAX(sg.sgrup_id) as sgrup_id"),
+                DB::raw("MAX(sg.descr_sgrup) as descr_sgrup"),
+                DB::raw("MAX(ssg.ssgrup_id) as ssgrup_id"),
+                DB::raw("MAX(ssg.descr_ssgrup) as descr_ssgrup"),
+                DB::raw("COALESCE(MAX(sa.awal), 0) as awal"),
+                DB::raw("COALESCE(MAX(tm.masuk), 0) as masuk"),
+                DB::raw("COALESCE(MAX(tk.keluar), 0) as keluar"),
+                DB::raw("(COALESCE(MAX(sa.awal),0) + COALESCE(MAX(tm.masuk),0) - COALESCE(MAX(tk.keluar),0)) as akhir")
             )
 
             ->when($sort == 'opron', fn($q) => $q->orderBy('p.opron'))
-            ->when($sort == 'prona', fn($q) => $q->orderBy('p.prona'))
-            ->when($sort == 'brand', fn($q) => $q->orderBy('p.brand'))
+            ->when($sort == 'prona', fn($q) => $q->orderBy(DB::raw('MAX(p.prona)')))
+            ->when($sort == 'brand', fn($q) => $q->orderBy(DB::raw('MAX(p.brand)')))
             ->when(!$sort, function ($q) {
-                $q->orderBy('it.descr_itype')
-                  ->orderBy('ssg.descr_ssgrup')
+                $q->orderBy(DB::raw('MAX(it.descr_itype)'))
+                  ->orderBy(DB::raw('MAX(ssg.descr_ssgrup)'))
                   ->orderBy('p.opron');
             })
             ->get();
@@ -200,6 +204,10 @@ class SmsController extends Controller
 
         if (isset($data['error'])) {
             return "<h3>{$data['error']}</h3>";
+        }
+
+        if ($data instanceof \Illuminate\Support\Collection) {
+            $data = $data->unique('opron')->values();
         }
 
         $itype = DB::table('mitype_tbl')
