@@ -12,7 +12,7 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('do.index') }}">List DO</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('bbk.index') }}">List Keluar</a></li>
                     <li class="breadcrumb-item active">Edit DO</li>
                 </ol>
             </nav>
@@ -120,7 +120,7 @@
                 </div>
                 @include('logistic.do.partial_edit.do_add_detail')
                 <div class="mt-4 d-flex justify-content-between">
-                    <a href="{{ route('do.index') }}" class="btn btn-secondary">Kembali</a>
+                    <a href="{{ route('bbk.index') }}" class="btn btn-secondary">Kembali</a>
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
 

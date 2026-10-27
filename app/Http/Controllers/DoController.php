@@ -597,7 +597,7 @@ class DoController extends Controller
         return response()->json($data);
     }
 
-   public function getLotByOC(Request $req)
+    public function getLotByOC(Request $req)
     {
         $braco = Auth::user()->cabang;
         $opron = $req->opron;
@@ -609,7 +609,8 @@ class DoController extends Controller
             ->select(
                 'lotno',
                 'locco',
-                'warco'
+                'warco',
+                'toqoh',
             )
             ->get();
 

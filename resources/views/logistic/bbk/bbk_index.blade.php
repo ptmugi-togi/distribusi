@@ -55,18 +55,52 @@
                             {{-- <a href="{{ route('bbk.previewBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
 
                             {{-- print --}}
-                            @if (!$periodClosed && $b->braco == auth()->user()->cabang)
-                            <a href="{{ route('bbk.printBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                            
-                            <a href="/bbk/{{ $b->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
-                              <a href="/bbk/{{ $b->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
-                              <form id="delete-inv-{{ $b->bbkid }}" action="{{ url('/bbk/'.$b->bbkid.'/delete') }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <a class="badge bg-danger btn-delete-inv" data-bbkid="{{ $b->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
-                                      <i class="bi bi-trash"></i>
-                                </a>
-                              </form>
+                            @if ($b->formc == 'DO')
+                              @if (!$periodClosed && $b->braco == auth()->user()->cabang)
+                                <a href="{{ route('do.printDo', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                
+                                <a href="/do/{{ $b->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                                {{-- <a href="/do/{{ $b->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a> --}}
+                                <form id="delete-do-{{ $b->bbkid }}" action="{{ url('/do/'.$b->bbkid.'/delete') }}" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <a class="badge bg-danger btn-delete-do" data-bbkid="{{ $b->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                        <i class="bi bi-trash"></i>
+                                  </a>
+                                </form>
+                              @endif
+                            @elseif ($b->formc == 'TA')
+                              {{-- preview --}}
+                              {{-- <a href="{{ route('ta.previewTa', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Preview"><i class="bi bi-file-earmark-image-fill"></i></a> --}}
+
+                              {{-- print --}}
+                              @if (!$periodClosed && $b->braco == auth()->user()->cabang)
+                                <a href="{{ route('ta.printTa', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                
+                                <a href="/ta/{{ $b->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                                <a href="/ta/{{ $b->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <form id="delete-ta-{{ $b->bbkid }}" action="{{ url('/ta/'.$b->bbkid.'/delete') }}" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <a class="badge bg-danger btn-delete-ta" data-bbkid="{{ $b->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                        <i class="bi bi-trash"></i>
+                                  </a>
+                                </form>
+                              @endif
+                            @else
+                              @if (!$periodClosed && $b->braco == auth()->user()->cabang)
+                                <a href="{{ route('bbk.printBbk', $b->bbkid) }}" class="badge bg-success" data-tooltip="true" data-bs-placement="top" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                              
+                                <a href="/bbk/{{ $b->bbkid }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
+                                <a href="/bbk/{{ $b->bbkid }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <form id="delete-inv-{{ $b->bbkid }}" action="{{ url('/bbk/'.$b->bbkid.'/delete') }}" method="POST" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <a class="badge bg-danger btn-delete-inv" data-bbkid="{{ $b->bbkid }}" data-tooltip="true" data-bs-placement="top" title="Delete" style="cursor: pointer;">
+                                        <i class="bi bi-trash"></i>
+                                  </a>
+                                </form>
+                              @endif
                             @endif
                         </td>
                         <td class="text-center">{{ $b->braco ?? '-' }}</td>

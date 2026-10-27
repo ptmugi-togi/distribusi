@@ -12,7 +12,7 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('do.index') }}">List DO</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('bbk.index') }}">List Keluar</a></li>
                     <li class="breadcrumb-item active">Detail DO</li>
                 </ol>
             </nav>
@@ -149,7 +149,7 @@
             </div>
 
             <div class="mt-4">
-                <a href="{{ route('do.index') }}" class="btn btn-secondary">Kembali</a>
+                <a href="{{ route('bbk.index') }}" class="btn btn-secondary">Kembali</a>
             </div>
         </div>
     </section>

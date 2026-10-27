@@ -14,6 +14,8 @@ use App\Models\Mformcode;
 use App\Models\InvoiceHdr;
 use App\Models\Mvendor;
 use App\Models\Mpromas;
+use App\Models\DoHdr;
+use App\Models\DoDtl;
 
 class BbkController extends Controller
 {
@@ -25,7 +27,7 @@ class BbkController extends Controller
         $userBraco = Auth::user()->cabang;
 
         $bbkhdr = BbkHdr::with('mformcode')
-                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA', 'OE', 'TA'])
+                        ->whereIn('formc', ['OF', 'OC', 'OB', 'OD', 'OG', 'OA', 'OE', 'TA', 'DO'])
                         ->where('braco', $userBraco)
                         ->get();
 
@@ -240,8 +242,138 @@ class BbkController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
+        // Deteksi Form Code (apakah dari DO)
+        $formc = $request->formc_store;
+
+        if ($formc === 'DO') {
+            return $this->storeDeliveryOrder($request);
+        }
+
+        return $this->storeBbkBiasa($request);
+    }
+
+    private function storeDeliveryOrder(Request $request)
+    {
         // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $braco = auth()->user()->cabang ?? $request->braco;
+            $formc = 'DO';
+            $tradt = $request->tradt;
+            $year  = Carbon::parse($tradt)->format('y');
+            $mainWarco = is_array($request->warco) ? ($request->warco[0] ?? '-') : ($request->warco ?? '-');
+
+            $last = DB::table('tsisnh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(trano,2) = ?", [$year])
+                ->lockForUpdate()
+                ->orderByDesc('trano')
+                ->value('trano');
+
+            $number = $last ? ((int) substr($last, 2) + 1) : 1;
+            $trano  = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $bbkid      = $braco . $formc . $trano;
+            $bracoformc = $braco . $formc;
+
+            DoHdr::create([
+                'bbkid'      => $bbkid,
+                'bracoformc' => $bracoformc,
+                'braco'      => $braco,
+                'warco'      => $mainWarco,
+                'formc'      => $formc,
+                'trano'      => $trano,
+                'tradt'      => $tradt,
+                'priod'      => $request->priod,
+                'cusno'      => $request->cusno,
+                'cuspo'      => $request->cuspo,
+                'rfc01'      => $request->rfc01,
+                'ref01'      => $request->ref01,
+                'exped'      => $request->exped,
+                'noteh'      => $request->noteh,
+                'shpto'      => $request->shpto,
+                'created_at' => now(),
+                'created_by' => Auth::user()->name,
+                'updated_at' => now(),
+                'updated_by' => Auth::user()->name,
+                'user_id'    => Auth::user()->id,
+            ]);
+
+            if ($request->has('opron') && is_array($request->opron)) {
+                foreach ($request->opron as $i => $opron) {
+                    if (!$opron) continue;
+
+                    $lotno = $request->lotno[$i] ?? '-';
+                    $trqty = (int) ($request->trqty[$i] ?? 0);
+                    $locco = $request->locco[$i] ?? '';
+                    $qunit = $request->qunit[$i] ?? '';
+                    $warco = is_array($request->warco) ? ($request->warco[$i] ?? $mainWarco) : $mainWarco;
+                    $noted = $request->noted[$i] ?? '';
+
+                    DoDtl::create([
+                        'bbkid' => $bbkid,
+                        'formc' => $formc,
+                        'trano' => $trano,
+                        'opron' => $opron,
+                        'qunit' => $qunit,
+                        'trqty' => $trqty,
+                        'lotno' => $lotno,
+                        'locco' => $locco,
+                        'warco' => $warco,
+                        'qtyit' => $trqty,
+                        'reffc' => $request->rfc01,
+                        'refno' => $request->ref01,
+                        'noted' => $noted,
+                    ]);
+
+                    // Update Stok Header (stobw_tbl)
+                    DB::table('stobw_tbl')
+                        ->where('braco', $braco)
+                        ->where('warco', $warco)
+                        ->where('opron', $opron)
+                        ->update(['toqoh' => DB::raw("toqoh - $trqty")]);
+
+                    // Update Stok Lot (stobl_tbl)
+                    DB::table('stobl_tbl')
+                        ->where('braco', $braco)
+                        ->where('warco', $warco)
+                        ->where('opron', $opron)
+                        ->where('lotno', $lotno)
+                        ->update(['toqoh' => DB::raw("toqoh - $trqty")]);
+
+                    // Update Outstandings
+                    if ($request->rfc01 === 'SA') {
+                        DB::table('tcored')
+                            ->where('braco', $braco)
+                            ->where('formc', $request->rfc01)
+                            ->where('sorno', $request->ref01)
+                            ->where('opron', $opron)
+                            ->update(['qtydo' => DB::raw("qtydo + $trqty")]);
+                    } elseif ($request->rfc01 === 'SB') {
+                        DB::table('tprojc')
+                            ->where('braco', $braco)
+                            ->where('formc', $request->rfc01)
+                            ->where('sorno', $request->ref01)
+                            ->where('opron', $opron)
+                            ->update(['delqt' => DB::raw("delqt + $trqty")]);
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('bbk.index')->with('success', "DO \"$bbkid\" berhasil disimpan.");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Gagal Simpan DO:', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    private function storeBbkBiasa(Request $request)
+    {
+        DB::beginTransaction();
         try {
             $braco = auth()->user()->cabang;
             $warco = $request->warco;
@@ -253,22 +385,16 @@ class BbkController extends Controller
                 ->where('warco', $warco)
                 ->where('formc', $formc)
                 ->whereRaw("LEFT(trano,2) = ?", [$year])
-                ->lockForUpdate() // mencegah nomor ganda
+                ->lockForUpdate()
                 ->orderByDesc('trano')
                 ->value('trano');
 
-            if ($last) {
-                $number = (int) substr($last, 2) + 1;
-            } else {
-                $number = 1;
-            }
-
+            $number = $last ? ((int) substr($last, 2) + 1) : 1;
             $trano = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
 
             $bbkid = $request->braco . $request->warco . $formc . $trano;
             $bracoformc = $request->braco . $formc;
 
-            // Simpan header
             BbkHdr::create([
                 'bbkid' => $bbkid,
                 'bracoformc' => $bracoformc,
@@ -286,6 +412,7 @@ class BbkController extends Controller
                 'kdprod' => $request->kdprod,
                 'supno' => $request->supno ?? '',
                 'isutn' => $request->isutn,
+                'exped' => $request->exped ?? '',
                 'isua1' => $request->isua1,
                 'noteh' => $request->noteh,
                 'created_at' => now(),
@@ -295,7 +422,6 @@ class BbkController extends Controller
                 'user_id' => Auth::user()->id,
             ]);
 
-            // Loop tiap detail barang
             foreach ($request->opron as $i => $useOpron) {
                 $lotStart = $request->lotno[$i] ?? '-';
                 $trqty    = (int) ($request->trqty[$i] ?? 1);
@@ -330,7 +456,7 @@ class BbkController extends Controller
                         'trqty' => $qtyPerRecord,
                         'qunit' => $request->stdqt[$i] ?? '',
                         'locco' => $request->locco[$i] ?? '',
-                        'noted' => $request->noted[$i] ?? '',
+                        'noted' => $noted[$i] ?? '',
                     ]);
                 }
 
@@ -620,6 +746,7 @@ class BbkController extends Controller
             return back()->with('error', 'Terjadi kesalahan saat update: ' . $e->getMessage());
         }
     }
+    // update TA, DO ke masing" Controller
     
     /**
      * Remove the specified resource from storage.

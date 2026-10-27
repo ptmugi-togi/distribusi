@@ -219,22 +219,17 @@
         <ul id="logistic-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('bbk.index') }}">
-              <i class="bi bi-circle"></i><span>BBK (Bon Barang Keluar)</span>
+              <i class="bi bi-circle"></i><span>Keluar</span>
             </a>
           </li>
           <li>
             <a href="{{ route('bbm.index') }}">
-              <i class="bi bi-circle"></i><span>BBM (Bon Barang Masuk)</span>
+              <i class="bi bi-circle"></i><span>Masuk</span>
             </a>
           </li>
           <li>
             <a href="{{ route('bpb.index') }}">
               <i class="bi bi-circle"></i><span>BPB (Bon Permintaan Barang)</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('do.index') }}">
-              <i class="bi bi-circle"></i><span>DO (Delivery Order)</span>
             </a>
           </li>
           <li class="nav-item">

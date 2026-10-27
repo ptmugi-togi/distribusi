@@ -43,6 +43,7 @@
             <option value="OF" {{ old('formc') == 'OF' ? 'selected' : '' }}>OF (ADJUSTMENT)</option>
             <option value="OG" {{ old('formc') == 'OG' ? 'selected' : '' }}>OG (OFFICE USED)</option>
             <option value="TA" {{ old('formc') == 'TA' ? 'selected' : '' }}>TA (TRANSFER NOTE)</option>
+            <option value="DO" {{ old('formc') == 'DO' ? 'selected' : '' }}>DO (DELIVERY ORDER)</option>
             {{-- FormC lain nanti --}}
           </select>
           <input type="text" name="formc_store" id="formc_store" value="{{ old('formc_store') }}" hidden>
@@ -88,6 +89,10 @@
 
       <div id="section-ta" style="display:none;">
         @include('logistic.bbk.partial_create.bbk_create_ta')
+      </div>
+
+      <div id="section-do" style="display:none;">
+        @include('logistic.bbk.partial_create.bbk_create_do')
       </div>
 
       <div class="mt-3 d-flex justify-content-between">
@@ -192,6 +197,7 @@
                 $('#section-oa').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-of').find('[data-req="of"]').prop('required', true);
               }
               else if(formc === 'OC'){
@@ -203,6 +209,7 @@
                 $('#section-oa').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-oc').find('[data-req="oc"]').prop('required', true);
               }
               else if(formc === 'OB'){
@@ -214,6 +221,7 @@
                 $('#section-oa').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-ob').find('[data-req="ob"]').prop('required', true);
                 loadMasterProductAll();
               }
@@ -226,6 +234,7 @@
                 $('#section-oa').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-od').find('[data-req="od"]').prop('required', true);
               }
               else if(formc === 'OG'){
@@ -237,6 +246,7 @@
                 $('#section-oa').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-og').find('[data-req="og"]').prop('required', true);
               }
               else if(formc === 'OA'){
@@ -248,6 +258,7 @@
                 $('#section-og').remove();
                 $('#section-oe').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-oa').find('[data-req="oa"]').prop('required', true);
                 loadMasterProductAll();
               }
@@ -260,6 +271,7 @@
                 $('#section-og').remove();
                 $('#section-oa').remove();
                 $('#section-ta').remove();
+                $('#section-do').remove();
                 $('#section-oe').find('[data-req="oe"]').prop('required', true);
               }
               else if(formc === 'TA'){
@@ -271,15 +283,30 @@
                 $('#section-og').remove();
                 $('#section-oa').remove();
                 $('#section-oe').remove();
+                $('#section-do').remove();
                 $('#section-ta').find('[data-req="ta"]').prop('required', true);
+              }
+              else if(formc === 'DO'){
+                $('#section-do').fadeIn();
+                $('#section-of').remove();
+                $('#section-oc').remove();
+                $('#section-ob').remove();
+                $('#section-od').remove();
+                $('#section-og').remove();
+                $('#section-oa').remove();
+                $('#section-oe').remove();
+                $('#section-ta').remove();
+                $('#section-do').find('[data-req="do"]').prop('required', true);
               }
               else{
                 $('#section-of').fadeOut();
                 $('#section-oc').fadeOut();
                 $('#section-ta').fadeOut();
+                $('#section-do').fadeOut();
                 $('#section-of').find('[data-req="of"]').prop('required', false);
                 $('#section-oc').find('[data-req="oc"]').prop('required', false);
                 $('#section-ta').find('[data-req="ta"]').prop('required', false);
+                $('#section-do').find('[data-req="do"]').prop('required', false);
               }
 
               $warco.empty().append('<option disabled selected>Loading...</option>');
