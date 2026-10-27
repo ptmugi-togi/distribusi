@@ -112,7 +112,7 @@
                 @endif
             </td>
             <td class="center" style="width:30%; vertical-align:top;">
-                SIN TYPE : {{ $bbkhdr->mformcode->desc_c }} <br>
+                SIN TYPE : {{ $bbkhdr->mformcode->descr }} <br>
                 @if ($bbkhdr->formc == 'OE')
                     WC# : {{ $bbkhdr->ref01 }}    
                 @endif

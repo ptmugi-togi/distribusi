@@ -149,7 +149,7 @@
                     {{ $bbmhdr->blnum ?? '-' }}<br>
                     {{ $bbmhdr->vesel ?? '-' }}<br>
                 @endif
-                {{ $bbmhdr->mformcode->desc_c }}
+                {{ $bbmhdr->mformcode->descr }}
             </td>
             <td class="left td-top" style="width:2%"></td>
             <td class="left td-top" style="width:14%">

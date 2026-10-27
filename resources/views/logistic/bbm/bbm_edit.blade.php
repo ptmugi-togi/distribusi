@@ -34,7 +34,7 @@
                 <div class="col-md-6 mt-3">
                     <label class="form-label">Formc</label>
                     <input type="text" class="form-control" name="formc" id="formc" 
-                        value="{{ old('formc', $bbm->formc ?? '') }} ({{ $bbm->mformcode->desc_c ?? '' }})"
+                        value="{{ old('formc', $bbm->formc ?? '') }} ({{ $bbm->mformcode->descr ?? '' }})"
                         readonly 
                         style="background-color:#e9ecef;">
                 </div>
