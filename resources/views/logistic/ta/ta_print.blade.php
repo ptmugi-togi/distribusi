@@ -146,7 +146,7 @@
                         @endif
                     </td>
                     <td class="center">{{ $i->trqty }} {{ $i->mpromas->stdqu }}</td>
-                    <td class="center">{{ \Carbon\Carbon::parse($i->eariv)->format('d-m-Y') }}</td>
+                    <td class="center">{{ $i->locco }}</td>
                 </tr>
             @endforeach
         </tbody>

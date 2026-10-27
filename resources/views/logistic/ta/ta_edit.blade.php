@@ -12,7 +12,7 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('ta.index') }}">List TA</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('bbk.index') }}">List Keluar</a></li>
                     <li class="breadcrumb-item active">Edit TA</li>
                 </ol>
             </nav>
