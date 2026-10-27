@@ -280,7 +280,7 @@
                     <td class="center">{{ $loop->index + 1 }}.</td>
                     <td class="center">{{ $i->opron ?? '-' }}</td>
                     @if ($bbmhdr->formc != 'ID')
-                        <td class="left">{{ $i->mpromas->brand_name ?? '-' }}</td>
+                        <td class="left">{{ $i->mpromas->brand ?? '-' }}</td>
                     @endif
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
