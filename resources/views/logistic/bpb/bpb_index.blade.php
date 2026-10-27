@@ -45,7 +45,7 @@
                       @foreach ($bpbhdr as $b)
                       <tr>
                           <td class="text-center">{{ $b->braco ?? '-' }}</td>
-                          <td class="">{{ $b->reqno ?? '-' }}</td>
+                          <td class="text-center">RA {{ $b->reqno ?? '-' }}</td>
                           <td class="text-center" data-order="{{ \Carbon\Carbon::parse($b->tradt)->format('Y-m-d') }}">
                               {{ \Carbon\Carbon::parse($b->tradt)->format('d/m/Y') }}
                           </td>

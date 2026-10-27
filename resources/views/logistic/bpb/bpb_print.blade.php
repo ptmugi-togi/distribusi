@@ -108,7 +108,7 @@
             <td style="width:2%; vertical-align:top;">:<br>:<br>:</td>
             <td style="width:13%; vertical-align:top;">
                 {{ $bpbhdr->braco }}<br>
-                RA{{ $bpbhdr->sorno }}<br>
+                RA {{ $bpbhdr->reqno }}<br>
                 {{ \Carbon\Carbon::parse($bpbhdr->reqdt)->format('d-m-Y') }}<br>
             </td>
         </tr>
