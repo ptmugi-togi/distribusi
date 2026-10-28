@@ -38,6 +38,20 @@ class TpoController extends Controller
         return response()->json(['success' => false], 404);
     }
 
+    public function getVendorsByPotype($potype)
+    {
+        $vgrp = ($potype === 'Import') ? 'I' : 'L';
+
+        $vendors = Mvendor::where('vgrp', $vgrp)
+                        ->select('supno', 'supna')
+                        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $vendors
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

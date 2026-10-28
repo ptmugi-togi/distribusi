@@ -56,15 +56,8 @@
 
                     <div class="col-md-6 mt-3">
                         <label for="supno" class="form-label">Supplier <span class="text-danger">*</span></label>
-                        <select class="select2 form-control" name="supno" id="supno" required>
-                            <option value="" disabled {{ old('supno') ? '' : 'selected' }}>Silahkan pilih Supplier</option>
-                            @foreach($vendors as $v)
-                                <option
-                                    value="{{ $v->supno }}"
-                                    {{ old('supno') == $v->supno ? 'selected' : '' }}>
-                                    {{ $v->supna }}
-                                </option>
-                            @endforeach
+                        <select class="select2 form-control" name="supno" id="supno" style="width: 100%;" required>
+                            <option value="" disabled selected>Silahkan pilih Tipe PO terlebih dahulu</option>
                         </select>
                     </div>
 
@@ -210,6 +203,56 @@
             });
         </script>
 
+        {{-- filter supplier --}}
+        <script>
+            $(document).ready(function () {
+                const $supno = $('#supno');
+                const oldSupno = "{{ old('supno') }}";
+
+                function loadSuppliers(potype, selectedValue = null) {
+                    if (!potype) {
+                        $supno.html('<option value="" disabled selected>Silahkan pilih Tipe PO terlebih dahulu</option>').trigger('change');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: `/get-vendors-by-potype/${potype}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        beforeSend: function() {
+                            $supno.html('<option value="" disabled selected>Memuat data supplier...</option>').trigger('change');
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                let options = '<option value="" disabled selected>Silahkan pilih Supplier</option>';
+                                
+                                $.each(response.data, function (key, vendor) {
+                                    let isSelected = (selectedValue && selectedValue == vendor.supno) ? 'selected' : '';
+                                    options += `<option value="${vendor.supno}" ${isSelected}>${vendor.supna}</option>`;
+                                });
+
+                                $supno.html(options).trigger('change');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error(xhr.responseText);
+                            $supno.html('<option value="" disabled selected>Gagal memuat supplier</option>').trigger('change');
+                        }
+                    });
+                }
+
+                // Listener saat Tipe PO diganti
+                $('#potype').on('change', function () {
+                    loadSuppliers($(this).val());
+                });
+
+                // Trigger otomatis saat halaman pertama dimuat (handle old input)
+                const initialPotype = $('#potype').val();
+                if (initialPotype) {
+                    loadSuppliers(initialPotype, oldSupno);
+                }
+            });
+        </script>
 
         {{-- get currency from curco --}}
         <script>
