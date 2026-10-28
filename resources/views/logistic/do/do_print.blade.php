@@ -150,7 +150,7 @@
                 <tr>
                     <td class="center">{{ $loop->index + 1 }}</td>
                     <td class="center">{{ $i->opron ?? '-' }}</td>
-                    <td class="center">{{ $i->mpromas->brand_name ?? '-' }}</td>
+                    <td class="center">{{ $i->mpromas->brand ?? '-' }}</td>
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
                         <br>
