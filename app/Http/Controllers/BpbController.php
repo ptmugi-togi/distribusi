@@ -35,28 +35,6 @@ class BpbController extends Controller
         return view('logistic.bpb.bpb_index', compact('bpbhdr', 'userBraco', 'periodClosed'));
     }
     
-    public function generateReqno(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = $request->formc;
-        $reqdt = $request->reqdt;
-        $year = Carbon::parse($reqdt)->format('y');
-
-        $last = DB::table('tsreqh')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(reqno,2) = ?", [$year])
-            ->orderBy('reqno','desc')
-            ->value('reqno');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
-    }
 
     public function getWarcoDetail($code)
     {
@@ -109,29 +87,49 @@ class BpbController extends Controller
         DB::beginTransaction();
 
         try {
-            $bpbid = $request->braco . $request->formc . $request->reqno;
+            $braco = $request->braco ?? auth()->user()->cabang;
+            $formc = $request->formc;
+            $reqdt = $request->reqdt;
+            $year  = Carbon::parse($reqdt)->format('y');
 
-            $bracoformc = $request->braco . $request->formc;
+            $last = DB::table('tsreqh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(reqno,2) = ?", [$year])
+                ->orderBy('reqno', 'desc')
+                ->lockForUpdate()
+                ->value('reqno');
 
-            // Simpan header
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $reqno = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+
+            $bpbid      = $braco . $formc . $reqno;
+            $bracoformc = $braco . $formc;
+
+            // Simpan Header
             BpbHdr::create([
-                'bpbid' => $bpbid,
+                'bpbid'      => $bpbid,
                 'bracoformc' => $bracoformc,
-                'braco' => $request->braco,
-                'warco' => $request->warco,
-                'formc' => $request->formc,
-                'reqno' => $request->reqno,
-                'reqdt' => $request->reqdt,
-                'sorfc' => $request->sorfc,
-                'sorno' => $request->sorno,
-                'rqfor' => $request->rqfor,
-                'reqto' => $request->reqto,
-                'reqtn' => $request->reqtn,
-                'delto' => $request->delto,
-                'delco' => $request->delco,
-                'warna' => $request->warna,
-                'contp' => $request->contp,
-                'noteh' => $request->noteh,
+                'braco'      => $braco,
+                'warco'      => $request->warco,
+                'formc'      => $formc,
+                'reqno'      => $reqno,
+                'reqdt'      => $reqdt,
+                'sorfc'      => $request->sorfc,
+                'sorno'      => $request->sorno,
+                'rqfor'      => $request->rqfor,
+                'reqto'      => $request->reqto,
+                'reqtn'      => $request->reqtn,
+                'delto'      => $request->delto,
+                'delco'      => $request->delco,
+                'warna'      => $request->warna,
+                'contp'      => $request->contp,
+                'noteh'      => $request->noteh,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
@@ -142,9 +140,9 @@ class BpbController extends Controller
             foreach ($request->opron as $i => $useOpron) {
                 BpbDtl::create([
                     'bpbid' => $bpbid,
-                    'braco' => $request->braco,
-                    'formc' => $request->formc,
-                    'reqno' => $request->reqno,
+                    'braco' => $braco,
+                    'formc' => $formc,
+                    'reqno' => $reqno,
                     'opron' => $useOpron,
                     'rqqty' => $request->rqqty[$i],
                     'eariv' => $request->eariv[$i],
@@ -154,13 +152,15 @@ class BpbController extends Controller
             }
 
             DB::commit();
+
             return redirect()->route('bpb.index')->with('success', "Data BPB \"$bpbid\" berhasil disimpan.");
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal simpan BPB:', ['error' => $e->getMessage()]);
+
             return back()
-            ->withInput()
-            ->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
         }
     }
 

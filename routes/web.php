@@ -259,7 +259,6 @@ Route::get('/stock/preview', [SmsController::class, 'preview'])->middleware('aut
 
 Route::get('/bpb', [BpbController::class,'index'])->middleware('auth')->name('bpb.index');
 Route::get('/bpb/create', [BpbController::class,'create'])->middleware('auth')->name('bpb.create');
-Route::get('/generate-reqno-bpb', [BpbController::class,'generateReqno'])->name('generate-reqno-bpb');
 Route::get('/get-warco-detail/{code}', [BpbController::class, 'getWarcoDetail']);
 Route::post('/bpb/store', [BpbController::class,'store'])->middleware('auth')->name('bpb.store');
 Route::get('/bpb/{id}/detail', [BpbController::class,'show'])->middleware('auth')->name('bpb.detail');

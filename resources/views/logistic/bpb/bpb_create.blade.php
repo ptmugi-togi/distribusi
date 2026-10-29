@@ -48,11 +48,6 @@
         </div>
 
         <div class="col-md-6 mt-3">
-          <label for="reqno" class="form-label">Requisition No.</label><span class="text-danger"> *</span>
-          <input type="text" class="form-control" name="reqno" id="reqno" value="{{ old('reqno') }}" required readonly style="background-color:#e9ecef">
-        </div>
-
-        <div class="col-md-6 mt-3">
           <label for="reqdt" class="form-label">Requisition Date</label><span class="text-danger"> *</span>
           <input type="date" class="form-control" name="reqdt" id="reqdt" value="{{ old('reqdt') }}" required min="{{ $minDate }}">
         </div>
@@ -147,30 +142,17 @@
 
     @push('scripts')
         <script>
-          $(document).ready(function(){
-            $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
+            $(document).ready(function(){
+                $('.select2').select2({ width: '100%', theme: 'bootstrap-5' });
 
-            setTimeout(()=>{
-                loadMasterProductAll();
-            },100);
+                setTimeout(()=>{
+                    loadMasterProductAll();
+                },100);
 
-            let oldReqto = "{{ old('reqto') }}";
+                let oldReqto = "{{ old('reqto') }}";
 
-            if (oldReqto) {
-                $('#reqto').val(oldReqto).trigger('change');
-            }
-          });
-
-            // generate reqno
-            $('#formc-store, #reqdt').on('change', function(){
-                let braco = $('#braco').val();
-                let formc = $('#formc-store').val();
-                let reqdt = $('#reqdt').val();
-
-                if(formc && braco && reqdt){
-                    $.get("{{ route('generate-reqno-bpb') }}", {formc, braco, reqdt}, function(res){
-                        $('#reqno').val(res);
-                    });
+                if (oldReqto) {
+                    $('#reqto').val(oldReqto).trigger('change');
                 }
             });
 
