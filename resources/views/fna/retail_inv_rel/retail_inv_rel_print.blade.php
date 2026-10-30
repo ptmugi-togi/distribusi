@@ -84,7 +84,7 @@
     <!-- Info Pelanggan, dikirim ke, dokumen -->
     <table class="no-border" style="margin-top:3px;">
         <tr>
-            <td class="left" style="width:40%; vertical-align:top">
+            <td class="left" style="width:38%; vertical-align:top">
                 <b>KEPADA YTH.</b><br>
                 <table class="no-border" style="margin-left: 5px; overflow: wrap;">
                     <tr>
@@ -116,7 +116,7 @@
                 ATTN. {{ $retailinvrelhdr->mcusmas_do?->ofcon }}
             </td>
 
-            <td class="left" style="width:21%; vertical-align:top">
+            <td class="left" style="width:20%; vertical-align:top">
                 <b>NO. FAKTUR</b><br>
                 <b>TGL. FAKTUR</b> <br>
                 <b>SYARAT PEMBAYARAN</b> <br>
@@ -136,7 +136,7 @@
                 <b>:</b> <br>
             </td>
     
-            <td class="left" style="width:12%; vertical-align:top">
+            <td class="left" style="width:15%; vertical-align:top">
                 {{ $retailinvrelhdr->formc }} {{ $retailinvrelhdr->invno }}/{{ $retailinvrelhdr->braco }}<br>
                 {{ \Carbon\Carbon::parse($retailinvrelhdr->invdt)->format('d-m-Y') }}<br>
                 {{ $retailinvrelhdr->topay }} Hari<br>
