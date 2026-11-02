@@ -104,8 +104,8 @@
                 <br>
             </td>
             <td class="left" style="width:13%; vertical-align:top">
-                {{ $tpohdr->pono }}<br>
-                {{ $tpohdr->podat }}<br>
+                PI {{ $tpohdr->pono }}<br>
+                {{ \Carbon\Carbon::parse($tpohdr->podat)->format('d-m-Y') }}<br>
             </td>
         </tr>
     </table>
@@ -148,7 +148,7 @@
                         @endif
                     </td>
                     <td class="center">{{ $d->poqty }} {{ $d->mpromas->stdqu}}</td>
-                    <td class="center">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
+                    <td class="right">{{ formatNumberOnly($d->price, $tpohdr->curco) }}</td>
                     <td class="right">{{ formatNumberOnly($subtotal, $tpohdr->curco) }}</td>
                 </tr>
             @endforeach
@@ -165,7 +165,6 @@
                     @php $grandtotal = round($total - $diskon + $tpohdr->freight_cost, 2); @endphp
 
                     <td style="width:60%; vertical-align:top">
-                        <b>Note :</b><br>
                         {{ $tpohdr->noteh }}
                     </td>
                     <td style="width:40%">

@@ -112,8 +112,8 @@
                 <br>
             </td>
             <td class="left" style="width:13%; vertical-align:top">
-                {{ $tpohdr->pono }}<br>
-                {{ $tpohdr->podat }}<br>
+                {{ $tpohdr->formc }} {{ $tpohdr->pono }}<br>
+                {{ \Carbon\Carbon::parse($tpohdr->podat)->format('d-m-Y') }}<br>
             </td>
         </tr>
     </table>
@@ -185,7 +185,6 @@
                 @php $grandtotal = round($subtotal - $diskon + $ppn - $totalpph, 2); @endphp
     
                 <td style="width:60%; vertical-align:top">
-                    <b>Catatan:</b><br>
                     {{ $tpohdr->noteh }}
                 </td>
                 <td style="width:40%">
