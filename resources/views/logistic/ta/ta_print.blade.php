@@ -130,7 +130,7 @@
         <tbody>
             @foreach($tadtls as $i)
                 <tr>
-                    <td class="center">{{ $loop->index + 1 }}</td>
+                    <td class="center">{{ $loop->iteration }}</td>
                     <td class="center">{{ $i->opron ?? '-' }}</td>
                     <td>
                         {{ $i->mpromas->prona ?? '-' }}
@@ -145,7 +145,7 @@
                         </table>
                         @endif
                     </td>
-                    <td class="center">{{ $i->trqty }} {{ $i->mpromas->stdqu }}</td>
+                    <td class="center">{{ $i->trqty }} {{ $i->mpromas->stdqu ?? '' }}</td>
                     <td class="center">{{ $i->locco }}</td>
                 </tr>
             @endforeach

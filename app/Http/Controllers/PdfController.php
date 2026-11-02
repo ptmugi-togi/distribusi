@@ -628,16 +628,37 @@ class PdfController extends Controller
             'tadtls.mpromas',
         ])->findOrFail($id);
 
-        $tadtls = $tahdr->tadtls;
+        $tadtls = $tahdr->tadtls->groupBy('opron')->map(function ($items) {
+            $first = $items->first();
+
+            $snList = $items->pluck('lotno')
+                            ->filter()
+                            ->unique()
+                            ->implode(', ');
+
+            $locList = $items->pluck('locco')
+                            ->filter()
+                            ->unique()
+                            ->implode(', ');
+
+            return (object) [
+                'opron'   => $first->opron,
+                'mpromas' => $first->mpromas,
+                'noted'   => $first->noted,
+                'trqty'   => $items->sum('trqty'),
+                'lotno'   => $snList,
+                'locco'   => $locList,
+            ];
+        })->values();
 
         $html = view('logistic.ta.ta_print', [
-            'tahdr' => $tahdr,
+            'tahdr'  => $tahdr,
             'tadtls' => $tadtls,
         ])->render();
 
         $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
+            'format'        => 'A4',
+            'margin_top'    => 10,
             'margin_bottom' => 10,
         ]);
 
@@ -661,23 +682,43 @@ class PdfController extends Controller
             'tadtls.mpromas',
         ])->findOrFail($id);
 
-        $tadtls = $tahdr->tadtls;
+        $tadtls = $tahdr->tadtls->groupBy('opron')->map(function ($items) {
+            $first = $items->first();
+
+            $snList = $items->pluck('lotno')
+                            ->filter()
+                            ->unique()
+                            ->implode(', ');
+
+            $locList = $items->pluck('locco')
+                            ->filter()
+                            ->unique()
+                            ->implode(', ');
+
+            return (object) [
+                'opron'   => $first->opron,
+                'mpromas' => $first->mpromas,
+                'noted'   => $first->noted,
+                'trqty'   => $items->sum('trqty'),
+                'lotno'   => $snList,
+                'locco'   => $locList,
+            ];
+        })->values();
+
+        DB::table('tsisnh')
+            ->where('bbkid', $id)
+            ->update([
+                'prctr' => DB::raw('prctr + 1')
+            ]);
 
         $html = view('logistic.ta.ta_print', [
-            'tahdr' => $tahdr,
+            'tahdr'  => $tahdr,
             'tadtls' => $tadtls,
         ])->render();
 
-        // increment counter total print
-        DB::table('tsisnh')
-        ->where('bbkid', $id)
-        ->update([
-            'prctr' => DB::raw('prctr + 1')
-        ]);
-
         $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_top' => 10,
+            'format'        => 'A4',
+            'margin_top'    => 10,
             'margin_bottom' => 10,
         ]);
 
@@ -689,7 +730,6 @@ class PdfController extends Controller
         $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooterByName('myFooter', 'E_ALL');
 
-        // save PDF jadi string
         $filename = $tahdr->braco.'-'.$tahdr->formc.$tahdr->trano.'.pdf';
         $pdfContent = $mpdf->Output($filename, 'S');
 
