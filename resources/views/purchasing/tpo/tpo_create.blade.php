@@ -48,7 +48,7 @@
                         <input type="date" class="form-control"
                             name="podat" id="podat"
                             value="{{ old('podat') }}"
-                            required min="{{ date('Y-m-d') }}">
+                            required min="{{ $minDate }}">
                         @error('podat')
                             <small class="text-danger"><strong>{{ $message }}</strong></small>
                         @enderror

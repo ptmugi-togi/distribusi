@@ -61,7 +61,23 @@ class TpoController extends Controller
         $products = Mpromas::select('opron','prona','stdqu')->orderBy('opron')->get();
         $currencies = Mcurco::select('curco')->get();
 
-        return view('purchasing.tpo.tpo_create', compact('vendors', 'products', 'currencies'));
+        $priod = null;
+        $minDate = null;
+
+        $periodeAktif = DB::table('tperiode')
+            ->where('braco', auth()->user()->cabang)
+            ->where('status', 'O')
+            ->orderBy('periode', 'desc')
+            ->first();
+
+        if ($periodeAktif) {
+            $priod = $periodeAktif->periode;
+            $year = substr($periodeAktif->periode, 0, 4);
+            $month = substr($periodeAktif->periode, 4, 2);
+            $minDate = "$year-$month-01";
+        }
+
+        return view('purchasing.tpo.tpo_create', compact('vendors', 'products', 'currencies', 'minDate'));
     }
 
     /**
