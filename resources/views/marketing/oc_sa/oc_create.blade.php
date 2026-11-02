@@ -26,19 +26,14 @@
             <div class="row">
             <input type="text" class="form-control" id="formc" name="formc" value="SA" hidden>
             <input type="text" class="form-control" id="braco" name="braco" value="{{ auth()->user()->cabang }}" hidden>
-                
-            <div class="col-md-4 mt-3">
-                <label for="sorno" class="form-label">OC No.</label><span class="text-danger"> *</span>
-                <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" required readonly style="background-color:#e9ecef">
-            </div>
 
-            <div class="col-md-4 mt-3">
+            <div class="col-md-6 mt-3">
                 <label for="sordt" class="form-label">OC Date</label><span class="text-danger"> *</span>
                 <input type="date" class="form-control" name="sordt" id="sordt" value="{{ old('sordt') }}" min="{{ $minDate }}" required>
                 <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
             </div>
 
-            <div class="col-md-4 mt-3">
+            <div class="col-md-6 mt-3">
                 <label for="depo" class="form-label">Depo</label>
                  <select name="depo" id="depo" class="form-control select2"
                  
@@ -361,14 +356,6 @@
 
         $('#sordt').on('change', function(){
             let sordt = $('#sordt').val();
-
-            if(sordt){
-                $.get("{{ route('generate-ocnum') }}", {sordt}, function(res){
-                    $('#sorno').val(res);
-                });
-            }
-
-            if (!sordt) return;
 
             const year  = sordt.substring(0, 4);
             const month = sordt.substring(5, 7);

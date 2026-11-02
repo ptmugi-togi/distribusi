@@ -76,8 +76,28 @@ class OcController extends Controller
 
         try {
 
-            $ocid = $request->braco . $request->formc . $request->sorno;
-            $bracoformc = $request->braco . $request->formc;
+            $braco = $request->braco ?? auth()->user()->cabang;
+            $formc = 'SA';
+            $sordt = $request->sordt;
+            $year  = Carbon::parse($sordt)->format('y');
+
+            $last = DB::table('tcoreh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(sorno,2) = ?", [$year])
+                ->orderBy('sorno', 'desc')
+                ->lockForUpdate()
+                ->value('sorno');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $sorno      = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+            $ocid       = $braco . $formc . $sorno;
+            $bracoformc = $braco . $formc;
 
             $totalGross = 0;
             $totalOfficialDisc = 0;
@@ -88,7 +108,7 @@ class OcController extends Controller
                 'bracoformc' => $bracoformc,
                 'braco' => $request->braco,
                 'formc' => $request->formc,
-                'sorno' => $request->sorno,
+                'sorno' => $sorno,
                 'sordt' => $request->sordt,
                 'priod' => $request->priod,
                 'cusno' => $request->cusno,
@@ -129,7 +149,7 @@ class OcController extends Controller
                     'ocid' => $ocid,
                     'braco' => $request->braco,
                     'formc' => $request->formc,
-                    'sorno' => $request->sorno,
+                    'sorno' => $sorno,
                     'opron' => $opron,
                     'prona' => $request->prona[$i],
                     'qtyor' => $qty,
