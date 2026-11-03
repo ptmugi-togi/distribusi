@@ -102,12 +102,14 @@
             <td style="width:3%;"></td>
             <td style="width:5%; vertical-align:top;">
                 CABANG <br>
+                NO. SA <br>
                 NO. BPB <br>
                 TGL BPB <br>
             </td>
-            <td style="width:2%; vertical-align:top;">:<br>:<br>:</td>
+            <td style="width:2%; vertical-align:top;">:<br>:<br>:<br>:</td>
             <td style="width:13%; vertical-align:top;">
                 {{ $bpbhdr->braco }}<br>
+                {{ $bpbhdr->sorfc }} {{ $bpbhdr->sorno}}<br>
                 RA {{ $bpbhdr->reqno }}<br>
                 {{ \Carbon\Carbon::parse($bpbhdr->reqdt)->format('d-m-Y') }}<br>
             </td>
