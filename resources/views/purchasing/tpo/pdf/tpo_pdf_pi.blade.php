@@ -104,7 +104,7 @@
                 <br>
             </td>
             <td class="left" style="width:13%; vertical-align:top">
-                PI {{ $tpohdr->pono }}<br>
+                {{ $tpohdr->pono }}<br>
                 {{ \Carbon\Carbon::parse($tpohdr->podat)->format('d-m-Y') }}<br>
             </td>
         </tr>
@@ -165,6 +165,7 @@
                     @php $grandtotal = round($total - $diskon + $tpohdr->freight_cost, 2); @endphp
 
                     <td style="width:60%; vertical-align:top">
+                        <b>Note :</b><br>
                         {{ $tpohdr->noteh }}
                     </td>
                     <td style="width:40%">
