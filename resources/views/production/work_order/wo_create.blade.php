@@ -24,18 +24,13 @@
         @csrf
 
         <div class="row">
-        <input type="text" class="form-control" id="formc" name="formc" value="WO" hidden>
-        <input type="text" class="form-control" id="braco" name="braco" value="PST" hidden>
-            
-        <div class="col-md-6 mt-3">
-            <label for="wonum" class="form-label">Work Order</label><span class="text-danger"> *</span>
-            <input type="text" class="form-control" name="wonum" id="wonum" value="{{ old('wonum') }}" required readonly style="background-color:#e9ecef">
-        </div>
+        <input type="hidden" class="form-control" id="formc" name="formc" value="WO">
+        <input type="hidden" class="form-control" id="braco" name="braco" value="{{ auth()->user()->cabang }}">
 
         <div class="col-md-6 mt-3">
             <label for="wodat" class="form-label">Work Order Date</label><span class="text-danger"> *</span>
             <input type="date" class="form-control" name="wodat" id="wodat" value="{{ old('wodat') }}" required min="{{ $minDate }}">
-            <input type="text" name="priod" id="priod" value="{{ old('priod' ?? '') }}" hidden>
+            <input type="hidden" name="priod" id="priod" value="{{ old('priod' ?? '') }}">
         </div>
 
         <div class="col-md-6 mt-3">
@@ -64,8 +59,8 @@
             <select name="refcno" id="refcno" class="form-control select2" disabled>
                 <option value="" disabled {{ old('refcno') ? '' : 'selected' }}>Silahkan Pilih BPB/Requisition</option>
             </select>
-            <input type="text" id="reffc" name="reffc" value="{{ old('reffc') }}" hidden>
-            <input type="text" id="refno" name="refno" value="{{ old('refno') }}" hidden>
+            <input type="hidden" id="reffc" name="reffc" value="{{ old('reffc') }}">
+            <input type="hidden" id="refno" name="refno" value="{{ old('refno') }}">
             <div class="form-check">
                 <label for="noBpb"></label>
                 <input class="form-check-input noBpb-checkbox" type="checkbox" value="1" name="noBpb" id="noBpb">
@@ -88,12 +83,12 @@
         <div class="col-md-6 mt-3">
             <label for="sorfcno" class="form-label">Order Confirmation Number</label><span class="text-danger"> *</span>
             <input type="text" class="form-control" name="sorfcno" id="sorfcno" value="{{ old('sorno') }}" readonly style="background-color:#e9ecef">
-            <input type="text" class="form-control" name="sorfc" id="sorfc" value="{{ old('sorfc') }}" hidden>
-            <input type="text" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}" hidden>
+            <input type="hidden" class="form-control" name="sorfc" id="sorfc" value="{{ old('sorfc') }}">
+            <input type="hidden" class="form-control" name="sorno" id="sorno" value="{{ old('sorno') }}">
         </div>
 
         <div class="col-md-6 mt-3">
-            <label for="costc" class="form-label">Cost Center</label><span class="text-danger"> *</span>
+            <label for="costc" class="form-label">Cost Center</label>
             <select name="costc" id="costc" class="form-control select2">
                 <option value="" disabled {{ old('costc') ? '' : 'selected' }}>Silahkan Pilih Cost Center</option>
                 @foreach ($costc as $costc)
@@ -140,16 +135,6 @@
                 .prop('disabled', true)
                 .css('background-color', '#e9ecef');
             syncReqdtMode();
-        });
-
-        $('#wodat').on('change', function(){
-            let wodat = $('#wodat').val();
-
-            if(wodat){
-                $.get("{{ route('generate-wonum') }}", {wodat}, function(res){
-                    $('#wonum').val(res);
-                });
-            }
         });
 
         $(document).on('change', '#wodat', function () {

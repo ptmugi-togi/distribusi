@@ -60,57 +60,6 @@ class WoController extends Controller
         return view('production.work_order.wo_create', compact('periodeAktif', 'minDate', 'branches', 'costc'));
     }
 
-    public function generateWonum(Request $request)
-    {
-        $braco = auth()->user()->cabang;
-        $formc = 'WO';
-        $wodat = $request->wodat;
-
-        $year = Carbon::parse($wodat)->format('y');
-
-        $last = DB::table('tworkh')
-            ->where('braco', $braco)
-            ->where('formc', $formc)
-            ->whereRaw("LEFT(wonum,2) = ?", [$year])
-            ->orderBy('wonum','desc')
-            ->value('wonum');
-
-        if ($last) {
-            $number = (int)substr($last, 2) + 1;
-        } else {
-            $number = 1;
-        }
-
-        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
-    }
-
-    public function getRa($braco)
-    {
-        $ra = DB::table('tsreqh')
-            ->where('braco', $braco)
-            ->orderBy('reqno', 'desc')
-            ->get();
-
-        return response()->json($ra);
-    }
-
-    public function getBarangByRA($bpbid)
-    {
-        $data = DB::table('tsreqd')
-            ->join('mpromas', 'mpromas.opron', '=', 'tsreqd.opron')
-            ->where('tsreqd.bpbid', $bpbid)
-            ->whereColumn('tsreqd.qtyta', '<', 'tsreqd.rqqty')
-            ->select(
-                'tsreqd.opron',
-                'tsreqd.rqqty',
-                'mpromas.prona',
-                'mpromas.stdqu'
-            )
-            ->get();
-
-        return response()->json($data);
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -119,30 +68,49 @@ class WoController extends Controller
         DB::beginTransaction();
 
         try {
-            $woid = $request->braco . $request->formc . $request->wonum;
+            $braco = $request->braco ?? auth()->user()->cabang;
+            $formc = 'WO';
+            $wodat = $request->wodat;
+            $year  = Carbon::parse($wodat)->format('y');
 
-            $bracoformc = $request->braco . $request->formc;
+            $last = DB::table('tworkh')
+                ->where('braco', $braco)
+                ->where('formc', $formc)
+                ->whereRaw("LEFT(wonum,2) = ?", [$year])
+                ->orderBy('wonum', 'desc')
+                ->lockForUpdate()
+                ->value('wonum');
+
+            if ($last) {
+                $number = (int) substr($last, 2) + 1;
+            } else {
+                $number = 1;
+            }
+
+            $wonum      = $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+            $woid       = $braco . $formc . $wonum;
+            $bracoformc = $braco . $formc;
 
             // Simpan header
             WoHdr::create([
-                'woid' => $woid,
+                'woid'       => $woid,
                 'bracoformc' => $bracoformc,
-                'braco' => $request->braco,
-                'formc' => $request->formc,
-                'wonum' => $request->wonum,
-                'wodat' => $request->wodat,
-                'priod' => $request->priod,
-                'reqbr' => $request->reqbr,
-                'ppose' => $request->ppose,
-                'reffc' => $request->reffc,
-                'refno' => $request->refno,
-                'reqdt' => $request->reqdt,
-                'cusna' => $request->cusna,
-                'sorfc' => $request->sorfc,
-                'sorno' => $request->sorno,
-                'costc' => $request->costc,
-                'fdate' => $request->fdate,
-                'noteh' => $request->noteh,
+                'braco'      => $braco,
+                'formc'      => $formc,
+                'wonum'      => $wonum,
+                'wodat'      => $wodat,
+                'priod'      => $request->priod,
+                'reqbr'      => $request->reqbr,
+                'ppose'      => $request->ppose,
+                'reffc'      => $request->reffc,
+                'refno'      => $request->refno,
+                'reqdt'      => $request->reqdt,
+                'cusna'      => $request->cusna,
+                'sorfc'      => $request->sorfc,
+                'sorno'      => $request->sorno,
+                'costc'      => $request->costc,
+                'fdate'      => $request->fdate,
+                'noteh'      => $request->noteh,
                 'created_at' => now(),
                 'created_by' => Auth::user()->name,
                 'updated_at' => now(),
@@ -152,10 +120,10 @@ class WoController extends Controller
             // Loop tiap detail barang
             foreach ($request->opron as $i => $useOpron) {
                 WoDtl::create([
-                    'woid' => $woid,
-                    'braco' => $request->braco,
-                    'formc' => $request->formc,
-                    'wonum' => $request->wonum,
+                    'woid'  => $woid,
+                    'braco' => $braco,
+                    'formc' => $formc,
+                    'wonum' => $wonum,
                     'outpr' => $useOpron,
                     'outqt' => $request->outqt[$i],
                     'stdqu' => $request->stdqu[$i],
@@ -164,13 +132,15 @@ class WoController extends Controller
             }
 
             DB::commit();
+
             return redirect()->route('wo.index')->with('success', "Data WO \"$woid\" berhasil disimpan.");
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Gagal simpan WO:', ['error' => $e->getMessage()]);
+
             return back()
-            ->withInput()
-            ->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage());
         }
     }
 
@@ -255,5 +225,57 @@ class WoController extends Controller
             return redirect()->route('wo.index')
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+
+    
+    public function generateWonum(Request $request)
+    {
+        $braco = auth()->user()->cabang;
+        $formc = 'WO';
+        $wodat = $request->wodat;
+
+        $year = Carbon::parse($wodat)->format('y');
+
+        $last = DB::table('tworkh')
+            ->where('braco', $braco)
+            ->where('formc', $formc)
+            ->whereRaw("LEFT(wonum,2) = ?", [$year])
+            ->orderBy('wonum','desc')
+            ->value('wonum');
+
+        if ($last) {
+            $number = (int)substr($last, 2) + 1;
+        } else {
+            $number = 1;
+        }
+
+        return $year . str_pad($number, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function getRa($braco)
+    {
+        $ra = DB::table('tsreqh')
+            ->where('braco', $braco)
+            ->orderBy('reqno', 'desc')
+            ->get();
+
+        return response()->json($ra);
+    }
+
+    public function getBarangByRA($bpbid)
+    {
+        $data = DB::table('tsreqd')
+            ->join('mpromas', 'mpromas.opron', '=', 'tsreqd.opron')
+            ->where('tsreqd.bpbid', $bpbid)
+            ->whereColumn('tsreqd.qtyta', '<', 'tsreqd.rqqty')
+            ->select(
+                'tsreqd.opron',
+                'tsreqd.rqqty',
+                'mpromas.prona',
+                'mpromas.stdqu'
+            )
+            ->get();
+
+        return response()->json($data);
     }
 }
