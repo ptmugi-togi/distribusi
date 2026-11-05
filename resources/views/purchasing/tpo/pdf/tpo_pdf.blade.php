@@ -186,7 +186,9 @@
     
                 <td style="width:60%; vertical-align:top">
                     <b>Note :</b><br>
-                    {{ $tpohdr->noteh }}
+                    {{ $tpohdr->noteh }}<br><br>
+                    <b>TERBILANG :</b> <br>
+                    # {{ strtoupper(terbilang($grandtotal)) }} RUPIAH #
                 </td>
                 <td style="width:40%">
                     <table class="no-border">
@@ -203,11 +205,11 @@
                             <td class="right">{{ formatNumberOnly($netamount, $tpohdr->curco) ?? '0' }}</td>
                         </tr>
                         <tr>
-                            <td>PPN</td>
+                            <td>PPN @if($tpohdr->vatax != 0){{ $tpohdr->vatax }}%@endif</td>
                             <td class="right">{{ $ppn != 0 ? '' . formatNumberOnly($ppn, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
-                            <td>PPH {{ $d->pphd }}%</td>
+                            <td>PPH @if($d->pphd != 0){{ $d->pphd }}%@endif</td>
                             <td class="right">{{ $totalpph != 0 ? '- ' . formatNumberOnly($totalpph, $tpohdr->curco) : '0' }}</td>
                         </tr>
                         <tr>
