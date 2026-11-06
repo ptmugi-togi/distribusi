@@ -81,8 +81,8 @@ class OsrController extends Controller
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
-            'margin_top' => 30,
-            'margin_bottom' => 35,
+            'margin_top' => 20,
+            'margin_bottom' => 15,
         ]);
 
         $html = view('logistic.reports.osr.osr_print', [
