@@ -67,10 +67,15 @@
           <?php if(auth()->user()->level=="IT"){ ?>
             <li class="{{ request()->is('register') ? 'active' : '' }}">
                 <a href="/register">
-                <i class="bi bi-circle"></i><span>REGISTER</span>
+                <i class="bi bi-circle"></i><span>Register</span>
                 </a>
             </li>
           <?php } ?>
+          <li>
+              <a href="{{ route('role_permission.index') }}">
+              <i class="bi bi-circle"></i><span>Role Permission</span>
+              </a>
+          </li>
           <li>
               <a href="/msreno">
               <i class="bi bi-circle"></i><span>Sales Rep</span>
