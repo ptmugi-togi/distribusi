@@ -11,8 +11,8 @@
             <select class="select2 form-control" name="refcno" id="refcno">
                 <option value="" disabled selected>Pilih Work Order</option>
             </select>
-            <input type="text" class="form-control" name="rfc01" id="rfc01" value="{{ old('rfc01') }}">
-            <input type="text" class="form-control" name="ref01" id="ref01" value="{{ old('ref01') }}" maxlength="7">
+            <input type="hidden" class="form-control" name="rfc01" id="rfc01" value="{{ old('rfc01') }}">
+            <input type="hidden" class="form-control" name="ref01" id="ref01" value="{{ old('ref01') }}" maxlength="7">
         </div>
     </div>
 
