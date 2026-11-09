@@ -131,6 +131,33 @@ class BbkController extends Controller
         return view('logistic.bbk.bbk_create', compact('bbkhdr','vendors','priod','minDate','periodeAktif','tsupih', 'mbranch', 'mexped'));
     }
 
+    // get WO for BBK OB
+    public function getWorkOrders(Request $request)
+    {
+        $search = $request->input('q');
+
+        $query = DB::table('tworkh')
+            ->select('wonum');
+
+        if ($search) {
+            $query->where('wonum', 'LIKE', "%{$search}%");
+        }
+
+        $workOrders = $query->orderBy('wonum', 'desc')
+            ->limit(30)
+            ->get();
+
+        $results = $workOrders->map(function ($wo) {
+            return [
+                'formc' => 'WO',
+                'id'    => $wo->wonum,
+                'text'  => 'WO - ' . $wo->wonum,
+            ];
+        });
+
+        return response()->json(['results' => $results]);
+    }
+
     // get barang untuk OF
     public function getBarangOF($braco, $warco, $locco)
     {

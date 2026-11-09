@@ -1,4 +1,4 @@
-{{-- OB (LOCAL PURCHASE) --}}
+{{-- OB (ISSUE TO PRODUCTION) --}}
 <div class="row mt-4">
     <div class="col-md-6 mt-3">
         <label for="tradt" class="form-label">Stock Issue Date</label><span class="text-danger"> *</span>
@@ -6,11 +6,24 @@
     </div>
 
     <div class="col-md-6 mt-3">
-        <label for="refcno" class="form-label">Reference</label>
-        <div class="input-group">
-            <span class="input-group-text" id="basic-addon1">WO</span>
-            <input type="text" class="form-control" name="rfc01" id="rfc01" value="WO" hidden>
-            <input type="text" class="form-control" name="ref01" id="ref01" placeholder="25XXXX" value="{{ old('ref01') }}" maxlength="6">
+        <label for="refcno" class="form-label">Work Order</label>
+        <div>
+            <select class="select2 form-control" name="refcno" id="refcno">
+                <option value="" disabled selected>Pilih Work Order</option>
+            </select>
+            <input type="text" class="form-control" name="rfc01" id="rfc01" value="{{ old('rfc01') }}">
+            <input type="text" class="form-control" name="ref01" id="ref01" value="{{ old('ref01') }}" maxlength="7">
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-12"></div>
+
+    <div class="col-md-6 col-sm-12 mt-4">
+        <div class="form-check">
+            <input class="form-check-input noWo-checkbox" type="checkbox" value="1" name="noWo" id="noWo">
+            <label class="form-check-label" for="noWo">
+                Without WO
+            </label>
         </div>
     </div>
 
@@ -104,6 +117,53 @@
 
 @push('scripts')
 <script>
+    function loadWorkOrders() {
+        let refcno = $('#refcno');
+
+        if (refcno.children('option').length > 1) return;
+
+        $.get("{{ route('bbk.get-wo') }}", function(data) {
+            refcno.empty();
+            refcno.append('<option value="" disabled selected>Pilih Work Order</option>');
+
+            data.results.forEach(function(item) {
+                refcno.append(`<option value="${item.id}" data-formc="${item.formc}">${item.text}</option>`);
+            });
+
+            refcno.select2({ width: '100%', theme: 'bootstrap-5' });
+        });
+    }
+
+    $(document).on('change', '#formc', function() {
+        if ($(this).val() === 'OB') {
+            loadWorkOrders();
+        }
+    });
+
+    $(document).on('change', '#noWo', function() {
+        let isChecked = $(this).is(':checked');
+        let refcno = $('#refcno');
+
+        if (isChecked) {
+            refcno.val(null).trigger('change');
+            refcno.prop('disabled', true);
+            $('#rfc01').val('');
+            $('#ref01').val('');
+        } else {
+            refcno.prop('disabled', false);
+        }
+        refcno.select2({ width: '100%', theme: 'bootstrap-5' });
+    });
+
+    $(document).on('change', '#refcno', function() {
+        let selectedOption = $(this).find(':selected');
+        let formcVal = selectedOption.data('formc') || '';
+        let woVal = $(this).val() || '';
+
+        $('#rfc01').val(formcVal);
+        $('#ref01').val(woVal);
+    });
+
     // PILIH BARANG
     $(document).on('change', '.opron-ob', function () {
         const $opt = $(this).find(':selected');

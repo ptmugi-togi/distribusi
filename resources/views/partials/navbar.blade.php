@@ -72,7 +72,7 @@
             </li>
           <?php } ?>
           <li>
-              <a href="{{ route('role_permission.index') }}">
+              <a href="">
               <i class="bi bi-circle"></i><span>Role Permission</span>
               </a>
           </li>

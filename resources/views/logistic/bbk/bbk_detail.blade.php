@@ -53,7 +53,7 @@
                 @if ($bbk->formc == 'OC' || $bbk->formc == 'OB' || $bbk->formc == 'OD' || $bbk->formc == 'OG')
                     <div class="col-md-6 mt-3">
                         <label class="form-label">Reference</label>
-                        <input type="text" class="form-control" value="{{ $bbk->rfc01 }} {{ $bbk->ref01 }}" disabled>
+                        <input type="text" class="form-control" value="{{ $bbk->rfc01 ?? '-' }} {{ $bbk->ref01 }}" disabled>
                     </div>
 
                     <div class="col-md-6 mt-3">
