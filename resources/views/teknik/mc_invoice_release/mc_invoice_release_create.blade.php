@@ -156,7 +156,7 @@
                 </div>
 
                 <div class="mt-3 d-flex justify-content-between">
-                    <a href="{{ route('maintenance_contract.index') }}" class="btn btn-secondary">Kembali</a>
+                    <a href="{{ route('mc_invoice_release.index') }}" class="btn btn-secondary">Kembali</a>
                     <button type="submit" class="btn btn-primary">Release Invoice</button>
                 </div>
             </form>
