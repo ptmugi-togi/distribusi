@@ -61,6 +61,7 @@ use App\Http\Controllers\ReportOutstandingPOController;
 use App\Http\Controllers\ReportOutstandingWOController;
 use App\Http\Controllers\NationalStockPositionController;
 use App\Http\Controllers\ClosePeriodController;
+use App\Http\Controllers\GarantieCardReleaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -503,3 +504,11 @@ Route::get('/outstanding-wo/preview', [ReportOutstandingWOController::class, 'pr
 
 Route::get('/close-period', [ClosePeriodController::class, 'create'])->middleware('auth')->name('close_period.create');
 Route::post('/close-period-store', [ClosePeriodController::class, 'store'])->middleware('auth')->name('close_period.store');
+
+Route::get('/garantie-card-release', [GarantieCardReleaseController::class, 'index'])->middleware('auth')->name('gr.index');
+Route::get('/garantie-card-release/create', [GarantieCardReleaseController::class, 'create'])->middleware('auth')->name('gr.create');
+Route::get('/gr/get-do', [GarantieCardReleaseController::class, 'getDo'])->name('gr.get-do');
+Route::get('/gr/get-do-detail/{id}', [GarantieCardReleaseController::class, 'getDetailDo'])->name('gr.get-detail-do');
+Route::post('/garantie-card-release/store', [GarantieCardReleaseController::class, 'store'])->middleware('auth')->name('gr.store');
+Route::get('/gr/{id}', [GarantieCardReleaseController::class, 'show'])->name('gr.show');
+Route::get('/garantie-card-release/detail/{id}', [GarantieCardReleaseController::class, 'detail'])->middleware('auth')->name('gr.detail');

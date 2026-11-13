@@ -390,18 +390,23 @@
             </a>
           </li>
           <li>
+            <a href="{{ route('gr.index') }}">
+            <i class="bi bi-circle"></i><span>Garantie Card Release (GR)</span>
+            </a>
+          </li>
+          <li>
             <a href="{{ route('maintenance_contract.index') }}">
             <i class="bi bi-circle"></i><span>Mantenance Contract (MC)</span>
             </a>
           </li>
           <li>
-            <a href="{{ route('service_invoice_release.index') }}">
-            <i class="bi bi-circle"></i><span>Sevice Invoice Release (SD)</span>
+            <a href="{{ route('mc_invoice_release.index') }}">
+            <i class="bi bi-circle"></i><span>Maintenance Contract Invoice Release (SD)</span>
             </a>
           </li>
           <li>
-            <a href="{{ route('mc_invoice_release.index') }}">
-            <i class="bi bi-circle"></i><span>Maintenance Contract Invoice Release (SD)</span>
+            <a href="{{ route('service_invoice_release.index') }}">
+            <i class="bi bi-circle"></i><span>Sevice Invoice Release (SD)</span>
             </a>
           </li>
           {{-- <li class="nav-item">
