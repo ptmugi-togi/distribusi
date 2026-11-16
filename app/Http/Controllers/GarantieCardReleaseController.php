@@ -95,7 +95,7 @@ class GarantieCardReleaseController extends Controller
                     'shpto'      => $request->shpto,
 
                     'opron'      => $item['opron'],
-                    'lotno'      => ($item['lotno'] !== '-') ? $item['lotno'] : null,
+                    'lotno'      => $item['lotno'],
 
                     'gmcfr'      => $request->gmcfr,
                     'grdays'     => $request->grdays,
@@ -129,7 +129,7 @@ class GarantieCardReleaseController extends Controller
 
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menyimpan data ke mgamc: ' . $e->getMessage());
+                ->with('error', 'Gagal menyimpan data ke mgamc');
         }
     }
 
