@@ -501,7 +501,7 @@
                   let cusno = $('#cusno').val();
                   if(!cusno) return;
 
-                  $.get("{{ route('get-main-address') }}", { cusno }, function(res){
+                  $.get("{{ route('get-main-address-dp') }}", { cusno }, function(res){
 
                       $('#shpto_name').val(res.name || '');
                       $('#shpto_attn').val(res.attn || '');
