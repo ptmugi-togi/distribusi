@@ -53,6 +53,7 @@ class LoginController extends Controller
             'name'=>'required|max:200',
             'password'=>'required|min:5|max:255',
             'level'=>'required|max:200',
+            'role'=>'required|max:200',
             'cabang'=>'required|max:200',
             'status'=>'required|max:200',
         ]);
@@ -68,6 +69,7 @@ class LoginController extends Controller
         $validasi= $request->validate([
             'name'=>'required|max:200',
             'level'=>'required|max:200',
+            'role'=>'required|max:200',
             'cabang'=>'required|max:200',
             'status'=>'required|max:200',
         ]);
