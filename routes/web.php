@@ -508,7 +508,7 @@ Route::post('/close-period-store', [ClosePeriodController::class, 'store'])->mid
 Route::get('/garantie-card-release', [GarantieCardReleaseController::class, 'index'])->middleware('auth')->name('gr.index');
 Route::get('/garantie-card-release/create', [GarantieCardReleaseController::class, 'create'])->middleware('auth')->name('gr.create');
 Route::get('/gr/get-do', [GarantieCardReleaseController::class, 'getDo'])->name('gr.get-do');
-Route::get('/gr/get-do-detail/{id}', [GarantieCardReleaseController::class, 'getDetailDo'])->name('gr.get-detail-do');
+Route::get('/gr/get-do-detail/{id}', [GarantieCardReleaseController::class, 'getDetailDo'])->name('gr.get_detail_do');
 Route::post('/garantie-card-release/store', [GarantieCardReleaseController::class, 'store'])->middleware('auth')->name('gr.store');
 Route::get('/gr/{id}', [GarantieCardReleaseController::class, 'show'])->name('gr.show');
 Route::get('/garantie-card-release/detail/{id}', [GarantieCardReleaseController::class, 'detail'])->middleware('auth')->name('gr.detail');

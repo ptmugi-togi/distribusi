@@ -250,7 +250,7 @@
             });
 
             function fetchDetailDo(doId) {
-                let url = "{{ route('gr.get-detail-do', ':do') }}".replace(':do', encodeURIComponent(doId));
+                let url = "{{ route('gr.get_detail_do', ':do') }}".replace(':do', encodeURIComponent(doId));
                 let tbody = $('#detail-tbody');
                 tbody.empty();
                 $('#check-all').prop('checked', false);
