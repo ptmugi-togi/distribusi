@@ -325,10 +325,22 @@
                     $(this).val(number ? number.toString().replace('.', ',') : '');
                 });
 
+                function formatRupiahCrate(value) {
+                    const num = parseFloat(value) || 0;
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 2
+                    }).format(num);
+                }
+
                 // Ganti currency selector → reformat semua
                 $(document).on('select2:select change', '.currency-selector', function () {
                     const $context = $(this).closest('#content-import, #content-loc-inv');
+                    const crate = $(this).find(':selected').data('crate') ?? 1;
+
                     reformatAll($context);
+                    $context.find('input[name="crate"]').val(formatRupiahCrate(crate));
                 });
 
                 // Format semua input saat halaman load
@@ -763,7 +775,7 @@
                                         return isNaN(number) ? 0 : number;
                                     }
 
-                                    document.querySelectorAll('.currency').forEach(function(el) {
+                                    document.querySelectorAll('.currency, .currency-idr').forEach(function(el) {
                                         const before = el.value;
                                         const parsed = parseCurrencyString(before);
                                         el.value = parsed.toString();

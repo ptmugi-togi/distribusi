@@ -93,7 +93,9 @@ class InvoiceController extends Controller
             ->select('hsn', 'bm')
             ->orderBy('hsn')
             ->get();
-        return view('purchasing.invoice.invoice_create', compact('userBraco', 'invoice', 'vendors', 'po', 'hsnList'));
+
+        $crates = DB::table('mcurco_tbl')->pluck('crate', 'curco');
+        return view('purchasing.invoice.invoice_create', compact('userBraco', 'invoice', 'vendors', 'po', 'hsnList', 'crates'));
     }
 
     /**
@@ -121,6 +123,7 @@ class InvoiceController extends Controller
                 'tfreight'  => $request->tfreight ?? 0,
                 'taxno'     => $request->taxno,
                 'amount'    => $request->amount ?? 1,
+                'crate'     => (float) ($request->crate ?? 1),
                 'blnum'     => $request->blnum,
                 'rinum'     => $request->rinum,
                 'braco'     => $request->braco,

@@ -25,12 +25,12 @@
 
     <div class="col-md-6 mt-3">
         <label for="invdt" class="form-label">Invoice Date</label><span class="text-danger"> *</span>
-        <input type="date" class="form-control" name="invdt" id="invdt" value="{{ old('invdt') }}">
+        <input type="date" class="form-control" name="invdt" id="invdt" value="{{ old('invdt') }}" required>
     </div>
 
     <div class="col-md-6 mt-3">
         <label for="duedt" class="form-label">Due Date</label><span class="text-danger"> *</span>
-        <input type="date" class="form-control" name="duedt" id="duedt" value="{{ old('duedt') }}">
+        <input type="date" class="form-control" name="duedt" id="duedt" value="{{ old('duedt') }}" required>
     </div>
 
     <input type="hidden" name="braco" id="braco" value="{{ $userBraco }}">
@@ -40,14 +40,19 @@
         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
         <select class="select2 form-control currency-selector" name="curco" id="currency" style="width: 100%;" required>
             <option value="" {{ old('curco') == '' ? 'selected' : '' }} disabled selected>Silahkan pilih Currency Code</option>
-            <option value="CHF" {{ old('curco') == 'CHF' ? 'selected' : '' }}>CHF (Franc Swiss)</option>
-            <option value="EUR" {{ old('curco') == 'EUR' ? 'selected' : '' }}>EUR (Euro)</option>
-            <option value="GBP" {{ old('curco') == 'GBP' ? 'selected' : '' }}>GBP (Pound Sterling)</option>
-            <option value="IDR" {{ old('curco') == 'IDR' ? 'selected' : '' }}>IDR (Rupiah Indonesia)</option>
-            <option value="MYR" {{ old('curco') == 'MYR' ? 'selected' : '' }}>MYR (Ringgit Malaysia)</option>
-            <option value="SGD" {{ old('curco') == 'SGD' ? 'selected' : '' }}>SGD (Dollar Singapura)</option>
-            <option value="USD" {{ old('curco') == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>
+            <option value="CHF" data-crate="{{ $crates['CHF'] }}" {{ old('curco') == 'CHF' ? 'selected' : '' }}>CHF (Franc Swiss)</option>
+            <option value="EUR" data-crate="{{ $crates['EUR'] }}" {{ old('curco') == 'EUR' ? 'selected' : '' }}>EUR (Euro)</option>
+            <option value="GBP" data-crate="{{ $crates['GBP'] }}" {{ old('curco') == 'GBP' ? 'selected' : '' }}>GBP (Pound Sterling)</option>
+            <option value="IDR" data-crate="{{ $crates['IDR'] }}" {{ old('curco') == 'IDR' ? 'selected' : '' }}>IDR (Rupiah Indonesia)</option>
+            <option value="MYR" data-crate="{{ $crates['MYR'] }}" {{ old('curco') == 'MYR' ? 'selected' : '' }}>MYR (Ringgit Malaysia)</option>
+            <option value="SGD" data-crate="{{ $crates['SGD'] }}" {{ old('curco') == 'SGD' ? 'selected' : '' }}>SGD (Dollar Singapura)</option>
+            <option value="USD" data-crate="{{ $crates['USD'] }}" {{ old('curco') == 'USD' ? 'selected' : '' }}>USD (Dollar Amerika Serikat)</option>
         </select>
+    </div>
+    
+    <div class="col-md-6 mt-3">
+        <label for="crate" class="form-label">Rate</label>
+        <input type="text" class="form-control currency-idr" name="crate" id="crate" value="{{ old('crate') }}" readonly style="background-color: #e9ecef;">
     </div>
 
     <div class="col-md-6 mt-3">

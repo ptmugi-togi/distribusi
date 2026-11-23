@@ -28,6 +28,7 @@ class invoiceHdr extends Model
         'amount',
         'payment',
         'tfreight',
+        'crate',
         'created_at',
         'created_by',
         'updated_at',
