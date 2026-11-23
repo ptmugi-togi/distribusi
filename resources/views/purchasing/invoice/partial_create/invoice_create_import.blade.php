@@ -34,8 +34,8 @@
     </div>
 
     <div class="col-md-6 mt-3">
-        <input type="text" name="braco" id="braco-import" value="PST" hidden>
-        <input type="text" name="formc" id="formc-import" value="RI" hidden>
+        <input type="hidden" name="braco" id="braco-import" value="{{ $userBraco }}">
+        <input type="hidden" name="formc" id="formc-import" value="RI">
 
         <label for="rinum" class="form-label">Receipt Number</label><span class="text-danger"> *</span>
         <select class="form-select select2" name="rinum" id="rinum-import" required>
@@ -65,6 +65,11 @@
     <div class="col-md-6 mt-3">
         <label for="tfreight" class="form-label">Freight</label><span class="text-danger"> *</span>
         <input type="text" class="form-control currency" name="tfreight" id="tfreight-import" value="{{ old('tfreight') }}">
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="amount-import" class="form-label">Amount</label>
+        <input type="text" class="form-control currency" name="amount" id="amount-import" value="{{ old('amount') }}" style="background-color: #e9ecef;" readonly>
     </div>
 </div>
 

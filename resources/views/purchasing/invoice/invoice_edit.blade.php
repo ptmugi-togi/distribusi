@@ -61,6 +61,11 @@
             <input type="text" class="form-control" name="taxno" id="taxno" value="{{ $invoice->taxno }}" readonly style="background-color:#e9ecef;">
         </div>
 
+        <div class="col-md-6 mt-2">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="text" class="form-control currency" name="amount" id="amount" value="{{ old('amount', $invoice->amount) }}" readonly style="background-color:#e9ecef;">
+        </div>
+
             @if($invoice->details->first()->potyp === 'PI')
             <div class="col-md-6 mt-2">
                 <label class="form-label">Receipt Number</label>
@@ -209,9 +214,11 @@
                                             <label class="form-label">PPnBM (%)</label>
                                             <input type="number" class="form-control" name="ppnbm[]" value="{{ old('ppnbm.'. $i) ?? $d->ppnbm ?? '' }}">
                                         </div>
-                                        <div class="col-md-2 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <label class="form-label">PPh (%)</label>
-                                            <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"  onblur="this.value = this.value.replace(',', '.')">
+                                            <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9.,-]/g, '').replace(/(?!^)-/g, '')" 
+                                                onblur="this.value = this.value.replace(',', '.')">
                                         </div>
                                     </div>
                                 </div>
@@ -319,7 +326,9 @@
                                     </div>
                                     <div class="col-md-4 mt-3">
                                         <label class="form-label">PPh (%)</label>
-                                        <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
+                                        <input type="text" class="form-control" name="pph[]" value="{{ old('pph.'. $i) ?? $d->pph ?? '' }}" 
+                                            oninput="this.value = this.value.replace(/[^0-9.,-]/g, '').replace(/(?!^)-/g, '')" 
+                                            onblur="this.value = this.value.replace(',', '.')">
                                     </div>
                                 </div>
                             </div>
@@ -691,42 +700,76 @@
             });
         </script>
 
-        {{-- inamt auto generate --}}
+        {{-- inamt & header amount auto generate --}}
         <script>
-            $(document).on('input', 'input[name="inqty[]"], input[name="inprc[]"]', function () {
-                const $row = $(this).closest('.row');
-                const qty = parseFloat($row.find('input[name="inqty[]"]').val()) || 0;
-                const priceStr = $row.find('input[name="inprc[]"]').val();
+            const editLocaleMap = {
+                IDR: 'id-ID',
+                USD: 'en-US',
+                EUR: 'de-DE',
+                GBP: 'en-GB',
+                MYR: 'ms-MY',
+                SGD: 'en-SG',
+                CHF: 'de-CH'
+            };
 
-                // Ambil currency code dari selector
-                const curco = $('.currency-selector').val() || $('input[name="curco"]').val() || 'IDR';
-
-                // Ambil locale dari kode currency
-                const localeMap = {
-                    IDR: 'id-ID',
-                    USD: 'en-US',
-                    EUR: 'de-DE',
-                    GBP: 'en-GB',
-                    MYR: 'ms-MY',
-                    SGD: 'en-SG',
-                    CHF: 'de-CH'
-                };
-                const locale = localeMap[curco] || 'id-ID';
-
-                // Bersihkan angka
-                const price = parseFloat(String(priceStr).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
-
-                // Hitung total
-                const total = qty * price;
-
-                // Format hasil sesuai currency yang dipilih
-                const formatted = new Intl.NumberFormat(locale, {
+            function formatEditCurrency(value, curco) {
+                const locale = editLocaleMap[curco] || 'id-ID';
+                const options = {
                     style: 'currency',
                     currency: curco,
                     minimumFractionDigits: 2
-                }).format(total);
+                };
 
-                $row.find('input[name="inamt[]"]').val(formatted);
+                if (curco === 'SGD') {
+                    options.currencyDisplay = 'code';
+                }
+
+                return new Intl.NumberFormat(locale, options).format(value);
+            }
+
+            function calculateHeaderAmount() {
+                const curco = $('input[name="curco"]').val() || 'IDR';
+                const potyp = $('#potyp').val();
+                const $activeSection = (potyp === 'PI') ? $('#content-import') : $('#content-loc-inv');
+
+                if (!$activeSection.length) return;
+
+                let grandTotal = 0;
+
+                $activeSection.find('.accordion-item').each(function () {
+                    const $item = $(this);
+
+                    const qty = parseFloat($item.find('input[name="inqty[]"]').val()) || 0;
+                    const price = window.parseCurrencyString($item.find('input[name="inprc[]"]').val());
+                    const lineAmount = qty * price;
+
+                    $item.find('input[name="inamt[]"]').val(formatEditCurrency(lineAmount, curco));
+
+                    const ppnPct = parseFloat(String($item.find('input[name="ppn[]"]').val()).replace(',', '.')) || 0;
+                    const ppnbmPct = parseFloat(String($item.find('input[name="ppnbm[]"]').val()).replace(',', '.')) || 0;
+                    const pphPct = parseFloat(String($item.find('input[name="pph[]"]').val()).replace(',', '.')) || 0;
+
+                    const nominalPpn = lineAmount * (ppnPct / 100);
+                    const nominalPpnbm = lineAmount * (ppnbmPct / 100);
+                    const nominalPph = lineAmount * (pphPct / 100);
+
+                    const netLineTotal = lineAmount + nominalPpn + nominalPpnbm + nominalPph;
+                    grandTotal += netLineTotal;
+                });
+
+                $('input[name="amount"]').val(formatEditCurrency(grandTotal, curco));
+            }
+
+            // Hitung ulang saat qty, harga, atau persentase pajak diubah
+            $(document).on('input change blur', 'input[name="inqty[]"], input[name="inprc[]"], input[name="ppn[]"], input[name="ppnbm[]"], input[name="pph[]"]', function () {
+                calculateHeaderAmount();
+            });
+
+            // Hitung ulang saat halaman pertama kali selesai memuat data dari DB
+            $(document).ready(function () {
+                setTimeout(() => {
+                    calculateHeaderAmount();
+                }, 300);
             });
         </script>
 

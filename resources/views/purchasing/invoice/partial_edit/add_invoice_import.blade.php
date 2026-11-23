@@ -176,6 +176,11 @@
 
     function removeInvoiceImport(index) {
         const item = document.getElementById(`accordion-item-${index}`);
-        if (item) item.remove();
+        if (item) {
+            item.remove();
+            if (typeof calculateHeaderAmount === 'function') {
+                calculateHeaderAmount();
+            }
+        }
     }
 </script>

@@ -54,20 +54,30 @@
                     <input type="text" class="form-control" value="{{ $invoice->curco }}" disabled>
                 </div>
 
+                <div class="col-md-6 mt-2">
+                    <label class="form-label">Tax No</label>
+                    <input type="text" class="form-control" value="{{ $invoice->taxno }}" disabled>
+                </div>
+
+                <div class="col-md-6 mt-2">
+                    <label class="form-label">Amount</label>
+                    <input type="text" class="form-control" value="{{ formatCurrencyDetail($invoice->amount, $invoice->curco) }}" disabled>
+                </div>
+
                 @if($invoice->details->first()->potyp === 'PI')
-                {{-- Import Fields --}}
-                <div class="col-md-6 mt-2">
-                    <label class="form-label">Receipt Number</label>
-                    <input type="text" class="form-control" value="RI {{ $invoice->rinum }}" disabled>
-                </div>
-                <div class="col-md-6 mt-2">
-                    <label class="form-label">BL / AWB No.</label>
-                    <input type="text" class="form-control" value="{{ $invoice->blnum }}" disabled>
-                </div>
-                <div class="col-md-6 mt-2">
-                    <label class="form-label">Freight</label>
-                    <input type="text" class="form-control" value="{{ formatCurrencyDetail($invoice->tfreight, $invoice->curco) }}" disabled>
-                </div>
+                    {{-- Import Fields --}}
+                    <div class="col-md-6 mt-2">
+                        <label class="form-label">Receipt Number</label>
+                        <input type="text" class="form-control" value="RI {{ $invoice->rinum }}" disabled>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label class="form-label">BL / AWB No.</label>
+                        <input type="text" class="form-control" value="{{ $invoice->blnum }}" disabled>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label class="form-label">Freight</label>
+                        <input type="text" class="form-control" value="{{ formatCurrencyDetail($invoice->tfreight, $invoice->curco) }}" disabled>
+                    </div>
                 @endif
             </div>
 
@@ -155,17 +165,17 @@
                                     </div>
                                 @endif
 
-                                <div class="col-md-2 mt-2">
+                                <div class="col-md-4 mt-2">
                                     <label class="form-label">PPn (%)</label>
                                     <input type="text" class="form-control" value="{{ $detail->ppn }}" disabled>
                                 </div>
 
-                                <div class="col-md-2 mt-2">
+                                <div class="col-md-4 mt-2">
                                     <label class="form-label">PPnBM (%)</label>
                                     <input type="text" class="form-control" value="{{ $detail->ppnbm }}" disabled>
                                 </div>
 
-                                <div class="col-md-2 mt-2">
+                                <div class="col-md-4 mt-2">
                                     <label class="form-label">PPh (%)</label>
                                     <input type="text" class="form-control" value="{{ $detail->pph }}" disabled>
                                 </div>

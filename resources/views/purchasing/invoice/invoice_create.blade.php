@@ -89,7 +89,7 @@
 
                  $.getJSON(`/get-rinum-by-supplier/${oldSupno}`).then(response => {
                     if (response.success && response.data.length > 0) {
-                        let rinumOptions = '<option value="">Pilih Receipt Number</option>';
+                        let rinumOptions = '<option value="" disabled>Pilih Receipt Number</option>';
                         response.data.forEach(row => {
                             rinumOptions += `
                                 <option value="${row.rinum}" 
@@ -267,7 +267,7 @@
                             return new Intl.NumberFormat(locale, {
                                 style: 'currency',
                                 currency: currencyCode,
-                                currencyDisplay: 'code',  // tampil kode "SGD" bukan simbol "$"
+                                currencyDisplay: 'code',
                                 minimumFractionDigits: 2
                             }).format(number);
                         }
@@ -380,7 +380,7 @@
                         dataType: 'json',
                         success: function(response) {
                             if (response.success && response.data.length > 0) {
-                                let options = '<option value="">Pilih Receipt Number</option>';
+                                let options = '<option value="" disabled selected>Pilih Receipt Number</option>';
                                 response.data.forEach(row => {
                                     options += `
                                         <option value="${row.rinum}" data-blnum="${row.blnum}">
@@ -546,42 +546,110 @@
             });
         </script>
 
-        {{-- inamt auto generate --}}
+        {{-- inamt & header amount auto generate --}}
         <script>
-            $(document).on('input', 'input[name="inqty[]"], input[name="inprc[]"]', function () {
-                const $row = $(this).closest('.row');
-                const qty = parseFloat($row.find('input[name="inqty[]"]').val()) || 0;
-                const priceStr = $row.find('input[name="inprc[]"]').val();
+            const invoiceLocaleMap = {
+                IDR: 'id-ID',
+                USD: 'en-US',
+                EUR: 'de-DE',
+                GBP: 'en-GB',
+                MYR: 'ms-MY',
+                SGD: 'en-SG',
+                CHF: 'de-CH'
+            };
 
-                // Ambil currency code dari selector
-                const curco = $('.currency-selector').val() || $('input[name="curco"]').val() || 'IDR';
+            // Helper parsing angka bersih dari format currency apapun
+            function parseCleanNumber(str) {
+                if (!str) return 0;
+                let clean = String(str).replace(/[^\d.,-]/g, '');
 
-                // Ambil locale dari kode currency
-                const localeMap = {
-                    IDR: 'id-ID',
-                    USD: 'en-US',
-                    EUR: 'de-DE',
-                    GBP: 'en-GB',
-                    MYR: 'ms-MY',
-                    SGD: 'en-SG',
-                    CHF: 'de-CH'
-                };
-                const locale = localeMap[curco] || 'id-ID';
+                if (clean.includes(',') && clean.includes('.')) {
+                    if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                        clean = clean.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        clean = clean.replace(/,/g, '');
+                    }
+                } else if (clean.includes(',')) {
+                    const commaCount = (clean.match(/,/g) || []).length;
+                    if (commaCount === 1 && clean.indexOf(',') > clean.length - 4) {
+                        clean = clean.replace(',', '.');
+                    } else {
+                        clean = clean.replace(/,/g, '');
+                    }
+                } else {
+                    clean = clean.replace(/[^\d.-]/g, '');
+                }
 
-                // Bersihkan angka
-                const price = parseFloat(String(priceStr).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                const number = parseFloat(clean);
+                return isNaN(number) ? 0 : number;
+            }
 
-                // Hitung total
-                const total = qty * price;
-
-                // Format hasil sesuai currency yang dipilih
-                const formatted = new Intl.NumberFormat(locale, {
+            // Helper format angka ke currency sesuai curco aktif
+            function formatInvoiceCurrency(value, curco) {
+                const locale = invoiceLocaleMap[curco] || 'id-ID';
+                const options = {
                     style: 'currency',
                     currency: curco,
                     minimumFractionDigits: 2
-                }).format(total);
+                };
 
-                $row.find('input[name="inamt[]"]').val(formatted);
+                if (curco === 'SGD') {
+                    options.currencyDisplay = 'code';
+                }
+
+                return new Intl.NumberFormat(locale, options).format(value);
+            }
+
+            // Fungsi utama menghitung total keseluruhan ke Header Amount
+            function calculateHeaderAmount() {
+                const poType = $('#potype').val();
+                const $activeSection = (poType === 'PI') ? $('#content-import') : $('#content-loc-inv');
+
+                if (!$activeSection.length) return;
+
+                const curco = $activeSection.find('.currency-selector').val() || 'IDR';
+                let grandTotal = 0;
+
+                $activeSection.find('.accordion-item').each(function () {
+                    const $item = $(this);
+
+                    const qty = parseFloat($item.find('input[name="inqty[]"]').val()) || 0;
+                    const price = parseCleanNumber($item.find('input[name="inprc[]"]').val());
+                    const lineAmount = qty * price;
+
+                    $item.find('input[name="inamt[]"]').val(formatInvoiceCurrency(lineAmount, curco));
+
+                    // Ambil persentase pajak (bisa positif maupun negatif untuk PPh)
+                    const ppnPct = parseFloat(String($item.find('input[name="ppn[]"]').val()).replace(',', '.')) || 0;
+                    const ppnbmPct = parseFloat(String($item.find('input[name="ppnbm[]"]').val()).replace(',', '.')) || 0;
+                    const pphPct = parseFloat(String($item.find('input[name="pph[]"]').val()).replace(',', '.')) || 0;
+
+                    const nominalPpn = lineAmount * (ppnPct / 100);
+                    const nominalPpnbm = lineAmount * (ppnbmPct / 100);
+                    const nominalPph = lineAmount * (pphPct / 100);
+
+                    const netLineTotal = lineAmount + nominalPpn + nominalPpnbm + nominalPph;
+                    grandTotal += netLineTotal;
+                });
+
+                $activeSection.find('input[name="amount"]').val(formatInvoiceCurrency(grandTotal, curco));
+            }
+
+            $(document).on('input change blur', 'input[name="inqty[]"], input[name="inprc[]"], input[name="ppn[]"], input[name="ppnbm[]"], input[name="pph[]"]', function () {
+                calculateHeaderAmount();
+            });
+
+            // Trigger hitung ulang saat currency (curco) atau PO Type diganti
+            $(document).on('select2:select change', '.currency-selector, #potype', function () {
+                setTimeout(() => {
+                    calculateHeaderAmount();
+                }, 50);
+            });
+
+            $(document).ready(function () {
+                setTimeout(() => {
+                    calculateHeaderAmount();
+                }, 200);
             });
         </script>
 

@@ -50,7 +50,11 @@
                         <td class="text-center" data-order="{{ \Carbon\Carbon::parse($i->duedt)->format('Y-m-d') }}">
                             {{ \Carbon\Carbon::parse($i->duedt)->format('d/m/Y') }}
                         </td>
-                        <td class="text-center">RI {{ $i->rinum }}</td>
+                        @if ($i->rinum == null)
+                          <td class="text-center">-</td>
+                        @else
+                          <td class="text-center">RI {{ $i->rinum }}</td>
+                        @endif
                         <td class="text-center">
                             <a href="/invoice/{{ $i->invno }}/detail" class="badge bg-primary" data-tooltip="true" data-bs-placement="top" title="Detail"><i class="bi bi-info-circle"></i></a>
                             <a href="/invoice/{{ $i->invno }}/edit" class="badge bg-warning" data-tooltip="true" data-bs-placement="top" title="Edit"><i class="bi bi-pencil"></i></a>

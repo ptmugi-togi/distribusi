@@ -100,8 +100,10 @@
                 </div>
 
                 <div class="col-md-2 mt-3">
-                    <label for="pph" class="form-label">PPh (%)</label>
-                    <input type="text" class="form-control" name="pph[]" id="pph-{{ $i }}" value="{{ old('pph.'. $i) }}" oninput="this.value = this.value.replace(/[^0-9,.]/g, '')" onblur="this.value = this.value.replace(',', '.')">
+                    <label class="form-label">PPh (%)</label>
+                    <input type="text" class="form-control" name="pph[]" id="pph-import-{{ $i }}" value="{{ old('pph.'. $i) }}" 
+                        oninput="this.value = this.value.replace(/[^0-9.,-]/g, '').replace(/(?!^)-/g, '')" 
+                        onblur="this.value = this.value.replace(',', '.')">
                 </div>
             </div>
         </div>

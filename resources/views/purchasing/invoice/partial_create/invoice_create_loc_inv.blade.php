@@ -33,8 +33,8 @@
         <input type="date" class="form-control" name="duedt" id="duedt" value="{{ old('duedt') }}">
     </div>
 
-    <input type="text" name="braco" id="braco" value="PST" hidden>
-    <input type="text" name="formc" id="formc" value="RI" hidden>
+    <input type="hidden" name="braco" id="braco" value="{{ $userBraco }}">
+    <input type="hidden" name="formc" id="formc" value="RI">
 
     <div class="col-md-6 mt-3">
         <label for="curco" class="form-label">Currency Code</label><span class="text-danger"> *</span>
@@ -53,6 +53,11 @@
     <div class="col-md-6 mt-3">
         <label for="taxno" class="form-label">Tax no.</label>
         <input type="text" class="form-control" name="taxno" id="taxno" value="{{ old('taxno') }}">
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="text" class="form-control currency" name="amount" id="amount" value="{{ old('amount') }}" readonly style="background-color: #e9ecef;">
     </div>
 </div>
 

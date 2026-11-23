@@ -82,7 +82,9 @@
 
                         <div class="col-md-4 mt-3">
                             <label class="form-label">PPh (%)</label>
-                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceIndex}" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" onblur="this.value = this.value.replace(',', '.')">
+                            <input type="text" class="form-control" name="pph[]" id="pph-${invoiceIndex}" 
+                                oninput="this.value = this.value.replace(/[^0-9.,-]/g, '').replace(/(?!^)-/g, '')" 
+                                onblur="this.value = this.value.replace(',', '.')">
                         </div>
                     </div>
                 </div>
@@ -144,6 +146,11 @@
 
     function removeInvoice(index) {
         const item = document.getElementById(`accordion-item-${index}`);
-        if (item) item.remove();
+        if (item) {
+            item.remove();
+            if (typeof calculateHeaderAmount === 'function') {
+                calculateHeaderAmount();
+            }
+        }
     }
 </script>

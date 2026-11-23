@@ -85,6 +85,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
+        $userBraco = Auth::user()->cabang;
         $invoice = InvoiceHdr::with(['currency', 'branches', 'formcode'])->get();
         $vendors = Mvendor::select('supno','supna', 'vgrp')->orderBy('supno')->get();
         $po = DB::table('pohdr_tbl')->select('pono','supno')->where('supno', '!=', '')->orderBy('pono')->get();
@@ -92,7 +93,7 @@ class InvoiceController extends Controller
             ->select('hsn', 'bm')
             ->orderBy('hsn')
             ->get();
-        return view('purchasing.invoice.invoice_create', compact('invoice', 'vendors', 'po', 'hsnList'));
+        return view('purchasing.invoice.invoice_create', compact('userBraco', 'invoice', 'vendors', 'po', 'hsnList'));
     }
 
     /**
@@ -100,6 +101,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'invno' => 'required|unique:tsupih_tbl,invno',
         ], [
@@ -117,6 +119,8 @@ class InvoiceController extends Controller
                 'duedt'     => $request->duedt,
                 'curco'     => $request->curco,
                 'tfreight'  => $request->tfreight ?? 0,
+                'taxno'     => $request->taxno,
+                'amount'    => $request->amount ?? 1,
                 'blnum'     => $request->blnum,
                 'rinum'     => $request->rinum,
                 'braco'     => $request->braco,
@@ -256,28 +260,39 @@ class InvoiceController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update / insert detail
+            $grandTotal = 0;
+
             foreach ($request->pono ?? [] as $i => $pono) {
                 $opron = $request->opron[$i] ?? null;
                 $inqty = (float) str_replace(',', '', $request->inqty[$i] ?? 0);
                 $inprc = (float) str_replace(',', '', $request->inprc[$i] ?? 0);
                 $inamt = (float) str_replace(',', '', $request->inamt[$i] ?? ($inqty * $inprc));
 
+                $ppn   = (float) str_replace(',', '.', $request->ppn[$i] ?? 0);
+                $ppnbm = (float) str_replace(',', '.', $request->ppnbm[$i] ?? 0);
+                $pph   = (float) str_replace(',', '.', $request->pph[$i] ?? 0);
+
+                $nominalPpn   = $inamt * ($ppn / 100);
+                $nominalPpnbm = $inamt * ($ppnbm / 100);
+                $nominalPph   = $inamt * ($pph / 100);
+
+                $grandTotal += ($inamt + $nominalPpn + $nominalPpnbm + $nominalPph);
+
                 $payload = [
                     'pono'   => $pono,
                     'opron'  => $opron,
                     'inqty'  => $inqty,
-                    'stdqt'  => $request->stdqt[$i],
+                    'stdqt'  => $request->stdqt[$i] ?? '',
                     'inprc'  => $inprc,
                     'inamt'  => $inamt,
-                    'ewprc'  => $request->ewprc[$i],
-                    'fobch' => $request->fobch[$i],
-                    'incst'  => $request->incst[$i],
-                    'hsn'    => $request->hsn[$i],
-                    'bm'     => $request->bm[$i],
-                    'ppn'    => $request->ppn[$i],
-                    'ppnbm'  => $request->ppnbm[$i],
-                    'pph'    => $request->pph[$i],
+                    'ewprc'  => $request->ewprc[$i] ?? null,
+                    'fobch'  => $request->fobch[$i] ?? null,
+                    'incst'  => $request->incst[$i] ?? null,
+                    'hsn'    => $request->hsn[$i] ?? null,
+                    'bm'     => $request->bm[$i] ?? null,
+                    'ppn'    => $ppn,
+                    'ppnbm'  => $ppnbm,
+                    'pph'    => $pph,
                 ];
 
                 $id_su = $request->id_su[$i] ?? null;
@@ -296,17 +311,14 @@ class InvoiceController extends Controller
                             ->update($payload);
                     }
                 } else {
-                    // insert baris baru
                     $payload = array_merge($payload, [
-                        'invno'      => $id,
-                        'potyp'      => $request->potyp ?? $request->potype ?? null,
-                        'curco'      => $request->curco,
-                        'stdqt'      => $request->stdqt[$i] ?? '',
+                        'invno' => $id,
+                        'potyp' => $request->potyp ?? $request->potype ?? null,
+                        'curco' => $request->curco,
                     ]);
                     DB::table('tsupid_tbl')->insert($payload);
                 }
 
-                // update inqty ke tabel podtl_tbl
                 if ($pono && $opron) {
                     DB::table('podtl_tbl')
                         ->where('pono', $pono)
@@ -314,6 +326,17 @@ class InvoiceController extends Controller
                         ->update(['inqty' => $inqty]);
                 }
             }
+
+            DB::table('tsupih_tbl')
+                ->where('invno', $id)
+                ->update([
+                    'amount' => $grandTotal,
+                ]);
+
+            Log::info('Update invoice', [
+                'invno'        => $id,
+                'total_amount' => $grandTotal,
+            ]);
 
             DB::commit();
             return redirect()->route('invoice.index')
@@ -323,13 +346,7 @@ class InvoiceController extends Controller
             Log::error('Gagal update invoice: ' . $th->getMessage());
             return back()->with('error', 'Gagal update invoice: ' . $th->getMessage());
         }
-        Log::info('Update invoice', [
-            'invno' => $id,
-            'id_su' => $id_su,
-            'mode' => $id_su ? 'update' : 'insert',
-        ]);
     }
-
 
     /**
      * Remove the specified resource from storage.
