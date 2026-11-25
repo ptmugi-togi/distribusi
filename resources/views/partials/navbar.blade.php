@@ -133,6 +133,11 @@
         </a>
         <ul id="fna-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="{{ route('ap_payment.index') }}">
+            <i class="bi bi-circle"></i><span>AP Payment</span>
+            </a>
+          </li>
+          <li>
             <a href="{{ route('cn_dp_project.index') }}">
             <i class="bi bi-circle"></i><span>CN DP/Project</span>
             </a>

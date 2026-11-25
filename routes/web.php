@@ -62,6 +62,7 @@ use App\Http\Controllers\ReportOutstandingWOController;
 use App\Http\Controllers\NationalStockPositionController;
 use App\Http\Controllers\ClosePeriodController;
 use App\Http\Controllers\GarantieCardReleaseController;
+use App\Http\Controllers\ApPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -512,3 +513,16 @@ Route::get('/gr/get-do-detail/{id}', [GarantieCardReleaseController::class, 'get
 Route::post('/garantie-card-release/store', [GarantieCardReleaseController::class, 'store'])->middleware('auth')->name('gr.store');
 Route::get('/gr/{id}', [GarantieCardReleaseController::class, 'show'])->name('gr.show');
 Route::get('/garantie-card-release/detail/{id}', [GarantieCardReleaseController::class, 'detail'])->middleware('auth')->name('gr.detail');
+
+Route::get('/ap-payment', [ApPaymentController::class, 'index'])->middleware('auth')->name('ap_payment.index');
+Route::get('/get-currency-rate-ap/{curco}', [ApPaymentController::class, 'getCurrencyRate'])->name('get-currency-rate-ap-payment');
+Route::get('/ap-payment/get-invoices/{supno}', [ApPaymentController::class, 'getInvoicesBySupplier'])->name('ap-payment.get-invoices');
+Route::get('/ap-payment/create', [ApPaymentController::class,'create'])->middleware('auth')->name('ap_payment.create');
+Route::post('/ap-payment/store', [ApPaymentController::class,'store'])->middleware('auth')->name('ap_payment.store');
+Route::get('/ap-payment/{id}/detail', [ApPaymentController::class,'show'])->middleware('auth')->name('ap_payment.detail');
+Route::get('/ap-payment/{id}/edit', [ApPaymentController::class,'edit'])->middleware('auth')->name('ap_payment.edit');
+Route::put('/ap-payment/{id}', [ApPaymentController::class,'update'])->middleware('auth')->name('ap_payment.update');
+Route::get('/ap-payment/previewAp/{id}', [ApPaymentController::class, 'previewAp'])->name('ap_payment.previewAp');
+Route::get('/ap-payment/printAp/{id}', [ApPaymentController::class, 'printAp'])->name('ap_payment.printAp');
+Route::put('/ap-payment/{id}/cancel', [ApPaymentController::class,'cancel'])->middleware('auth')->name('ap_payment.cancel');
+Route::delete('/ap-payment/{id}/delete', [ApPaymentController::class,'destroy'])->middleware('auth')->name('ap_payment.delete');
