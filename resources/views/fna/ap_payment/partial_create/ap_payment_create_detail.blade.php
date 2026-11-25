@@ -44,19 +44,25 @@
                                 <input type="hidden" class="payrate" name="payrate[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Amount Invoice</label>
                                 <input type="text" class="form-control inv-amount-display" readonly style="background-color:#e9ecef">
                                 <input type="hidden" class="inv-amount" name="inv_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Outstanding Amount</label>
+                                <input type="text" class="form-control outstanding-amount-display" readonly style="background-color:#e9ecef">
+                                <input type="hidden" class="outstanding-amount">
+                            </div>
+
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Payment</label><span class="text-danger"> *</span>
                                 <input type="text" class="form-control pay-amount-display" required>
                                 <input type="hidden" class="pay-amount" name="pay_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Payment (IDR)</label>
                                 <input type="text" class="form-control pay-idr-display" readonly style="background-color:#e9ecef;">
                                 <input type="hidden" class="pay-idr" name="pay_idr[]">
@@ -83,31 +89,16 @@
 
 @push('scripts')
     <script>
-        // Helper untuk mengubah string format currency/angka lokal menjadi float murni
-        function parseCurrencyToFloat(val, currency) {
-            if (!val) return 0;
-            let str = val.toString().trim();
-
-            if (currency === 'IDR') {
-                // Hapus simbol Rp, spasi, dan titik pemisah ribuan, lalu ganti koma desimal jadi titik
-                str = str.replace(/[^0-9,-]/g, '').replace(',', '.');
-            } else {
-                // Format US/Asing: hapus simbol mata uang dan koma pemisah ribuan
-                str = str.replace(/[^0-9.-]/g, '');
-            }
-            return parseFloat(str) || 0;
-        }
-
         $('#supno').on('change', function () {
-            const supno = $(this).val();
+            const supno = ($(this).val() || '').trim();
             if (!supno) return;
 
             $.ajax({
-                url: `/ap-payment/get-invoices/${supno}`,
+                url: `/ap-payment/get-invoices/${encodeURIComponent(supno)}`,
                 method: 'GET',
                 success: function (res) {
                     if (res.success) {
-                        window.supplierInvoices = res.data;
+                        window.supplierInvoices = res.data || [];
                         populateAllInvoiceDropdowns();
                     }
                 },
@@ -117,7 +108,6 @@
             });
         });
 
-        // Isi opsi ke semua dropdown select.invoice-select yang ada
         function populateAllInvoiceDropdowns(targetSelect = null) {
             const selects = targetSelect ? $(targetSelect) : $('select.invoice-select');
             const invoices = window.supplierInvoices || [];
@@ -126,16 +116,26 @@
                 const $sel = $(this);
                 $sel.empty();
 
-                if (invoices.length === 0) {
+                // Saring invoice yang sudah dipilih di baris accordion lain agar tidak duplikat
+                const alreadyChosen = [];
+                $('select.invoice-select').not($sel).each(function () {
+                    const val = $(this).val();
+                    if (val) alreadyChosen.push(String(val).trim());
+                });
+
+                const availableInvoices = invoices.filter(inv => !alreadyChosen.includes(String(inv.invno).trim()));
+
+                if (availableInvoices.length === 0) {
                     $sel.append('<option value="" disabled selected>No invoice found for this supplier</option>');
                     $sel.prop('disabled', true);
                 } else {
                     $sel.prop('disabled', false);
                     $sel.append('<option value="" disabled selected>Select Invoice</option>');
 
-                    invoices.forEach(inv => {
-                        const label = `${inv.invno} (${inv.curco_inv} - ${formatMoney(parseFloat(inv.total_amount), inv.curco_inv)})`;
-                        const option = new Option(label, inv.invno, false, false);
+                    availableInvoices.forEach(inv => {
+                        const invNoStr = String(inv.invno).trim();
+                        const label = `${invNoStr} (${inv.curco_inv} - ${formatMoney(parseFloat(inv.total_amount), inv.curco_inv)})`;
+                        const option = new Option(label, invNoStr, false, false);
                         $(option).data('invoice', inv);
                         $sel.append(option);
                     });
@@ -156,13 +156,15 @@
 
             if (!invData) return;
 
-            const curcoInv  = invData.curco_inv || 'IDR';
-            const invRate  = parseFloat(invData.invrate) || 1;
-            const payRate  = parseFloat(invData.payrate) || 1;
-            const invAmount = parseFloat(invData.total_amount) || 0;
-            const defaultPay = (invData.sisa_bayar !== undefined) ? parseFloat(invData.sisa_bayar) : invAmount;
+            const curcoInv    = invData.curco_inv || 'IDR';
+            const invRate     = parseFloat(invData.invrate) || 1;
+            const payRate     = parseFloat(invData.payrate) || 1;
+            const invAmount   = parseFloat(invData.total_amount) || 0;
+            const paidAmount  = parseFloat(invData.payment) || 0;
+            const outstanding = (invData.sisa_bayar !== undefined && invData.sisa_bayar !== null)
+                ? parseFloat(invData.sisa_bayar)
+                : Math.max(0, invAmount - paidAmount);
 
-            // Isi field readonly
             $body.find('.curco-inv').val(curcoInv);
 
             $body.find('.invrate').val(invRate);
@@ -174,18 +176,19 @@
             $body.find('.inv-amount').val(invAmount);
             $body.find('.inv-amount-display').val(formatMoney(invAmount, curcoInv));
 
-            // Isi Total Payment (raw & display currency)
-            $body.find('.pay-amount').val(defaultPay);
-            $body.find('.pay-amount-display').val(formatMoney(defaultPay, curcoInv));
+            // Isi raw & display Outstanding Amount
+            $body.find('.outstanding-amount').val(outstanding);
+            $body.find('.outstanding-amount-display').val(formatMoney(outstanding, curcoInv));
 
-            // Update judul accordion
+            // Default Total Payment = sisa tagihan (outstanding)
+            $body.find('.pay-amount').val(outstanding);
+            $body.find('.pay-amount-display').val(formatMoney(outstanding, curcoInv));
+
             $item.find('.accordion-title').text(`Invoice: ${invData.invno} (${curcoInv})`);
 
-            // Hitung konversi IDR baris ini
             calculateRowIDR($body);
         });
 
-        // Saat fokus: tampilkan angka murni agar user mudah mengedit
         $(document).on('focus', '.pay-amount-display', function () {
             const $body = $(this).closest('.accordion-body');
             const rawVal = $body.find('.pay-amount').val();
@@ -194,47 +197,56 @@
             }
         });
 
-        // Saat mengetik: update nilai hidden & hitung total IDR real-time
         $(document).on('input', '.pay-amount-display', function () {
             const $body = $(this).closest('.accordion-body');
-            // Izinkan angka, titik, dan koma saja
             let cleaned = $(this).val().replace(/[^0-9.,]/g, '');
             $(this).val(cleaned);
 
-            // Konversi inputan sementara ke float (ganti koma ke titik untuk kalkulasi)
             let numericVal = parseFloat(cleaned.replace(/,/g, '.')) || 0;
             $body.find('.pay-amount').val(numericVal);
 
             calculateRowIDR($body);
         });
 
-        // Saat keluar dari input (blur): format kembali ke tampilan currency
         $(document).on('blur', '.pay-amount-display', function () {
-            const $body = $(this).closest('.accordion-body');
-            const curcoInv = $body.find('.curco-inv').val() || 'IDR';
-            const rawVal = parseFloat($body.find('.pay-amount').val());
+            const $input      = $(this);
+            const $body       = $input.closest('.accordion-body');
+            const curcoInv    = $body.find('.curco-inv').val() || 'IDR';
+            const invno       = $body.find('select.invoice-select').val();
+            const outstanding = parseFloat($body.find('.outstanding-amount').val()) || 0;
+            const rawVal      = parseFloat($body.find('.pay-amount').val()) || 0;
+
+            if (invno && rawVal > outstanding) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Melebihi Outstanding!',
+                    html: `Total Payment untuk invoice <b>${invno}</b> (${formatMoney(rawVal, curcoInv)}) tidak boleh melebihi Outstanding Amount (${formatMoney(outstanding, curcoInv)}).`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    $body.find('.pay-amount').val(outstanding);
+                    $input.val(formatMoney(outstanding, curcoInv));
+                    calculateRowIDR($body);
+                    $input.focus();
+                });
+                return;
+            }
 
             if (!isNaN(rawVal) && rawVal > 0) {
-                $(this).val(formatMoney(rawVal, curcoInv));
+                $input.val(formatMoney(rawVal, curcoInv));
             } else {
                 $body.find('.pay-amount').val(0);
-                $(this).val(formatMoney(0, curcoInv));
+                $input.val(formatMoney(0, curcoInv));
             }
             calculateRowIDR($body);
         });
 
-        // Fungsi hitung konversi IDR per baris detail
         function calculateRowIDR($body) {
             const curcoInv  = $body.find('.curco-inv').val();
-            const payRate  = parseFloat($body.find('.payrate').val()) || 1;
+            const payRate   = parseFloat($body.find('.payrate').val()) || 1;
             const payAmount = parseFloat($body.find('.pay-amount').val()) || 0;
 
-            let idrValue = 0;
-            if (curcoInv === 'IDR') {
-                idrValue = payAmount;
-            } else {
-                idrValue = payAmount * payRate;
-            }
+            let idrValue = (curcoInv === 'IDR') ? payAmount : (payAmount * payRate);
 
             $body.find('.pay-idr').val(idrValue.toFixed(2));
             $body.find('.pay-idr-display').val(formatIDR(idrValue));
@@ -242,7 +254,6 @@
             calculateHeaderTotal();
         }
 
-        // Fungsi hitung Total di Header
         function calculateHeaderTotal() {
             let grandTotalInvoiceIDR = 0;
             let grandTotalPayIDR = 0;
@@ -251,35 +262,27 @@
                 const $body     = $(this).find('.accordion-body');
                 const curcoInv  = $body.find('.curco-inv').val();
                 const invAmount = parseFloat($body.find('.inv-amount').val()) || 0;
-                const invRate  = parseFloat($body.find('.invrate').val()) || 1;
+                const invRate   = parseFloat($body.find('.invrate').val()) || 1;
                 const payIDR    = parseFloat($body.find('.pay-idr').val()) || 0;
 
-                // Hitung Total Bayar (Total Amount tsupih × Rate Invoice saat itu)
                 if (invAmount > 0) {
-                    if (curcoInv === 'IDR') {
-                        grandTotalInvoiceIDR += invAmount;
-                    } else {
-                        grandTotalInvoiceIDR += (invAmount * invRate);
-                    }
+                    grandTotalInvoiceIDR += (curcoInv === 'IDR') ? invAmount : (invAmount * invRate);
                 }
 
-                // Hitung Total Payment dalam IDR (penjumlahan seluruh Equivalent IDR di detail)
                 if (payIDR > 0) {
                     grandTotalPayIDR += payIDR;
                 }
             });
 
-            // Update kolom Total Bayar (Basis Rate Invoice)
             $('#tpayment_raw').val(grandTotalInvoiceIDR.toFixed(2));
             $('#tpayment_display').val(formatIDR(grandTotalInvoiceIDR));
 
-            // Update kolom Total Payment IDR (Basis Rate Sekarang dari detail pay_idr)
             $('#tpayment_detail_raw').val(grandTotalPayIDR.toFixed(2));
             $('#tpayment_detail_display').val(formatIDR(grandTotalPayIDR));
         }
 
         function resetDetailRow($body) {
-            $body.find('.curco-inv, .invrate, .invrate-display, .payrate, .payrate-display, .inv-amount, .inv-amount-display, .pay-amount, .pay-amount-display, .pay-idr, .pay-idr-display').val('');
+            $body.find('.curco-inv, .invrate, .invrate-display, .payrate, .payrate-display, .inv-amount, .inv-amount-display, .outstanding-amount, .outstanding-amount-display, .pay-amount, .pay-amount-display, .pay-idr, .pay-idr-display').val('');
             $body.closest('.accordion-item').find('.accordion-title').text('Detail Invoice');
         }
 
@@ -289,14 +292,20 @@
                 return;
             }
 
-            const i = $('#accordionApPayment .accordion-item').length;
+            if (!window.supplierInvoices || window.supplierInvoices.length === 0) {
+                alert('No invoice found for this supplier!');
+                return;
+            }
+
+            const i = Date.now();
+            const rowNum = $('#accordionApPayment .accordion-item').length + 1;
             const html = `
             <div class="accordion-item" id="accordion-ap-item-${i}">
                 <h2 class="accordion-header d-flex justify-content-between align-items-center" id="heading-ap-${i}">
                     <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#details-ap-${i}"
                         aria-expanded="false" aria-controls="details-ap-${i}">
-                        <span class="accordion-title">Detail Invoice #${i + 1}</span>
+                        <span class="accordion-title">Detail Invoice #${rowNum}</span>
                     </button>
                     <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeApDetail(${i})">
                         <i class="bi bi-trash-fill"></i>
@@ -331,19 +340,25 @@
                                 <input type="hidden" class="payrate" name="payrate[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Amount Invoice</label>
                                 <input type="text" class="form-control inv-amount-display" readonly style="background-color:#e9ecef">
                                 <input type="hidden" class="inv-amount" name="inv_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Outstanding Amount</label>
+                                <input type="text" class="form-control outstanding-amount-display" readonly style="background-color:#e9ecef">
+                                <input type="hidden" class="outstanding-amount">
+                            </div>
+
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Payment</label><span class="text-danger"> *</span>
                                 <input type="text" class="form-control pay-amount-display" required>
                                 <input type="hidden" class="pay-amount" name="pay_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Payment (IDR)</label>
                                 <input type="text" class="form-control pay-idr-display" readonly style="background-color:#e9ecef;">
                                 <input type="hidden" class="pay-idr" name="pay_idr[]">

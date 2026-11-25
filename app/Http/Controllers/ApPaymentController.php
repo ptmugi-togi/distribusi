@@ -305,13 +305,15 @@ class ApPaymentController extends Controller
     {
         $invoices = DB::table('tsupih_tbl')
             ->leftJoin('mcurco_tbl', 'tsupih_tbl.curco', '=', 'mcurco_tbl.curco')
-            ->where('tsupih_tbl.supno', $supno)
+            ->whereRaw('TRIM(tsupih_tbl.supno) = ?', [trim($supno)])
             ->whereRaw('COALESCE(tsupih_tbl.payment, 0) < COALESCE(tsupih_tbl.amount, 0)')
             ->select(
-                'tsupih_tbl.invno',
-                'tsupih_tbl.curco as curco_inv',
+                DB::raw('TRIM(tsupih_tbl.invno) as invno'),
+                DB::raw('TRIM(tsupih_tbl.curco) as curco_inv'),
                 'tsupih_tbl.crate as invrate',
                 'tsupih_tbl.amount as total_amount',
+                DB::raw('COALESCE(tsupih_tbl.payment, 0) as payment'),
+                DB::raw('(COALESCE(tsupih_tbl.amount, 0) - COALESCE(tsupih_tbl.payment, 0)) as sisa_bayar'),
                 DB::raw('COALESCE(mcurco_tbl.crate, 1) as payrate')
             )
             ->get();

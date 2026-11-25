@@ -3,14 +3,16 @@
     <div class="accordion" id="accordionApPayment">
         @foreach ($header->details as $i => $dtl)
             @php
-                $invnoTrim  = trim($dtl->invno);
-                $invMaster  = $invoicesMap[$invnoTrim] ?? null;
-                $curcoInv   = trim($dtl->curco ?? ($invMaster->curco ?? 'IDR'));
-                $invAmount  = $invMaster ? (float) $invMaster->amount : (float) $dtl->payval;
-                $invRate    = (float) $dtl->invrate;
-                $payRate    = (float) $dtl->payrate;
-                $payVal     = (float) $dtl->payval;
-                $payIdr     = (float) $dtl->totalidr;
+                $invnoTrim     = trim($dtl->invno);
+                $invMaster     = $invoicesMap[$invnoTrim] ?? null;
+                $curcoInv      = trim($dtl->curco ?? ($invMaster->curco ?? 'IDR'));
+                $invAmount     = $invMaster ? (float) $invMaster->amount : (float) $dtl->payval;
+                $invRate       = (float) $dtl->invrate;
+                $payRate       = (float) $dtl->payrate;
+                $payVal        = (float) $dtl->payval;
+                $payIdr        = (float) $dtl->totalidr;
+                $currentSisa   = $invMaster ? max(0, round((float) $invMaster->amount - (float) ($invMaster->payment ?? 0), 2)) : 0;
+                $maxAllowedPay = round($currentSisa + $payVal, 2);
             @endphp
 
             <div class="accordion-item" id="accordion-ap-item-{{ $i }}">
@@ -20,9 +22,11 @@
                         aria-expanded="{{ $i == 0 ? 'true' : 'false' }}" aria-controls="details-ap-{{ $i }}">
                         <span class="accordion-title">Invoice: {{ $invnoTrim }} ({{ $curcoInv }})</span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeApDetail({{ $i }})">
-                        <i class="bi bi-trash-fill"></i>
-                    </button>
+                    @if($i > 0)
+                        <button type="button" class="btn btn-sm btn-danger mx-2" onclick="removeApDetail({{ $i }})">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    @endif
                 </h2>
 
                 <div id="details-ap-{{ $i }}" class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
@@ -37,6 +41,7 @@
                                     data-existing-invrate="{{ $invRate }}"
                                     data-existing-payrate="{{ $payRate }}"
                                     data-existing-invamount="{{ $invAmount }}"
+                                    data-existing-outstanding="{{ $maxAllowedPay }}"
                                     data-existing-payval="{{ $payVal }}"
                                     required>
                                     <option value="{{ $invnoTrim }}" selected>
@@ -65,7 +70,7 @@
                                 <input type="hidden" class="payrate" name="payrate[]" value="{{ $payRate }}">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Amount Invoice</label>
                                 <input type="text" class="form-control inv-amount-display"
                                     value="{{ $curcoInv === 'IDR' ? 'Rp ' . number_format($invAmount, 2, ',', '.') : '$' . number_format($invAmount, 2, '.', ',') }}"
@@ -73,7 +78,15 @@
                                 <input type="hidden" class="inv-amount" name="inv_amount[]" value="{{ $invAmount }}">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Outstanding Amount</label>
+                                <input type="text" class="form-control outstanding-amount-display"
+                                    value="{{ $curcoInv === 'IDR' ? 'Rp ' . number_format($maxAllowedPay, 2, ',', '.') : '$' . number_format($maxAllowedPay, 2, '.', ',') }}"
+                                    readonly style="background-color:#e9ecef">
+                                <input type="hidden" class="outstanding-amount" value="{{ $maxAllowedPay }}">
+                            </div>
+
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Payment</label><span class="text-danger"> *</span>
                                 <input type="text" class="form-control pay-amount-display"
                                     value="{{ $curcoInv === 'IDR' ? 'Rp ' . number_format($payVal, 2, ',', '.') : '$' . number_format($payVal, 2, '.', ',') }}"
@@ -81,7 +94,7 @@
                                 <input type="hidden" class="pay-amount" name="pay_amount[]" value="{{ $payVal }}">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Payment (IDR)</label>
                                 <input type="text" class="form-control pay-idr-display"
                                     value="{{ 'Rp ' . number_format($payIdr, 2, ',', '.') }}" readonly style="background-color:#e9ecef;">
@@ -109,15 +122,24 @@
 
 @push('scripts')
     <script>
+        window.supplierInvoices = window.supplierInvoices || [];
+
+        $(document).ready(function () {
+            const supno = ($('#supno').val() || '').trim();
+            if (supno) {
+                fetchSupplierInvoices(supno, true);
+            }
+        });
+
         $('#supno').on('change', function () {
-            const supno = $(this).val();
+            const supno = ($(this).val() || '').trim();
             if (!supno) return;
             fetchSupplierInvoices(supno, false);
         });
 
         function fetchSupplierInvoices(supno, preserveExisting = false) {
             $.ajax({
-                url: `/ap-payment/get-invoices/${supno}`,
+                url: `/ap-payment/get-invoices/${encodeURIComponent(supno)}`,
                 method: 'GET',
                 success: function (res) {
                     if (res.success) {
@@ -141,8 +163,24 @@
 
                 $sel.empty();
 
-                // Gabungkan daftar invoice aktif dengan invoice lama yang tersimpan (jika invoice lama sudah lunas penuh)
-                let combinedInvoices = [...invoices];
+                const alreadyChosen = [];
+                $('select.invoice-select').not($sel).each(function () {
+                    const val = $(this).val();
+                    if (val) alreadyChosen.push(String(val).trim());
+                });
+
+                // Gabungkan daftar invoice aktif dengan batas outstanding yang akurat untuk baris existing
+                let combinedInvoices = invoices.map(inv => {
+                    const invNoStr = String(inv.invno).trim();
+                    if (preserveExisting && invNoStr === selectedInvno && $sel.data('existing-outstanding') !== undefined) {
+                        return {
+                            ...inv,
+                            sisa_bayar: parseFloat($sel.data('existing-outstanding'))
+                        };
+                    }
+                    return inv;
+                });
+
                 if (preserveExisting && selectedInvno) {
                     const alreadyExists = combinedInvoices.some(inv => String(inv.invno).trim() === selectedInvno);
                     if (!alreadyExists) {
@@ -152,34 +190,31 @@
                             invrate: parseFloat($sel.data('existing-invrate')) || 1,
                             payrate: parseFloat($sel.data('existing-payrate')) || 1,
                             total_amount: parseFloat($sel.data('existing-invamount')) || 0,
-                            sisa_bayar: parseFloat($sel.data('existing-payval')) || 0
+                            sisa_bayar: parseFloat($sel.data('existing-outstanding')) || 0
                         });
                     }
                 }
 
-                if (combinedInvoices.length === 0) {
+                const availableInvoices = combinedInvoices.filter(inv => {
+                    const invNoStr = String(inv.invno).trim();
+                    return (preserveExisting && invNoStr === selectedInvno) || !alreadyChosen.includes(invNoStr);
+                });
+
+                if (availableInvoices.length === 0) {
                     $sel.append('<option value="" disabled selected>No invoice found for this supplier</option>');
                     $sel.prop('disabled', true);
                 } else {
                     $sel.prop('disabled', false);
                     $sel.append(`<option value="" disabled ${!preserveExisting ? 'selected' : ''}>Select Invoice</option>`);
 
-                    const alreadyChosen = [];
-                    $('select.invoice-select').not($sel).each(function () {
-                        const val = $(this).val();
-                        if (val) alreadyChosen.push(String(val).trim());
+                    availableInvoices.forEach(inv => {
+                        const invNoStr = String(inv.invno).trim();
+                        const isSelected = preserveExisting && (invNoStr === selectedInvno);
+                        const label = `${invNoStr} (${inv.curco_inv} - ${formatMoney(parseFloat(inv.total_amount), inv.curco_inv)})`;
+                        const option = new Option(label, invNoStr, isSelected, isSelected);
+                        $(option).data('invoice', inv);
+                        $sel.append(option);
                     });
-
-                    combinedInvoices
-                        .filter(inv => preserveExisting || !alreadyChosen.includes(String(inv.invno).trim()))
-                        .forEach(inv => {
-                            const invNoStr = String(inv.invno).trim();
-                            const isSelected = preserveExisting && (invNoStr === selectedInvno);
-                            const label = `${invNoStr} (${inv.curco_inv} - ${formatMoney(parseFloat(inv.total_amount), inv.curco_inv)})`;
-                            const option = new Option(label, invNoStr, isSelected, isSelected);
-                            $(option).data('invoice', inv);
-                            $sel.append(option);
-                        });
                 }
 
                 if (!preserveExisting) {
@@ -202,11 +237,14 @@
 
             if (!invData) return;
 
-            const curcoInv   = invData.curco_inv || 'IDR';
-            const invRate    = parseFloat(invData.invrate) || 1;
-            const payRate    = parseFloat(invData.payrate) || 1;
-            const invAmount  = parseFloat(invData.total_amount) || 0;
-            const defaultPay = (invData.sisa_bayar !== undefined) ? parseFloat(invData.sisa_bayar) : invAmount;
+            const curcoInv    = invData.curco_inv || 'IDR';
+            const invRate     = parseFloat(invData.invrate) || 1;
+            const payRate     = parseFloat(invData.payrate) || 1;
+            const invAmount   = parseFloat(invData.total_amount) || 0;
+            const paidAmount  = parseFloat(invData.payment) || 0;
+            const outstanding = (invData.sisa_bayar !== undefined && invData.sisa_bayar !== null)
+                ? parseFloat(invData.sisa_bayar)
+                : Math.max(0, invAmount - paidAmount);
 
             $body.find('.curco-inv').val(curcoInv);
 
@@ -219,8 +257,11 @@
             $body.find('.inv-amount').val(invAmount);
             $body.find('.inv-amount-display').val(formatMoney(invAmount, curcoInv));
 
-            $body.find('.pay-amount').val(defaultPay);
-            $body.find('.pay-amount-display').val(formatMoney(defaultPay, curcoInv));
+            $body.find('.outstanding-amount').val(outstanding);
+            $body.find('.outstanding-amount-display').val(formatMoney(outstanding, curcoInv));
+
+            $body.find('.pay-amount').val(outstanding);
+            $body.find('.pay-amount-display').val(formatMoney(outstanding, curcoInv));
 
             $item.find('.accordion-title').text(`Invoice: ${invData.invno} (${curcoInv})`);
 
@@ -247,15 +288,34 @@
         });
 
         $(document).on('blur', '.pay-amount-display', function () {
-            const $body = $(this).closest('.accordion-body');
-            const curcoInv = $body.find('.curco-inv').val() || 'IDR';
-            const rawVal = parseFloat($body.find('.pay-amount').val());
+            const $input      = $(this);
+            const $body       = $input.closest('.accordion-body');
+            const curcoInv    = $body.find('.curco-inv').val() || 'IDR';
+            const invno       = $body.find('select.invoice-select').val();
+            const outstanding = parseFloat($body.find('.outstanding-amount').val()) || 0;
+            const rawVal      = parseFloat($body.find('.pay-amount').val()) || 0;
+
+            if (invno && rawVal > outstanding) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Melebihi Outstanding!',
+                    html: `Total Payment untuk invoice <b>${invno}</b> (${formatMoney(rawVal, curcoInv)}) tidak boleh melebihi Outstanding Amount (${formatMoney(outstanding, curcoInv)}).`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    $body.find('.pay-amount').val(outstanding);
+                    $input.val(formatMoney(outstanding, curcoInv));
+                    calculateRowIDR($body);
+                    $input.focus();
+                });
+                return;
+            }
 
             if (!isNaN(rawVal) && rawVal > 0) {
-                $(this).val(formatMoney(rawVal, curcoInv));
+                $input.val(formatMoney(rawVal, curcoInv));
             } else {
                 $body.find('.pay-amount').val(0);
-                $(this).val(formatMoney(0, curcoInv));
+                $input.val(formatMoney(0, curcoInv));
             }
             calculateRowIDR($body);
         });
@@ -301,7 +361,7 @@
         }
 
         function resetDetailRow($body) {
-            $body.find('.curco-inv, .invrate, .invrate-display, .payrate, .payrate-display, .inv-amount, .inv-amount-display, .pay-amount, .pay-amount-display, .pay-idr, .pay-idr-display').val('');
+            $body.find('.curco-inv, .invrate, .invrate-display, .payrate, .payrate-display, .inv-amount, .inv-amount-display, .outstanding-amount, .outstanding-amount-display, .pay-amount, .pay-amount-display, .pay-idr, .pay-idr-display').val('');
             $body.closest('.accordion-item').find('.accordion-title').text('Detail Invoice');
         }
 
@@ -316,7 +376,7 @@
                 return;
             }
 
-            const i = Date.now(); // Gunakan timestamp unik agar index id tidak bentrok saat ada baris yang dihapus
+            const i = Date.now();
             const rowNum = $('#accordionApPayment .accordion-item').length + 1;
             const html = `
             <div class="accordion-item" id="accordion-ap-item-${i}">
@@ -359,19 +419,25 @@
                                 <input type="hidden" class="payrate" name="payrate[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Amount Invoice</label>
                                 <input type="text" class="form-control inv-amount-display" readonly style="background-color:#e9ecef">
                                 <input type="hidden" class="inv-amount" name="inv_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label">Outstanding Amount</label>
+                                <input type="text" class="form-control outstanding-amount-display" readonly style="background-color:#e9ecef">
+                                <input type="hidden" class="outstanding-amount">
+                            </div>
+
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Total Payment</label><span class="text-danger"> *</span>
                                 <input type="text" class="form-control pay-amount-display" required>
                                 <input type="hidden" class="pay-amount" name="pay_amount[]">
                             </div>
 
-                            <div class="col-md-4 mt-3">
+                            <div class="col-md-6 mt-3">
                                 <label class="form-label">Payment (IDR)</label>
                                 <input type="text" class="form-control pay-idr-display" readonly style="background-color:#e9ecef;">
                                 <input type="hidden" class="pay-idr" name="pay_idr[]">
