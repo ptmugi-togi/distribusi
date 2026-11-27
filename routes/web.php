@@ -63,6 +63,7 @@ use App\Http\Controllers\NationalStockPositionController;
 use App\Http\Controllers\ClosePeriodController;
 use App\Http\Controllers\GarantieCardReleaseController;
 use App\Http\Controllers\ApPaymentController;
+use App\Http\Controllers\ReportOutstandingApPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -522,7 +523,10 @@ Route::post('/ap-payment/store', [ApPaymentController::class,'store'])->middlewa
 Route::get('/ap-payment/{id}/detail', [ApPaymentController::class,'show'])->middleware('auth')->name('ap_payment.detail');
 Route::get('/ap-payment/{id}/edit', [ApPaymentController::class,'edit'])->middleware('auth')->name('ap_payment.edit');
 Route::put('/ap-payment/{id}', [ApPaymentController::class,'update'])->middleware('auth')->name('ap_payment.update');
-Route::get('/ap-payment/previewAp/{id}', [ApPaymentController::class, 'previewAp'])->name('ap_payment.previewAp');
-Route::get('/ap-payment/printAp/{id}', [ApPaymentController::class, 'printAp'])->name('ap_payment.printAp');
-Route::put('/ap-payment/{id}/cancel', [ApPaymentController::class,'cancel'])->middleware('auth')->name('ap_payment.cancel');
-Route::delete('/ap-payment/{id}/delete', [ApPaymentController::class,'destroy'])->middleware('auth')->name('ap_payment.delete');
+// Route::get('/ap-payment/previewAp/{id}', [ApPaymentController::class, 'previewAp'])->name('ap_payment.previewAp');
+// Route::get('/ap-payment/printAp/{id}', [ApPaymentController::class, 'printAp'])->name('ap_payment.printAp');
+// Route::put('/ap-payment/{id}/cancel', [ApPaymentController::class,'cancel'])->middleware('auth')->name('ap_payment.cancel');
+// Route::delete('/ap-payment/{id}/delete', [ApPaymentController::class,'destroy'])->middleware('auth')->name('ap_payment.delete');
+
+Route::get('/outstanding-ap-payment', [ReportOutstandingApPaymentController::class, 'index'])->name('outstanding_ap_payment.create');
+Route::get('/outstanding-ap-payment/preview', [ReportOutstandingApPaymentController::class, 'preview'])->name('outstanding_ap_payment.preview');

@@ -212,6 +212,13 @@
               </ul>
               <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
                 <li>
+                  <a href="{{ route('outstanding_ap_payment.create') }}">
+                  <i class="bi bi-circle"></i><span>Outstanding AP Payment List</span>
+                  </a>
+                </li>
+              </ul>
+              <ul id="subFna-nav" class="nav-content collapse" data-bs-parent="#fna-nav">
+                <li>
                   <a href="{{ route('payment_list.create') }}">
                   <i class="bi bi-circle"></i><span>Payment List</span>
                   </a>
